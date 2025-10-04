@@ -1,0 +1,24 @@
+.wrapper {
+  height: calc(100vh - 60px);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.splitContainer {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.leftPanel {
+  flex: 0 0 33.333%;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  scrollbar-gutter: stable; /* prevent content shift */
+}
+.rightPanel {
+  flex: 0 0 66.666%;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}

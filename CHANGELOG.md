@@ -1,3 +1,17 @@
+## [0.7] (2025-10-04)
+
+#### changes:
+
+1. Added `group_llms` PostgreSQL table.
+   Now each group can have several LLM.
+   LLM types: dummy, ollama-local, ollama-remote
+
+2. Added `backend/init_sql_data/group_llms.json` to use in `backend/init_sql_db.py` script.
+
+3. changed `RAG documents` page:
+   Now user must select LLM (if there are more than 1) to query documents.
+   Also, added vertical scrolls for both (history and query) sides.
+
 ## [0.6] (2025-09-28)
 
 #### changes:

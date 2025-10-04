@@ -32,7 +32,7 @@ function QueriesListBar() {
   const beforeRows = queriesStore.getBeforeRows();
 
   return (
-    <div className="w-100 bg-light border-end overflow-auto">
+    <div className="w-100 bg-light border-end">
       <Button
         type="button"
         variant="light"

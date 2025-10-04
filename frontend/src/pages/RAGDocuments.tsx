@@ -1,31 +1,26 @@
-import { Container } from "react-bootstrap";
 import QueriesListBar from "./elements/RAGDocuments/QueriesListBar";
 import QueryArea from "./elements/RAGDocuments/QueryArea";
 import ResponseArea from "./elements/RAGDocuments/ResponseArea";
 import { useTopNavBarTitle } from "../hooks/useTopNavBarTitle";
+import styles from "./RAGDocuments.module.css";
+import clsx from "clsx";
 
 const RAGDocuments = () => {
   useTopNavBarTitle("RAG Documents");
 
   return (
-    <Container fluid style={{ height: "calc(100vh - 60px)" }}>
-      <div className="row h-100">
-        {/* Sidebar */}
-        <div className="col-3 h-100 overflow-auto border-end">
+    <div className={styles.wrapper}>
+      <div className={styles.splitContainer}>
+        <div className={clsx("ps-2", "pe-2", styles.leftPanel)}>
+          {/* Sidebar */}
           <QueriesListBar />
         </div>
-
-        {/* Main content */}
-        <div className="col-9 d-flex flex-column h-100">
-          <div className="">
-            <QueryArea />
-          </div>
-          <div className="">
-            <ResponseArea />
-          </div>
+        <div className={clsx("p-0", styles.rightPanel)}>
+          <QueryArea />
+          <ResponseArea />
         </div>
       </div>
-    </Container>
+    </div>
   );
 };
 
