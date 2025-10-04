@@ -1,0 +1,5 @@
+[
+  { "name": "llm_api_base", "value": "http://localhost:11434/v1" },
+  { "name": "llm_model_name", "value": "gemma3" },
+  { "name": "llm_api_key", "value": "ollama" }
+]

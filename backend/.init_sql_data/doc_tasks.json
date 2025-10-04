@@ -1,0 +1,233 @@
+[
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 1",
+    "input_text": "Input text for Query 1",
+    "optional_text": "Optional text for Query 1",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 1",
+    "created_at__hours_before": 30
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 2",
+    "input_text": "Input text for Query 2",
+    "optional_text": "Optional text for Query 2",
+    "gvdbs_id": 1,
+    "gc_id": 2,
+    "output_text": "Response for Query 2",
+    "created_at__hours_before": 29
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 3",
+    "input_text": "Input text for Query 3",
+    "optional_text": "Optional text for Query 3",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 3",
+    "created_at__hours_before": 28
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 4",
+    "input_text": "Input text for Query 4",
+    "optional_text": "Optional text for Query 4",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 4",
+    "created_at__hours_before": 27
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 5",
+    "input_text": "Input text for Query 5",
+    "optional_text": "Optional text for Query 5",
+    "gvdbs_id": 1,
+    "gc_id": 2,
+    "output_text": "Response for Query 5",
+    "created_at__hours_before": 26
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 6",
+    "input_text": "Input text for Query 6",
+    "optional_text": "Optional text for Query 6",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 6",
+    "created_at__hours_before": 25
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 7",
+    "input_text": "Input text for Query 7",
+    "optional_text": "Optional text for Query 7",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 7",
+    "created_at__hours_before": 24
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 8",
+    "input_text": "Input text for Query 8",
+    "optional_text": "Optional text for Query 8",
+    "gvdbs_id": 1,
+    "gc_id": 2,
+    "output_text": "Response for Query 8",
+    "created_at__hours_before": 23
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 9",
+    "input_text": "Input text for Query 9",
+    "optional_text": "Optional text for Query 9",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 9",
+    "created_at__hours_before": 22
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 10",
+    "input_text": "Input text for Query 10",
+    "optional_text": "Optional text for Query 10",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 10",
+    "created_at__hours_before": 21
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 11",
+    "input_text": "Input text for Query 11",
+    "optional_text": "Optional text for Query 11",
+    "gvdbs_id": 1,
+    "gc_id": 2,
+    "output_text": "Response for Query 11",
+    "created_at__hours_before": 20
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 12",
+    "input_text": "Input text for Query 12",
+    "optional_text": "Optional text for Query 12",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 12",
+    "created_at__hours_before": 19
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 13",
+    "input_text": "Input text for Query 13",
+    "optional_text": "Optional text for Query 13",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 13",
+    "created_at__hours_before": 18
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 14",
+    "input_text": "Input text for Query 14",
+    "optional_text": "Optional text for Query 14",
+    "gvdbs_id": 1,
+    "gc_id": 2,
+    "output_text": "Response for Query 14",
+    "created_at__hours_before": 17
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 15",
+    "input_text": "Input text for Query 15",
+    "optional_text": "Optional text for Query 15",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 15",
+    "created_at__hours_before": 16
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 16",
+    "input_text": "Input text for Query 16",
+    "optional_text": "Optional text for Query 16",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 16",
+    "created_at__hours_before": 15
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 17",
+    "input_text": "Input text for Query 17",
+    "optional_text": "Optional text for Query 17",
+    "gvdbs_id": 1,
+    "gc_id": 2,
+    "output_text": "Response for Query 17",
+    "created_at__hours_before": 14
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 18",
+    "input_text": "Input text for Query 18",
+    "optional_text": "Optional text for Query 18",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 18",
+    "created_at__hours_before": 3
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "Query 19",
+    "input_text": "Input text for Query 19",
+    "optional_text": "Optional text for Query 19",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Response for Query 19",
+    "created_at__hours_before": 2
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "",
+    "input_text": "Tell me about NBPTS Standards",
+    "optional_text": "Answer shorter",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "Based on the provided documents, the NBPTS Standards emphasize consistent classroom assessment practices. They advocate for assessments tied to learning goals, minimizing bias, and providing scores interpretable in relation to student knowledge and skills. The standards aim for uniformity across state testing programs, with a focus on assessment for learning rather than simply measuring student status.",
+    "created_at__hours_before": 1
+  },
+  {
+    "group_id": 1,
+    "user_id": 1,
+    "short_name": "",
+    "input_text": "Tell me about RAG",
+    "optional_text": "",
+    "gvdbs_id": 1,
+    "gc_id": 1,
+    "output_text": "\nOkay, let\\'s break down Retrieval-Augmented Generation (RAG) based on the provided documents.\n\n**What is RAG?**\n\nRAG is a technique that combines the strengths of two key approaches in Natural Language Processing (NLP):\n\n1.  **Large Language Models (LLMs):** These are powerful models like GPT-3, PaLM, etc., that can generate text, translate languages, and answer questions. However, they have a significant limitation: they rely on the knowledge *they were trained on*. This knowledge is static and can be outdated.\n\n2.  **Retrieval Systems:** These systems (like vector databases) are designed to quickly find relevant information from a large collection of documents.\n\n**How RAG Works (Based on the Documents)**\n\nRAG works by augmenting the LLM with information retrieved from an external knowledge source. Here\\'s the process, as illustrated by several of the documents:\n\n1.  **User Query:** The user poses a question or prompt to the system.\n\n2.  **Retrieval:** The system uses the query to search a database of documents (e.g., a vector database) for relevant information.  This is done using techniques like:\n    *   **Bigrams:**  (Document 9)  The system analyzes the query and uses it to find similar phrases (bigrams) within the document collection.\n    *   **Word Transformations:** (Document 7) The system uses a series of operations to match the query to the document.\n\n3.  **Augmentation:** The retrieved information is then combined with the original query and fed to the LLM.\n\n4.  **Generation:** The LLM uses *both* the original query *and* the retrieved context to generate a more informed and accurate response.\n\n**Key Concepts Highlighted in the Documents:**\n\n*   **Knowledge Base:** RAG relies on a large collection of documents as its knowledge base.\n*   **Contextualization:** The retrieved information provides the LLM with the necessary context to answer the question effectively.\n*   **Dynamic Knowledge:** RAG allows the LLM to access and utilize up-to-date information, overcoming the limitations of static training data.\n*   **Bigram Analysis:** (Document 9)  A specific retrieval technique.\n*   **Word Transformations:** (Document 7) Another retrieval technique.\n\n**In essence, RAG makes LLMs smarter by giving them access to a constantly updated and relevant knowledge base.**\n\nDo you want me to elaborate on a specific aspect of RAG, such as:\n\n*   Different types of retrieval systems?\n*   How RAG improves LLM accuracy?\n*   The architecture of a typical RAG system?\n",
+    "created_at__hours_before": 0
+  }
+]
