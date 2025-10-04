@@ -1,6 +1,7 @@
 export type DocTasksResponse = {
   doc_task_id: number;
   gvdbs_id: number;
+  gllms_id: number;
   gc_id: number;
   status: number;
   status_text: string;

@@ -6,7 +6,9 @@ import type { DocTasksShortItem } from "../../../models/docTasksShortItem";
 interface DocTasksCurrentState {
   doc_task_id: number | null;
   gvdbs_id: number | null;
-  setGVDBSID: (gvdbs_id: number | null) => void;
+  setGVDBsID: (gvdbs_id: number | null) => void;
+  gllms_id: number | null;
+  setGLLMsID: (gllms_id: number | null) => void;
   gc_id: number | null;
   setGCID: (gc_id: number | null) => void;
   status: number | null;
@@ -32,6 +34,7 @@ interface DocTasksCurrentState {
 const defaultState = {
   doc_task_id: null,
   gvdbs_id: null,
+  gllms_id: null,
   gc_id: null,
   status: null,
   status_text: "",
@@ -47,7 +50,8 @@ const defaultState = {
 
 export const useDocTasksCurrentStore = create<DocTasksCurrentState>((set) => ({
   ...defaultState,
-  setGVDBSID: (gvdbs_id: number | null) => set({ gvdbs_id }),
+  setGVDBsID: (gvdbs_id: number | null) => set({ gvdbs_id }),
+  setGLLMsID: (gllms_id: number | null) => set({ gllms_id }),
   setGCID: (gc_id: number | null) => set({ gc_id }),
   setShortName: (short_name: string) => set({ short_name }),
   setInputText: (input_text: string) => set({ input_text }),

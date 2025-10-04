@@ -2,10 +2,10 @@ from datetime import datetime
 from sqlalchemy import VARCHAR, Integer, ForeignKey, DateTime, func, text, Index, Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from common.sql_models import Base
-from common.enums.gvdbs_types import GVDBSTypes
+from common.enums.gvdbs_types import GVDBsTypes
 
 # ['chroma', 'qdrant', 'pgvector', ...]
-GVDBS_TYPE_VALUES = [v for k, v in vars(GVDBSTypes).items() if not k.startswith('_') and isinstance(v, str)]
+GVDBS_TYPE_VALUES = [v for k, v in vars(GVDBsTypes).items() if not k.startswith('_') and isinstance(v, str)]
 
 class GroupVDBs(Base):
     __tablename__ = "group_vdbs"

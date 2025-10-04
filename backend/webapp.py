@@ -3,18 +3,8 @@ import os
 from fastapi import HTTPException, Request
 from fastapi.responses import FileResponse
 
-from cwa_lib.app import app, templates, api_router
-from cwa_lib.routers.doc_tasks import router__doc_tasks
-from cwa_lib.routers.group_contexts import router__group_contexts
-from cwa_lib.routers.group_vdbs import router__group_vdbs
-from cwa_lib.routers.manage_contexts import router__manage_contexts
-from cwa_lib.routers.misc import router__misc
-
-api_router.include_router(router__doc_tasks)
-api_router.include_router(router__group_contexts)
-api_router.include_router(router__group_vdbs)
-api_router.include_router(router__manage_contexts)
-api_router.include_router(router__misc)
+from cwa_lib.app import app, templates
+from cwa_lib.routers import api_router
 
 app.include_router(api_router)  # must be here, after all other API routes, and before page routes
 

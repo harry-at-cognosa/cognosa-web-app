@@ -1,28 +1,28 @@
 import { create } from "zustand";
-import type { GroupVDBS } from "./groupVDBS";
+import type { GroupVDBs } from "./groupVDBs";
 
-interface GroupVDBSState {
-  rows: GroupVDBS[];
-  setRows: (rows: GroupVDBS[]) => void;
+interface GroupVDBsState {
+  rows: GroupVDBs[];
+  setRows: (rows: GroupVDBs[]) => void;
   needReload: boolean;
   setNeedReload: (needReload: boolean) => void;
 }
 
-export const useGroupVDBSStore = create<GroupVDBSState>((set) => ({
+export const useGroupVDBsStore = create<GroupVDBsState>((set) => ({
   rows: [],
   setRows: (rows) => set({ rows }),
   needReload: true,
   setNeedReload: (needReload: boolean) => set({ needReload }),
 }));
 
-interface GroupVDBSLastUsedState {
+interface GroupVDBsLastUsedState {
   gvdbs_id: number | null;
-  setGVDBSID: (gvdbs_id: number | null) => void;
+  setGVDBsID: (gvdbs_id: number | null) => void;
 }
 
-export const useGroupVDBSLastUsedStore = create<GroupVDBSLastUsedState>(
+export const useGroupVDBsLastUsedStore = create<GroupVDBsLastUsedState>(
   (set) => ({
     gvdbs_id: null,
-    setGVDBSID: (gvdbs_id) => set({ gvdbs_id }),
+    setGVDBsID: (gvdbs_id) => set({ gvdbs_id }),
   })
 );

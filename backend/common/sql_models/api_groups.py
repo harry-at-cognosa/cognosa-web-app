@@ -14,3 +14,5 @@ class ApiGroups(Base):
         "GroupContexts", back_populates="api_groups_id")
     group_vdbs_id_list: Mapped[list["GroupVDBs"]] = relationship(   # pyright: ignore[reportUndefinedVariable]
         "GroupVDBs", back_populates="api_groups_id")
+    group_llms_id_list: Mapped[list["GroupLLMs"]] = relationship(   # pyright: ignore[reportUndefinedVariable]
+        "GroupLLMs", back_populates="api_groups_id")

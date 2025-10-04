@@ -12,7 +12,7 @@ from common import WORK_DIR
 from common.helpers import utcnow
 from common.enums.doc_task_status import TaskStatus
 from common.sql_db_async import Base, sql_async_engine, async_get_session
-from common.sql_models import ApiSettings, ApiGroups, GroupVDBs, GroupContexts, DocTasks
+from common.sql_models import ApiSettings, ApiGroups, GroupVDBs, GroupLLMs, GroupContexts, DocTasks
 
 # log.init('init_sql_db', log_sqlalchemy='DEBUG')
 
@@ -24,6 +24,9 @@ with open(os.path.join(WORK_DIR, '.init_sql_data', 'api_groups.json'), 'r', enco
 
 with open(os.path.join(WORK_DIR, '.init_sql_data', 'group_vdbs.json'), 'r', encoding='utf8') as f_json:
     group_vdbs_initial_data = json.loads(f_json.read())
+
+with open(os.path.join(WORK_DIR, '.init_sql_data', 'group_llms.json'), 'r', encoding='utf8') as f_json:
+    group_llms_initial_data = json.loads(f_json.read())
 
 with open(os.path.join(WORK_DIR, '.init_sql_data', 'group_contexts.json'), 'r', encoding='utf8') as f_json:
     group_contexts_initial_data = json.loads(f_json.read())
@@ -94,6 +97,23 @@ class InitDatabase:
                 session.add_all(group_vdbs_objects)
                 await session.commit()
                 print(f"Inserted {len(group_vdbs_objects)} group_vdbs rows")
+
+                group_llms_objects = [
+                    GroupLLMs(
+                        group_id=item['group_id'], 
+                        gllms_seqn=item['gllms_seqn'],
+                        gllms_type=item['gllms_type'],
+                        gllms_name=item['gllms_name'],
+                        gllms_api_base=item['gllms_api_base'], 
+                        gllms_model=item['gllms_model'], 
+                        gllms_api_key=item['gllms_api_key'],
+                        gllms_created_at=utcnow()
+                    )
+                    for item in group_llms_initial_data                
+                ]
+                session.add_all(group_llms_objects)
+                await session.commit()
+                print(f"Inserted {len(group_llms_objects)} group_llms rows")
                 
                 group_contexts_objects = [
                     GroupContexts(
@@ -123,6 +143,7 @@ class InitDatabase:
                         input_text=item.get('input_text', ''),
                         optional_text=item.get('optional_text', ''),
                         gvdbs_id=item.get('gvdbs_id', 1),
+                        gllms_id=item.get('gllms_id', 1),
                         gc_id=item.get('gc_id', 1),
                         context_json=item.get('context_json', '[]'),
                         output_text=item.get('output_text', ''),

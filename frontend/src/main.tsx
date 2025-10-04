@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import RAGDocuments from "./pages/RAGDocuments";
 import ManageContexts from "./pages/ManageContexts";
 import ServerStatus from "./pages/ServerStatus";
+import "./main.css";
 
 const router = createBrowserRouter([
   {

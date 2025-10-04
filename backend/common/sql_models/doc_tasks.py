@@ -34,6 +34,9 @@ class DocTasks(Base):
     # group_vdbs.gvdbs_id
     gvdbs_id: Mapped[int] = mapped_column(Integer, nullable=False)
 
+    # group_llms.gllms_id
+    gllms_id: Mapped[int] = mapped_column(Integer, nullable=False)
+
     # gc_id Foreign Key to group_contexts.gc_id
     gc_id: Mapped[int] = mapped_column(Integer, ForeignKey('group_contexts.gc_id'), nullable=False)
 

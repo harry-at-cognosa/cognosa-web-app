@@ -3,7 +3,7 @@ from traceback import format_exc
 from sqlalchemy import select, func
 from common import log
 from common.enums.doc_task_status import TaskStatus
-from common.sql_models import ApiSettings, DocTasks, GroupContexts
+from common.sql_models import DocTasks, GroupContexts, GroupLLMs
 from common.sql_db_sync import SqlSyncSession, Session
 from tasks_lib.entities.llm_worker_msg import LLMWorkerMsg
 from tasks_lib.llm_lib.llm_ops import LLMOps
@@ -25,20 +25,15 @@ class LLMWorker(Thread):
         self.msg = msg
         self.doc_task_id = msg.doc_task_id
 
-    def get_api_settings(self, session: Session) -> dict[str, str]:
-        api_settings: dict[str, str] = {
-            'llm_api_base': '',
-            'llm_model_name': '',
-            'llm_api_key': ''
-        }
-        for name, value in session.query(ApiSettings.name, ApiSettings.value):
-            if name in api_settings:
-                api_settings[name] = value.strip()
-        
-        if not all(api_settings.values()):
-            log.error(f"Not all LLM options specified in api_settings:\n{api_settings}")
+    def get_llm_settings(self, session: Session, task: DocTasks) -> GroupLLMs:
+        stmt = select(GroupLLMs).where(
+            GroupLLMs.gllms_id == task.gllms_id,
+            GroupLLMs.group_id == task.group_id)
+        gllms_row = session.execute(stmt).scalar_one_or_none()
+        if not gllms_row:
+            log.error(f"LLM options not found for gllms_id={task.gllms_id}")
             raise LLMOptionsNotFound
-        return api_settings
+        return gllms_row
         
     def write_status_error(self, session: Session, task: DocTasks, error_msg: str, exc_msg: str | None = None):
         log.error(f"LLM run error in {task.doc_task_id=}:\n{error_msg=}{exc_msg=}")
@@ -84,7 +79,7 @@ class LLMWorker(Thread):
                 if not task:
                     raise Exception(f"LLM run error: tasks.task_id={self.doc_task_id} not found")
                 try:
-                    api_settings = self.get_api_settings(session)
+                    gllms = self.get_llm_settings(session, task)
                 except LLMOptionsNotFound:
                     self.write_status_error(session, task, error_msg="LLM Options not found")
                     raise
@@ -104,9 +99,10 @@ class LLMWorker(Thread):
                         optional_text=task.optional_text,
                         template=group_context.gc_text,
                         context_json_str=task.context_json,
-                        llm_api_base=api_settings['llm_api_base'],
-                        llm_model_name=api_settings['llm_model_name'],
-                        llm_api_key=api_settings['llm_api_key']
+                        llm_type=gllms.gllms_type,
+                        llm_api_base=gllms.gllms_api_base,
+                        llm_model=gllms.gllms_model,
+                        llm_api_key=gllms.gllms_api_key,
                     )
                     answer = ''
                     for chunk in llm_ops.stream_to_llm():

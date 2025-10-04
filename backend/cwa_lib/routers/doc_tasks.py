@@ -19,6 +19,7 @@ async def create_task(
         group_id=user.group_id, 
         user_id=user.user_id, 
         gvdbs_id=payload.gvdbs_id,
+        gllms_id=payload.gllms_id,
         gc_id=payload.gc_id,
         short_name=payload.short_name, 
         input_text=payload.input_text, 

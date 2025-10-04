@@ -9,6 +9,7 @@ from pydantic import SecretStr
 from tasks_lib.cmd_line_opts import IS_DUMMY_LLM
 from .dummy import DummyLLM
 from common.helpers import chunks
+from common.enums.gllms_types import GLLMsTypes
 
 
 class LLMOps:
@@ -17,8 +18,9 @@ class LLMOps:
                  optional_text: str,
                  template: str, 
                  context_json_str: str | None, 
+                 llm_type: str,
                  llm_api_base: str, 
-                 llm_model_name: str, 
+                 llm_model: str, 
                  llm_api_key: str
                  ) -> None:
         self.query_text = query_text
@@ -27,8 +29,9 @@ class LLMOps:
         self.optional_text = optional_text
         self.template = template
         self.context_json_str = context_json_str if context_json_str else '[]'
+        self.llm_type = llm_type
         self.llm_api_base = llm_api_base
-        self.llm_model_name = llm_model_name
+        self.llm_model = llm_model
         self.llm_api_key = SecretStr(llm_api_key)
         self.top_k = 4
         self.temperature = 0.0
@@ -52,7 +55,7 @@ class LLMOps:
     
     def stream_to_llm(self) -> Generator[str, None, None]:
         # Initialize LLM
-        if IS_DUMMY_LLM:
+        if IS_DUMMY_LLM or (self.llm_type == GLLMsTypes.DUMMY):
             dummy_answer = f"Dummy answer to query:\n{self.query_text}\n{DummyLLM.fake_answer}"
             self.answer = ""
             for chunk in chunks(list(dummy_answer), 50):
@@ -63,7 +66,7 @@ class LLMOps:
             return
         full_context = self.prepare_context()
         llm = ChatOpenAI(
-            model=self.llm_model_name,
+            model=self.llm_model,
             api_key=self.llm_api_key,
             base_url=self.llm_api_base,
             temperature=self.temperature,

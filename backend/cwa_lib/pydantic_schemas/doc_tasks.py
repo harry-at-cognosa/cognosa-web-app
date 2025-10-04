@@ -8,6 +8,7 @@ class DocTaskCreate(BaseModel):
     input_text: str
     optional_text: str
     gvdbs_id: int
+    gllms_id: int
     gc_id: int
 
 
@@ -21,6 +22,7 @@ class DocTaskQueryResult(BaseModel):
     input_text: str
     optional_text: str
     gvdbs_id: int
+    gllms_id: int
     gc_id: int
     output_text: str | None = None
     created_at: datetime

@@ -1,15 +1,14 @@
 from contextlib import asynccontextmanager
 import os
 
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from common import FRONTEND_DIR_STATIC, CORS_ORIGINS, API_URL_PREFIX
+from common import FRONTEND_DIR_STATIC, CORS_ORIGINS
 
-from cwa_lib.pydantic_schemas.user import UserRead, UserCreate, UserUpdate
-from cwa_lib.users import fastapi_users, auth_backend
+from cwa_lib.users import fastapi_users
 from fastapi_users.password import PasswordHelper
 
 
@@ -29,12 +28,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-api_router = APIRouter(prefix=API_URL_PREFIX)
-
-# Auth & user routes from fastapi-users
-api_router.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["Auth"])
-api_router.include_router(fastapi_users.get_register_router(UserRead, UserCreate), prefix="/auth", tags=["Auth"])
-api_router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate), prefix="/users", tags=["Users"])
 
 app.mount('/static', StaticFiles(directory=FRONTEND_DIR_STATIC), name="static")
 app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR_STATIC, "assets")), name="assets")

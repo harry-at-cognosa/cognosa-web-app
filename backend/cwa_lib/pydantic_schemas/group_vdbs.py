@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from .generic_table import TableQueryResult
 
 
-class GroupVDBSRead(BaseModel):
+class GroupVDBsRead(BaseModel):
     gvdbs_id: int
     group_id: int
     gvdbs_name: str
@@ -11,4 +11,4 @@ class GroupVDBSRead(BaseModel):
         from_attributes = True
 
 
-ManageGroupVDBSQueryResult = TableQueryResult[GroupVDBSRead]
+ManageGroupVDBsQueryResult = TableQueryResult[GroupVDBsRead]

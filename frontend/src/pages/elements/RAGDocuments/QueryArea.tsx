@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Button, Form, ProgressBar } from "react-bootstrap";
+import { Button, Form, InputGroup, ProgressBar } from "react-bootstrap";
 import type { groupContext } from "../../../models/groupContext";
 import axiosClient from "../../../api/axiosClient";
 import { useDocTasksCurrentStore } from "./useDocTasksCurrent";
@@ -11,10 +11,16 @@ import type { DocTasksQuery } from "../../../models/docTasksQuery";
 import type { DocTasksResponse } from "../../../models/docTasksResponse";
 import { useDocTasksShortStore } from "./useDocTasksShort";
 import {
-  useGroupVDBSLastUsedStore,
-  useGroupVDBSStore,
-} from "./useGroupVDBSStore";
-import type { GroupVDBS } from "./groupVDBS";
+  useGroupVDBsLastUsedStore,
+  useGroupVDBsStore,
+} from "./useGroupVDBsStore";
+import type { GroupVDBs } from "./groupVDBs";
+import {
+  useGroupLLMsLastUsedStore,
+  useGroupLLMsStore,
+} from "./useGroupLLMsStore";
+import type { GroupLLMs } from "./groupLLMs";
+import clsx from "clsx";
 
 function QueryArea() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -22,11 +28,14 @@ function QueryArea() {
   const current = useDocTasksCurrentStore();
   const contextListStore = useContextListStore();
   const contextListLastUsedStore = useContextListLastUsedStore();
-  const groupVDBSStore = useGroupVDBSStore();
-  const groupVDBSLastUsedStore = useGroupVDBSLastUsedStore();
+  const groupVDBsStore = useGroupVDBsStore();
+  const groupVDBsLastUsedStore = useGroupVDBsLastUsedStore();
+  const groupLLMsStore = useGroupLLMsStore();
+  const groupLLMsLastUsedStore = useGroupLLMsLastUsedStore();
   const docTasksShortStore = useDocTasksShortStore();
   const selectGCIDRef = useRef<HTMLSelectElement>(null);
-  const selectGVDBSRef = useRef<HTMLSelectElement>(null);
+  const selectGVDBsRef = useRef<HTMLSelectElement>(null);
+  const selectGLLMsRef = useRef<HTMLSelectElement>(null);
 
   // Send POST request to url
   const handleSubmit = async () => {
@@ -42,11 +51,18 @@ function QueryArea() {
       alert("No context specified");
       return;
     }
-    const gvdbs_id = selectGVDBSRef.current?.value
-      ? Number(selectGVDBSRef.current.value)
+    const gvdbs_id = selectGVDBsRef.current?.value
+      ? Number(selectGVDBsRef.current.value)
       : null;
     if (!gvdbs_id) {
       alert("No group vector DB specified");
+      return;
+    }
+    const gllms_id = selectGLLMsRef.current?.value
+      ? Number(selectGLLMsRef.current.value)
+      : null;
+    if (!gllms_id) {
+      alert("No LLM specified");
       return;
     }
 
@@ -56,11 +72,13 @@ function QueryArea() {
         short_name: current.short_name || "",
         input_text,
         gvdbs_id,
+        gllms_id,
         gc_id,
         optional_text: current.optional_text || "",
       };
       contextListLastUsedStore.setGCID(current.gc_id);
-      groupVDBSLastUsedStore.setGVDBSID(current.gvdbs_id);
+      groupVDBsLastUsedStore.setGVDBsID(current.gvdbs_id);
+      groupLLMsLastUsedStore.setGLLMsID(current.gllms_id);
       current.setBeforeServerResponse(query);
       const response = await axiosClient.post<DocTasksResponse>(
         "/doc_tasks",
@@ -151,10 +169,10 @@ function QueryArea() {
   }, [contextListStore.needReload]);
 
   useEffect(() => {
-    if (!groupVDBSStore.needReload) return;
-    async function fetchGroupVDBS() {
+    if (!groupVDBsStore.needReload) return;
+    async function fetchGroupVDBs() {
       try {
-        const response = await axiosClient.get<GroupVDBS[]>("/group_vdbs");
+        const response = await axiosClient.get<GroupVDBs[]>("/group_vdbs");
         const rows = response.data;
         rows.sort((a, b) => {
           return (
@@ -162,38 +180,76 @@ function QueryArea() {
             Number(a.gvdbs_status === "success")
           );
         });
-        groupVDBSStore.setRows(rows);
+        groupVDBsStore.setRows(rows);
         if (!rows?.length) return;
         const all_gvdbs_id = rows.map((row) => Number(row.gvdbs_id));
-        const defaultGVDBSID = all_gvdbs_id.includes(current.gvdbs_id || -1)
+        const defaultGVDBsID = all_gvdbs_id.includes(current.gvdbs_id || -1)
           ? current.gvdbs_id
           : Number(rows[0]?.gvdbs_id) || null;
-        current.setGVDBSID(defaultGVDBSID);
+        current.setGVDBsID(defaultGVDBsID);
+        groupVDBsStore.setNeedReload(false);
       } catch {
         alert("Error during fetching /group_vdbs");
       }
     }
-    fetchGroupVDBS();
-  }, [groupVDBSStore.needReload]);
+    fetchGroupVDBs();
+  }, [groupVDBsStore.needReload]);
+
+  useEffect(() => {
+    if (!groupLLMsStore.needReload) return;
+    async function fetchGroupLLMs() {
+      try {
+        const response = await axiosClient.get<GroupLLMs[]>("/group_llms");
+        const rows = response.data;
+        rows.sort((a, b) => {
+          return (
+            Number(b.gllms_status === "success") -
+            Number(a.gllms_status === "success")
+          );
+        });
+        groupLLMsStore.setRows(rows);
+        if (!rows?.length) return;
+        const all_gllms_id = rows.map((row) => Number(row.gllms_id));
+        const defaultGLLMsID = all_gllms_id.includes(current.gllms_id || -1)
+          ? current.gllms_id
+          : Number(rows[0]?.gllms_id) || null;
+        current.setGLLMsID(defaultGLLMsID);
+        groupLLMsStore.setNeedReload(false);
+      } catch {
+        alert("Error during fetching /group_llms");
+      }
+    }
+    fetchGroupLLMs();
+  }, [groupLLMsStore.needReload]);
 
   return (
     <div className="p-3 border-bottom bg-light">
-      <Form.Select
-        ref={selectGVDBSRef}
-        className="mb-2"
-        value={current.gvdbs_id?.toString() || ""}
-        onChange={(e) => current.setGVDBSID(Number(e.target.value))}
-        style={{ display: groupVDBSStore.rows.length > 1 ? "inherit" : "none" }}
+      <InputGroup
+        className={clsx("mb-2", {
+          "d-none": !(groupVDBsStore.rows.length > 1),
+        })}
       >
-        {groupVDBSStore.rows.map((gvdbs_obj) => (
-          <option
-            key={gvdbs_obj.gvdbs_id.toString()}
-            value={gvdbs_obj.gvdbs_id.toString()}
-          >
-            {gvdbs_obj.gvdbs_name}
-          </option>
-        ))}
-      </Form.Select>
+        <InputGroup.Text
+          id="input-group__rag_documents__query_area__select_gvdbs_id"
+          className="bg-gray-300 fw-bold"
+        >
+          Document Collection:
+        </InputGroup.Text>
+        <Form.Select
+          ref={selectGVDBsRef}
+          value={current.gvdbs_id?.toString() || ""}
+          onChange={(e) => current.setGVDBsID(Number(e.target.value))}
+        >
+          {groupVDBsStore.rows.map((gvdbs_obj) => (
+            <option
+              key={gvdbs_obj.gvdbs_id.toString()}
+              value={gvdbs_obj.gvdbs_id.toString()}
+            >
+              {gvdbs_obj.gvdbs_name}
+            </option>
+          ))}
+        </Form.Select>
+      </InputGroup>
       <Form.Control
         type="text"
         className="mb-2"
@@ -209,18 +265,56 @@ function QueryArea() {
         value={current.input_text || ""}
         onChange={(e) => current.setInputText(e.target.value)}
       />
-      <Form.Select
-        ref={selectGCIDRef}
-        className="mb-2"
-        value={current.gc_id?.toString() || ""}
-        onChange={(e) => current.setGCID(Number(e.target.value))}
+      <InputGroup className="mb-2">
+        <InputGroup.Text
+          id="input-group__rag_documents__query_area__select_gc_id"
+          className="bg-gray-300 fw-bold"
+        >
+          Context:
+        </InputGroup.Text>
+
+        <Form.Select
+          ref={selectGCIDRef}
+          value={current.gc_id?.toString() || ""}
+          onChange={(e) => current.setGCID(Number(e.target.value))}
+        >
+          {contextListStore.rows.map((gc_obj) => (
+            <option
+              key={gc_obj.gc_id.toString()}
+              value={gc_obj.gc_id.toString()}
+            >
+              {gc_obj.gc_name}
+            </option>
+          ))}
+        </Form.Select>
+      </InputGroup>
+      <InputGroup
+        className={clsx("mb-2", {
+          "d-none": !(groupLLMsStore.rows.length > 1),
+        })}
       >
-        {contextListStore.rows.map((gc_obj) => (
-          <option key={gc_obj.gc_id.toString()} value={gc_obj.gc_id.toString()}>
-            {gc_obj.gc_name}
-          </option>
-        ))}
-      </Form.Select>
+        <InputGroup.Text
+          id="input-group__rag_documents__query_area__select_gllms_id"
+          className="bg-gray-300 fw-bold"
+        >
+          LLM:
+        </InputGroup.Text>
+
+        <Form.Select
+          ref={selectGLLMsRef}
+          value={current.gllms_id?.toString() || ""}
+          onChange={(e) => current.setGLLMsID(Number(e.target.value))}
+        >
+          {groupLLMsStore.rows.map((gllms_obj) => (
+            <option
+              key={gllms_obj.gllms_id.toString()}
+              value={gllms_obj.gllms_id.toString()}
+            >
+              {gllms_obj.gllms_name}
+            </option>
+          ))}
+        </Form.Select>
+      </InputGroup>
       <Form.Control
         as="textarea"
         className="mb-2"

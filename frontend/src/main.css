@@ -1,0 +1,31 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.bg-gray-100 {
+  background-color: var(--bs-gray-100) !important;
+}
+.bg-gray-200 {
+  background-color: var(--bs-gray-200) !important;
+}
+.bg-gray-300 {
+  background-color: var(--bs-gray-300) !important;
+}
+.bg-gray-400 {
+  background-color: var(--bs-gray-400) !important;
+}
+.bg-gray-500 {
+  background-color: var(--bs-gray-500) !important;
+}
+.bg-gray-600 {
+  background-color: var(--bs-gray-600) !important;
+}
+.bg-gray-700 {
+  background-color: var(--bs-gray-700) !important;
+}
+.bg-gray-800 {
+  background-color: var(--bs-gray-800) !important;
+}
+.bg-gray-900 {
+  background-color: var(--bs-gray-900) !important;
+}

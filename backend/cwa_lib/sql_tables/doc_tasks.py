@@ -48,6 +48,7 @@ class DocTasksTable:
             group_id: int, 
             user_id: int,
             gvdbs_id: int,
+            gllms_id: int,
             gc_id: int, 
             short_name: str, 
             input_text: str, 
@@ -57,6 +58,7 @@ class DocTasksTable:
             group_id=group_id, 
             user_id=user_id, 
             gvdbs_id=gvdbs_id,
+            gllms_id=gllms_id,
             gc_id=gc_id,
             short_name=short_name, 
             input_text=input_text, 
@@ -75,7 +77,7 @@ class DocTasksTable:
             )
         except Exception:
             print(format_exc())
-            log.debug(f"Can't add new doc_tasks row for {group_id=}, {user_id=}, {gvdbs_id=}, {gc_id=}, {short_name=}\n"
+            log.debug(f"Can't add new doc_tasks row for {group_id=}, {user_id=}, {gvdbs_id=}, {gllms_id=}, {gc_id=}, {short_name=}\n"
                       f"{input_text=}\n"
                       f"{optional_text=}\n"
                       f"Exception:\n{format_exc()}")
