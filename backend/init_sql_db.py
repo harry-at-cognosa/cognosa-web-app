@@ -13,6 +13,7 @@ from common.helpers import utcnow
 from common.enums.doc_task_status import TaskStatus
 from common.sql_db_async import Base, sql_async_engine, async_get_session
 from common.sql_models import ApiSettings, ApiGroups, GroupVDBs, GroupLLMs, GroupContexts, DocTasks
+from cwa_lib.sql_tables.api_users import ApiUsersTable
 
 # log.init('init_sql_db', log_sqlalchemy='DEBUG')
 
@@ -21,6 +22,9 @@ with open(os.path.join(WORK_DIR, '.init_sql_data', 'api_settings.json'), 'r', en
 
 with open(os.path.join(WORK_DIR, '.init_sql_data', 'api_groups.json'), 'r', encoding='utf8') as f_json:
     api_groups_initial_data = json.loads(f_json.read())
+
+with open(os.path.join(WORK_DIR, '.init_sql_data', 'api_users.json'), 'r', encoding='utf8') as f_json:
+    api_users_initial_data = json.loads(f_json.read())
 
 with open(os.path.join(WORK_DIR, '.init_sql_data', 'group_vdbs.json'), 'r', encoding='utf8') as f_json:
     group_vdbs_initial_data = json.loads(f_json.read())
@@ -80,6 +84,26 @@ class InitDatabase:
                 session.add_all(api_groups_objects)
                 await session.commit()
                 print(f"Inserted {len(api_groups_objects)} api_groups rows")
+
+                # api_users
+                for item in api_users_initial_data:
+                    try:
+                        await ApiUsersTable.create_user(
+                            user_id=item.get('user_id'),
+                            email=item['email'],
+                            password=item['password'],
+                            user_name=item['user_name'],
+                            full_name=item['full_name'],
+                            group_id=item['group_id'],
+                            is_active=item.get('is_active', True),
+                            is_verified=item.get('is_verified', True),
+                            is_superuser=item.get('is_superuser', False),
+                            is_groupadmin=item.get('is_groupadmin', False),
+                            is_contentmanager=item.get('is_contentmanager', False),
+                        )
+                    except Exception as exc:
+                        print(exc)
+                        exit(-1)
                 
                 group_vdbs_objects = [
                     GroupVDBs(

@@ -1,0 +1,28 @@
+[
+  {
+    "user_id": 1,
+    "group_id": 1,
+    "user_name": "john_smith",
+    "full_name": "John Smith",
+    "email": "john.smith@gmail.com",
+    "password": "12345678",
+    "is_superuser": true,
+    "is_groupadmin": true,
+    "is_contentmanager": true,
+    "is_active": true,
+    "is_verified": true
+  },
+  {
+    "user_id": 2,
+    "group_id": 1,
+    "user_name": "john_smith2",
+    "full_name": "John Smith 2",
+    "email": "john.smith2@gmail.com",
+    "password": "12345678",
+    "is_superuser": true,
+    "is_groupadmin": true,
+    "is_contentmanager": true,
+    "is_active": true,
+    "is_verified": true
+  }
+]

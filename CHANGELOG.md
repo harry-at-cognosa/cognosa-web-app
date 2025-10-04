@@ -18,6 +18,14 @@
    Added info about all LLM specified in `group_llms` PostgreSQL table.
    Each LLM is checked by `run_tasks.py` script.
 
+6. Added `api_users`.`user_name`.
+   It must be unique, have length from 3 to 32 characters. Allowed characters:
+   a-z0-9\_-
+   Constraints added to PostgreSQL and Pydantic/Sqlalchemy schema.
+
+7. Added `backend/init_sql_data/api_users.json` to use in `backend/init_sql_db.py` script.
+   No need to use `backend/create_user.py` during project installation.
+
 ## [0.6] (2025-09-28)
 
 #### changes:

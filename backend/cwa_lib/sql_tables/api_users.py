@@ -13,13 +13,16 @@ get_user_manager_context = contextlib.asynccontextmanager(get_user_manager)
 class ApiUsersTable:
     @staticmethod
     async def create_user(
+        user_id: int | None,
         email: str, 
         password: str, 
+        user_name: str,
         full_name: str, 
         group_id: int = 2,
         is_active: bool = True, 
         is_verified: bool = False, 
         is_groupadmin: bool = False,
+        is_contentmanager: bool = False,
         is_superuser: bool = False
         ):
         try:
@@ -28,13 +31,16 @@ class ApiUsersTable:
                     async with get_user_manager_context(user_db) as user_manager:
                         user = await user_manager.create(
                             UserCreate(
+                                user_id=user_id,
                                 email=email, 
                                 password=password, 
+                                user_name=user_name,
                                 full_name=full_name,
                                 group_id=group_id,
                                 is_active=is_active,
                                 is_verified=is_verified,
                                 is_groupadmin=is_groupadmin,
+                                is_contentmanager=is_contentmanager,
                                 is_superuser=is_superuser,
                                 created_at=utcnow()
                             )

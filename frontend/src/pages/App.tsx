@@ -26,6 +26,7 @@ export default function App() {
           Number(user["id"]),
           Number(user["group_id"]),
           user["email"].toString(),
+          user["user_name"].toString(),
           user["full_name"].toString(),
           user["is_superuser"]
         );

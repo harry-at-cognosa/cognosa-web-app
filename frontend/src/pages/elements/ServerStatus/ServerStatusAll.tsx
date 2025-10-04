@@ -89,7 +89,7 @@ function ServerStatusAll() {
 
         {/* GroupLLMs Table */}
         <Col xs={12}>
-          <h4>GroupLLMS</h4>
+          <h4>GroupLLMs</h4>
           <Table striped bordered hover size="sm">
             <thead>
               <tr>

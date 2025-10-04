@@ -67,7 +67,7 @@ const TopNavBar = () => {
               <Dropdown className="nav-hover-glow">
                 <Dropdown.Toggle variant="" id="nav-dropdown-logout">
                   <Navbar.Text className="me-2 fw-bold">
-                    {user.fullName}
+                    {user.fullName || user.userName || user.email}
                   </Navbar.Text>
                   <PersonCircle size={"28"} />
                 </Dropdown.Toggle>

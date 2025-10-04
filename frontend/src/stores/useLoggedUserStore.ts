@@ -5,12 +5,14 @@ interface LoggedUserState {
   id: number;
   groupId: number;
   email: string;
+  userName: string;
   fullName: string;
   is_superuser: boolean;
   setLoggedUser: (
     id: number,
     groupId: number,
     email: string,
+    userName: string,
     fullName: string,
     is_superuser: boolean
   ) => void;
@@ -22,16 +24,26 @@ export const useLoggedUserStore = create<LoggedUserState>((set) => ({
   id: -1,
   groupId: -1,
   email: "",
+  userName: "",
   fullName: "",
   is_superuser: false,
-  setLoggedUser: (id, groupId, email, fullName, is_superuser) =>
-    set({ isLogged: true, id, groupId, email, fullName, is_superuser }),
+  setLoggedUser: (id, groupId, email, userName, fullName, is_superuser) =>
+    set({
+      isLogged: true,
+      id,
+      groupId,
+      email,
+      userName,
+      fullName,
+      is_superuser,
+    }),
   clearLoggedUser: () =>
     set({
       isLogged: false,
       id: -1,
       groupId: -1,
       email: "",
+      userName: "",
       fullName: "",
       is_superuser: false,
     }),
