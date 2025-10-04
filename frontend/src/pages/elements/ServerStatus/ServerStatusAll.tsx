@@ -20,7 +20,8 @@ async function fetchBackendData() {
 }
 
 function ServerStatusAll() {
-  const { run_tasks, group_vdbs_rows } = useServerStatusStore();
+  const { run_tasks, group_vdbs_rows, group_llms_rows } =
+    useServerStatusStore();
   useEffect(() => {
     fetchBackendData();
     const interval = setInterval(() => {
@@ -55,9 +56,9 @@ function ServerStatusAll() {
           </Col>
         ))}
 
-        {/* GroupVDBS Table */}
+        {/* GroupVBDs Table */}
         <Col xs={12}>
-          <h4>GroupVDBS</h4>
+          <h4>GroupVDBs</h4>
           <Table striped bordered hover size="sm">
             <thead>
               <tr>
@@ -80,6 +81,37 @@ function ServerStatusAll() {
                   <td>{vdb.gvdbs_url}</td>
                   <td>{vdb.gvdbs_collection}</td>
                   <td>{vdb.gvdbs_status_text}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Col>
+
+        {/* GroupLLMs Table */}
+        <Col xs={12}>
+          <h4>GroupLLMS</h4>
+          <Table striped bordered hover size="sm">
+            <thead>
+              <tr>
+                <th>Group ID</th>
+                <th>Seqn #</th>
+                <th>Type</th>
+                <th>Name</th>
+                <th>API BASE</th>
+                <th>Model</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {group_llms_rows.map((llm, idx) => (
+                <tr key={idx} className={"table-" + llm.gllms_status}>
+                  <td>{llm.group_id}</td>
+                  <td>{llm.gllms_seqn}</td>
+                  <td>{llm.gllms_type}</td>
+                  <td>{llm.gllms_name}</td>
+                  <td>{llm.gllms_api_base}</td>
+                  <td>{llm.gllms_model}</td>
+                  <td>{llm.gllms_status_text}</td>
                 </tr>
               ))}
             </tbody>

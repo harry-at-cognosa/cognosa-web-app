@@ -14,6 +14,10 @@
    Now user must select LLM (if there are more than 1) to query documents.
    Also, added vertical scrolls for both (history and query) sides.
 
+5. changed `Server Status` page:
+   Added info about all LLM specified in `group_llms` PostgreSQL table.
+   Each LLM is checked by `run_tasks.py` script.
+
 ## [0.6] (2025-09-28)
 
 #### changes:

@@ -9,7 +9,7 @@ from tasks_lib.vdb_lib.workers import AllVDBWorkers
 from common.watchdogs import AP_SLEEP_TIME, check_name_is_still_running
 from common.watchdogs.api_processes_table import ApiProcessesTable
 from common.watchdogs.watchdog_thread import WatchdogThread
-from tasks_lib.vdb_lib.vdb_status_worker import VDBStatusWorker
+from tasks_lib.vdb_llm_status_worker import VDBLLMStatusWorker
 
 
 class RunTasks():
@@ -19,8 +19,8 @@ class RunTasks():
         self.watchdog_thread = WatchdogThread(ap_type='run_tasks', ap_name=AP_NAME)
         self.watchdog_thread.start()
         if IS_PRIMARY_INSTANCE:
-            self.vdb_status_worker = VDBStatusWorker()
-            self.vdb_status_worker.start()
+            self.vdb_llm_status_worker = VDBLLMStatusWorker()
+            self.vdb_llm_status_worker.start()
         self.polling_last_updated = 0.0
 
     def update_polling_loop_status(self, ap_status: str, ap_dict: dict | None = None, check_time: bool = True):
@@ -81,7 +81,7 @@ class RunTasks():
             pass
         if IS_PRIMARY_INSTANCE:
             try:
-                self.vdb_status_worker.stop()
+                self.vdb_llm_status_worker.stop()
             except Exception:
                 pass
         try:
@@ -94,7 +94,7 @@ class RunTasks():
             pass
         if IS_PRIMARY_INSTANCE:
             try:
-                self.vdb_status_worker.join()
+                self.vdb_llm_status_worker.join()
             except Exception:
                 pass
 

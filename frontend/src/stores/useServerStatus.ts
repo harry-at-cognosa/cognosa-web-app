@@ -11,7 +11,7 @@ export type RunTask = {
   subprocesses: Subprocess[];
 };
 
-export type GroupVDBS = {
+export type GroupVDBs = {
   gvdbs_id: number;
   group_id: number;
   gvdbs_seqn: number;
@@ -23,14 +23,28 @@ export type GroupVDBS = {
   gvdbs_status_text: string;
 };
 
+export type GroupLLMs = {
+  gllms_id: number;
+  group_id: number;
+  gllms_seqn: number;
+  gllms_type: string;
+  gllms_name: string;
+  gllms_api_base: string;
+  gllms_model: string;
+  gllms_status: "success" | "warning" | "danger";
+  gllms_status_text: string;
+};
+
 export type ServerStatusResponse = {
   run_tasks: RunTask[];
-  group_vdbs_rows: GroupVDBS[];
+  group_vdbs_rows: GroupVDBs[];
+  group_llms_rows: GroupLLMs[];
 };
 
 type State = {
   run_tasks: RunTask[];
-  group_vdbs_rows: GroupVDBS[];
+  group_vdbs_rows: GroupVDBs[];
+  group_llms_rows: GroupLLMs[];
 };
 
 type Actions = {
@@ -41,10 +55,13 @@ type Actions = {
 export const useServerStatusStore = create<State & Actions>((set) => ({
   run_tasks: [],
   group_vdbs_rows: [],
+  group_llms_rows: [],
   setData: (data) =>
     set(() => ({
       run_tasks: data.run_tasks,
       group_vdbs_rows: data.group_vdbs_rows,
+      group_llms_rows: data.group_llms_rows,
     })),
-  clear: () => set(() => ({ run_tasks: [], group_vdbs_rows: [] })),
+  clear: () =>
+    set(() => ({ run_tasks: [], group_vdbs_rows: [], group_llms_rows: [] })),
 }));

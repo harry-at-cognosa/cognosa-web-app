@@ -1,22 +1,22 @@
 from threading import Thread
 from time import time, sleep
-from common.parsed_url import ParsedUrl
 from common.watchdogs import AP_SLEEP_TIME
 from common.sql_db_sync import SqlSyncSession, Session
-from common.sql_models.group_vdbs import GroupVDBs
+from common.sql_models import GroupVDBs, GroupLLMs
 from tasks_lib.cmd_line_opts import AP_NAME
-from tasks_lib.vdb_lib import get_host_port_from_url
 from tasks_lib.vdb_lib.vdb_ops import VectorDBOps
+from tasks_lib.llm_lib.llm_ops import LLMOps
 from common.watchdogs.api_processes_table import ApiProcessesTable
 from common.watchdogs.group_vdbs import GroupVDBSTable
+from common.watchdogs.group_llms import GroupLLMsTable
 
 
-class VDBStatusWorker(Thread):
+class VDBLLMStatusWorker(Thread):
     def __init__(self):
         super().__init__()
         self._is_running = False
         self.last_polling = 0.0
-        self.ap_subname = "vdb_checking"
+        self.ap_subname = "vdb_llm_checking"
 
     def stop(self):
         self._is_running = False
@@ -29,7 +29,7 @@ class VDBStatusWorker(Thread):
             ap_status=ap_status
         )
 
-    def check_one(self, session: Session, gvdbs: GroupVDBs):
+    def check_one_vdb(self, session: Session, gvdbs: GroupVDBs):
         """Check one row from group_vdbs table"""
         def set_status(gvdbs_status: str, gvdbs_status_text: str):
             GroupVDBSTable.sync_update_gvdbs_status(session, gvdbs.gvdbs_id, gvdbs_status, gvdbs_status_text)
@@ -52,12 +52,30 @@ class VDBStatusWorker(Thread):
             set_status(gvdbs_status='success', gvdbs_status_text='Ready')
         else:
             set_status(gvdbs_status='danger', gvdbs_status_text='Collection not found')
+    
+    def check_one_llm(self, session: Session, gllms: GroupLLMs):
+        """Check one row from group_vdbs table"""
+        def set_status(gllms_status: str, gllms_status_text: str):
+            GroupLLMsTable.sync_update_gllms_status(session, gllms.gllms_id, gllms_status, gllms_status_text)
+        # check if URL is specified
+        try:
+            llm_ops = LLMOps('', '', '', '', gllms.gllms_type, gllms.gllms_api_base, gllms.gllms_model, gllms.gllms_api_key)
+        except Exception:
+            set_status(gllms_status='danger', gllms_status_text='Wrong server URL')
+            return
+        if not llm_ops.check_working():
+            set_status(gllms_status='danger', gllms_status_text='LLM server not found')
+            return
+        set_status(gllms_status='success', gllms_status_text='Ready')
 
     def check_all(self):
         with SqlSyncSession() as session:
             gvdbs_rows = GroupVDBSTable.sync_select_all(session)
             for gvdbs in gvdbs_rows:
-                self.check_one(session, gvdbs)
+                self.check_one_vdb(session, gvdbs)
+            gllms_rows = GroupLLMsTable.sync_select_all(session)
+            for gllms in gllms_rows:
+                self.check_one_llm(session, gllms)
 
     def sleep(self):
         """ sleep for the left time until the next polling """

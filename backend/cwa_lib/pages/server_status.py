@@ -4,6 +4,7 @@ from traceback import format_exc
 from common import log
 from common.watchdogs.api_processes_table import ApiProcessesTable, ApiProcesses
 from common.watchdogs.group_vdbs import GroupVDBSTable
+from common.watchdogs.group_llms import GroupLLMsTable
 from common.sql_db_async import AsyncSession
 
 class ServerStatusPage:
@@ -34,7 +35,7 @@ class ServerStatusPage:
         for ap in ap_list:
             type__name__subname__ap.setdefault(ap.ap_type, dict()).setdefault(ap.ap_name, dict())[ap.ap_subname] = ap
         # check all run_tasks instances
-        run_tasks_base_subnames = ['watchdog', 'polling_loop', 'vdb_checking', 'vdb_p_1']
+        run_tasks_base_subnames = ['watchdog', 'polling_loop', 'vdb_llm_checking', 'vdb_p_1']
         name__subname__ap = type__name__subname__ap.get('run_tasks', dict())
         run_tasks_instances = ['run_tasks_primary']
         for instance in sorted(name__subname__ap):
@@ -115,6 +116,46 @@ class ServerStatusPage:
                 'gvdbs_status_text': status_text,
             })
         return result_list
+    
+    @classmethod
+    async def get_group_llms_data(cls, session: AsyncSession) -> list[dict]:
+        """
+        Make group_llms data list:
+        [
+            {
+                'gllms_id': number,
+                'group_id': number,
+                'gllms_seqn': number,
+                'gllms_type': <string>,
+                'gllms_name': <string>,
+                'gllms_api_base': <string>,                
+                'gllms_model': <string>,
+                'gllms_status': 'success' / 'warning' / 'danger',
+                'gllms_status_text': <string>
+            }, ...
+        ]
+        """
+        result_list = []
+        gllms_rows = await GroupLLMsTable.async_select_all_order_by_group_id_seqn(session)
+        for row in gllms_rows:
+            status_text = row.gllms_status_text if row.gllms_status_text else ''
+            if not row.gllms_status_updated_at:
+                status_text = '[Not updated] ' + status_text
+            # check if outdated: updated > 2 minutes before
+            elif row.gllms_status_updated_at.timestamp() < (time() - 120):
+                status_text = '[Outdated] ' + status_text
+            result_list.append({
+                'gllms_id': row.gllms_id,
+                'group_id': row.group_id,
+                'gllms_seqn': row.gllms_seqn,
+                'gllms_type': row.gllms_type,
+                'gllms_name': row.gllms_name,
+                'gllms_api_base': row.gllms_api_base,
+                'gllms_model': row.gllms_model,
+                'gllms_status': row.gllms_status,
+                'gllms_status_text': status_text,
+            })
+        return result_list
 
     @classmethod
     async def get_all_data(cls, session: AsyncSession) -> dict:
@@ -147,6 +188,19 @@ class ServerStatusPage:
                     'gvdbs_status': 'success' / 'warning' / 'danger',
                     'gvdbs_status_text': <string>
                 }, ...
+            ],
+            'group_llms_rows': [
+                {
+                    'gllms_id': number,
+                    'group_id': number,
+                    'gllms_seqn': number,
+                    'gllms_type': <string>,
+                    'gllms_name': <string>,
+                    'gllms_api_base': <string>,                
+                    'gllms_model': <string>,
+                    'gllms_status': 'success' / 'warning' / 'danger',
+                    'gllms_status_text': <string>
+                }, ...
             ]
         }        
         """
@@ -154,6 +208,7 @@ class ServerStatusPage:
             result_dict = {
                 'run_tasks': await cls.get_run_tasks_data(session),
                 'group_vdbs_rows': await cls.get_group_vdbs_data(session),
+                'group_llms_rows': await cls.get_group_llms_data(session),
             }
         except Exception as exc:
             log.error(f"Error in ServerStatusPage.get_all_data:\n{exc}")

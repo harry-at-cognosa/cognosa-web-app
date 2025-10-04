@@ -5,10 +5,12 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
+import requests
 from pydantic import SecretStr
 from tasks_lib.cmd_line_opts import IS_DUMMY_LLM
 from .dummy import DummyLLM
 from common.helpers import chunks
+from common.parsed_url import ParsedUrl
 from common.enums.gllms_types import GLLMsTypes
 
 
@@ -39,6 +41,18 @@ class LLMOps:
         self.context_json: str = ''
         self.answer: str = ''
 
+    def check_working(self) -> bool:
+        """
+        Check if LLM is working
+        """
+        if self.llm_type == GLLMsTypes.DUMMY:
+            return True
+        try:
+            parsed_url = ParsedUrl.from_url(self.llm_api_base)  # to convert localhost -> 127.0.0.1
+            parsed_url.path = 'v1/models'
+            return requests.get(parsed_url.full_url, timeout=5).status_code == 200
+        except Exception:
+            return False
 
     def prepare_context(self) -> str:
         # Prepare context for LLM
