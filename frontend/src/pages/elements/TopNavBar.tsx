@@ -15,6 +15,7 @@ const TopNavBar = () => {
       className="justify-content-between p-0"
       style={{ backgroundColor: "var(--bs-gray-300)" }}
     >
+      <title>{title}</title>
       <style>
         {`
           .nav-hover-glow {
