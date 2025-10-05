@@ -10,6 +10,7 @@ from cwa_lib.routers.group_vdbs import router__group_vdbs
 from cwa_lib.routers.group_llms import router__group_llms
 from cwa_lib.routers.manage_contexts import router__manage_contexts
 from cwa_lib.routers.misc import router__misc
+from cwa_lib.routers.login_by_username import router__login_by_username
 
 api_router = APIRouter(prefix=API_URL_PREFIX)
 
@@ -17,6 +18,7 @@ api_router = APIRouter(prefix=API_URL_PREFIX)
 api_router.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["Auth"])
 api_router.include_router(fastapi_users.get_register_router(UserRead, UserCreate), prefix="/auth", tags=["Auth"])
 api_router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate), prefix="/users", tags=["Users"])
+api_router.include_router(router__login_by_username, tags=["Auth"])
 
 api_router.include_router(router__doc_tasks)
 api_router.include_router(router__group_contexts)

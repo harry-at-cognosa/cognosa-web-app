@@ -1,7 +1,9 @@
 import contextlib
 from fastapi_users.exceptions import UserAlreadyExists
+from sqlalchemy import select
 from common.helpers import utcnow
-from common.sql_db_async import async_get_session, async_get_user_db
+from common.sql_db_async import async_get_session, async_get_user_db, AsyncSession
+from common.sql_models.api_users import User
 from cwa_lib.pydantic_schemas.user import UserCreate
 from cwa_lib.users import get_user_manager
 
@@ -11,6 +13,12 @@ get_user_db_context = contextlib.asynccontextmanager(async_get_user_db)
 get_user_manager_context = contextlib.asynccontextmanager(get_user_manager)
 
 class ApiUsersTable:
+    @staticmethod
+    async def async_select_by_user_name(session: AsyncSession, user_name: str) -> User | None:
+        stmt = select(User).where(User.user_name == user_name)
+        result = await session.scalar(stmt)
+        return result
+
     @staticmethod
     async def create_user(
         user_id: int | None,

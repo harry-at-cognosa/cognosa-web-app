@@ -26,7 +26,12 @@ export default function Login() {
     body.set("username", emailInput);
     body.set("password", passwordInput);
 
-    const res = await fetch(`${API_URL}/auth/jwt/login`, {
+    // choose to login by email or username
+    const api_login_path = emailInput.includes("@")
+      ? "/auth/jwt/login"
+      : "/auth/jwt/login_by_username";
+
+    const res = await fetch(`${API_URL}${api_login_path}`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: body.toString(),
@@ -47,9 +52,9 @@ export default function Login() {
         <h2 className="text-center mb-4">Login</h2>
         <Form onSubmit={login}>
           {/* Email with floating label */}
-          <FloatingLabel controlId="floatingEmail" label="Email">
+          <FloatingLabel controlId="floatingEmail" label="Username or Email">
             <Form.Control
-              type="email"
+              type="text"
               className="mb-3"
               placeholder="name@example.com"
               value={emailInput}

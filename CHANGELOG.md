@@ -1,3 +1,10 @@
+## [0.7.1] (2025-10-05)
+
+#### changes:
+
+1. `Login` page:
+   Now allows login by `api_users.email` or `api_users.user_name`.
+
 ## [0.7] (2025-10-04)
 
 #### changes:

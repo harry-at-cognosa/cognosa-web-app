@@ -2,6 +2,7 @@ import os
 import sys
 from dotenv import load_dotenv
 from common.helpers import split2list
+import httpx
 
 SCRIPT_NAME = os.path.basename(sys.argv[0])
 WORK_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -20,6 +21,8 @@ DATABASE_SYNC_URL = DATABASE_URL.replace('database://', 'postgresql+psycopg2://'
 LOG_SQLALCHEMY_RT = os.getenv("LOG_SQLALCHEMY_RT", 'NOTSET')
 RT_VDB_PROCESS_NUM = int(os.getenv("RT_VDB_PROCESS_NUM", 1))
 RT_VDB_EMB_MODELS_PRELOAD = split2list(os.getenv("RT_VDB_EMB_MODELS_PRELOAD", ''), ',', str)
+
+http_client = httpx.AsyncClient(base_url='http://127.0.0.1:8000')
 
 from .async_log import AsyncLogger
 log = AsyncLogger()
