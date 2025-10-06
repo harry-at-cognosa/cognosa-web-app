@@ -1,17 +1,11 @@
-import React from "react";
 import UniversalTable from "../../../tables/UniversalTable";
 import { createTableStore } from "../../../tables/TableStoreFactory";
 
-const useTableManageContextsStore = createTableStore();
+const useTableManageContextsStore = createTableStore({
+  name: "manage_contexts",
+  endpoint: "/manage_contexts",
+});
 
-export const TableManageContexts: React.FC = () => {
-  return (
-    <UniversalTable
-      endpoint="/manage_contexts/query"
-      request={{ name: "manage_contexts", limit: 10 }}
-      useStore={useTableManageContextsStore}
-    />
-  );
-};
-
-export default TableManageContexts;
+export default function TableManageContexts() {
+  return <UniversalTable useStore={useTableManageContextsStore} />;
+}

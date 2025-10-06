@@ -9,6 +9,7 @@ from cwa_lib.routers.group_contexts import router__group_contexts
 from cwa_lib.routers.group_vdbs import router__group_vdbs
 from cwa_lib.routers.group_llms import router__group_llms
 from cwa_lib.routers.manage_contexts import router__manage_contexts
+from cwa_lib.routers.manage_users import router__manage_users
 from cwa_lib.routers.misc import router__misc
 from cwa_lib.routers.login_by_username import router__login_by_username
 
@@ -25,4 +26,5 @@ api_router.include_router(router__group_contexts)
 api_router.include_router(router__group_vdbs)
 api_router.include_router(router__group_llms)
 api_router.include_router(router__manage_contexts)
+api_router.include_router(router__manage_users, include_in_schema=False)
 api_router.include_router(router__misc)

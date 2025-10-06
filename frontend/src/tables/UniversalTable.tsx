@@ -1,46 +1,97 @@
-import React, { useEffect } from "react";
-import { Table, Spinner, Alert } from "react-bootstrap";
-import type { createTableStore, TableRequest } from "./TableStoreFactory";
+import { useEffect } from "react";
+import { Table, Spinner, Alert, Button } from "react-bootstrap";
+import type { createTableStore } from "./TableStoreFactory";
+import OnlyEnableCheck from "./CellRenders/OnlyEnableCheck";
+import TextCell from "./CellRenders/TextCell";
 
 interface Props {
-  endpoint: string;
-  request: TableRequest;
   useStore: ReturnType<typeof createTableStore>;
 }
 
-const UniversalTable: React.FC<Props> = ({ endpoint, request, useStore }) => {
-  const { loading, error, data, fetchTable } = useStore();
+export default function UniversalTable({ useStore }: Props) {
+  const {
+    loading,
+    error,
+    data,
+    visible_columns,
+    needReload,
+    setNeedReload,
+    queryTable,
+  } = useStore();
 
   useEffect(() => {
-    fetchTable(endpoint, request);
-  }, [endpoint, JSON.stringify(request)]);
+    if (!needReload) return;
+    queryTable();
+  }, [needReload]);
+  useEffect(() => setNeedReload(true), []);
 
   if (loading) return <Spinner animation="border" />;
   if (error) return <Alert variant="danger">{error}</Alert>;
   if (!data) return <p>No data</p>;
-  const col_list: string[] = [];
-  for (const col_name of Object.keys(data.columns)) col_list.push(col_name);
+  const { rows, columns } = data;
+
+  function getDisplayName(col: string) {
+    let displayName = columns[col].display || col;
+    let lines = displayName.split("\n");
+    if (lines.length > 1) return lines.map((x) => <div>{x}</div>);
+    return displayName;
+  }
+
+  function getCellElement(row: Record<string, any>, col: string) {
+    if (!data) return null;
+    const value = row[col];
+    const cellType = data.columns[col].type;
+    if (cellType === "bool_green")
+      return <OnlyEnableCheck value={value}></OnlyEnableCheck>;
+    if (cellType === "text") return <TextCell value={value}></TextCell>;
+    return value.toString();
+  }
 
   return (
     <Table striped bordered hover responsive>
       <thead>
-        <tr>
-          {col_list.map((col) => (
-            <th key={col}>{col}</th>
+        <tr style={{ textAlign: "center", verticalAlign: "middle" }}>
+          {/* edit th */}
+          {data.table_options.allow_update ? <th></th> : null}
+          {/* visible columns display names */}
+          {visible_columns.map((col) => (
+            <th key={col} className="text-nowrap">
+              {getDisplayName(col)}
+            </th>
           ))}
+          {/* delete th */}
+          {data.table_options.allow_delete ? <th></th> : null}
         </tr>
       </thead>
       <tbody>
-        {data.rows.map((row, idx) => (
-          <tr key={row[data.pk] ?? idx}>
-            {col_list.map((col) => (
-              <td key={col}>{row[col]}</td>
+        {rows.map((row) => (
+          <tr
+            key={row[data.table_options.pk]}
+            style={{ textAlign: "center", verticalAlign: "middle" }}
+          >
+            {/* edit button cell */}
+            {data.table_options.allow_update ? (
+              <td>
+                <Button type="button" variant="secondary">
+                  Edit
+                </Button>
+              </td>
+            ) : null}
+            {/* visible columns */}
+            {visible_columns.map((col) => (
+              <td key={col}>{getCellElement(row, col)}</td>
             ))}
+            {/* delete button cell */}
+            {data.table_options.allow_delete ? (
+              <td>
+                <Button type="button" variant="secondary">
+                  X
+                </Button>
+              </td>
+            ) : null}
           </tr>
         ))}
       </tbody>
     </Table>
   );
-};
-
-export default UniversalTable;
+}

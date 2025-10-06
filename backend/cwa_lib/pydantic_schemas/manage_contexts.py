@@ -1,13 +1,8 @@
 from pydantic import BaseModel
-
-class GroupContextsCreate(BaseModel):
-    group_id: int
-    gc_seqn: int
-    gc_name: str
-    gc_text: str
+from .generic_table import TableQueryResult
 
 
-class GroupContextsRead(BaseModel):
+class ManageContextsRead(BaseModel):
     gc_id: int
     group_id: int
     gc_seqn: int
@@ -15,3 +10,6 @@ class GroupContextsRead(BaseModel):
     gc_text: str
     class Config:
         from_attributes = True
+
+
+ManageContextsQueryResult = TableQueryResult[ManageContextsRead]

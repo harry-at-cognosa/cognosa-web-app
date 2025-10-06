@@ -11,6 +11,7 @@ import RAGDocuments from "./pages/RAGDocuments";
 import ManageContexts from "./pages/ManageContexts";
 import ServerStatus from "./pages/ServerStatus";
 import "./main.css";
+import ManageUsers from "./pages/ManageUsers";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: "server_status",
         element: <ServerStatus />,
+      },
+      {
+        path: "manage_users",
+        element: <ManageUsers />,
       },
     ],
   },

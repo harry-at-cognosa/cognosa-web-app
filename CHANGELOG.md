@@ -5,6 +5,12 @@
 1. `Login` page:
    Now allows login by `api_users.email` or `api_users.user_name`.
 
+2. `Manage Contexts` page:
+   updated `Manage Contexts` table (currently only view).
+
+3. New page `Users` (for superusers only).
+   There is `Manage Users` table (currently only view).
+
 ## [0.7] (2025-10-04)
 
 #### changes:

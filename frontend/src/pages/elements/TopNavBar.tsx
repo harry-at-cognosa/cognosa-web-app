@@ -63,6 +63,11 @@ const TopNavBar = () => {
                 </Nav.Link>
               </LinkContainer>
             )}
+            {user.is_superuser && (
+              <LinkContainer to="/manage_users">
+                <Nav.Link className="fw-bold nav-hover-glow">Users</Nav.Link>
+              </LinkContainer>
+            )}
             {/* Right side - User menu */}
             {user.isLogged && (
               <Dropdown className="nav-hover-glow">
