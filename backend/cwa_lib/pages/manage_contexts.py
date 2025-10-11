@@ -1,12 +1,13 @@
-from sqlalchemy import select
 from common.sql_db_async import AsyncSession
-from common.sql_models import create_order_clause, GroupContexts
+from common.sql_models import GroupContexts
+from common.sql_tools import create_order_clause
+from sqlalchemy import select
 from cwa_lib.pydantic_schemas.generic_table import ColumnType, TableOptions, TableQuery
 from cwa_lib.pydantic_schemas.manage_contexts import ManageContextsQueryResult
 
 
 manage_contexts__query_columns = {
-    'gc_id': ColumnType(display='ID', seqn=None, type='number'), 
+    'gc_id': ColumnType(display='ID', seqn=None, type='number'),
     'group_id': ColumnType(display='Group ID', seqn=None, type='number'),
     'gc_seqn': ColumnType(display='Seqn #', seqn=3, type='number'),
     'gc_name': ColumnType(display='Name', seqn=4, type='string'),
@@ -22,13 +23,14 @@ manage_contexts__table_options = TableOptions(
     allow_order_by=['gc_seqn', 'gc_name', 'gc_text']
 )
 
+
 class ManageContextsTable:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def query_all_by_group_id(
-            self, 
-            group_id: int, 
+            self,
+            group_id: int,
             payload: TableQuery
             ) -> ManageContextsQueryResult:
         order_clause = create_order_clause(GroupContexts, manage_contexts__table_options.pk, payload.order_by, payload.order_dir)

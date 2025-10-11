@@ -44,6 +44,11 @@ class LLMWorker(Thread):
         task.completed_at = func.now()        
         session.commit()
 
+    def write_sent_to_llm(self, session: Session, task: DocTasks, sent_to_llm: str):
+        if sent_to_llm and (not task.sent_to_llm):
+            task.sent_to_llm = sent_to_llm
+            session.commit()
+
     def write_llm_writing(self, session: Session, task: DocTasks, answer: str):
         task.status = TaskStatus.QD_LLM_WRITING
         task.status_text = "LLM answering..."
@@ -107,6 +112,7 @@ class LLMWorker(Thread):
                     answer = ''
                     for chunk in llm_ops.stream_to_llm():
                         answer += chunk
+                        self.write_sent_to_llm(session, task, llm_ops.sent_to_llm)
                         self.write_llm_writing(session, task, answer)                    
                 except Exception:
                     exc_msg = f"LLMOps exception for {task.doc_task_id=}, {task.group_id=}, {task.gc_id=}:\n{format_exc()}"

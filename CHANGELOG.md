@@ -1,3 +1,8 @@
+## [0.8] (2025-10-12)
+
+1. Added `doc_tasks`.`sent_to_llm`.
+   Here will be full request to LLM. For debugging purposes.
+
 ## [0.7.1] (2025-10-05)
 
 #### changes:

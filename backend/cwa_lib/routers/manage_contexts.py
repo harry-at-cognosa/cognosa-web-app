@@ -4,7 +4,7 @@ from common.sql_models.api_users import User
 from cwa_lib.app import current_active_user
 from cwa_lib.pydantic_schemas.generic_table import TableQuery
 from cwa_lib.pydantic_schemas.manage_contexts import ManageContextsQueryResult
-from cwa_lib.sql_tables.group_contexts import ManageContextsTable
+from cwa_lib.pages.manage_contexts import ManageContextsTable
 
 router__manage_contexts = APIRouter()
 

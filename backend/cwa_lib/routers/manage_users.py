@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from common.sql_db_async import AsyncSession, async_get_session
 from cwa_lib.pydantic_schemas.generic_table import TableQuery
 from cwa_lib.pydantic_schemas.manage_users import ManageUsersQueryResult
-from cwa_lib.sql_tables.api_users import ManageUsersTable
+from cwa_lib.pages.manage_users import ManageUsersTable
 
 router__manage_users = APIRouter()
 

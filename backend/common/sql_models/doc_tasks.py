@@ -43,6 +43,9 @@ class DocTasks(Base):
     # context_json TEXT
     context_json: Mapped[str | None] = mapped_column(Text, nullable=True)
 
+    # sent_to_llm TEXT
+    sent_to_llm: Mapped[str | None] = mapped_column(Text, nullable=True)
+
     # output_text TEXT
     output_text: Mapped[str | None] = mapped_column(Text, nullable=True)
 
