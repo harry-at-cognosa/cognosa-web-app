@@ -3,6 +3,26 @@
 1. Added `doc_tasks`.`sent_to_llm`.
    Here will be full request to LLM. For debugging purposes.
 
+2. Added `deleted` column to PostgreSQL tables:
+   `api_groups`, `api_users`, `doc_tasks`, `group_contexts`, `group_llm`, `group_vdbs`.
+   Will be used for "logical" deletion.
+   Default: 0.
+   `deleted` = 1 means row was deleted.
+
+3. `Manage Contexts` page:
+   Allow delete (set `group_contexts`.`deleted` = 1).
+   Don't show deleted rows.
+
+4. Added `log_crud` PostgreSQL table.
+   It will save info for each CRUD operation:
+   `dt` - operation datetime
+   `group_id`, `user_id`, `user_name` - user info
+   `source_addr` - ip address of the user
+   `method` - HTTP methods: GET / POST / PUT / DELETE
+   `dest_addr` - server url, e.g. http://127.0.0.1:8000/manage_contexts/1
+   `data` - request data
+   `result` - result of operation
+
 ## [0.7.1] (2025-10-05)
 
 #### changes:

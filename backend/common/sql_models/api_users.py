@@ -12,6 +12,8 @@ from common.sql_models import Base
 class User(SQLAlchemyBaseUserTableUUID, Base):
     __tablename__ = 'api_users'
     user_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    # deleted INT DEFAULT 0
+    deleted: Mapped[int] = mapped_column(Integer, index=True, nullable=False, server_default=text("0"))
     group_id: Mapped[int] = mapped_column(Integer, ForeignKey("api_groups.group_id", name="fk_api_users_group_id"), nullable=False, server_default=text("2"))    
     user_name: Mapped[str] = mapped_column(VARCHAR(32), nullable=False, unique=True)
     full_name: Mapped[str] = mapped_column(VARCHAR, nullable=False, server_default=text("''"))

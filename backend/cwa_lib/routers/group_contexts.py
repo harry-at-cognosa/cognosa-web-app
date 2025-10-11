@@ -15,6 +15,7 @@ async def list_group_contexts(
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(async_get_session),
     ):
-    result = await session.execute(select(GroupContexts).where(GroupContexts.group_id == user.group_id))    
+    where_clause = (GroupContexts.group_id == user.group_id) & (GroupContexts.deleted == 0)
+    result = await session.execute(select(GroupContexts).where(where_clause))
     group_contexts = result.scalars().all()
     return group_contexts

@@ -25,7 +25,8 @@ manage_users__table_options = TableOptions(
     allow_add=True,
     allow_update=True,
     allow_delete=True,
-    allow_order_by=list(manage_users__query_columns.keys())  # allow order by all
+    delete_ask_columns=['user_name', 'full_name', 'email'],
+    allow_order_by=list(manage_users__query_columns.keys())  # allow order by all    
 )
 
 

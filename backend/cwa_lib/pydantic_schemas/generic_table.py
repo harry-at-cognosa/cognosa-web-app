@@ -14,7 +14,7 @@ class TableOptions(BaseModel):
     allow_add: bool
     allow_update: bool
     allow_delete: bool
-    delete_ask_column: str = ''  # on button Delete, ask this column name value
+    delete_ask_columns: list[str] = []  # on button Delete, ask this column names values
     allow_order_by: list[str] = []
 
 
@@ -34,3 +34,8 @@ class TableQueryResult(BaseModel, Generic[RowType]):
     columns: dict[str, ColumnType]
     table_options: TableOptions
     total: int
+
+
+class TableDeleteRowResult(BaseModel):
+    result: str
+    total_deleted: int

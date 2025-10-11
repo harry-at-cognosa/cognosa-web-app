@@ -1,6 +1,7 @@
 from traceback import format_exc
 from sqlalchemy import select, delete
 from common import log
+from common.helpers import shorten
 from common.sql_db_async import AsyncSession
 from common.sql_models.doc_tasks import DocTasks
 from cwa_lib.pydantic_schemas.doc_tasks import DocTaskQueryShort, DocTaskQueryShortItem, DocTaskQueryResult
@@ -21,22 +22,13 @@ class DocTasksTable:
             .limit(100)
         )
         rows = result.scalars().all()
-        def get_short_name(d: DocTasks) -> str:
-            if d.short_name and d.short_name.strip():
-                return d.short_name
-            CHAR_LIMIT = 50
-            input_text = d.input_text.strip()
-            if len(input_text) > CHAR_LIMIT:
-                return input_text[:CHAR_LIMIT] + '...'
-            return input_text
-
         return DocTaskQueryShort(rows=[
             DocTaskQueryShortItem(
                 doc_task_id=row.doc_task_id,
                 status=row.status,
                 status_text=row.status_text,
                 created_at=row.created_at,
-                short_name=get_short_name(row),
+                short_name=shorten(row.short_name, 50),
                 is_processing=row.status not in TaskStatus.FINISHED_LIST,
                 is_error=row.status in TaskStatus.ERROR_LIST,
                 status_pct=TaskStatus.get_pct(row.status),
@@ -76,7 +68,6 @@ class DocTasksTable:
                 status_pct=0,
             )
         except Exception:
-            print(format_exc())
             log.debug(f"Can't add new doc_tasks row for {group_id=}, {user_id=}, {gvdbs_id=}, {gllms_id=}, {gc_id=}, {short_name=}\n"
                       f"{input_text=}\n"
                       f"{optional_text=}\n"

@@ -12,6 +12,8 @@ class GroupLLMs(Base):
     
     # gvdb_id Integer PRIMARY KEY
     gllms_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    # deleted INT DEFAULT 0
+    deleted: Mapped[int] = mapped_column(Integer, index=True, nullable=False, server_default=text("0"))
     group_id = mapped_column(Integer, ForeignKey('api_groups.group_id', name="fk_group_llms_group_id"), nullable=False)
     gllms_seqn: Mapped[int] = mapped_column(Integer, nullable=False)
     # gllms_type = ollama_local / ollama_remote

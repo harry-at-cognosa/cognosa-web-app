@@ -1,5 +1,7 @@
+import type { TableCellValue } from "../TableStoreFactory";
+
 interface Props {
-  value: boolean;
+  value: TableCellValue;
 }
 
 export default function OnlyEnableCheck({ value }: Props) {

@@ -10,6 +10,9 @@ class DocTasks(Base):
     # doc_task_id SERIAL primary key semantics (auto-increment)
     doc_task_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
+    # deleted INT DEFAULT 0
+    deleted: Mapped[int] = mapped_column(Integer, index=True, nullable=False, server_default=text("0"))
+
     # group_id INT
     group_id: Mapped[int] = mapped_column(Integer, ForeignKey("api_groups.group_id", name="fk_api_users_group_id"), nullable=False) 
 

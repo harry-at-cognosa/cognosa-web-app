@@ -62,3 +62,17 @@ def split_in_dict(source_dict, opt_name, sep=';', func: Callable = str):
     :return: list
     """
     source_dict[opt_name] = split2list(source_dict.get(opt_name, ''), sep, func)
+
+
+def shorten(text: str | None, char_limit: int) -> str:
+    """
+    Shorten text:
+    (' Hello World ', 11) -> 'Hello World'
+    (' Hello World ', 10) -> 'Hello W...'
+    """
+    if not isinstance(text, str):
+        return ''
+    text = text.strip()
+    if len(text) <= char_limit:
+        return text
+    return text[:(char_limit - 3)] + '...'

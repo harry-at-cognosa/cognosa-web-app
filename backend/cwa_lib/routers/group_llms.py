@@ -15,6 +15,7 @@ async def list_group_llms(
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(async_get_session),
     ):
-    result = await session.execute(select(GroupLLMs).where(GroupLLMs.group_id == user.group_id))    
+    where_clause = (GroupLLMs.group_id == user.group_id) & (GroupLLMs.deleted == 0)
+    result = await session.execute(select(GroupLLMs).where(where_clause))
     group_contexts = result.scalars().all()
     return group_contexts

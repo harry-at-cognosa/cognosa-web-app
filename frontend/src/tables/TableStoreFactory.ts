@@ -22,15 +22,23 @@ export interface TableOptions {
   allow_add: boolean;
   allow_update: boolean;
   allow_delete: boolean;
-  delete_ask_column: string;
+  delete_ask_columns: string[];
 }
+
+export type TableCellValue = string | number | boolean | null | undefined;
+export type TableRow = Record<string, TableCellValue>;
 
 export interface TableResponse {
   name: string;
-  rows: Record<string, any>[];
+  rows: TableRow[];
   columns: Record<string, TableColumnData>;
   table_options: TableOptions;
   total?: number;
+}
+
+export interface TableRowDeleteResponse {
+  result: string;
+  total_deleted: number;
 }
 
 export interface TableStore {
@@ -42,6 +50,10 @@ export interface TableStore {
   setNeedReload: (needReload: boolean) => void;
   nextRequest: TableRequest;
   queryTable: () => Promise<void>;
+  askDelete: TableRow | null;
+  setAskDelete: (askDelete: TableRow | null) => void;
+  deleting: boolean;
+  deleteRow: () => Promise<void>;
 }
 
 interface createTableStoreProps {
@@ -59,8 +71,8 @@ export function createTableStore({ name, endpoint }: createTableStoreProps) {
     setNeedReload: (needReload) => set({ needReload }),
     nextRequest: { name },
     queryTable: async () => {
+      set({ loading: true, error: null });
       try {
-        set({ loading: true, error: null });
         const res = await axiosClient.post<TableResponse>(
           endpoint + "/query",
           get().nextRequest
@@ -81,6 +93,30 @@ export function createTableStore({ name, endpoint }: createTableStoreProps) {
         });
       } finally {
         set({ needReload: false });
+      }
+    },
+    askDelete: null,
+    setAskDelete: (askDelete: TableRow | null) => set({ askDelete }),
+    deleting: false,
+    deleteRow: async () => {
+      const table_options = get().data?.table_options;
+      if (!table_options) return;
+      const rowToDelete = get().askDelete;
+      if (!rowToDelete) return;
+      const pkColName = table_options.pk;
+      const pkValue = rowToDelete[pkColName];
+      if (pkValue === null || pkValue === undefined) return;
+      set({ deleting: true, error: null });
+      try {
+        await axiosClient.delete<TableRowDeleteResponse>(
+          endpoint + "/" + pkValue.toString()
+        );
+      } catch (err: any) {
+        set({
+          error: err.response?.data?.message || err.message,
+        });
+      } finally {
+        set({ deleting: false, askDelete: null, needReload: true });
       }
     },
   }));
