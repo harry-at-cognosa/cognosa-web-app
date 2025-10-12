@@ -30,7 +30,7 @@ export default function UniversalTable({ useStore }: Props) {
         <thead>
           <tr style={{ textAlign: "center", verticalAlign: "middle" }}>
             {/* edit th */}
-            {data.table_options.allow_update ? <th></th> : null}
+            {data.table_options.update__allow ? <th></th> : null}
             {/* visible columns display names */}
             {tableStore.visible_columns.map((col) => (
               <th key={col} className="text-nowrap">
@@ -38,7 +38,7 @@ export default function UniversalTable({ useStore }: Props) {
               </th>
             ))}
             {/* delete th */}
-            {data.table_options.allow_delete ? <th></th> : null}
+            {data.table_options.delete__allow ? <th></th> : null}
           </tr>
         </thead>
         <tbody>
@@ -48,7 +48,7 @@ export default function UniversalTable({ useStore }: Props) {
               style={{ textAlign: "center", verticalAlign: "middle" }}
             >
               {/* edit button cell */}
-              {data.table_options.allow_update ? (
+              {data.table_options.update__allow ? (
                 <td>
                   <Button type="button" variant="secondary">
                     Edit
@@ -66,7 +66,7 @@ export default function UniversalTable({ useStore }: Props) {
                 </td>
               ))}
               {/* delete button cell */}
-              {data.table_options.allow_delete ? (
+              {data.table_options.delete__allow ? (
                 <td>
                   <Button
                     type="button"

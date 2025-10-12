@@ -19,11 +19,12 @@ export interface TableColumnData {
 export interface TableOptions {
   title: string;
   pk: string;
-  allow_add: boolean;
-  allow_update: boolean;
-  allow_delete: boolean;
+  create__allow: boolean;
   read__hide_on_false: string[];
+  update__allow: boolean;
+  delete__allow: boolean;
   delete__ask_columns: string[];
+  order_by__allow: string[];
 }
 
 export type TableCellValue = string | number | boolean | null | undefined;

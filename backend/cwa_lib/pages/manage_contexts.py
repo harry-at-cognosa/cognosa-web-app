@@ -18,11 +18,11 @@ manage_contexts__query_columns = {
 manage_contexts__table_options = TableOptions(
     title='Manage Contexts',
     pk='gc_id',
-    allow_add=True,
-    allow_update=True,
-    allow_delete=True,
-    delete_ask_columns=['gc_name'],
-    allow_order_by=['gc_seqn', 'gc_name', 'gc_text']
+    create__allow=True,
+    update__allow=True,
+    delete__allow=True,
+    delete__ask_columns=['gc_name'],
+    order_by__allow=['gc_seqn', 'gc_name', 'gc_text']
 )
 
 

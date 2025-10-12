@@ -11,12 +11,12 @@ class ColumnType(BaseModel):
 class TableOptions(BaseModel):
     title: str
     pk: str
-    allow_add: bool
-    allow_update: bool
-    allow_delete: bool
-    allow_order_by: list[str] = []
+    create__allow: bool
     read__hide_on_false: list[str] = []  # table view: hide value if false
+    update__allow: bool
+    delete__allow: bool
     delete__ask_columns: list[str] = []  # on button Delete, ask this column names values
+    order_by__allow: list[str] = []
 
 
 class TableQuery(BaseModel):
