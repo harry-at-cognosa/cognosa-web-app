@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from common.sql_db_async import AsyncSession, async_get_session
 from common.sql_models import User
-from cwa_lib.pydantic_schemas.doc_tasks import DocTaskCreate, DocTaskQueryResult, DocTaskQueryShort, DocTaskDeleteResult
-from cwa_lib.sql_tables.doc_tasks import DocTasksTable
 from cwa_lib.app import current_active_user
+from cwa_lib.pages.rag_documents import RAGDocumentsOptions
+from cwa_lib.pydantic_schemas.doc_tasks import (
+    DocTaskCreate, DocTaskQueryResult, DocTaskQueryShort, DocTaskDeleteResult, DocTaskOptionsResult
+)
+from cwa_lib.sql_tables.doc_tasks import DocTasksTable
 
 
 router__doc_tasks = APIRouter()
@@ -31,7 +34,7 @@ async def create_task(
 
 
 # Fetch RAG document task
-@router__doc_tasks.get("/doc_tasks/{doc_task_id}", tags=["Document RAG tasks"], response_model=DocTaskQueryResult)
+@router__doc_tasks.get("/doc_tasks/{doc_task_id:int}", tags=["Document RAG tasks"], response_model=DocTaskQueryResult)
 async def get_task(
     doc_task_id: int, 
     user: User = Depends(current_active_user), 
@@ -67,3 +70,12 @@ async def doc_tasks__query_short(
     ):
     result = await DocTasksTable(session).short_query_all_by_group_id_user_id(group_id=user.group_id, user_id=user.user_id)
     return result
+
+
+# Fetch RAG document options: LLM, VDB, Contexts
+@router__doc_tasks.get("/doc_tasks/options", tags=["Document RAG tasks"], response_model=DocTaskOptionsResult)
+async def get_task_options(
+    user: User = Depends(current_active_user), 
+    session: AsyncSession = Depends(async_get_session),
+    ):
+    return await RAGDocumentsOptions(session, user).get_options()

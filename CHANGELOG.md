@@ -23,6 +23,8 @@
    `data` - request data
    `result` - result of operation
 
+5. RAG Documents options (Contexts, VDBs, LLMs) are now fetched by /doc_tasks/options
+
 ## [0.7.1] (2025-10-05)
 
 #### changes:

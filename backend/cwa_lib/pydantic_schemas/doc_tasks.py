@@ -55,3 +55,35 @@ class DocTaskQueryShortItem(BaseModel):
 
 class DocTaskQueryShort(BaseModel):
     rows: Sequence[DocTaskQueryShortItem]
+
+
+class DocTasksOptionsGroupContextsRow(BaseModel):
+    gc_id: int
+    group_id: int
+    gc_seqn: int
+    gc_name: str
+    gc_text: str
+    class Config:
+        from_attributes = True
+
+class DocTasksOptionsGroupLLMsRow(BaseModel):
+    gllms_id: int
+    group_id: int
+    gllms_name: str
+    gllms_status: str
+    class Config:
+        from_attributes = True
+
+class DocTasksOptionsGroupVDBsRow(BaseModel):
+    gvdbs_id: int
+    group_id: int
+    gvdbs_name: str
+    gvdbs_status: str
+    class Config:
+        from_attributes = True
+
+
+class DocTaskOptionsResult(BaseModel):
+    group_contexts: Sequence[DocTasksOptionsGroupContextsRow]
+    group_llms: Sequence[DocTasksOptionsGroupLLMsRow]
+    group_vdbs: Sequence[DocTasksOptionsGroupVDBsRow]

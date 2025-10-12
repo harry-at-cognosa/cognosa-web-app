@@ -21,6 +21,11 @@ class DocTasksTable:
             .order_by(DocTasks.created_at.desc())
             .limit(100)
         )
+        def get_short_name(d: DocTasks) -> str:
+            if d.short_name and d.short_name.strip():
+                return d.short_name
+            return shorten(d.input_text, 50)
+            
         rows = result.scalars().all()
         return DocTaskQueryShort(rows=[
             DocTaskQueryShortItem(
@@ -28,7 +33,7 @@ class DocTasksTable:
                 status=row.status,
                 status_text=row.status_text,
                 created_at=row.created_at,
-                short_name=shorten(row.short_name, 50),
+                short_name=get_short_name(row),
                 is_processing=row.status not in TaskStatus.FINISHED_LIST,
                 is_error=row.status in TaskStatus.ERROR_LIST,
                 status_pct=TaskStatus.get_pct(row.status),

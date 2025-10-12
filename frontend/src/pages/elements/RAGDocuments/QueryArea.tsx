@@ -1,37 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import { Button, Form, InputGroup, ProgressBar } from "react-bootstrap";
-import type { groupContext } from "../../../models/groupContext";
 import axiosClient from "../../../api/axiosClient";
 import { useDocTasksCurrentStore } from "./useDocTasksCurrent";
-import {
-  useContextListStore,
-  useContextListLastUsedStore,
-} from "./useContextListStore";
 import type { DocTasksQuery } from "../../../models/docTasksQuery";
 import type { DocTasksResponse } from "../../../models/docTasksResponse";
 import { useDocTasksShortStore } from "./useDocTasksShort";
-import {
-  useGroupVDBsLastUsedStore,
-  useGroupVDBsStore,
-} from "./useGroupVDBsStore";
-import type { GroupVDBs } from "./groupVDBs";
-import {
-  useGroupLLMsLastUsedStore,
-  useGroupLLMsStore,
-} from "./useGroupLLMsStore";
-import type { GroupLLMs } from "./groupLLMs";
 import clsx from "clsx";
+import {
+  useDocTaskOptionsLastUsedStore,
+  useDocTaskOptionsStore,
+  type DocTaskOptionsResponse,
+} from "./useDocTaskOptionsStore";
 
 function QueryArea() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [pollingInterval, setPollingInterval] = useState<number | null>(null);
   const current = useDocTasksCurrentStore();
-  const contextListStore = useContextListStore();
-  const contextListLastUsedStore = useContextListLastUsedStore();
-  const groupVDBsStore = useGroupVDBsStore();
-  const groupVDBsLastUsedStore = useGroupVDBsLastUsedStore();
-  const groupLLMsStore = useGroupLLMsStore();
-  const groupLLMsLastUsedStore = useGroupLLMsLastUsedStore();
+  const docTaskOptionsStore = useDocTaskOptionsStore();
+  const docTaskOptionsLastUsedStore = useDocTaskOptionsLastUsedStore();
   const docTasksShortStore = useDocTasksShortStore();
   const selectGCIDRef = useRef<HTMLSelectElement>(null);
   const selectGVDBsRef = useRef<HTMLSelectElement>(null);
@@ -76,9 +62,7 @@ function QueryArea() {
         gc_id,
         optional_text: current.optional_text || "",
       };
-      contextListLastUsedStore.setGCID(current.gc_id);
-      groupVDBsLastUsedStore.setGVDBsID(current.gvdbs_id);
-      groupLLMsLastUsedStore.setGLLMsID(current.gllms_id);
+      docTaskOptionsLastUsedStore.setLastUsed(gc_id, gllms_id, gvdbs_id);
       current.setBeforeServerResponse(query);
       const response = await axiosClient.post<DocTasksResponse>(
         "/doc_tasks",
@@ -147,86 +131,58 @@ function QueryArea() {
   }, [pollingInterval]);
 
   useEffect(() => {
-    if (!contextListStore.needReload) return;
-    async function fetchGroupContexts() {
+    if (!docTaskOptionsStore.needReload) return;
+    async function fetchDocTaskOptions() {
       try {
-        const response = await axiosClient.get<groupContext[]>(
-          "/group_contexts"
+        const response = await axiosClient.get<DocTaskOptionsResponse>(
+          "/doc_tasks/options"
         );
-        const rows = response.data;
-        contextListStore.setRows(rows);
-        if (!rows?.length) return;
-        const all_gc_id = rows.map((row) => Number(row.gc_id));
-        const defaultGCID = all_gc_id.includes(current.gc_id || -1)
-          ? current.gc_id
-          : Number(rows[0]?.gc_id) || null;
-        current.setGCID(defaultGCID);
-      } catch {
-        alert("Error during fetching /group_contexts");
-      }
-    }
-    fetchGroupContexts();
-  }, [contextListStore.needReload]);
-
-  useEffect(() => {
-    if (!groupVDBsStore.needReload) return;
-    async function fetchGroupVDBs() {
-      try {
-        const response = await axiosClient.get<GroupVDBs[]>("/group_vdbs");
-        const rows = response.data;
-        rows.sort((a, b) => {
+        const data = response.data;
+        // use success rows first
+        data.group_vdbs.sort((a, b) => {
           return (
             Number(b.gvdbs_status === "success") -
             Number(a.gvdbs_status === "success")
           );
         });
-        groupVDBsStore.setRows(rows);
-        if (!rows?.length) return;
-        const all_gvdbs_id = rows.map((row) => Number(row.gvdbs_id));
-        const defaultGVDBsID = all_gvdbs_id.includes(current.gvdbs_id || -1)
-          ? current.gvdbs_id
-          : Number(rows[0]?.gvdbs_id) || null;
-        current.setGVDBsID(defaultGVDBsID);
-        groupVDBsStore.setNeedReload(false);
-      } catch {
-        alert("Error during fetching /group_vdbs");
-      }
-    }
-    fetchGroupVDBs();
-  }, [groupVDBsStore.needReload]);
-
-  useEffect(() => {
-    if (!groupLLMsStore.needReload) return;
-    async function fetchGroupLLMs() {
-      try {
-        const response = await axiosClient.get<GroupLLMs[]>("/group_llms");
-        const rows = response.data;
-        rows.sort((a, b) => {
+        data.group_llms.sort((a, b) => {
           return (
             Number(b.gllms_status === "success") -
             Number(a.gllms_status === "success")
           );
         });
-        groupLLMsStore.setRows(rows);
-        if (!rows?.length) return;
-        const all_gllms_id = rows.map((row) => Number(row.gllms_id));
+        docTaskOptionsStore.setData(data);
+        // get first available gc_id
+        const all_gc_id = data.group_contexts.map((row) => Number(row.gc_id));
+        const defaultGCID = all_gc_id.includes(current.gc_id || -1)
+          ? current.gc_id
+          : Number(data.group_contexts[0]?.gc_id) || null;
+        current.setGCID(defaultGCID);
+        // get first available gvdbs_id
+        const all_gvdbs_id = data.group_vdbs.map((row) => Number(row.gvdbs_id));
+        const defaultGVDBsID = all_gvdbs_id.includes(current.gvdbs_id || -1)
+          ? current.gvdbs_id
+          : Number(data.group_vdbs[0]?.gvdbs_id) || null;
+        current.setGVDBsID(defaultGVDBsID);
+        // get first available gllms_id
+        const all_gllms_id = data.group_llms.map((row) => Number(row.gllms_id));
         const defaultGLLMsID = all_gllms_id.includes(current.gllms_id || -1)
           ? current.gllms_id
-          : Number(rows[0]?.gllms_id) || null;
+          : Number(data.group_llms[0]?.gllms_id) || null;
         current.setGLLMsID(defaultGLLMsID);
-        groupLLMsStore.setNeedReload(false);
+        docTaskOptionsStore.setNeedReload(false);
       } catch {
-        alert("Error during fetching /group_llms");
+        alert("Error during fetching /doc_tasks/options");
       }
     }
-    fetchGroupLLMs();
-  }, [groupLLMsStore.needReload]);
+    fetchDocTaskOptions();
+  }, [docTaskOptionsStore.needReload]);
 
   return (
     <div className="p-3 border-bottom bg-light">
       <InputGroup
         className={clsx("mb-2", {
-          "d-none": !(groupVDBsStore.rows.length > 1),
+          "d-none": !(docTaskOptionsStore.data.group_vdbs.length > 1),
         })}
       >
         <InputGroup.Text
@@ -240,7 +196,7 @@ function QueryArea() {
           value={current.gvdbs_id?.toString() || ""}
           onChange={(e) => current.setGVDBsID(Number(e.target.value))}
         >
-          {groupVDBsStore.rows.map((gvdbs_obj) => (
+          {docTaskOptionsStore.data.group_vdbs.map((gvdbs_obj) => (
             <option
               key={gvdbs_obj.gvdbs_id.toString()}
               value={gvdbs_obj.gvdbs_id.toString()}
@@ -278,7 +234,7 @@ function QueryArea() {
           value={current.gc_id?.toString() || ""}
           onChange={(e) => current.setGCID(Number(e.target.value))}
         >
-          {contextListStore.rows.map((gc_obj) => (
+          {docTaskOptionsStore.data.group_contexts.map((gc_obj) => (
             <option
               key={gc_obj.gc_id.toString()}
               value={gc_obj.gc_id.toString()}
@@ -290,7 +246,7 @@ function QueryArea() {
       </InputGroup>
       <InputGroup
         className={clsx("mb-2", {
-          "d-none": !(groupLLMsStore.rows.length > 1),
+          "d-none": !(docTaskOptionsStore.data.group_llms.length > 1),
         })}
       >
         <InputGroup.Text
@@ -305,7 +261,7 @@ function QueryArea() {
           value={current.gllms_id?.toString() || ""}
           onChange={(e) => current.setGLLMsID(Number(e.target.value))}
         >
-          {groupLLMsStore.rows.map((gllms_obj) => (
+          {docTaskOptionsStore.data.group_llms.map((gllms_obj) => (
             <option
               key={gllms_obj.gllms_id.toString()}
               value={gllms_obj.gllms_id.toString()}
