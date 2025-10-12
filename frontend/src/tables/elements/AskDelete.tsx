@@ -12,7 +12,7 @@ export default function AskDelete({ useStore }: Props) {
   const { data, askDelete } = tableStore;
   if (!data) return null;
   if (!askDelete) return null;
-  const { delete_ask_columns } = data.table_options;
+  const { delete__ask_columns } = data.table_options;
   const handleClose = () => tableStore.setAskDelete(null);
   return (
     <Modal show={Boolean(askDelete)} onHide={handleClose}>
@@ -20,7 +20,7 @@ export default function AskDelete({ useStore }: Props) {
         <Modal.Title>Confirm delete:</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {delete_ask_columns.map((col) => (
+        {delete__ask_columns.map((col) => (
           <Table bordered key={col + "__col_table"}>
             <tbody>
               <tr key={col + "__col_name"}>

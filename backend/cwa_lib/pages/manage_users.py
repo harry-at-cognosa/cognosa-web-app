@@ -12,12 +12,12 @@ manage_users__query_columns = {
     'group_id': ColumnType(display='GroupID', seqn=2, type='number'),
     'user_name': ColumnType(display='User name', seqn=3, type='string'),
     'full_name': ColumnType(display='Full name', seqn=4, type='string'),
-    'email': ColumnType(display='Email', seqn=4, type='string'),
-    'is_active': ColumnType(display='Active', seqn=5, type='bool_green'),
-    'is_contentmanager': ColumnType(display='Content\nManager', seqn=6, type='bool_green'),
-    'is_groupadmin': ColumnType(display='Group\nAdmin', seqn=7, type='bool_green'),
-    'is_superuser': ColumnType(display='Super\nUser', seqn=8, type='bool_green'),
-    'created_at': ColumnType(display='Created at', seqn=9, type='datetime'),
+    'email': ColumnType(display='Email', seqn=5, type='string'),
+    'is_active': ColumnType(display='Active', seqn=6, type='boolean'),
+    'is_contentmanager': ColumnType(display='Content\nManager', seqn=7, type='boolean'),
+    'is_groupadmin': ColumnType(display='Group\nAdmin', seqn=8, type='boolean'),
+    'is_superuser': ColumnType(display='Super\nUser', seqn=9, type='boolean'),
+    'created_at': ColumnType(display='Created at', seqn=10, type='datetime'),
 }
 manage_users__table_options = TableOptions(
     title='Manage Users',
@@ -25,8 +25,9 @@ manage_users__table_options = TableOptions(
     allow_add=True,
     allow_update=True,
     allow_delete=True,
-    delete_ask_columns=['user_name', 'full_name', 'email'],
-    allow_order_by=list(manage_users__query_columns.keys())  # allow order by all    
+    allow_order_by=list(manage_users__query_columns.keys()),  # allow order by all    
+    read__hide_on_false=['is_active', 'is_contentmanager', 'is_groupadmin', 'is_superuser'],  # table view: hide if false
+    delete__ask_columns=['user_name', 'full_name', 'email'],
 )
 
 

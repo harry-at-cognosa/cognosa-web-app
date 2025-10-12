@@ -14,8 +14,9 @@ class TableOptions(BaseModel):
     allow_add: bool
     allow_update: bool
     allow_delete: bool
-    delete_ask_columns: list[str] = []  # on button Delete, ask this column names values
     allow_order_by: list[str] = []
+    read__hide_on_false: list[str] = []  # table view: hide value if false
+    delete__ask_columns: list[str] = []  # on button Delete, ask this column names values
 
 
 class TableQuery(BaseModel):

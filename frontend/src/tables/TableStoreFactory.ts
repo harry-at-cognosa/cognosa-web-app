@@ -22,7 +22,8 @@ export interface TableOptions {
   allow_add: boolean;
   allow_update: boolean;
   allow_delete: boolean;
-  delete_ask_columns: string[];
+  read__hide_on_false: string[];
+  delete__ask_columns: string[];
 }
 
 export type TableCellValue = string | number | boolean | null | undefined;
