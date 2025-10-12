@@ -1,8 +1,8 @@
 import { Badge, Button, Form, ListGroup } from "react-bootstrap";
-import type { DocTasksShortItem } from "../../../models/docTasksShortItem";
-import { useDocTasksCurrentStore } from "./useDocTasksCurrent";
+import type { DocTasksShortItem } from "../models/docTasksShortItem";
+import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import axiosClient from "../../../api/axiosClient";
-import { useDocTasksShortStore } from "./useDocTasksShort";
+import { useDocTasksShortStore } from "../stores/useDocTasksShort";
 
 interface QueriesListBarItemProps {
   showDate: boolean;

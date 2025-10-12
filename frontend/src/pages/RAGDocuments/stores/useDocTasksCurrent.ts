@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import type { DocTasksResponse } from "../../../models/docTasksResponse";
-import type { DocTasksQuery } from "../../../models/docTasksQuery";
-import type { DocTasksShortItem } from "../../../models/docTasksShortItem";
+import type { DocTasksResponse } from "../models/docTasksResponse";
+import type { DocTasksQuery } from "../models/docTasksQuery";
+import type { DocTasksShortItem } from "../models/docTasksShortItem";
 
 interface DocTasksCurrentState {
   doc_task_id: number | null;

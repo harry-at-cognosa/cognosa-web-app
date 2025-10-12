@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Button, Form, InputGroup, ProgressBar } from "react-bootstrap";
 import axiosClient from "../../../api/axiosClient";
-import { useDocTasksCurrentStore } from "./useDocTasksCurrent";
-import type { DocTasksQuery } from "../../../models/docTasksQuery";
-import type { DocTasksResponse } from "../../../models/docTasksResponse";
-import { useDocTasksShortStore } from "./useDocTasksShort";
+import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
+import type { DocTasksQuery } from "../models/docTasksQuery";
+import type { DocTasksResponse } from "../models/docTasksResponse";
+import { useDocTasksShortStore } from "../stores/useDocTasksShort";
 import clsx from "clsx";
 import {
   useDocTaskOptionsLastUsedStore,
   useDocTaskOptionsStore,
   type DocTaskOptionsResponse,
-} from "./useDocTaskOptionsStore";
+} from "../stores/useDocTaskOptionsStore";
 
 function QueryArea() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);

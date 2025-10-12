@@ -1,5 +1,5 @@
-import { useDocTasksCurrentStore } from "./useDocTasksCurrent";
-import MarkdownRenderer from "./MarkdownRenderer";
+import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
+import MarkdownRenderer from "../../../components/MarkdownRenderer";
 
 function ResponseArea() {
   const { output_text } = useDocTasksCurrentStore();

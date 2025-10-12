@@ -3,15 +3,15 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./pages/App";
-import Login from "./pages/Login";
-import Logout from "./pages/Logout";
-import ChangePassword from "./pages/ChangePassword";
-import Index from "./pages/Index";
-import RAGDocuments from "./pages/RAGDocuments";
-import ManageContexts from "./pages/ManageContexts";
-import ServerStatus from "./pages/ServerStatus";
+import LoginPage from "./pages/Login/LoginPage";
+import LogoutPage from "./pages/Logout/LogoutPage";
+import IndexPage from "./pages/Index/IndexPage";
+import RAGDocumentsPage from "./pages/RAGDocuments/RAGDocumentsPage";
+import ServerStatusPage from "./pages/ServerStatus/ServerStatusPage";
 import "./main.css";
-import ManageUsers from "./pages/ManageUsers";
+import ManageUsersPage from "./pages/ManageUsers/ManageUsersPage";
+import ManageContextsPage from "./pages/ManageContexts/ManageContextsPage";
+import ChangePasswordPage from "./pages/ChangePassword/ChangePasswordPage";
 
 const router = createBrowserRouter([
   {
@@ -20,37 +20,37 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Index />,
+        element: <IndexPage />,
       },
       {
         path: "logout",
-        element: <Logout />,
+        element: <LogoutPage />,
       },
       {
         path: "change_password",
-        element: <ChangePassword />,
+        element: <ChangePasswordPage />,
       },
       {
         path: "rag_documents",
-        element: <RAGDocuments />,
+        element: <RAGDocumentsPage />,
       },
       {
         path: "manage_contexts",
-        element: <ManageContexts />,
+        element: <ManageContextsPage />,
       },
       {
         path: "server_status",
-        element: <ServerStatus />,
+        element: <ServerStatusPage />,
       },
       {
         path: "manage_users",
-        element: <ManageUsers />,
+        element: <ManageUsersPage />,
       },
     ],
   },
   {
     path: "login",
-    element: <Login />,
+    element: <LoginPage />,
   },
 ]);
 

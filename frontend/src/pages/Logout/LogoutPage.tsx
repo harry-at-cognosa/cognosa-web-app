@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLoggedUserStore } from "../stores/useLoggedUserStore";
+import { useLoggedUserStore } from "../../stores/useLoggedUserStore";
 
-function Logout() {
+export default function LogoutPage() {
   const { clearLoggedUser } = useLoggedUserStore();
   const navigate = useNavigate();
 
@@ -13,5 +13,3 @@ function Logout() {
   }, []);
   return <div>Logout</div>;
 }
-
-export default Logout;

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Container, Form } from "react-bootstrap";
-import { API_URL } from "../api/apiURL";
+import { API_URL } from "../../api/apiURL";
 
-export default function ChangePassword() {
+export default function ChangePasswordPage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");

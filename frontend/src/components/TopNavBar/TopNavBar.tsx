@@ -1,7 +1,7 @@
 import { PersonCircle, FileEarmarkText } from "react-bootstrap-icons";
 import { Container, Dropdown, Nav, Navbar } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { useNavbarStore } from "../../stores/useTopNavBarStore";
+import { useNavbarStore } from "./useTopNavBarStore";
 import { useLoggedUserStore } from "../../stores/useLoggedUserStore";
 
 const TopNavBar = () => {

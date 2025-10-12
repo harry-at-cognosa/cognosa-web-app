@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavbarStore } from "../stores/useTopNavBarStore";
+import { useNavbarStore } from "../components/TopNavBar/useTopNavBarStore";
 
 const DEFAULT_TITLE = "Cognosa WebApp";
 

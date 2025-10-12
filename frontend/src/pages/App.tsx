@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import TopNavBar from "./elements/TopNavBar";
+import TopNavBar from "../components/TopNavBar/TopNavBar";
 import { useLoggedUserStore } from "../stores/useLoggedUserStore";
 import NavigationInjector from "../api/NavigationInjector";
 import { API_URL } from "../api/apiURL";

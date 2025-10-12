@@ -1,5 +1,5 @@
-import UniversalTable from "../../../tables/UniversalTable";
-import { createTableStore } from "../../../tables/TableStoreFactory";
+import { createTableStore } from "../../tables/TableStoreFactory";
+import UniversalTable from "../../tables/UniversalTable";
 
 const useTableManageUsersStore = createTableStore({
   name: "manage_users",

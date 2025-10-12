@@ -2,9 +2,9 @@ import { Col, Container, Row, Table } from "react-bootstrap";
 import {
   useServerStatusStore,
   type ServerStatusResponse,
-} from "../../../stores/useServerStatus";
+} from "./useServerStatusStore";
 import { useEffect } from "react";
-import axiosClient from "../../../api/axiosClient";
+import axiosClient from "../../api/axiosClient";
 
 async function fetchBackendData() {
   try {

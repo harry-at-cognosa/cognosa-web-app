@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { DocTasksShortItem } from "../../../models/docTasksShortItem";
+import type { DocTasksShortItem } from "../models/docTasksShortItem";
 
 const getGroupKey = (item: {
   created_at: string;

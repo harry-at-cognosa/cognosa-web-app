@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Button, ListGroup } from "react-bootstrap";
-import { useDocTasksShortStore } from "./useDocTasksShort";
+import { useDocTasksShortStore } from "../stores/useDocTasksShort";
 import QueriesListBarItem from "./QueriesListBarItem";
 import axiosClient from "../../../api/axiosClient";
-import type { DocTasksShortQuery } from "../../../models/docTasksShortQuery";
-import { useDocTasksCurrentStore } from "./useDocTasksCurrent";
+import type { DocTasksShortQuery } from "../models/docTasksShortQuery";
+import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 
 function QueriesListBar() {
   const queriesStore = useDocTasksShortStore();

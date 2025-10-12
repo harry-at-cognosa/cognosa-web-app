@@ -1,5 +1,5 @@
-import UniversalTable from "../../../tables/UniversalTable";
-import { createTableStore } from "../../../tables/TableStoreFactory";
+import UniversalTable from "../../tables/UniversalTable";
+import { createTableStore } from "../../tables/TableStoreFactory";
 
 const useTableManageContextsStore = createTableStore({
   name: "manage_contexts",

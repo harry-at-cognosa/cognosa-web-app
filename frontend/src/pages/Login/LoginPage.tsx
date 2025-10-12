@@ -9,9 +9,9 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
-import { API_URL } from "../api/apiURL";
+import { API_URL } from "../../api/apiURL";
 
-export default function Login() {
+export default function LoginPage() {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [error, setError] = useState("");

@@ -1,11 +1,11 @@
-import QueriesListBar from "./elements/RAGDocuments/QueriesListBar";
-import QueryArea from "./elements/RAGDocuments/QueryArea";
-import ResponseArea from "./elements/RAGDocuments/ResponseArea";
-import { useTopNavBarTitle } from "../hooks/useTopNavBarTitle";
-import styles from "./RAGDocuments.module.css";
+import QueriesListBar from "./components/QueriesListBar";
+import QueryArea from "./components/QueryArea";
+import ResponseArea from "./components/ResponseArea";
+import { useTopNavBarTitle } from "../../hooks/useTopNavBarTitle";
+import styles from "./RAGDocumentsPage.module.css";
 import clsx from "clsx";
 
-const RAGDocuments = () => {
+export default function RAGDocumentsPage() {
   useTopNavBarTitle("RAG Documents");
 
   return (
@@ -22,6 +22,4 @@ const RAGDocuments = () => {
       </div>
     </div>
   );
-};
-
-export default RAGDocuments;
+}
