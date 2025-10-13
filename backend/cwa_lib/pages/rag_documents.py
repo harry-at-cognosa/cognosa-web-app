@@ -17,17 +17,17 @@ class RAGDocumentsOptions:
 
     async def _from__group_contexts(self) -> Sequence[DocTasksOptionsGroupContextsRow]:
         where_clause = (GroupContexts.group_id == self.user.group_id) & (GroupContexts.deleted == 0)
-        result = await self.session.execute(select(GroupContexts).where(where_clause))
+        result = await self.session.execute(select(GroupContexts).where(where_clause).order_by(GroupContexts.gc_seqn))
         return result.scalars().all()
     
     async def _from__group_llms(self) -> Sequence[DocTasksOptionsGroupLLMsRow]:
         where_clause = (GroupLLMs.group_id == self.user.group_id) & (GroupLLMs.deleted == 0)
-        result = await self.session.execute(select(GroupLLMs).where(where_clause))
+        result = await self.session.execute(select(GroupLLMs).where(where_clause).order_by(GroupLLMs.gllms_id))
         return result.scalars().all()
     
     async def _from__group_vdbs(self) -> Sequence[DocTasksOptionsGroupVDBsRow]:
         where_clause = (GroupVDBs.group_id == self.user.group_id) & (GroupVDBs.deleted == 0)
-        result = await self.session.execute(select(GroupVDBs).where(where_clause))
+        result = await self.session.execute(select(GroupVDBs).where(where_clause).order_by(GroupVDBs.gvdbs_id))
         return result.scalars().all()
 
     async def get_options(self) -> DocTaskOptionsResult:

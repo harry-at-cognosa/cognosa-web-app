@@ -7,15 +7,15 @@ interface Props {
   useStore: ReturnType<typeof createTableStore>;
 }
 
-export default function AskDelete({ useStore }: Props) {
+export default function DeleteDialog({ useStore }: Props) {
   const tableStore = useStore();
-  const { data, askDelete } = tableStore;
+  const { data, deleteRow } = tableStore;
   if (!data) return null;
-  if (!askDelete) return null;
+  if (!deleteRow) return null;
   const { delete__ask_columns } = data.table_options;
-  const handleClose = () => tableStore.setAskDelete(null);
+  const handleClose = () => tableStore.setDeleteRow(null);
   return (
-    <Modal show={Boolean(askDelete)} onHide={handleClose}>
+    <Modal show={Boolean(deleteRow)} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>Confirm delete:</Modal.Title>
       </Modal.Header>
@@ -32,7 +32,7 @@ export default function AskDelete({ useStore }: Props) {
                 <td>
                   <ViewCellElement
                     data={data}
-                    row={askDelete}
+                    row={deleteRow}
                     col={col}
                   ></ViewCellElement>
                 </td>
@@ -44,8 +44,8 @@ export default function AskDelete({ useStore }: Props) {
       <Modal.Footer>
         <Button
           variant="danger"
-          onClick={tableStore.deleteRow}
-          disabled={tableStore.deleting}
+          onClick={tableStore.queryDeleteRow}
+          disabled={tableStore.busy != ""}
         >
           Delete
         </Button>

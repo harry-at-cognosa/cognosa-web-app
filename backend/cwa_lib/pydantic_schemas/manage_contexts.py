@@ -13,3 +13,16 @@ class ManageContextsRead(BaseModel):
 
 
 ManageContextsQueryResult = TableQueryResult[ManageContextsRead]
+
+
+class ManageContextsCreate(BaseModel):
+    gc_seqn: int | None = None
+    gc_name: str
+    gc_text: str
+
+
+class ManageContextsUpdate(BaseModel):
+    gc_id: int
+    gc_seqn: int | None = None
+    gc_name: str | None = None
+    gc_text: str | None = None

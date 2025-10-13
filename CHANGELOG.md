@@ -9,11 +9,18 @@
    Default: 0.
    `deleted` = 1 means row was deleted.
 
-3. `Manage Contexts` page:
-   Allow delete (set `group_contexts`.`deleted` = 1).
-   Don't show deleted rows.
+3. Added generic table CRUD operations:
+   Create new row,
+   update existing row,
+   delete existing row (or set deleted = 1)
 
-4. Added `log_crud` PostgreSQL table.
+4. `Manage Contexts` page:
+   Allow add new row.
+   Allow update row.
+   Allow delete (set `group_contexts`.`deleted` = 1).
+   Won't show deleted rows, and on RAG documents page too.
+
+5. Added `log_crud` PostgreSQL table.
    It will save info for each CRUD operation:
    `dt` - operation datetime
    `group_id`, `user_id`, `user_name` - user info
@@ -23,7 +30,7 @@
    `data` - request data
    `result` - result of operation
 
-5. RAG Documents options (Contexts, VDBs, LLMs) are now fetched by /doc_tasks/options
+6. RAG Documents options (Contexts, VDBs, LLMs) are now fetched by /doc_tasks/options
 
 ## [0.7.1] (2025-10-05)
 

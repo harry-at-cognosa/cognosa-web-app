@@ -14,14 +14,17 @@ export interface TableColumnData {
   display: string;
   seqn: number;
   type: string;
+  default: string | number | boolean | null;
 }
 
 export interface TableOptions {
   title: string;
   pk: string;
   create__allow: boolean;
+  create__ask_columns: string[];
   read__hide_on_false: string[];
   update__allow: boolean;
+  update__ask_columns: string[];
   delete__allow: boolean;
   delete__ask_columns: string[];
   order_by__allow: string[];
@@ -38,13 +41,24 @@ export interface TableResponse {
   total?: number;
 }
 
+export interface TableRowCreateResponse {
+  result: string;
+  total_created: number;
+}
+
+export interface TableRowUpdateResponse {
+  result: string;
+  total_updated: number;
+}
+
 export interface TableRowDeleteResponse {
   result: string;
   total_deleted: number;
 }
 
 export interface TableStore {
-  loading: boolean;
+  title: string;
+  busy: "" | "create" | "read" | "update" | "delete";
   error: string | null;
   data: TableResponse | null;
   visible_columns: string[];
@@ -52,20 +66,35 @@ export interface TableStore {
   setNeedReload: (needReload: boolean) => void;
   nextRequest: TableRequest;
   queryTable: () => Promise<void>;
-  askDelete: TableRow | null;
-  setAskDelete: (askDelete: TableRow | null) => void;
-  deleting: boolean;
-  deleteRow: () => Promise<void>;
+
+  showCreateOrUpdateDialog: "" | "create" | "update";
+  editRow: TableRow | null;
+  setShowCreateOrUpdateDialog: (
+    showCreateOrUpdateDialog: "" | "create" | "update",
+    editRow: TableRow | null
+  ) => void;
+  setEditRow: (editRow: TableRow | null) => void;
+  queryEditRow: () => Promise<void>;
+
+  deleteRow: TableRow | null;
+  setDeleteRow: (askDelete: TableRow | null) => void;
+  queryDeleteRow: () => Promise<void>;
 }
 
 interface createTableStoreProps {
+  title: string;
   name: string;
   endpoint: string;
 }
 
-export function createTableStore({ name, endpoint }: createTableStoreProps) {
+export function createTableStore({
+  title,
+  name,
+  endpoint,
+}: createTableStoreProps) {
   return create<TableStore>((set, get) => ({
-    loading: false,
+    title,
+    busy: "",
     error: null,
     data: null,
     visible_columns: [], // column names, sort by seqn
@@ -73,7 +102,8 @@ export function createTableStore({ name, endpoint }: createTableStoreProps) {
     setNeedReload: (needReload) => set({ needReload }),
     nextRequest: { name },
     queryTable: async () => {
-      set({ loading: true, error: null });
+      if (get().busy) return;
+      set({ busy: "read", error: null });
       try {
         const res = await axiosClient.post<TableResponse>(
           endpoint + "/query",
@@ -86,29 +116,63 @@ export function createTableStore({ name, endpoint }: createTableStoreProps) {
             .sort(
               (a, b) => res.data.columns[a].seqn - res.data.columns[b].seqn
             ),
-          loading: false,
         });
+      } catch (err: any) {
+        set({ error: err.response?.data?.message || err.message });
+      } finally {
+        set({ busy: "", needReload: false });
+      }
+    },
+
+    showCreateOrUpdateDialog: "",
+    editRow: null,
+    setShowCreateOrUpdateDialog: (
+      showCreateOrUpdateDialog: "" | "create" | "update",
+      editRow: TableRow | null
+    ) => set({ showCreateOrUpdateDialog, editRow }),
+    setEditRow: (editRow: TableRow | null) => set({ editRow }),
+    queryEditRow: async () => {
+      if (get().busy) return;
+      const showCreateOrUpdateDialog = get().showCreateOrUpdateDialog;
+      if (!showCreateOrUpdateDialog) return;
+      set({ busy: showCreateOrUpdateDialog, error: null });
+      try {
+        if (showCreateOrUpdateDialog === "create")
+          await axiosClient.post<TableRowCreateResponse>(
+            endpoint,
+            get().editRow
+          );
+        else
+          await axiosClient.put<TableRowUpdateResponse>(
+            endpoint,
+            get().editRow
+          );
       } catch (err: any) {
         set({
           error: err.response?.data?.message || err.message,
-          loading: false,
         });
       } finally {
-        set({ needReload: false });
+        set({
+          busy: "",
+          editRow: null,
+          showCreateOrUpdateDialog: "",
+          needReload: true,
+        });
       }
     },
-    askDelete: null,
-    setAskDelete: (askDelete: TableRow | null) => set({ askDelete }),
-    deleting: false,
-    deleteRow: async () => {
+
+    deleteRow: null,
+    setDeleteRow: (deleteRow: TableRow | null) => set({ deleteRow }),
+    queryDeleteRow: async () => {
+      if (get().busy) return;
       const table_options = get().data?.table_options;
       if (!table_options) return;
-      const rowToDelete = get().askDelete;
+      const rowToDelete = get().deleteRow;
       if (!rowToDelete) return;
       const pkColName = table_options.pk;
       const pkValue = rowToDelete[pkColName];
       if (pkValue === null || pkValue === undefined) return;
-      set({ deleting: true, error: null });
+      set({ busy: "delete", error: null });
       try {
         await axiosClient.delete<TableRowDeleteResponse>(
           endpoint + "/" + pkValue.toString()
@@ -118,7 +182,7 @@ export function createTableStore({ name, endpoint }: createTableStoreProps) {
           error: err.response?.data?.message || err.message,
         });
       } finally {
-        set({ deleting: false, askDelete: null, needReload: true });
+        set({ busy: "", deleteRow: null, needReload: true });
       }
     },
   }));

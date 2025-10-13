@@ -22,10 +22,10 @@ manage_users__query_columns = {
 manage_users__table_options = TableOptions(
     title='Manage Users',
     pk='user_id',
-    create__allow=True,
+    create__allow=False,
     read__hide_on_false=['is_active', 'is_contentmanager', 'is_groupadmin', 'is_superuser'],  # table view: hide if false
-    update__allow=True,
-    delete__allow=True,
+    update__allow=False,
+    delete__allow=False,
     delete__ask_columns=['user_name', 'full_name', 'email'],
     order_by__allow=list(manage_users__query_columns.keys()),  # allow order by all    
 )

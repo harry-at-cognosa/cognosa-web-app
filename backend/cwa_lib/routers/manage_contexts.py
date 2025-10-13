@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Request
 from common.sql_db_async import AsyncSession, async_get_session
 from common.sql_models.api_users import User
 from cwa_lib.app import current_active_user
-from cwa_lib.pydantic_schemas.generic_table import TableQuery, TableDeleteRowResult
-from cwa_lib.pydantic_schemas.manage_contexts import ManageContextsQueryResult
+from cwa_lib.pydantic_schemas.generic_table import TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
+from cwa_lib.pydantic_schemas.manage_contexts import ManageContextsQueryResult, ManageContextsCreate, ManageContextsUpdate
 from cwa_lib.pages.manage_contexts import ManageContextsTable
 from cwa_lib.sql_tables.log_crud import LogCRUDTable
 
@@ -22,6 +22,29 @@ async def manage_contexts__query(
         deleted=0
     )
     return result
+
+@router__manage_contexts.post("/manage_contexts", tags=["Manage Contexts"], response_model=TableCreateRowResult)
+async def manage_contexts__create(
+    payload: ManageContextsCreate,
+    user: User = Depends(current_active_user),
+    session: AsyncSession = Depends(async_get_session),
+    ):
+    return await ManageContextsTable(session).create_one(user.group_id, payload)
+
+
+@router__manage_contexts.put("/manage_contexts", tags=["Manage Contexts"], response_model=TableUpdateRowResult)
+async def manage_contexts__update(
+    request: Request,
+    payload: ManageContextsUpdate,
+    user: User = Depends(current_active_user),
+    session: AsyncSession = Depends(async_get_session),
+    ):
+    log_table = LogCRUDTable(session)
+    await log_table.add_one(user, request, dict(payload))
+    result = await ManageContextsTable(session).update_one(user.group_id, payload)
+    await log_table.write_result(result)
+    return result
+
 
 @router__manage_contexts.delete("/manage_contexts/{gc_id}", tags=["Manage Contexts"], response_model=TableDeleteRowResult)
 async def manage_contexts__delete(
