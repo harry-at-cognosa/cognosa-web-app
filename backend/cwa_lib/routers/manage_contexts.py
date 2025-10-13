@@ -25,11 +25,17 @@ async def manage_contexts__query(
 
 @router__manage_contexts.post("/manage_contexts", tags=["Manage Contexts"], response_model=TableCreateRowResult)
 async def manage_contexts__create(
+    request: Request,
     payload: ManageContextsCreate,
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(async_get_session),
     ):
-    return await ManageContextsTable(session).create_one(user.group_id, payload)
+    
+    log_table = LogCRUDTable(session)
+    await log_table.add_one(user, request, dict(payload))
+    result = await ManageContextsTable(session).create_one(user.group_id, payload)
+    await log_table.write_result(result)
+    return result
 
 
 @router__manage_contexts.put("/manage_contexts", tags=["Manage Contexts"], response_model=TableUpdateRowResult)
