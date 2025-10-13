@@ -1,4 +1,4 @@
-import { Button, Modal, Table } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import type { createTableStore } from "../TableStoreFactory";
 import ColumnDisplayName from "./ColumnDisplayName";
 import EditCellElement from "./EditCellElement";
