@@ -10,7 +10,6 @@ function ResponseArea() {
         wordWrap: "break-word",
         wordBreak: "break-word",
         overflowWrap: "break-word",
-        whiteSpace: "pre-wrap", // Optional: preserves formatting but wraps
       }}
     >
       {output_text ? (

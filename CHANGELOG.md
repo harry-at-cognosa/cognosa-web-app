@@ -1,4 +1,4 @@
-## [0.9a] (2025-10-17)
+## [0.9b] (2025-10-17)
 
 1. fixed:
    retained previous history queries on another user login.
@@ -17,6 +17,7 @@
 
 3. `RAG Documents` page:
    Show info: `VectorDB/LLM time: .../... Tokens Sent/Recv: .../...`
+   Show less white space in the LLM answer window.
 
 4. `Server Status` page:
    Show info `api_settings` -> `app_version` and `db_version`
