@@ -15,6 +15,9 @@
    Note: tokens calculation can be not exact.
    Uses `gpt4o` model token calculation as default.
 
+3. `RAG Documents` page:
+   Show info: `VectorDB/LLM time: .../... Tokens Sent/Recv: .../...`
+
 ## [0.8] (2025-10-12)
 
 1. Added `doc_tasks`.`sent_to_llm`.

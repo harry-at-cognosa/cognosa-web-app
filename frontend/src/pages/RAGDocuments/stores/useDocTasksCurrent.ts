@@ -20,6 +20,10 @@ interface DocTasksCurrentState {
   optional_text: string | null;
   setOptionalText: (optional_text: string) => void;
   output_text: string | null;
+  vdb_query_seconds: number | null;
+  llm_query_seconds: number | null;
+  llm_tokens_sent: number | null;
+  llm_tokens_received: number | null;
   is_processing: boolean | null;
   is_error: boolean | null;
   status_pct: number | null;
@@ -42,6 +46,10 @@ const defaultState = {
   input_text: null,
   optional_text: null,
   output_text: null,
+  vdb_query_seconds: null,
+  llm_query_seconds: null,
+  llm_tokens_sent: null,
+  llm_tokens_received: null,
   is_processing: null,
   is_error: null,
   status_pct: null,
