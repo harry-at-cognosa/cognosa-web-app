@@ -27,6 +27,10 @@ class DocTaskQueryResult(BaseModel):
     output_text: str | None = None
     created_at: datetime
     completed_at: datetime | None = None
+    vdb_query_seconds: float | None = None
+    llm_query_seconds: float | None = None
+    llm_tokens_sent: int | None = None
+    llm_tokens_received: int | None = None
     is_processing: bool
     is_error: bool
     status_pct: int

@@ -167,7 +167,9 @@ class InitDatabase:
                         input_text=item.get('input_text', ''),
                         optional_text=item.get('optional_text', ''),
                         gvdbs_id=item.get('gvdbs_id', 1),
+                        gvdbs_json="{}",
                         gllms_id=item.get('gllms_id', 1),
+                        gllms_json="{}",
                         gc_id=item.get('gc_id', 1),
                         context_json=item.get('context_json', '[]'),
                         output_text=item.get('output_text', ''),
@@ -175,6 +177,10 @@ class InitDatabase:
                         fetched_at=prepare_dt(item, 1),
                         context_at=prepare_dt(item, 2),
                         completed_at=prepare_dt(item, 3),
+                        vdb_query_seconds=1,
+                        llm_query_seconds=1,
+                        llm_tokens_sent=1,
+                        llm_tokens_received=1,
                     )
                     for item in doc_tasks_initial_data                
                 ]
@@ -184,6 +190,7 @@ class InitDatabase:
 
 
             except Exception as e:
+                raise
                 await session.rollback()
                 print(f"Error inserting data: {e}")
             finally:

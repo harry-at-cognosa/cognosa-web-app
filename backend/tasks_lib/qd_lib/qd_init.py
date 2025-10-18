@@ -1,11 +1,10 @@
 from datetime import datetime
+import json
 from multiprocessing import Queue
-from sqlalchemy import select
 from common.sql_models import DocTasks, GroupVDBs
 from common.sql_db_sync import Session
 from common.enums.doc_task_status import TaskStatus
 from tasks_lib.entities.task_queue_msg import VDBDocTaskQueueMsg
-from tasks_lib.vdb_lib import get_host_port_from_url
 
 class QueryDocumentInitException(Exception):
     pass
@@ -35,17 +34,6 @@ class QueryDocumentInit:
         self.task.fetched_at = datetime.now()
         self.session.commit()
     
-    def query_gvdbs(self):
-        stmt = (
-            select(GroupVDBs)
-            .where(
-                (GroupVDBs.group_id == self.task.group_id) 
-                & 
-                (GroupVDBs.gvdbs_id == self.task.gvdbs_id)
-            )
-            )
-        return self.session.scalar(stmt)
-
     def check_task_opts(self):
         # Checks:
         # input_text must be non-empty
@@ -56,9 +44,10 @@ class QueryDocumentInit:
             if not self.input_text:
                 raise Exception
             error_msg = "No VectorDB settings found for this group and gvdbs_id"
-            gvdbs = self.query_gvdbs()
-            if not gvdbs:
+            gvdbs_dict = json.loads(self.task.gvdbs_json)
+            if not gvdbs_dict:
                 raise Exception
+            gvdbs = GroupVDBs(**gvdbs_dict)            
             self.gvdbs_type = gvdbs.gvdbs_type
             error_msg = 'VectorDB URL is not specified'
             self.gvdbs_url = gvdbs.gvdbs_url.strip()

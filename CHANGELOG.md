@@ -1,7 +1,19 @@
-## [0.9] (2025-10-19)
+## [0.9a] (2025-10-17)
 
 1. fixed:
    retained previous history queries on another user login.
+
+2. added `doc_tasks` columns:
+   `gvdbs_json` - JSON dictionary with vector db credentials
+   `gllms_json` - JSON dictionary with LLM credentials
+   Note: these VDB/LLM credentials will be used,
+   even if current `group_vdb`/`group_llm` row was changed during request.
+   `vdb_query_seconds` - vector db query time in seconds
+   `llm_query_seconds` - llm query time in seconds
+   `llm_tokens_sent` - calculated tokens number sent to LLM.
+   `llm_tokens_received` - calculated tokens number received from LLM.
+   Note: tokens calculation can be not exact.
+   Uses `gpt4o` model token calculation as default.
 
 ## [0.8] (2025-10-12)
 

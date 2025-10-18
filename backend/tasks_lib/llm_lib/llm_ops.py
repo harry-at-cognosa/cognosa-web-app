@@ -70,7 +70,10 @@ class LLMOps:
         # Combine all context
         return "\n\n".join(context_parts)
     
-    def _stream_dummy_answer(self) -> Generator[str, None, None]:
+    def _stream_dummy_answer(self, full_context: str) -> Generator[str, None, None]:
+        self.sent_to_llm = full_context \
+            .replace('{question}', self.query_text) \
+            .replace('{context}', full_context)
         dummy_answer = f"Dummy answer to query:\n{self.query_text}\n{DummyLLM.fake_answer}"
         self.answer = ""
         for chunk in chunks(list(dummy_answer), 50):
@@ -81,9 +84,11 @@ class LLMOps:
         return
     
     def stream_to_llm(self) -> Generator[str, None, None]:
+        full_context = self.prepare_context()
+        
         # Initialize LLM
         if IS_DUMMY_LLM or (self.llm_type == GLLMsTypes.DUMMY):
-            yield from self._stream_dummy_answer()
+            yield from self._stream_dummy_answer(full_context)
             return
         
         def capture_prompt(prompt_value):
@@ -93,7 +98,6 @@ class LLMOps:
                 log.error(f"Prompt value is not StringPromptValue, but {type(prompt_value)}")
             return prompt_value
 
-        full_context = self.prepare_context()
         llm = ChatOpenAI(
             model=self.llm_model,
             api_key=self.llm_api_key,

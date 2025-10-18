@@ -1,4 +1,6 @@
+import json
 from threading import Thread
+from time import time
 from traceback import format_exc
 from sqlalchemy import select, func
 from common import log
@@ -7,6 +9,7 @@ from common.sql_models import DocTasks, GroupContexts, GroupLLMs
 from common.sql_db_sync import SqlSyncSession, Session
 from tasks_lib.entities.llm_worker_msg import LLMWorkerMsg
 from tasks_lib.llm_lib.llm_ops import LLMOps
+from .tiktoken_count import TikTokenCount
 
 
 class LLMOptionsNotFound(Exception):
@@ -24,16 +27,15 @@ class LLMWorker(Thread):
         super().__init__()
         self.msg = msg
         self.doc_task_id = msg.doc_task_id
+        self.tiktoken_count = TikTokenCount('')
 
-    def get_llm_settings(self, session: Session, task: DocTasks) -> GroupLLMs:
-        stmt = select(GroupLLMs).where(
-            GroupLLMs.gllms_id == task.gllms_id,
-            GroupLLMs.group_id == task.group_id)
-        gllms_row = session.execute(stmt).scalar_one_or_none()
-        if not gllms_row:
+    def get_llm_settings(self, task: DocTasks) -> GroupLLMs:
+        try:
+            gllms_dict = json.loads(task.gllms_json)
+            return GroupLLMs(**gllms_dict)
+        except Exception:
             log.error(f"LLM options not found for gllms_id={task.gllms_id}")
-            raise LLMOptionsNotFound
-        return gllms_row
+            raise LLMOptionsNotFound        
         
     def write_status_error(self, session: Session, task: DocTasks, error_msg: str, exc_msg: str | None = None):
         log.error(f"LLM run error in {task.doc_task_id=}:\n{error_msg=}{exc_msg=}")
@@ -47,19 +49,23 @@ class LLMWorker(Thread):
     def write_sent_to_llm(self, session: Session, task: DocTasks, sent_to_llm: str):
         if sent_to_llm and (not task.sent_to_llm):
             task.sent_to_llm = sent_to_llm
+            task.llm_tokens_sent = self.tiktoken_count.count(sent_to_llm)
             session.commit()
 
     def write_llm_writing(self, session: Session, task: DocTasks, answer: str):
         task.status = TaskStatus.QD_LLM_WRITING
         task.status_text = "LLM answering..."
         task.output_text = answer
+        task.llm_tokens_received = self.tiktoken_count.count(answer)
         session.commit()
     
-    def write_llm_finished(self, session: Session, task: DocTasks, answer: str):
+    def write_llm_finished(self, session: Session, task: DocTasks, answer: str, llm_query_seconds: float):
         task.status = TaskStatus.QD_LLM_FETCHED
         task.status_text = "Task completed"
         task.output_text = answer
         task.completed_at = func.now()
+        task.llm_query_seconds = llm_query_seconds
+        task.llm_tokens_received = self.tiktoken_count.count(answer)
         session.commit()
 
     def fetch_group_context(self, session: Session, task: DocTasks) -> GroupContexts:
@@ -84,7 +90,7 @@ class LLMWorker(Thread):
                 if not task:
                     raise Exception(f"LLM run error: tasks.task_id={self.doc_task_id} not found")
                 try:
-                    gllms = self.get_llm_settings(session, task)
+                    gllms = self.get_llm_settings(task)
                 except LLMOptionsNotFound:
                     self.write_status_error(session, task, error_msg="LLM Options not found")
                     raise
@@ -99,6 +105,8 @@ class LLMWorker(Thread):
                     self.write_status_error(session, task, error_msg="LLM Group Context text is wrong", exc_msg=exc_msg)
                     raise
                 try:
+                    self.tiktoken_count = TikTokenCount(gllms.gllms_model)
+                    start_time = time()
                     llm_ops = LLMOps(
                         query_text=task.input_text,
                         optional_text=task.optional_text,
@@ -113,13 +121,13 @@ class LLMWorker(Thread):
                     for chunk in llm_ops.stream_to_llm():
                         answer += chunk
                         self.write_sent_to_llm(session, task, llm_ops.sent_to_llm)
-                        self.write_llm_writing(session, task, answer)                    
+                        self.write_llm_writing(session, task, answer)                                        
                 except Exception:
                     exc_msg = f"LLMOps exception for {task.doc_task_id=}, {task.group_id=}, {task.gc_id=}:\n{format_exc()}"
                     self.write_status_error(session, task, error_msg="Undefined LLM error", exc_msg=exc_msg)
                     raise
                 else:
-                    self.write_llm_finished(session, task, llm_ops.answer)
+                    self.write_llm_finished(session, task, llm_ops.answer, llm_query_seconds=round(time()-start_time, 3))
         
         except Exception:
             log.error(format_exc())

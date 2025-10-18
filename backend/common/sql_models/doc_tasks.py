@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Integer, Text, VARCHAR, DateTime, text, func, ForeignKey
+from sqlalchemy import Integer, Text, VARCHAR, DateTime, text, func, ForeignKey, FLOAT
 from sqlalchemy.orm import Mapped, mapped_column
 from common.sql_models import Base
 
@@ -37,8 +37,14 @@ class DocTasks(Base):
     # group_vdbs.gvdbs_id
     gvdbs_id: Mapped[int] = mapped_column(Integer, nullable=False)
 
+    # gvdbs_json TEXT - dictionary of group_vdbs row
+    gvdbs_json: Mapped[str] = mapped_column(Text, nullable=False)
+
     # group_llms.gllms_id
     gllms_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    
+    # gllms_json TEXT - dictionary of group_llms row
+    gllms_json: Mapped[str] = mapped_column(Text, nullable=False)
 
     # gc_id Foreign Key to group_contexts.gc_id
     gc_id: Mapped[int] = mapped_column(Integer, ForeignKey('group_contexts.gc_id'), nullable=False)
@@ -71,3 +77,11 @@ class DocTasks(Base):
 
     # completed_at UTC datetime
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # vdb/llm query time in seconds
+    vdb_query_seconds: Mapped[float | None] = mapped_column(FLOAT, nullable=True)
+    llm_query_seconds: Mapped[float | None] = mapped_column(FLOAT, nullable=True)
+
+    # llm sent/received tokens counters
+    llm_tokens_sent: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    llm_tokens_received: Mapped[int | None] = mapped_column(Integer, nullable=True)

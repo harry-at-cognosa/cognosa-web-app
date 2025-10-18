@@ -1,9 +1,10 @@
+import json
 from traceback import format_exc
 from sqlalchemy import select, delete
 from common import log
 from common.helpers import shorten
 from common.sql_db_async import AsyncSession
-from common.sql_models.doc_tasks import DocTasks
+from common.sql_models import GroupVDBs, GroupLLMs, DocTasks
 from cwa_lib.pydantic_schemas.doc_tasks import DocTaskQueryShort, DocTaskQueryShortItem, DocTaskQueryResult
 from common.enums.doc_task_status import TaskStatus
 
@@ -11,6 +12,42 @@ from common.enums.doc_task_status import TaskStatus
 class DocTasksTable:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
+
+    @staticmethod
+    def row_as_json(row_obj) -> str:
+        ignore_columns = ("deleted",
+            "gllms_status", "gllms_status_updated_at", "gllms_created_at", "gllms_status_text",
+            "gvdbs_status", "gvdbs_status_updated_at", "gvdbs_created_at", "gvdbs_status_text"
+        )
+        return json.dumps({k: v for k, v in row_obj.__dict__.items() 
+                           if not (k.startswith('_') or k in ignore_columns)
+                           }, indent=1, default=str)
+
+    async def query_gvdbs(self, group_id: int, gvdbs_id: int):
+        result = await self.session.execute(
+            select(GroupVDBs)
+            .where(
+                (GroupVDBs.group_id == group_id) 
+                & 
+                (GroupVDBs.gvdbs_id == gvdbs_id)
+                & 
+                (GroupVDBs.deleted == 0)
+            )
+            )
+        return result.scalar_one_or_none()
+    
+    async def query_gllms(self, group_id: int, gllms_id: int):
+        result = await self.session.execute(
+            select(GroupLLMs)
+            .where(
+                (GroupLLMs.group_id == group_id) 
+                & 
+                (GroupLLMs.gllms_id == gllms_id)
+                & 
+                (GroupLLMs.deleted == 0)
+            )
+            )
+        return result.scalar_one_or_none()
 
     async def short_query_all_by_group_id_user_id(self, group_id: int, user_id: int) -> DocTaskQueryShort:
         result = await self.session.execute(
@@ -50,12 +87,24 @@ class DocTasksTable:
             short_name: str, 
             input_text: str, 
             optional_text: str) -> DocTaskQueryResult | None:
+        # get group_vdbs and group_llms rows
+        if not (gvdbs_obj := await self.query_gvdbs(group_id, gvdbs_id)):
+            error_msg = 'DocTasksTable.add_one: group_vdbs row not found for {group_id=}, {gvdbs_id=}'
+            log.error(error_msg)
+            raise Exception(error_msg)
         
+        if not (gllms_obj := await self.query_gllms(group_id, gllms_id)):
+            error_msg = 'DocTasksTable.add_one: group_llms row not found for {group_id=}, {gllms_id=}'
+            log.error(error_msg)
+            raise Exception(error_msg)
+
         task = DocTasks(
             group_id=group_id, 
             user_id=user_id, 
             gvdbs_id=gvdbs_id,
+            gvdbs_json=self.row_as_json(gvdbs_obj),
             gllms_id=gllms_id,
+            gllms_json=self.row_as_json(gllms_obj),
             gc_id=gc_id,
             short_name=short_name, 
             input_text=input_text, 

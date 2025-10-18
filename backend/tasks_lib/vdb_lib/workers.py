@@ -1,6 +1,7 @@
 import json
 from multiprocessing import Process, Queue, cpu_count
 from queue import Empty
+from time import time
 from traceback import format_exc
 from common import log, LOG_SQLALCHEMY_RT, RT_VDB_PROCESS_NUM
 from common.helpers import utcnow
@@ -30,7 +31,7 @@ class VDBWorker(Process):
         task.status = TaskStatus.QD_VDB_ERROR
         session.commit()        
 
-    def save_results_to_sql(self, session: Session, task: DocTasks, result_dict: list[dict]):
+    def save_results_to_sql(self, session: Session, task: DocTasks, result_dict: list[dict], vdb_query_seconds: float):
         doc_number = len(result_dict)
         context_json=json.dumps(result_dict, indent=1)        
         log.info(f"Task id {task.doc_task_id} completed")
@@ -38,6 +39,7 @@ class VDBWorker(Process):
         task.context_json = context_json
         task.status = TaskStatus.QD_VDB_FETCHED
         task.status_text = f"Documents search completed. Found {doc_number} documents. Sending to LLM..."
+        task.vdb_query_seconds=vdb_query_seconds
         session.commit()
 
     def update_ap_status(self, ap_status: str):
@@ -78,6 +80,7 @@ class VDBWorker(Process):
                         vdb_ops = VectorDBOps(msg.gvdbs_type, msg.gvdbs_url)
                         if error_msg := vdb_ops.check_url():
                             raise Exception(f'VDB URL error: {error_msg}')
+                        start_time = time()
                         result_dict = vdb_ops.get_docs(
                             emb_obj=emb_models.get_by_name(msg.gvdbs_emb_model),
                             collection_name=msg.gvdbs_collection,
@@ -86,7 +89,8 @@ class VDBWorker(Process):
                         self.save_results_to_sql(
                             session=session,
                             task=task,
-                            result_dict=result_dict
+                            result_dict=result_dict,
+                            vdb_query_seconds=round(time()-start_time, 3)
                         )
                     except Exception:
                         self.save_error_to_sql(
