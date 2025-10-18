@@ -16,5 +16,14 @@
     "gllms_api_base": "http://localhost:11434/v1",
     "gllms_model": "gemma3",
     "gllms_api_key": "ollama"
+  },
+  {
+    "group_id": 3,
+    "gllms_seqn": 3,
+    "gllms_type": "ollama_local",
+    "gllms_name": "Ollama Gemma3",
+    "gllms_api_base": "http://localhost:11434/v1",
+    "gllms_model": "gemma3",
+    "gllms_api_key": "ollama"
   }
 ]

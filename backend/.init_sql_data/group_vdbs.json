@@ -25,5 +25,14 @@
     "gvdbs_url": "localhost:8010",
     "gvdbs_collection": "collection_1",
     "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2"
+  },
+  {
+    "group_id": 3,
+    "gvdbs_seqn": 4,
+    "gvdbs_type": "qdrant",
+    "gvdbs_name": "Qdrant wab_group_products db",
+    "gvdbs_url": "localhost:6333",
+    "gvdbs_collection": "wab_group_products",
+    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2"
   }
 ]
