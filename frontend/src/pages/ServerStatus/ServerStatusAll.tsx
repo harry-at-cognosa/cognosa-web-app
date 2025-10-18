@@ -20,7 +20,7 @@ async function fetchBackendData() {
 }
 
 function ServerStatusAll() {
-  const { run_tasks, group_vdbs_rows, group_llms_rows } =
+  const { api_settings, run_tasks, group_vdbs_rows, group_llms_rows } =
     useServerStatusStore();
   useEffect(() => {
     fetchBackendData();
@@ -30,9 +30,16 @@ function ServerStatusAll() {
     return () => clearInterval(interval);
   }, []);
 
+  const textAppDBVersions = `APP: ${api_settings.app_version} DB: ${api_settings.db_version}`;
+
   return (
     <Container className="py-3">
       <Row className="gy-4">
+        {/* App/DB versions*/}
+        <Col className="text-center mb-0" xs={12} key={"app_db_versions"}>
+          <h4>{textAppDBVersions}</h4>
+        </Col>
+
         {/* Run Tasks Tables */}
         {run_tasks.map((task) => (
           <Col xs={12} key={task.name}>

@@ -6,6 +6,11 @@ export type Subprocess = {
   is_good: "success" | "warning" | "danger";
 };
 
+type ApiSettings = {
+  app_version: string;
+  db_version: string;
+};
+
 export type RunTask = {
   name: string;
   subprocesses: Subprocess[];
@@ -36,12 +41,14 @@ export type GroupLLMs = {
 };
 
 export type ServerStatusResponse = {
+  api_settings: ApiSettings;
   run_tasks: RunTask[];
   group_vdbs_rows: GroupVDBs[];
   group_llms_rows: GroupLLMs[];
 };
 
 type State = {
+  api_settings: ApiSettings;
   run_tasks: RunTask[];
   group_vdbs_rows: GroupVDBs[];
   group_llms_rows: GroupLLMs[];
@@ -53,11 +60,13 @@ type Actions = {
 
 export const useServerStatusStore = createResettableStore<State & Actions>(
   (set) => ({
+    api_settings: { app_version: "", db_version: "" },
     run_tasks: [],
     group_vdbs_rows: [],
     group_llms_rows: [],
     setData: (data) =>
       set(() => ({
+        api_settings: data.api_settings,
         run_tasks: data.run_tasks,
         group_vdbs_rows: data.group_vdbs_rows,
         group_llms_rows: data.group_llms_rows,

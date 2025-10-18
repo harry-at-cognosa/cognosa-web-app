@@ -6,10 +6,15 @@ from common.watchdogs.api_processes_table import ApiProcessesTable, ApiProcesses
 from common.watchdogs.group_vdbs import GroupVDBSTable
 from common.watchdogs.group_llms import GroupLLMsTable
 from common.sql_db_async import AsyncSession
+from cwa_lib.sql_tables.api_settings import ApiSettingsTable
 
 class ServerStatusPage:
     def __init__(self) -> None:
         pass
+
+    @classmethod
+    async def get_api_settings_data(cls, session: AsyncSession) -> dict[str, str]:
+        return await ApiSettingsTable(session).select_by_names(['app_version', 'db_version'])
 
     @classmethod
     async def get_run_tasks_data(cls, session: AsyncSession) -> list[dict]:
@@ -162,6 +167,11 @@ class ServerStatusPage:
         """
         Make status dict e.g.: 
         {
+            'api_settings': 
+            {
+                'app_version': ...,
+                'db_version': ...,
+            }
             'run_tasks':
                 [
                     {
@@ -206,6 +216,7 @@ class ServerStatusPage:
         """
         try:
             result_dict = {
+                'api_settings': await cls.get_api_settings_data(session),
                 'run_tasks': await cls.get_run_tasks_data(session),
                 'group_vdbs_rows': await cls.get_group_vdbs_data(session),
                 'group_llms_rows': await cls.get_group_llms_data(session),
