@@ -18,6 +18,9 @@
 3. `RAG Documents` page:
    Show info: `VectorDB/LLM time: .../... Tokens Sent/Recv: .../...`
 
+4. `Server Status` page:
+   Show info `api_settings` -> `app_version` and `db_version`
+
 ## [0.8] (2025-10-12)
 
 1. Added `doc_tasks`.`sent_to_llm`.
