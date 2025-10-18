@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { createResettableStore } from "../../api/createResettableStore";
 
 export type Subprocess = {
   name: string;
@@ -49,19 +49,18 @@ type State = {
 
 type Actions = {
   setData: (data: ServerStatusResponse) => void;
-  clear: () => void;
 };
 
-export const useServerStatusStore = create<State & Actions>((set) => ({
-  run_tasks: [],
-  group_vdbs_rows: [],
-  group_llms_rows: [],
-  setData: (data) =>
-    set(() => ({
-      run_tasks: data.run_tasks,
-      group_vdbs_rows: data.group_vdbs_rows,
-      group_llms_rows: data.group_llms_rows,
-    })),
-  clear: () =>
-    set(() => ({ run_tasks: [], group_vdbs_rows: [], group_llms_rows: [] })),
-}));
+export const useServerStatusStore = createResettableStore<State & Actions>(
+  (set) => ({
+    run_tasks: [],
+    group_vdbs_rows: [],
+    group_llms_rows: [],
+    setData: (data) =>
+      set(() => ({
+        run_tasks: data.run_tasks,
+        group_vdbs_rows: data.group_vdbs_rows,
+        group_llms_rows: data.group_llms_rows,
+      })),
+  })
+);

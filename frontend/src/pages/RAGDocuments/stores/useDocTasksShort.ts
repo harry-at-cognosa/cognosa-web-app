@@ -1,5 +1,5 @@
-import { create } from "zustand";
 import type { DocTasksShortItem } from "../models/docTasksShortItem";
+import { createResettableStore } from "../../../api/createResettableStore";
 
 const getGroupKey = (item: {
   created_at: string;
@@ -36,22 +36,24 @@ interface DocTasksShortState {
   deleteRow: (doc_task_id: number) => void;
 }
 
-export const useDocTasksShortStore = create<DocTasksShortState>((set, get) => ({
-  rows: [],
-  setRows: (rows) => set({ rows }),
-  getTodayRows: () => {
-    return get().rows.filter((item) => getGroupKey(item) === "Today");
-  },
-  getWeekRows: () => {
-    return get().rows.filter((item) => getGroupKey(item) === "This week");
-  },
-  getBeforeRows: () => {
-    return get().rows.filter((item) => getGroupKey(item) === "Before");
-  },
-  needReload: true,
-  setNeedReload: (needReload: boolean) => set({ needReload }),
-  deleteRow: (doc_task_id: number) =>
-    set((state) => ({
-      rows: state.rows.filter((item) => item.doc_task_id !== doc_task_id),
-    })),
-}));
+export const useDocTasksShortStore = createResettableStore<DocTasksShortState>(
+  (set, get) => ({
+    rows: [],
+    setRows: (rows) => set({ rows }),
+    getTodayRows: () => {
+      return get().rows.filter((item) => getGroupKey(item) === "Today");
+    },
+    getWeekRows: () => {
+      return get().rows.filter((item) => getGroupKey(item) === "This week");
+    },
+    getBeforeRows: () => {
+      return get().rows.filter((item) => getGroupKey(item) === "Before");
+    },
+    needReload: true,
+    setNeedReload: (needReload: boolean) => set({ needReload }),
+    deleteRow: (doc_task_id: number) =>
+      set((state) => ({
+        rows: state.rows.filter((item) => item.doc_task_id !== doc_task_id),
+      })),
+  })
+);

@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { createResettableStore } from "../../../api/createResettableStore";
 
 export type GroupContexts = {
   gc_id: number;
@@ -35,12 +35,13 @@ interface DocTaskOptionsState {
   setNeedReload: (needReload: boolean) => void;
 }
 
-export const useDocTaskOptionsStore = create<DocTaskOptionsState>((set) => ({
-  data: { group_contexts: [], group_llms: [], group_vdbs: [] },
-  setData: (data) => set({ data }),
-  needReload: true,
-  setNeedReload: (needReload: boolean) => set({ needReload }),
-}));
+export const useDocTaskOptionsStore =
+  createResettableStore<DocTaskOptionsState>((set) => ({
+    data: { group_contexts: [], group_llms: [], group_vdbs: [] },
+    setData: (data) => set({ data }),
+    needReload: true,
+    setNeedReload: (needReload: boolean) => set({ needReload }),
+  }));
 
 interface DocTaskOptionsLastUsedState {
   gc_id: number | null;
@@ -50,7 +51,7 @@ interface DocTaskOptionsLastUsedState {
 }
 
 export const useDocTaskOptionsLastUsedStore =
-  create<DocTaskOptionsLastUsedState>((set) => ({
+  createResettableStore<DocTaskOptionsLastUsedState>((set) => ({
     gc_id: null,
     gllms_id: null,
     gvdbs_id: null,

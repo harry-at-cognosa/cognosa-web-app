@@ -1,7 +1,7 @@
-import { create } from "zustand";
 import type { DocTasksResponse } from "../models/docTasksResponse";
 import type { DocTasksQuery } from "../models/docTasksQuery";
 import type { DocTasksShortItem } from "../models/docTasksShortItem";
+import { createResettableStore } from "../../../api/createResettableStore";
 
 interface DocTasksCurrentState {
   doc_task_id: number | null;
@@ -48,21 +48,22 @@ const defaultState = {
   needReload: false,
 };
 
-export const useDocTasksCurrentStore = create<DocTasksCurrentState>((set) => ({
-  ...defaultState,
-  setGVDBsID: (gvdbs_id: number | null) => set({ gvdbs_id }),
-  setGLLMsID: (gllms_id: number | null) => set({ gllms_id }),
-  setGCID: (gc_id: number | null) => set({ gc_id }),
-  setShortName: (short_name: string) => set({ short_name }),
-  setInputText: (input_text: string) => set({ input_text }),
-  setOptionalText: (optional_text: string) => set({ optional_text }),
-  setBeforeServerResponse: (query: DocTasksQuery) => set(query),
-  setFromServerResponse: (response: DocTasksResponse) => set(response),
-  setNeedReload: (needReload: boolean) => set({ needReload }),
-  setFromHistory: (item: DocTasksShortItem) =>
-    set({
-      doc_task_id: item.doc_task_id,
-      needReload: true,
-    }),
-  setNewQuery: () => set(defaultState),
-}));
+export const useDocTasksCurrentStore =
+  createResettableStore<DocTasksCurrentState>((set) => ({
+    ...defaultState,
+    setGVDBsID: (gvdbs_id: number | null) => set({ gvdbs_id }),
+    setGLLMsID: (gllms_id: number | null) => set({ gllms_id }),
+    setGCID: (gc_id: number | null) => set({ gc_id }),
+    setShortName: (short_name: string) => set({ short_name }),
+    setInputText: (input_text: string) => set({ input_text }),
+    setOptionalText: (optional_text: string) => set({ optional_text }),
+    setBeforeServerResponse: (query: DocTasksQuery) => set(query),
+    setFromServerResponse: (response: DocTasksResponse) => set(response),
+    setNeedReload: (needReload: boolean) => set({ needReload }),
+    setFromHistory: (item: DocTasksShortItem) =>
+      set({
+        doc_task_id: item.doc_task_id,
+        needReload: true,
+      }),
+    setNewQuery: () => set(defaultState),
+  }));

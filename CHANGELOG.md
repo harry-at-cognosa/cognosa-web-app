@@ -1,3 +1,8 @@
+## [0.9] (2025-10-19)
+
+1. fixed:
+   retained previous history queries on another user login.
+
 ## [0.8] (2025-10-12)
 
 1. Added `doc_tasks`.`sent_to_llm`.

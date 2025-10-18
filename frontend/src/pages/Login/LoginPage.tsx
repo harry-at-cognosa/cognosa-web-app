@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import { API_URL } from "../../api/apiURL";
+import { resetAllStores } from "../../api/createResettableStore";
 
 export default function LoginPage() {
   const [emailInput, setEmailInput] = useState("");
@@ -39,6 +40,7 @@ export default function LoginPage() {
 
     if (res.ok) {
       const data = await res.json();
+      resetAllStores();
       localStorage.setItem("token", data.access_token);
       navigate("/");
     } else {

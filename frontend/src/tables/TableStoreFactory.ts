@@ -1,5 +1,5 @@
-import { create } from "zustand";
 import axiosClient from "../api/axiosClient";
+import { createResettableStore } from "../api/createResettableStore";
 
 export interface TableRequest {
   name: string;
@@ -92,7 +92,7 @@ export function createTableStore({
   name,
   endpoint,
 }: createTableStoreProps) {
-  return create<TableStore>((set, get) => ({
+  return createResettableStore<TableStore>((set, get) => ({
     title,
     busy: "",
     error: null,
