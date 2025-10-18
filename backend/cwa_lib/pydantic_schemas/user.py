@@ -12,6 +12,22 @@ def validate_user_name(v: str) -> str:
         raise ValueError("user_name must contain only lowercase letters, numbers, underscores, or hyphens")
     return v
 
+
+class UsersMe(BaseModel):
+    id: uuid.UUID
+    user_id: int
+    group_id: int
+    group_name: str
+    email: str
+    user_name: str
+    full_name: str
+    is_groupadmin: bool
+    is_contentmanager: bool
+    is_superuser: bool
+    is_verified: bool
+    created_at: datetime
+
+
 class UserRead(schemas.BaseUser[uuid.UUID]):
     user_id: int
     group_id: int

@@ -32,6 +32,7 @@ const TopNavBar = () => {
           <Navbar.Brand className="d-flex align-items-center">
             <FileEarmarkText className="me-2"></FileEarmarkText>
             {title}
+            &nbsp;&nbsp;&nbsp;{"(" + user.group_name + ")"}
           </Navbar.Brand>
         </LinkContainer>
 
@@ -73,7 +74,7 @@ const TopNavBar = () => {
               <Dropdown className="nav-hover-glow">
                 <Dropdown.Toggle variant="" id="nav-dropdown-logout">
                   <Navbar.Text className="me-2 fw-bold">
-                    {user.fullName || user.userName || user.email}
+                    {user.full_name || user.user_name || user.email}
                   </Navbar.Text>
                   <PersonCircle size={"28"} />
                 </Dropdown.Toggle>

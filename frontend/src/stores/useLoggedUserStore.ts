@@ -1,50 +1,41 @@
 import { create } from "zustand";
 
-interface LoggedUserState {
-  isLogged: boolean;
-  id: number;
-  groupId: number;
+interface UsersMeResponse {
+  id: string;
+  group_id: number;
+  group_name: string;
   email: string;
-  userName: string;
-  fullName: string;
+  user_name: string;
+  full_name: string;
+  is_groupadmin: boolean;
+  is_contentmanager: boolean;
+  is_verified: boolean;
   is_superuser: boolean;
-  setLoggedUser: (
-    id: number,
-    groupId: number,
-    email: string,
-    userName: string,
-    fullName: string,
-    is_superuser: boolean
-  ) => void;
+}
+
+interface LoggedUserState extends UsersMeResponse {
+  isLogged: boolean;
+  setLoggedUser: (data: UsersMeResponse) => void;
   clearLoggedUser: () => void;
 }
 
-export const useLoggedUserStore = create<LoggedUserState>((set) => ({
+const defaultValues = {
   isLogged: false,
-  id: -1,
-  groupId: -1,
+  id: "",
+  user_id: -1,
+  group_id: -1,
+  group_name: "",
   email: "",
-  userName: "",
-  fullName: "",
+  user_name: "",
+  full_name: "",
+  is_groupadmin: false,
+  is_contentmanager: false,
+  is_verified: false,
   is_superuser: false,
-  setLoggedUser: (id, groupId, email, userName, fullName, is_superuser) =>
-    set({
-      isLogged: true,
-      id,
-      groupId,
-      email,
-      userName,
-      fullName,
-      is_superuser,
-    }),
-  clearLoggedUser: () =>
-    set({
-      isLogged: false,
-      id: -1,
-      groupId: -1,
-      email: "",
-      userName: "",
-      fullName: "",
-      is_superuser: false,
-    }),
+};
+
+export const useLoggedUserStore = create<LoggedUserState>((set) => ({
+  ...defaultValues,
+  setLoggedUser: (data) => set({ ...data, isLogged: true }),
+  clearLoggedUser: () => set(defaultValues),
 }));

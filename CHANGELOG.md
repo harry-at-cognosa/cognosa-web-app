@@ -1,4 +1,4 @@
-## [0.9b] (2025-10-17)
+## [0.9c] (2025-10-17)
 
 1. fixed:
    retained previous history queries on another user login.
@@ -21,6 +21,9 @@
 
 4. `Server Status` page:
    Show info `api_settings` -> `app_version` and `db_version`
+
+5. Changed `GET /users/me` route to give out `api_groups`.`group_name` of logged user group.
+   Top navigation bar: added `group_name` of currently logged user.
 
 ## [0.8] (2025-10-12)
 
