@@ -8,7 +8,7 @@ interface Props {
 
 export default function UpdateRowButton({ row, useStore }: Props) {
   const { data, setShowCreateOrUpdateDialog } = useStore();
-  if (!data?.table_options?.update__allow) return null;
+  if (!data?.table_options?.update__ask_columns.length) return null;
 
   return (
     <Button

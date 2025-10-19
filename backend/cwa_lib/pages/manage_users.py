@@ -8,26 +8,26 @@ from cwa_lib.pydantic_schemas.manage_users import ManageUsersQueryResult
 
 
 manage_users__query_columns = {
-    'user_id': ColumnType(display='UserID', seqn=1, type='number'),
-    'group_id': ColumnType(display='GroupID', seqn=2, type='number'),
-    'user_name': ColumnType(display='User name', seqn=3, type='string'),
-    'full_name': ColumnType(display='Full name', seqn=4, type='string'),
-    'email': ColumnType(display='Email', seqn=5, type='string'),
-    'is_active': ColumnType(display='Active', seqn=6, type='boolean'),
-    'is_contentmanager': ColumnType(display='Content\nManager', seqn=7, type='boolean'),
-    'is_groupadmin': ColumnType(display='Group\nAdmin', seqn=8, type='boolean'),
-    'is_superuser': ColumnType(display='Super\nUser', seqn=9, type='boolean'),
-    'created_at': ColumnType(display='Created at', seqn=10, type='datetime'),
+    'user_id': ColumnType(display='UserID', type='number'),
+    'group_id': ColumnType(display='GroupID', type='number'),
+    'user_name': ColumnType(display='User name', type='string'),
+    'full_name': ColumnType(display='Full name', type='string'),
+    'email': ColumnType(display='Email', type='string'),
+    'is_active': ColumnType(display='Active', type='boolean'),
+    'is_contentmanager': ColumnType(display='Content\nManager', type='boolean'),
+    'is_groupadmin': ColumnType(display='Group\nAdmin', type='boolean'),
+    'is_superuser': ColumnType(display='Super\nUser', type='boolean'),
+    'created_at': ColumnType(display='Created at', type='datetime'),
 }
+manage_users__all_columns = list(manage_users__query_columns.keys())
+
 manage_users__table_options = TableOptions(
     title='Manage Users',
     pk='user_id',
-    create__allow=False,
+    read__visible_columns=manage_users__all_columns,
     read__hide_on_false=['is_active', 'is_contentmanager', 'is_groupadmin', 'is_superuser'],  # table view: hide if false
-    update__allow=False,
-    delete__allow=False,
     delete__ask_columns=['user_name', 'full_name', 'email'],
-    order_by__allow=list(manage_users__query_columns.keys()),  # allow order by all    
+    order_by__allow=manage_users__all_columns,
 )
 
 

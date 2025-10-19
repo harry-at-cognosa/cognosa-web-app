@@ -7,7 +7,7 @@ interface Props {
 
 export default function CreateRowButton({ useStore }: Props) {
   const { data, setShowCreateOrUpdateDialog } = useStore();
-  if (!data?.table_options?.create__allow) return null;
+  if (!data?.table_options?.create__ask_columns.length) return null;
   function makeInitialDict() {
     const row: TableRow = {};
     data?.table_options.create__ask_columns.map((col) => {

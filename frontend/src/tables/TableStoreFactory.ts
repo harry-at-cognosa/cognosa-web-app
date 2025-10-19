@@ -12,7 +12,6 @@ export interface TableRequest {
 
 export interface TableColumnData {
   display: string;
-  seqn: number;
   type: string;
   default: string | number | boolean | null;
 }
@@ -20,12 +19,10 @@ export interface TableColumnData {
 export interface TableOptions {
   title: string;
   pk: string;
-  create__allow: boolean;
-  create__ask_columns: string[];
+  read__visible_columns: string[];
   read__hide_on_false: string[];
-  update__allow: boolean;
+  create__ask_columns: string[];
   update__ask_columns: string[];
-  delete__allow: boolean;
   delete__ask_columns: string[];
   order_by__allow: string[];
 }
@@ -61,7 +58,6 @@ export interface TableStore {
   busy: "" | "create" | "read" | "update" | "delete";
   error: string | null;
   data: TableResponse | null;
-  visible_columns: string[];
   needReload: boolean;
   setNeedReload: (needReload: boolean) => void;
   nextRequest: TableRequest;
@@ -97,7 +93,6 @@ export function createTableStore({
     busy: "",
     error: null,
     data: null,
-    visible_columns: [], // column names, sort by seqn
     needReload: false,
     setNeedReload: (needReload) => set({ needReload }),
     nextRequest: { name },
@@ -111,11 +106,6 @@ export function createTableStore({
         );
         set({
           data: res.data,
-          visible_columns: Object.keys(res.data.columns)
-            .filter((col) => res.data.columns[col].seqn !== null) // seqn = null means invisible
-            .sort(
-              (a, b) => res.data.columns[a].seqn - res.data.columns[b].seqn
-            ),
         });
       } catch (err: any) {
         set({ error: err.response?.data?.message || err.message });

@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 class ColumnType(BaseModel):
     display: str | None
-    seqn: int | None  # seqn = None - means invisible
     type: str
     default: str | int | bool | None = None
 
@@ -12,12 +11,10 @@ class ColumnType(BaseModel):
 class TableOptions(BaseModel):
     title: str
     pk: str
-    create__allow: bool
-    create__ask_columns: list[str] = []  # on button Add, ask this column names values
+    read__visible_columns: list[str] = []  # column sequence in table view
     read__hide_on_false: list[str] = []  # table view: hide value if false
-    update__allow: bool
+    create__ask_columns: list[str] = []  # on button Add, ask this column names values
     update__ask_columns: list[str] = []  # on button Update, ask this column names values
-    delete__allow: bool
     delete__ask_columns: list[str] = []  # on button Delete, ask this column names values
     order_by__allow: list[str] = []
 

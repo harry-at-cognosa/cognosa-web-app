@@ -57,17 +57,19 @@ export default function UniversalTable({ useStore }: Props) {
                 ></UpdateRowButton>
               </td>
               {/* visible columns */}
-              {tableStore.visible_columns.map((col) => (
-                <td key={col}>
-                  <ViewCellElement
-                    data={data}
-                    row={row}
-                    col={col}
-                  ></ViewCellElement>
-                </td>
-              ))}
+              {tableStore.data?.table_options?.read__visible_columns.map(
+                (col) => (
+                  <td key={col}>
+                    <ViewCellElement
+                      data={data}
+                      row={row}
+                      col={col}
+                    ></ViewCellElement>
+                  </td>
+                )
+              )}
               {/* delete button cell */}
-              {data.table_options.delete__allow ? (
+              {data.table_options.delete__ask_columns.length ? (
                 <td>
                   <Button
                     type="button"

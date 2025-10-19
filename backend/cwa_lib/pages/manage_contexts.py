@@ -21,21 +21,19 @@ Helpful Answer:
 
 
 manage_contexts__query_columns = {
-    'gc_id': ColumnType(display='ID', seqn=None, type='number'),
-    'group_id': ColumnType(display='Group ID', seqn=None, type='number'),
-    'gc_seqn': ColumnType(display='Seqn #', seqn=3, type='number', default=0),
-    'gc_name': ColumnType(display='Name', seqn=4, type='string', default="New context"),
-    'gc_text': ColumnType(display='Text', seqn=5, type='text', default=default_gc_text),
+    'gc_id': ColumnType(display='ID', type='number'),
+    'group_id': ColumnType(display='Group ID', type='number'),
+    'gc_seqn': ColumnType(display='Seqn #', type='number', default=0),
+    'gc_name': ColumnType(display='Name', type='string', default="New context"),
+    'gc_text': ColumnType(display='Text', type='text', default=default_gc_text),
 }
 
 manage_contexts__table_options = TableOptions(
     title='Group Contexts',
     pk='gc_id',
-    create__allow=True,
+    read__visible_columns=['gc_seqn', 'gc_name', 'gc_text'],
     create__ask_columns=['gc_seqn', 'gc_name', 'gc_text'],
-    update__allow=True,
     update__ask_columns=['gc_seqn', 'gc_name', 'gc_text'],
-    delete__allow=True,
     delete__ask_columns=['gc_name'],
     order_by__allow=['gc_seqn', 'gc_name', 'gc_text']
 )
@@ -52,7 +50,12 @@ class ManageContextsTable:
             gc_text += "\nQuestion: {question}\n"
         return gc_text
 
-    async def resequence_group_contexts(self, group_id: int, commit: bool = False) -> None:
+    async def resequence_group_contexts(
+            self, 
+            group_id: int, 
+            prioritize_gc_id: int,
+            commit: bool = False
+        ) -> None:
         """
         Resequence gc_seqn for all non-deleted GroupContexts of a given group_id,
         starting from 1 and incrementing by 1, ordered by (gc_seqn ASC, gc_id DESC).
@@ -65,14 +68,19 @@ class ManageContextsTable:
             FROM (
                 SELECT 
                     gc_id,
-                    ROW_NUMBER() OVER (ORDER BY gc_seqn ASC, gc_id DESC) AS new_seqn
+                    ROW_NUMBER() OVER (
+                        ORDER BY 
+                            gc_seqn ASC,
+                            (gc_id = :prioritize_gc_id) DESC,
+                            gc_id DESC
+                    ) AS new_seqn
                 FROM group_contexts
                 WHERE group_id = :group_id AND deleted = 0
             ) AS sub
             WHERE group_contexts.gc_id = sub.gc_id;
         """)
         
-        await self.session.execute(query, {"group_id": group_id})
+        await self.session.execute(query, {"group_id": group_id, "prioritize_gc_id": prioritize_gc_id or 0})
         if commit:
             await self.session.commit()
 
@@ -116,7 +124,8 @@ class ManageContextsTable:
         )
         self.session.add(new_row)
         await self.session.commit()
-        await self.resequence_group_contexts(group_id, commit=True)
+        await self.session.refresh(new_row)
+        await self.resequence_group_contexts(group_id, prioritize_gc_id=new_row.gc_id, commit=True)
         return TableCreateRowResult(result='success', total_created=1)
     
     async def update_one(self, group_id: int, data: ManageContextsUpdate) -> TableUpdateRowResult:
@@ -145,7 +154,7 @@ class ManageContextsTable:
         total_updated = result.rowcount
         await self.session.commit()
         if (total_updated > 0) and ('gc_seqn' in update_values):
-            await self.resequence_group_contexts(group_id, commit=True)
+            await self.resequence_group_contexts(group_id, prioritize_gc_id=data.gc_id, commit=True)
         return TableUpdateRowResult(result='success', total_updated=total_updated)
 
     
@@ -163,7 +172,7 @@ class ManageContextsTable:
                 return TableDeleteRowResult(result='error', total_deleted=0)
             row.deleted = 1
             await self.session.commit()
-            await self.resequence_group_contexts(row.group_id, commit=True)
+            await self.resequence_group_contexts(row.group_id, prioritize_gc_id=0, commit=True)
             return TableDeleteRowResult(result='success', total_deleted=1)
         except Exception as exc:
             log.error(f"Exception in ManageContextsTable.delete_by_group_id_gc_id ({group_id=}, {gc_id=}):\n{exc}")
