@@ -1,8 +1,8 @@
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import GroupContexts
-from common.sql_tools import create_order_clause
-from sqlalchemy import select, update, text
+from common.sql_tools import create_order_clause, async_reseqn_by_group_id
+from sqlalchemy import select, update
 from cwa_lib.pydantic_schemas.generic_table import (
     ColumnType, TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
@@ -50,39 +50,8 @@ class ManageContextsTable:
             gc_text += "\nQuestion: {question}\n"
         return gc_text
 
-    async def resequence_group_contexts(
-            self, 
-            group_id: int, 
-            prioritize_gc_id: int,
-            commit: bool = False
-        ) -> None:
-        """
-        Resequence gc_seqn for all non-deleted GroupContexts of a given group_id,
-        starting from 1 and incrementing by 1, ordered by (gc_seqn ASC, gc_id DESC).
-        
-        Only affects rows where `deleted = 0`.
-        """
-        query = text("""
-            UPDATE group_contexts
-            SET gc_seqn = sub.new_seqn
-            FROM (
-                SELECT 
-                    gc_id,
-                    ROW_NUMBER() OVER (
-                        ORDER BY 
-                            gc_seqn ASC,
-                            (gc_id = :prioritize_gc_id) DESC,
-                            gc_id DESC
-                    ) AS new_seqn
-                FROM group_contexts
-                WHERE group_id = :group_id AND deleted = 0
-            ) AS sub
-            WHERE group_contexts.gc_id = sub.gc_id;
-        """)
-        
-        await self.session.execute(query, {"group_id": group_id, "prioritize_gc_id": prioritize_gc_id or 0})
-        if commit:
-            await self.session.commit()
+    async def resequence_group_contexts(self, group_id: int, prioritize_gc_id: int) -> None:
+        await async_reseqn_by_group_id(self.session, GroupContexts, group_id, prioritize_gc_id)
 
     async def query_all_by_group_id(
             self,
@@ -127,7 +96,7 @@ class ManageContextsTable:
         self.session.add(new_row)
         await self.session.commit()
         await self.session.refresh(new_row)
-        await self.resequence_group_contexts(group_id, prioritize_gc_id=new_row.gc_id, commit=True)
+        await self.resequence_group_contexts(group_id, prioritize_gc_id=new_row.gc_id)
         return TableCreateRowResult(result='success', total_created=1)
     
     async def update_one(self, group_id: int, data: ManageContextsUpdate) -> TableUpdateRowResult:
@@ -156,7 +125,7 @@ class ManageContextsTable:
         total_updated = result.rowcount
         await self.session.commit()
         if (total_updated > 0) and ('gc_seqn' in update_values):
-            await self.resequence_group_contexts(group_id, prioritize_gc_id=data.gc_id, commit=True)
+            await self.resequence_group_contexts(group_id, prioritize_gc_id=data.gc_id)
         return TableUpdateRowResult(result='success', total_updated=total_updated)
 
     
@@ -174,7 +143,7 @@ class ManageContextsTable:
                 return TableDeleteRowResult(result='error', total_deleted=0)
             row.deleted = 1
             await self.session.commit()
-            await self.resequence_group_contexts(row.group_id, prioritize_gc_id=0, commit=True)
+            await self.resequence_group_contexts(row.group_id, prioritize_gc_id=0)
             return TableDeleteRowResult(result='success', total_deleted=1)
         except Exception as exc:
             log.error(f"Exception in ManageContextsTable.delete_by_group_id_gc_id ({group_id=}, {gc_id=}):\n{exc}")
