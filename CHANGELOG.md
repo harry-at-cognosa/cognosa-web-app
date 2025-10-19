@@ -1,4 +1,4 @@
-## [0.9c] (2025-10-17)
+## [0.9c] (2025-10-18)
 
 1. fixed:
    retained previous history queries on another user login.
@@ -24,6 +24,8 @@
 
 5. Changed `GET /users/me` route to give out `api_groups`.`group_name` of logged user group.
    Top navigation bar: added `group_name` of currently logged user.
+
+6. Added web manifest and icons.
 
 ## [0.8] (2025-10-12)
 
