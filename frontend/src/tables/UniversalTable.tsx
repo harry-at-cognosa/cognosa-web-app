@@ -3,11 +3,9 @@ import { Table, Spinner, Alert, Button } from "react-bootstrap";
 import type { createTableStore } from "./TableStoreFactory";
 import ViewCellElement from "./elements/ViewCellElement";
 import DeleteDialog from "./elements/DeleteDialog";
-import HeaderColumnsRow from "./elements/HeaderColumnsRow";
-import TableTitle from "./elements/TableTitle";
-import CreateRowButton from "./elements/CreateRowButton";
 import EditDialog from "./elements/EditDialog";
 import UpdateRowButton from "./elements/UpdateRowButton";
+import TableHeader from "./elements/TableHeader";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -32,17 +30,7 @@ export default function UniversalTable({ useStore }: Props) {
         <Alert variant="danger">{tableStore.error}</Alert>
       ) : null}
       <Table bordered hover responsive>
-        <thead>
-          <tr>
-            <th colSpan={100}>
-              <div className="d-flex">
-                <CreateRowButton useStore={useStore}></CreateRowButton>
-                <TableTitle useStore={useStore}></TableTitle>
-              </div>
-            </th>
-          </tr>
-          <HeaderColumnsRow useStore={useStore}></HeaderColumnsRow>
-        </thead>
+        <TableHeader useStore={useStore}></TableHeader>
         <tbody>
           {data.rows.map((row) => (
             <tr
@@ -51,7 +39,7 @@ export default function UniversalTable({ useStore }: Props) {
             >
               {/* edit button cell */}
               {data.table_options.update__ask_columns.length ? (
-                <td>
+                <td style={{ width: "1px" }}>
                   <UpdateRowButton
                     row={row}
                     useStore={useStore}
@@ -72,7 +60,7 @@ export default function UniversalTable({ useStore }: Props) {
               )}
               {/* delete button cell */}
               {data.table_options.delete__ask_columns.length ? (
-                <td>
+                <td style={{ width: "1px" }}>
                   <Button
                     type="button"
                     variant="secondary"

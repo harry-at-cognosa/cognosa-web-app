@@ -20,7 +20,7 @@ export default function CreateRowButton({ useStore }: Props) {
     <Button
       type="button"
       variant="warning"
-      className="me-3 fw-bold"
+      className="me-3 fw-bold px-4"
       onClick={() => setShowCreateOrUpdateDialog("create", makeInitialDict())}
     >
       + Add
