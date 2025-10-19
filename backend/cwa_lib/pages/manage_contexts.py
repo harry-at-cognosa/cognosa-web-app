@@ -1,7 +1,7 @@
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import GroupContexts
-from common.sql_tools import create_order_clause, async_reseqn_by_group_id
+from common.sql_tools import create_order_clause, async_reseqn_by_group_id, fix_autoincrement
 from sqlalchemy import select, update
 from cwa_lib.pydantic_schemas.generic_table import (
     ColumnType, TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
@@ -85,6 +85,7 @@ class ManageContextsTable:
         """
         Create one row
         """
+        await fix_autoincrement(self.session, GroupContexts)
         gc_seqn__default = manage_contexts__query_columns['gc_seqn'].default
         gc_name__default = manage_contexts__query_columns['gc_name'].default
         new_row = GroupContexts(

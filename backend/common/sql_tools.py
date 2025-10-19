@@ -51,7 +51,7 @@ class TableInfo:
     pk_col: str
     seqn_col: str
 
-def get_table_info(model: type[DeclarativeBase]) -> TableInfo:
+def get_table_info(model: type[DeclarativeBase], raise_on_errors: bool = True) -> TableInfo:
     """
     Given a SQLAlchemy model class, returns a TableInfo dataclass containing:
     - table_name: the name of the database table
@@ -61,16 +61,20 @@ def get_table_info(model: type[DeclarativeBase]) -> TableInfo:
     table_name = model.__tablename__
     mapper = inspect(model)
     pk_columns = [col.name for col in mapper.primary_key]
-    if len(pk_columns) != 1:
-        raise ValueError(f"Expected exactly one primary key column, got {len(pk_columns)}")
+    if raise_on_errors:
+        if len(pk_columns) != 1:
+            raise ValueError(f"Expected exactly one primary key column, got {len(pk_columns)}")
     pk_col = pk_columns[0]
     # find _seqn col. It should be e.g. `gc_seqn` for `pk gc_id`
     prefix = pk_col.replace('_id', '')
     expected_seqn_col = f"{prefix}_seqn"
     seqn_cols = [col.name for col in mapper.columns if col.name.endswith('_seqn')]
-    seqn_col = seqn_cols[0]
-    if seqn_col != expected_seqn_col:
-        raise ValueError(f"{expected_seqn_col=}, {seqn_col=}")
+    if raise_on_errors:
+        seqn_col = seqn_cols[0]
+        if seqn_col != expected_seqn_col:
+            raise ValueError(f"{expected_seqn_col=}, {seqn_col=}")
+    else:
+        seqn_col = expected_seqn_col
 
     return TableInfo(table_name=table_name, pk_col=pk_col, seqn_col=seqn_col)
 
@@ -113,3 +117,15 @@ async def async_reseqn_by_group_id(
         await session.execute(query, {"group_id": group_id, "prioritize_pk": prioritize_pk or 0})
         if commit:
             await session.commit()
+
+###
+# Fix autoincrement sequence number
+###
+async def fix_autoincrement(session: AsyncSession, model: type[DeclarativeBase]):
+    ti = get_table_info(model, raise_on_errors=False)
+    table_name, pk_col = (ti.table_name, ti.pk_col)
+    await session.execute(
+        text(f"SELECT setval(pg_get_serial_sequence('{table_name}', '{pk_col}'), "
+            f"COALESCE((SELECT MAX({pk_col}) FROM {table_name}), 0));")
+    )
+    await session.commit()

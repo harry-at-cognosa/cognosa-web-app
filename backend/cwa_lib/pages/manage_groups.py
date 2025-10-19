@@ -1,7 +1,7 @@
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import ApiGroups
-from common.sql_tools import create_order_clause
+from common.sql_tools import create_order_clause, fix_autoincrement
 from sqlalchemy import select, update
 from cwa_lib.pydantic_schemas.generic_table import (
     ColumnType, TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
@@ -60,7 +60,7 @@ class ManageGroupsTable:
         """
         Create one row
         """
-        print(data)
+        await fix_autoincrement(self.session, ApiGroups)
         group_name__default = manage_groups__query_columns['group_name'].default
         new_row = ApiGroups(
             group_name=data.group_name if data.group_name else group_name__default,

@@ -12,7 +12,8 @@ from common import WORK_DIR
 from common.helpers import utcnow
 from common.enums.doc_task_status import TaskStatus
 from common.sql_db_async import Base, sql_async_engine, async_get_session
-from common.sql_models import ApiSettings, ApiGroups, GroupVDBs, GroupLLMs, GroupContexts, DocTasks
+from common.sql_models import ApiSettings, ApiGroups, GroupVDBs, GroupLLMs, GroupContexts, DocTasks, User
+from common.sql_tools import fix_autoincrement
 from cwa_lib.sql_tables.api_users import ApiUsersTable
 
 # log.init('init_sql_db', log_sqlalchemy='DEBUG')
@@ -83,6 +84,7 @@ class InitDatabase:
                 ]
                 session.add_all(api_groups_objects)
                 await session.commit()
+                await fix_autoincrement(session, ApiGroups)
                 print(f"Inserted {len(api_groups_objects)} api_groups rows")
 
                 # api_users
@@ -104,6 +106,7 @@ class InitDatabase:
                     except Exception as exc:
                         print(exc)
                         exit(-1)
+                await fix_autoincrement(session, User)
                 
                 group_vdbs_objects = [
                     GroupVDBs(

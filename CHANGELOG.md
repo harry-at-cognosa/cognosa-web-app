@@ -1,4 +1,4 @@
-## [0.9d] (2025-10-18)
+## [0.9e] (2025-10-19)
 
 1. fixed:
    retained previous history queries on another user login.
