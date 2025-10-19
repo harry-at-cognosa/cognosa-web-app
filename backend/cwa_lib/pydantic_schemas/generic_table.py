@@ -35,6 +35,8 @@ class TableQueryResult(BaseModel, Generic[RowType]):
     columns: dict[str, ColumnType]
     table_options: TableOptions
     total: int
+    order_by: str
+    order_dir: Literal['asc', 'desc']
 
 
 class TableCreateRowResult(BaseModel):

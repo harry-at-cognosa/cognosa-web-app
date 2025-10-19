@@ -50,12 +50,14 @@ export default function UniversalTable({ useStore }: Props) {
               style={{ textAlign: "center", verticalAlign: "middle" }}
             >
               {/* edit button cell */}
-              <td>
-                <UpdateRowButton
-                  row={row}
-                  useStore={useStore}
-                ></UpdateRowButton>
-              </td>
+              {data.table_options.update__ask_columns.length ? (
+                <td>
+                  <UpdateRowButton
+                    row={row}
+                    useStore={useStore}
+                  ></UpdateRowButton>
+                </td>
+              ) : null}
               {/* visible columns */}
               {tableStore.data?.table_options?.read__visible_columns.map(
                 (col) => (

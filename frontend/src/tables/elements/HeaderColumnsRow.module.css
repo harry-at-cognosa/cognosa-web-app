@@ -1,0 +1,30 @@
+.sortableHeader {
+  position: relative; /* enables absolute positioning of child */
+  padding-right: 24px; /* make room for the ▲ so it doesn't overlap text */
+}
+
+.sortIndicator {
+  position: absolute;
+  right: 0; /* adjust as needed for spacing from right border */
+  top: 50%;
+  transform: translateY(-50%); /* vertically center */
+  opacity: 0.3; /* optional: subtle by default */
+  transition: opacity 0.2s ease; /* smooth shadow transition */
+}
+
+.sortIndicatorInvisible {
+  opacity: 0;
+  position: absolute;
+  right: 0; /* adjust as needed for spacing from right border */
+  top: 50%;
+  transform: translateY(-50%); /* vertically center */
+  transition: opacity 0.2s ease; /* smooth shadow transition */
+}
+
+.sortableHeader:hover .sortIndicator {
+  opacity: 1;
+}
+
+.sortableHeader:hover .sortIndicatorInvisible {
+  opacity: 1; /* fully visible on hover */
+}

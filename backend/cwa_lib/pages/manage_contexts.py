@@ -35,7 +35,7 @@ manage_contexts__table_options = TableOptions(
     create__ask_columns=['gc_seqn', 'gc_name', 'gc_text'],
     update__ask_columns=['gc_seqn', 'gc_name', 'gc_text'],
     delete__ask_columns=['gc_name'],
-    order_by__allow=['gc_seqn', 'gc_name', 'gc_text']
+    order_by__allow=['gc_seqn', 'gc_name']
 )
 
 
@@ -93,7 +93,7 @@ class ManageContextsTable:
         where_clause = GroupContexts.group_id == group_id
         if deleted is not None:
             where_clause &= GroupContexts.deleted == deleted
-        order_clause = create_order_clause(GroupContexts, 'gc_seqn', payload.order_by, payload.order_dir)
+        order_clause, order_by, order_dir = create_order_clause(GroupContexts, 'gc_seqn', payload.order_by, payload.order_dir)
         result = await self.session.execute(
             select(GroupContexts)
             .where(where_clause)
@@ -107,6 +107,8 @@ class ManageContextsTable:
             rows=rows,
             columns=manage_contexts__query_columns,
             table_options=manage_contexts__table_options,
+            order_by=order_by,
+            order_dir=order_dir,
             total=len(rows)
         )
     

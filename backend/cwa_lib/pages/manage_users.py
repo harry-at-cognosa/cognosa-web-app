@@ -39,7 +39,7 @@ class ManageUsersTable:
             self,
             payload: TableQuery
             ) -> ManageUsersQueryResult:
-        order_clause = create_order_clause(User, manage_users__table_options.pk, payload.order_by, payload.order_dir)
+        order_clause, order_by, order_dir = create_order_clause(User, manage_users__table_options.pk, payload.order_by, payload.order_dir)
         result = await self.session.execute(
             select(User)
             .order_by(order_clause)
@@ -52,5 +52,7 @@ class ManageUsersTable:
             rows=rows,
             columns=manage_users__query_columns,
             table_options=manage_users__table_options,
+            order_by=order_by,
+            order_dir=order_dir,
             total=len(rows)
         )

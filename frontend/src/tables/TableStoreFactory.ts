@@ -35,6 +35,8 @@ export interface TableResponse {
   rows: TableRow[];
   columns: Record<string, TableColumnData>;
   table_options: TableOptions;
+  order_by: string;
+  order_dir: "asc" | "desc";
   total?: number;
 }
 
@@ -106,6 +108,11 @@ export function createTableStore({
         );
         set({
           data: res.data,
+          nextRequest: {
+            ...get().nextRequest,
+            order_by: res.data.order_by,
+            order_dir: res.data.order_dir,
+          },
         });
       } catch (err: any) {
         set({ error: err.response?.data?.message || err.message });

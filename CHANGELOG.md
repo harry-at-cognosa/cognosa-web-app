@@ -27,6 +27,9 @@
 
 6. Added web manifest and icons.
 
+7. `Manage Contexts` and `Manage Users` pages:
+   added `sort by column` ability.
+
 ## [0.8] (2025-10-12)
 
 1. Added `doc_tasks`.`sent_to_llm`.

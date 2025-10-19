@@ -29,11 +29,12 @@ def create_order_clause(
     pk: str,
     order_by: str | None,
     order_dir: Literal['asc', 'desc'] | None
-) -> ColumnElement:
+) -> tuple[ColumnElement, str, Literal['asc', 'desc']]:
     """
     Create safe order clause to use in .order_by(...)
     """
     # default order_dir is asc
-    order_func = desc if (order_dir == 'desc') else asc
-    column = getattr(model, order_by if order_by else pk)
-    return order_func(column)
+    order_by = order_by if order_by else pk
+    order_func, order_dir = (desc, 'desc') if (order_dir == 'desc') else (asc, 'asc')
+    column = getattr(model, order_by)
+    return order_func(column), order_by, order_dir
