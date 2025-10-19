@@ -3,7 +3,7 @@ documents_for_chromadb/
 frontend/node_modules/
 logs/
 qdrant/*
-backend/static/assets/
+backend/static/
 vite.svg
 backend/t.py
 
