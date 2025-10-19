@@ -10,7 +10,7 @@ from cwa_lib.sql_tables.log_crud import LogCRUDTable
 router__manage_contexts = APIRouter()
 
 
-@router__manage_contexts.post("/manage_contexts/query", tags=["Manage Contexts"], response_model=ManageContextsQueryResult)
+@router__manage_contexts.post("/manage_contexts/query", response_model=ManageContextsQueryResult)
 async def manage_contexts__query(
     payload: TableQuery,
     user: User = Depends(current_active_user),
@@ -23,7 +23,7 @@ async def manage_contexts__query(
     )
     return result
 
-@router__manage_contexts.post("/manage_contexts", tags=["Manage Contexts"], response_model=TableCreateRowResult)
+@router__manage_contexts.post("/manage_contexts", response_model=TableCreateRowResult)
 async def manage_contexts__create(
     request: Request,
     payload: ManageContextsCreate,
@@ -38,7 +38,7 @@ async def manage_contexts__create(
     return result
 
 
-@router__manage_contexts.put("/manage_contexts", tags=["Manage Contexts"], response_model=TableUpdateRowResult)
+@router__manage_contexts.put("/manage_contexts", response_model=TableUpdateRowResult)
 async def manage_contexts__update(
     request: Request,
     payload: ManageContextsUpdate,
@@ -52,7 +52,7 @@ async def manage_contexts__update(
     return result
 
 
-@router__manage_contexts.delete("/manage_contexts/{gc_id}", tags=["Manage Contexts"], response_model=TableDeleteRowResult)
+@router__manage_contexts.delete("/manage_contexts/{gc_id:int}", response_model=TableDeleteRowResult)
 async def manage_contexts__delete(
     request: Request,
     gc_id: int,

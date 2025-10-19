@@ -30,6 +30,10 @@
 7. `Manage Contexts` and `Manage Users` pages:
    added `sort by column` ability.
 
+8. Added `Groups` page:
+   CRUD operations for `api_groups` PostgreSQL table.
+   Only for superusers.
+
 ## [0.8] (2025-10-12)
 
 1. Added `doc_tasks`.`sent_to_llm`.

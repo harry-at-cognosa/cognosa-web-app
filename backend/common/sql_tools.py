@@ -29,7 +29,7 @@ T = TypeVar('T')
 
 def create_order_clause(
     model: Type[T],
-    pk: str,
+    default_order_by: str,
     order_by: str | None,
     order_dir: Literal['asc', 'desc'] | None
 ) -> tuple[ColumnElement, str, Literal['asc', 'desc']]:
@@ -37,7 +37,7 @@ def create_order_clause(
     Create safe order clause to use in .order_by(...)
     """
     # default order_dir is asc
-    order_by = order_by if order_by else pk
+    order_by = order_by if order_by else default_order_by
     order_func, order_dir = (desc, 'desc') if (order_dir == 'desc') else (asc, 'asc')
     column = getattr(model, order_by)
     return order_func(column), order_by, order_dir

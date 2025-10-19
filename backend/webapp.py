@@ -9,7 +9,7 @@ from cwa_lib.routers import api_router
 app.include_router(api_router)  # must be here, after all other API routes, and before page routes
 
 
-@app.get("/", tags=["Index page"])
+@app.get("/", tags=["Index page"], include_in_schema=False)
 async def index(request: Request):
     """
     Index page
