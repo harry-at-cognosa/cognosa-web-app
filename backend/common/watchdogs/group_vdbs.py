@@ -10,13 +10,13 @@ class GroupVDBSTable:
 
     @classmethod
     async def async_select_all_order_by_group_id_seqn(cls, session: AsyncSession) -> list[GroupVDBs]:
-        stmt = select(GroupVDBs).order_by(GroupVDBs.group_id, GroupVDBs.gvdbs_seqn)
+        stmt = select(GroupVDBs).where(GroupVDBs.deleted==0).order_by(GroupVDBs.group_id, GroupVDBs.gvdbs_seqn)
         result = await session.execute(stmt)
         return list(result.scalars().all())
     
     @classmethod
     def sync_select_all(cls, session: Session) -> list[GroupVDBs]:
-        stmt = select(GroupVDBs).order_by(GroupVDBs.gvdbs_id)
+        stmt = select(GroupVDBs).where(GroupVDBs.deleted==0).order_by(GroupVDBs.gvdbs_id)
         return list(session.execute(stmt).scalars().all())
     
     @classmethod

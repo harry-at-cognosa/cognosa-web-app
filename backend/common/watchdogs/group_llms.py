@@ -10,13 +10,13 @@ class GroupLLMsTable:
 
     @classmethod
     async def async_select_all_order_by_group_id_seqn(cls, session: AsyncSession) -> list[GroupLLMs]:
-        stmt = select(GroupLLMs).order_by(GroupLLMs.group_id, GroupLLMs.gllms_seqn)
+        stmt = select(GroupLLMs).where(GroupLLMs.deleted==0).order_by(GroupLLMs.group_id, GroupLLMs.gllms_seqn)
         result = await session.execute(stmt)
         return list(result.scalars().all())
     
     @classmethod
     def sync_select_all(cls, session: Session) -> list[GroupLLMs]:
-        stmt = select(GroupLLMs).order_by(GroupLLMs.gllms_id)
+        stmt = select(GroupLLMs).where(GroupLLMs.deleted==0).order_by(GroupLLMs.gllms_id)
         return list(session.execute(stmt).scalars().all())
     
     @classmethod
