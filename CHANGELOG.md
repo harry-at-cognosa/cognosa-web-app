@@ -34,6 +34,10 @@
    CRUD operations for `api_groups` PostgreSQL table.
    Only for superusers.
 
+9. Added `LLMs` page:
+   CRUD operations for `group_llms` PostgreSQL table.
+   Only for superusers.
+
 ## [0.8] (2025-10-12)
 
 1. Added `doc_tasks`.`sent_to_llm`.

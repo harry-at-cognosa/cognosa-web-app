@@ -10,10 +10,16 @@ export interface TableRequest {
   filters?: Record<string, any>;
 }
 
+interface SelectOption {
+  name: string;
+  value: string | number;
+}
+
 export interface TableColumnData {
   display: string;
   type: string;
   default: string | number | boolean | null;
+  select: SelectOption[] | null;
 }
 
 export interface TableOptions {
@@ -25,6 +31,7 @@ export interface TableOptions {
   update__ask_columns: string[];
   delete__ask_columns: string[];
   order_by__allow: string[];
+  add_values: Record<string, any>;
 }
 
 export type TableCellValue = string | number | boolean | null | undefined;

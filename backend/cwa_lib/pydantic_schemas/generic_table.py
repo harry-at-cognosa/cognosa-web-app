@@ -1,11 +1,17 @@
-from typing import Generic, TypeVar, Sequence, Literal
+from typing import Generic, TypeVar, Sequence, Literal, Any
 from pydantic import BaseModel
+
+
+class SelectOption(BaseModel):
+    name: str
+    value: int | str
 
 
 class ColumnType(BaseModel):
     display: str | None
     type: str
     default: str | int | bool | None = None
+    select: list[SelectOption] | None = None
 
 
 class TableOptions(BaseModel):
@@ -17,6 +23,8 @@ class TableOptions(BaseModel):
     update__ask_columns: list[str] = []  # on button Update, ask this column names values
     delete__ask_columns: list[str] = []  # on button Delete, ask this column names values
     order_by__allow: list[str] = []
+    # additional values e.g. {'group_id_name': {<group_id>: <group_name>, ...}, ...}
+    add_values: dict[str, Any] = dict()
 
 
 class TableQuery(BaseModel):

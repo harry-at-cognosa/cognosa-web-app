@@ -8,7 +8,8 @@ interface Props {
 
 export default function EditCellElement({ useStore, col }: Props) {
   const tableStore = useStore();
-  const columns = tableStore.data?.columns;
+  if (!tableStore.data) return null;
+  const columns = tableStore.data.columns;
   if (!(columns && tableStore.editRow)) return null;
   const value = tableStore.editRow[col];
   const cellType = columns[col].type;
@@ -25,24 +26,56 @@ export default function EditCellElement({ useStore, col }: Props) {
         onChange={(e) => onChange(e.target.checked)}
       ></Form.Check>
     );
-  if (cellType === "number")
-    return (
-      <Form.Control
-        type="number"
-        value={value as string | number}
-        key={key}
-        onChange={(e) => onChange(parseFloat(e.target.value) || null)}
-      />
-    );
-  if (cellType === "string")
-    return (
-      <Form.Control
-        type="text"
-        value={value as string}
-        key={key}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    );
+  if (cellType === "number") {
+    const select_values = columns[col].select;
+    if (select_values === null)
+      return (
+        <Form.Control
+          type="number"
+          value={value as string | number}
+          key={key}
+          onChange={(e) => onChange(parseFloat(e.target.value) || null)}
+        />
+      );
+    else
+      return (
+        <Form.Select
+          value={value?.toString() || ""}
+          onChange={(e) => onChange(Number(e.target.value))}
+        >
+          {select_values.map((row) => (
+            <option key={row.value.toString()} value={row.value.toString()}>
+              {row.name}
+            </option>
+          ))}
+        </Form.Select>
+      );
+  }
+  if (cellType === "string") {
+    const select_values = columns[col].select;
+    if (select_values === null)
+      return (
+        <Form.Control
+          type="text"
+          value={value as string}
+          key={key}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      );
+    else
+      return (
+        <Form.Select
+          value={value?.toString() || ""}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          {select_values.map((row) => (
+            <option key={row.value.toString()} value={row.value.toString()}>
+              {row.name}
+            </option>
+          ))}
+        </Form.Select>
+      );
+  }
   if (cellType === "text")
     return (
       <Form.Control
@@ -53,5 +86,22 @@ export default function EditCellElement({ useStore, col }: Props) {
         rows={5}
       ></Form.Control>
     );
+  if (cellType === "group_id_name") {
+    const select_group_id_name = columns["group_id"].select;
+    if (!select_group_id_name || !select_group_id_name.length)
+      return <h3 style={{ color: "red" }}>No groups found!</h3>;
+    return (
+      <Form.Select
+        value={value?.toString() || ""}
+        onChange={(e) => onChange(Number(e.target.value))}
+      >
+        {select_group_id_name.map((gin) => (
+          <option key={gin.value.toString()} value={gin.value.toString()}>
+            {gin.name}
+          </option>
+        ))}
+      </Form.Select>
+    );
+  }
   return value?.toString();
 }

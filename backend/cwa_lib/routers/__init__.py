@@ -9,6 +9,7 @@ from cwa_lib.routers.doc_tasks import router__doc_tasks
 from cwa_lib.routers.manage_contexts import router__manage_contexts
 from cwa_lib.routers.manage_users import router__manage_users
 from cwa_lib.routers.manage_groups import router__manage_groups
+from cwa_lib.routers.manage_llms import router__manage_llms
 from cwa_lib.routers.misc import router__misc
 from cwa_lib.routers.login_by_username import router__login_by_username
 
@@ -24,4 +25,5 @@ api_router.include_router(router__doc_tasks)
 api_router.include_router(router__manage_contexts, tags=["Manage Contexts"])
 api_router.include_router(router__manage_users, include_in_schema=False)
 api_router.include_router(router__manage_groups, tags=["Manage Groups"], include_in_schema=False)
+api_router.include_router(router__manage_llms, tags=["Manage LLMs"], include_in_schema=False)
 api_router.include_router(router__misc)
