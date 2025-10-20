@@ -1,7 +1,7 @@
 from copy import deepcopy
 from common import log
 from common.sql_db_async import AsyncSession
-from common.sql_models.group_llm import GroupLLMs, GLLMsTypes, GLLMS_TYPE_VALUES
+from common.sql_models.group_llms import GroupLLMs, GLLMsTypes, GLLMS_TYPE_VALUES
 from common.sql_tools import create_order_clause, async_reseqn_by_group_id, fix_autoincrement
 from sqlalchemy import select
 from cwa_lib.pydantic_schemas.generic_table import (

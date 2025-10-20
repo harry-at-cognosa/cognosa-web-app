@@ -70,6 +70,11 @@ const TopNavBar = () => {
               </LinkContainer>
             )}
             {user.is_superuser && (
+              <LinkContainer to="/manage_vdbs">
+                <Nav.Link className="fw-bold nav-hover-glow">VDBs</Nav.Link>
+              </LinkContainer>
+            )}
+            {user.is_superuser && (
               <LinkContainer to="/manage_groups">
                 <Nav.Link className="fw-bold nav-hover-glow">Groups</Nav.Link>
               </LinkContainer>

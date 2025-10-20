@@ -10,6 +10,7 @@ import ManageContextsPage from "./ManageContexts/ManageContextsPage";
 import ChangePasswordPage from "./ChangePassword/ChangePasswordPage";
 import ManageGroupsPage from "./ManageGroups/ManageGroupsPage";
 import ManageLLMsPage from "./ManageLLMs/ManageLLMsPage";
+import ManageVDBsPage from "./ManageVDBs/ManageVDBsPage";
 
 export const Router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ export const Router = createBrowserRouter([
       {
         path: "manage_llms",
         element: <ManageLLMsPage />,
+      },
+      {
+        path: "manage_vdbs",
+        element: <ManageVDBsPage />,
       },
       {
         path: "server_status",
