@@ -42,6 +42,8 @@
     CRUD operations for `group_vdbs` PostgreSQL table.
     Only for superusers.
 
+11. Added "Reload" button to all CRUD tables.
+
 ## [0.8] (2025-10-12)
 
 1. Added `doc_tasks`.`sent_to_llm`.

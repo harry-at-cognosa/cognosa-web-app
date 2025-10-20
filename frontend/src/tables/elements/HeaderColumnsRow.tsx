@@ -30,7 +30,12 @@ export default function HeaderColumnsRow({ useStore }: Props) {
   }
 
   return (
-    <tr style={{ textAlign: "center", verticalAlign: "middle" }}>
+    <tr
+      style={{
+        textAlign: "center",
+        verticalAlign: "middle",
+      }}
+    >
       {/* edit th */}
       {data.table_options.update__ask_columns.length ? <th></th> : null}
       {/* visible columns display names */}

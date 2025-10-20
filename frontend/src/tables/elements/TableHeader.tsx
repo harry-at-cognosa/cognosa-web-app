@@ -1,6 +1,7 @@
 import type { createTableStore } from "../TableStoreFactory";
 import CreateRowButton from "./CreateRowButton";
 import HeaderColumnsRow from "./HeaderColumnsRow";
+import TableReloadButton from "./TableReloadButton";
 import TableTitle from "./TableTitle";
 
 interface Props {
@@ -15,6 +16,7 @@ export default function TableHeader({ useStore }: Props) {
           <div className="d-flex">
             <CreateRowButton useStore={useStore}></CreateRowButton>
             <TableTitle useStore={useStore}></TableTitle>
+            <TableReloadButton useStore={useStore}></TableReloadButton>
           </div>
         </th>
       </tr>
