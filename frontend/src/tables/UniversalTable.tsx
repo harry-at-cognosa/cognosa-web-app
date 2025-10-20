@@ -49,13 +49,11 @@ export default function UniversalTable({ useStore }: Props) {
               {/* visible columns */}
               {tableStore.data?.table_options?.read__visible_columns.map(
                 (col) => (
-                  <td key={col}>
-                    <ViewCellElement
-                      data={data}
-                      row={row}
-                      col={col}
-                    ></ViewCellElement>
-                  </td>
+                  <ViewCellElement
+                    data={data}
+                    row={row}
+                    col={col}
+                  ></ViewCellElement>
                 )
               )}
               {/* delete button cell */}
