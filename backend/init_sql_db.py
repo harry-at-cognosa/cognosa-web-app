@@ -10,6 +10,7 @@ import os
 from sqlalchemy import text
 from common import WORK_DIR
 from common.helpers import utcnow
+from common.enums.api_settings_names import API_SETTINGS_NAMES_LIST
 from common.enums.doc_task_status import TaskStatus
 from common.sql_db_async import Base, sql_async_engine, async_get_session
 from common.sql_models import ApiSettings, ApiGroups, GroupVDBs, GroupLLMs, GroupContexts, DocTasks, User
@@ -50,7 +51,6 @@ class InitDatabase:
         await self.drop_and_recreate()
         # 3. Insert initial data
         await self.insert_values()
-        print("Database initialized successfully!")
         # Close the engine
         await sql_async_engine.dispose()
 
@@ -71,11 +71,24 @@ class InitDatabase:
         # 3. Insert initial data
         async for session in async_get_session():
             try:
+                api_settings_names_left = API_SETTINGS_NAMES_LIST[:]
+                errors = False
+                for item in api_settings_initial_data:
+                    if (name := item['name']) in api_settings_names_left:
+                        api_settings_names_left.remove(name)
+                    else:
+                        print(f"Wrong {name=} in .init_sql_data/api_settings.json")
+                        errors = True
+                for name in api_settings_names_left:
+                        print(f"Not found {name=} in .init_sql_data/api_settings.json")
+                        errors = True
+                if errors:
+                    exit(-1)
+
                 api_settings_objects = [
                     ApiSettings(name=item['name'], value=item['value']) 
                     for item in api_settings_initial_data
-                ]
-                
+                ]                
                 session.add_all(api_settings_objects)
                 await session.commit()
                 print(f"Inserted {len(api_settings_objects)} api_settings rows")
@@ -192,15 +205,15 @@ class InitDatabase:
                 session.add_all(doc_tasks_objects)
                 await session.commit()
                 print(f"Inserted {len(doc_tasks_objects)} doc_tasks rows")
-
-
             except Exception as e:
+                print(f"Error inserting data!")
                 raise
-                await session.rollback()
-                print(f"Error inserting data: {e}")
+            except SystemExit:
+                print(f"Error inserting data!")
+            else:
+                print("Database initialized successfully!")
             finally:
                 await session.close()
-                # return
 
 
 if __name__ == "__main__":
