@@ -12,6 +12,7 @@ from cwa_lib.routers.manage_groups import router__manage_groups
 from cwa_lib.routers.manage_llms import router__manage_llms
 from cwa_lib.routers.manage_vdbs import router__manage_vdbs
 from cwa_lib.routers.misc import router__misc
+from cwa_lib.routers.webapp_options import router__webapp_options
 from cwa_lib.routers.login_by_username import router__login_by_username
 
 api_router = APIRouter(prefix=API_URL_PREFIX)
@@ -29,3 +30,4 @@ api_router.include_router(router__manage_groups, tags=["Manage Groups"], include
 api_router.include_router(router__manage_llms, tags=["Manage LLMs"], include_in_schema=False)
 api_router.include_router(router__manage_vdbs, tags=["Manage VDBs"], include_in_schema=False)
 api_router.include_router(router__misc)
+api_router.include_router(router__webapp_options)

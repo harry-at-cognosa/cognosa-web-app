@@ -5,10 +5,12 @@ import QueriesListBarItem from "./QueriesListBarItem";
 import axiosClient from "../../../api/axiosClient";
 import type { DocTasksShortQuery } from "../models/docTasksShortQuery";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
+import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 
 function QueriesListBar() {
   const queriesStore = useDocTasksShortStore();
   const currentStore = useDocTasksCurrentStore();
+  const { color } = useWebAppOptionsStore();
 
   useEffect(() => {
     if (!queriesStore.needReload) return;
@@ -37,14 +39,19 @@ function QueriesListBar() {
         type="button"
         variant="light"
         className="w-100 fw-bold mt-2"
-        style={{ backgroundColor: "var(--bs-gray-300)" }}
+        style={{ backgroundColor: color.c300 }}
         onClick={() => currentStore.setNewQuery()}
       >
         New Query
       </Button>
       {todayRows.length ? (
         <>
-          <h5 className="p-2 mb-0 bg-gray-100 bg-opacity-10">Today:</h5>
+          <h5
+            className="p-2 mb-0 bg-opacity-10"
+            style={{ backgroundColor: color.c100 }}
+          >
+            Today:
+          </h5>
           <ListGroup as="ul" className="m-0">
             {todayRows.map((item) => (
               <QueriesListBarItem
@@ -58,7 +65,12 @@ function QueriesListBar() {
       ) : null}
       {weekRows.length ? (
         <>
-          <h5 className="p-2 mb-0 bg-gray-100 bg-opacity-10">This week:</h5>
+          <h5
+            className="p-2 mb-0 bg-opacity-10"
+            style={{ backgroundColor: color.c100 }}
+          >
+            This week:
+          </h5>
           <ListGroup as="ul" className="m-0">
             {weekRows.map((item) => (
               <QueriesListBarItem
@@ -72,7 +84,12 @@ function QueriesListBar() {
       ) : null}
       {beforeRows.length ? (
         <>
-          <h5 className="p-2 mb-0 bg-gray-100 bg-opacity-10">Before:</h5>
+          <h5
+            className="p-2 mb-0 bg-opacity-10"
+            style={{ backgroundColor: color.c100 }}
+          >
+            Before:
+          </h5>
           <ListGroup as="ul" className="m-0">
             {beforeRows.map((item) => (
               <QueriesListBarItem

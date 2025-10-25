@@ -11,8 +11,10 @@ import {
   useDocTaskOptionsStore,
   type DocTaskOptionsResponse,
 } from "../stores/useDocTaskOptionsStore";
+import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 
 function QueryArea() {
+  const { color } = useWebAppOptionsStore();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [pollingInterval, setPollingInterval] = useState<number | null>(null);
   const current = useDocTasksCurrentStore();
@@ -204,7 +206,8 @@ function QueryArea() {
       >
         <InputGroup.Text
           id="input-group__rag_documents__query_area__select_gvdbs_id"
-          className="bg-gray-300 fw-bold"
+          className="fw-bold"
+          style={{ backgroundColor: color.c300 }}
         >
           Document Collection:
         </InputGroup.Text>
@@ -241,7 +244,8 @@ function QueryArea() {
       <InputGroup className="mb-2">
         <InputGroup.Text
           id="input-group__rag_documents__query_area__select_gc_id"
-          className="bg-gray-300 fw-bold"
+          className="fw-bold"
+          style={{ backgroundColor: color.c300 }}
         >
           Context:
         </InputGroup.Text>
@@ -268,7 +272,8 @@ function QueryArea() {
       >
         <InputGroup.Text
           id="input-group__rag_documents__query_area__select_gllms_id"
-          className="bg-gray-300 fw-bold"
+          className="fw-bold"
+          style={{ backgroundColor: color.c300 }}
         >
           LLM:
         </InputGroup.Text>

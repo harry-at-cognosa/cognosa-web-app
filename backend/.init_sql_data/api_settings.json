@@ -1,4 +1,5 @@
 [
   { "name": "app_version", "value": "0.9" },
-  { "name": "db_version", "value": "0.9" }
+  { "name": "db_version", "value": "0.9" },
+  { "name": "webapp_main_color", "value": "gray" }
 ]

@@ -1,8 +1,17 @@
-## [0.10a] (2025-10-24)
+## [0.10b] (2025-10-25)
 
 1. added:
    Ability to use Anthropic API - Claude LLM models.
    `requirements.txt` changed.
+
+2. added `api_settings` -> `webapp_main_color` option.
+   This relates to background colors of top navigation bar
+   and some elements on RAG Documents page.
+   Default: gray.
+   Can be one of:
+   slate, gray, zinc, neutral, stone, red, orange,
+   amber, yellow, lime, green, emerald, teal, cyan,
+   sky, blue, indigo, violet, purple, fuchsia, pink, rose.
 
 ## [0.9e] (2025-10-19)
 

@@ -3,17 +3,21 @@ import { Container, Dropdown, Nav, Navbar } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { useNavbarStore } from "./useTopNavBarStore";
 import { useLoggedUserStore } from "../../stores/useLoggedUserStore";
+import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
+import getColor from "../../api/getColor";
 
 const TopNavBar = () => {
   const user = useLoggedUserStore();
   const title = useNavbarStore((state) => state.title);
+  const { color } = useWebAppOptionsStore();
+
   return (
     <Navbar
       sticky="top"
       expand="lg"
       variant="light"
-      className="justify-content-between p-0"
-      style={{ backgroundColor: "var(--bs-gray-300)" }}
+      className={`justify-content-between p-0`}
+      style={{ backgroundColor: color.c300 }}
     >
       <title>{title}</title>
       <style>
@@ -22,7 +26,7 @@ const TopNavBar = () => {
             transition: background-color 0.3s ease;
           }
           .nav-hover-glow:hover {
-            background-color: var(--bs-gray-400)!important;            
+            background-color: ${color.c400}!important;            
           }
         `}
       </style>

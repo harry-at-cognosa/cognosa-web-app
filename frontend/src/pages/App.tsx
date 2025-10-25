@@ -4,10 +4,17 @@ import TopNavBar from "../components/TopNavBar/TopNavBar";
 import { useLoggedUserStore } from "../stores/useLoggedUserStore";
 import NavigationInjector from "../api/NavigationInjector";
 import { API_URL } from "../api/apiURL";
+import { useWebAppOptionsStore } from "../stores/useWebAppOptionsStore";
 
 export default function App() {
   const { setLoggedUser } = useLoggedUserStore();
   const navigate = useNavigate();
+  const webappOptionsStore = useWebAppOptionsStore();
+
+  useEffect(() => {
+    if (!webappOptionsStore.needReload) return;
+    webappOptionsStore.fetchData();
+  }, [webappOptionsStore.needReload]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");

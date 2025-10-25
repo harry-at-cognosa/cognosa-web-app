@@ -8,10 +8,11 @@ class ApiSettingsTable:
         self.session = session
 
     async def select_by_names(self, name_list: list[str]) -> dict[str, str]:
+        empty_values = {k: '' for k in name_list}
         if not name_list:
-            return {}
+            return empty_values
         
         query = select(ApiSettings).where(ApiSettings.name.in_(name_list))
         result = await self.session.execute(query)
         rows = result.scalars().all()
-        return {row.name: row.value for row in rows}
+        return {**empty_values, **{row.name: row.value for row in rows}}
