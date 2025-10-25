@@ -18,8 +18,26 @@
     "gllms_api_key": "ollama"
   },
   {
-    "group_id": 3,
+    "group_id": 1,
     "gllms_seqn": 3,
+    "gllms_type": "claude",
+    "gllms_name": "Claude Sonnet 4.5",
+    "gllms_api_base": "https://api.anthropic.com/v1",
+    "gllms_model": "claude-sonnet-4-5",
+    "gllms_api_key": "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"
+  },
+  {
+    "group_id": 3,
+    "gllms_seqn": 1,
+    "gllms_type": "claude",
+    "gllms_name": "Claude Sonnet 4.5",
+    "gllms_api_base": "https://api.anthropic.com/v1",
+    "gllms_model": "claude-sonnet-4-5",
+    "gllms_api_key": "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"
+  },
+  {
+    "group_id": 3,
+    "gllms_seqn": 2,
     "gllms_type": "ollama_local",
     "gllms_name": "Ollama Gemma3",
     "gllms_api_base": "http://localhost:11434/v1",

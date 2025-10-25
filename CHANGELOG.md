@@ -1,3 +1,9 @@
+## [0.10a] (2025-10-24)
+
+1. added:
+   Ability to use Anthropic API - Claude LLM models.
+   `requirements.txt` changed.
+
 ## [0.9e] (2025-10-19)
 
 1. fixed:

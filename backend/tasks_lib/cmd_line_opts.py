@@ -12,6 +12,9 @@ def parse_args():
     # -dl / --dummy_llm : boolean flag
     parser.add_argument("-dl", "--dummy_llm", action="store_true", help="Dummy LLM flag (default: False)")
 
+    # -pl / --proxy_llm: boolean flag. Use socks5 proxy for LLM, for dev only.
+    parser.add_argument("-lp", "--llm_proxy", action="store_true", help="LLM Proxy flag (default: False)")
+
     return parser.parse_args()
 
 args = parse_args()
@@ -22,3 +25,5 @@ IS_SECONDARY_INSTANCE = bool(SECONDARY_INSTANCE_NUMBER)
 AP_NAME = f"run_tasks_secondary_{SECONDARY_INSTANCE_NUMBER}" if IS_SECONDARY_INSTANCE else "run_tasks_primary"
 IS_DUMMY_VDB = args.dummy_vdb
 IS_DUMMY_LLM = args.dummy_llm
+
+LLM_PROXY = "socks5://192.168.1.10:2001" if args.llm_proxy else None

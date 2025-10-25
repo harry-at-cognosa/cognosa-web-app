@@ -62,6 +62,8 @@ class InitDatabase:
             table_names += ['tasks']  # TODO: remove in the next init_sql_db versions
             for table_name in table_names:
                 await conn.execute(text(f'DROP TABLE IF EXISTS "{table_name}" CASCADE;'))
+            await conn.execute(text("DROP TYPE IF EXISTS gllms_type_enum CASCADE;"))
+            await conn.execute(text("DROP TYPE IF EXISTS gvdbs_type_enum CASCADE;"))
             # 2. Create the table
             await conn.run_sync(Base.metadata.create_all)
     

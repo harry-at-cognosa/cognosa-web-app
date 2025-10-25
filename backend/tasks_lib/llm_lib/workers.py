@@ -120,14 +120,14 @@ class LLMWorker(Thread):
                     answer = ''
                     for chunk in llm_ops.stream_to_llm():
                         answer += chunk
-                        self.write_sent_to_llm(session, task, llm_ops.sent_to_llm)
+                        self.write_sent_to_llm(session, task, llm_ops.llm_obj.sent_to_llm)
                         self.write_llm_writing(session, task, answer)                                        
                 except Exception:
                     exc_msg = f"LLMOps exception for {task.doc_task_id=}, {task.group_id=}, {task.gc_id=}:\n{format_exc()}"
                     self.write_status_error(session, task, error_msg="Undefined LLM error", exc_msg=exc_msg)
                     raise
                 else:
-                    self.write_llm_finished(session, task, llm_ops.answer, llm_query_seconds=round(time()-start_time, 3))
+                    self.write_llm_finished(session, task, llm_ops.llm_obj.answer, llm_query_seconds=round(time()-start_time, 3))
         
         except Exception:
             log.error(format_exc())

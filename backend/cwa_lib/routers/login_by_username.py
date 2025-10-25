@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from common.sql_db_async import AsyncSession, async_get_session
 from fastapi import Form, Response
 
-from common import http_client
+from common import http_client__login_by_username
 from cwa_lib.sql_tables.api_users import ApiUsersTable
 
 
@@ -21,7 +21,7 @@ async def custom_auth_route(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
-    response = await http_client.post(
+    response = await http_client__login_by_username.post(
         "/api/v1/auth/jwt/login",
         data={"username": user.email, "password": password}
     )
