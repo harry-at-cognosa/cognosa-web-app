@@ -4,7 +4,6 @@ import { LinkContainer } from "react-router-bootstrap";
 import { useNavbarStore } from "./useTopNavBarStore";
 import { useLoggedUserStore } from "../../stores/useLoggedUserStore";
 import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
-import getColor from "../../api/getColor";
 
 const TopNavBar = () => {
   const user = useLoggedUserStore();
