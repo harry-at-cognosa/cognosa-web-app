@@ -3,14 +3,14 @@ import App from "./App";
 import LoginPage from "./Login/LoginPage";
 import LogoutPage from "./Logout/LogoutPage";
 import IndexPage from "./Index/IndexPage";
-import RAGDocumentsPage from "./RAGDocuments/RAGDocumentsPage";
-import ServerStatusPage from "./ServerStatus/ServerStatusPage";
-import ManageUsersPage from "./ManageUsers/ManageUsersPage";
+import QueryDocumentsPage from "./QueryDocuments/QueryDocumentsPage";
+import SuServerStatusPage from "./SuServerStatus/SuServerStatusPage";
+import SuManageUsersPage from "./SuManageUsers/SuManageUsersPage";
 import ManageContextsPage from "./ManageContexts/ManageContextsPage";
 import ChangePasswordPage from "./ChangePassword/ChangePasswordPage";
-import ManageGroupsPage from "./ManageGroups/ManageGroupsPage";
-import ManageLLMsPage from "./ManageLLMs/ManageLLMsPage";
-import ManageVDBsPage from "./ManageVDBs/ManageVDBsPage";
+import SuManageGroupsPage from "./SuManageGroups/SuManageGroupsPage";
+import SuManageLLMsPage from "./SuManageLLMs/SuManageLLMsPage";
+import SuManageVDBsPage from "./SuManageVDBs/SuManageVDBsPage";
 
 export const Router = createBrowserRouter([
   {
@@ -30,32 +30,32 @@ export const Router = createBrowserRouter([
         element: <ChangePasswordPage />,
       },
       {
-        path: "rag_documents",
-        element: <RAGDocumentsPage />,
+        path: "query_documents/queries",
+        element: <QueryDocumentsPage />,
       },
       {
         path: "manage_contexts",
         element: <ManageContextsPage />,
       },
       {
-        path: "manage_groups",
-        element: <ManageGroupsPage />,
+        path: "su/manage_groups",
+        element: <SuManageGroupsPage />,
       },
       {
-        path: "manage_llms",
-        element: <ManageLLMsPage />,
+        path: "su/manage_llms",
+        element: <SuManageLLMsPage />,
       },
       {
-        path: "manage_vdbs",
-        element: <ManageVDBsPage />,
+        path: "su/manage_vdbs",
+        element: <SuManageVDBsPage />,
       },
       {
-        path: "server_status",
-        element: <ServerStatusPage />,
+        path: "su/server_status",
+        element: <SuServerStatusPage />,
       },
       {
-        path: "manage_users",
-        element: <ManageUsersPage />,
+        path: "su/manage_users",
+        element: <SuManageUsersPage />,
       },
     ],
   },

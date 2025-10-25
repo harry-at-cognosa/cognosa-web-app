@@ -54,47 +54,54 @@ const TopNavBar = () => {
                   <LinkContainer to="/manage_contexts">
                     <Dropdown.Item>Manage Contexts</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/rag_documents">
-                    <Dropdown.Item>RAG Documents</Dropdown.Item>
+                  <LinkContainer to="/query_documents/queries">
+                    <Dropdown.Item>Queries</Dropdown.Item>
                   </LinkContainer>
                 </Dropdown.Menu>
               </Dropdown>
             )}
             {user.is_superuser && (
-              <LinkContainer to="/server_status">
-                <Nav.Link className="fw-bold nav-hover-glow">
-                  Server Status
-                </Nav.Link>
-              </LinkContainer>
+              <Dropdown className="nav-hover-glow">
+                <Dropdown.Toggle variant="" id="nav-dropdown-superuser">
+                  <Navbar.Text className="me-2 fw-bold">SuperUser</Navbar.Text>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <LinkContainer to="/su/manage_groups">
+                    <Dropdown.Item>Groups</Dropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/su/manage_users">
+                    <Dropdown.Item>Users</Dropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/su/manage_llms">
+                    <Dropdown.Item>LLMs</Dropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/su/manage_vdbs">
+                    <Dropdown.Item>VDBs</Dropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/su/server_status">
+                    <Dropdown.Item>Server Status</Dropdown.Item>
+                  </LinkContainer>
+                </Dropdown.Menu>
+              </Dropdown>
             )}
-            {user.is_superuser && (
-              <LinkContainer to="/manage_llms">
-                <Nav.Link className="fw-bold nav-hover-glow">LLMs</Nav.Link>
-              </LinkContainer>
-            )}
-            {user.is_superuser && (
-              <LinkContainer to="/manage_vdbs">
-                <Nav.Link className="fw-bold nav-hover-glow">VDBs</Nav.Link>
-              </LinkContainer>
-            )}
-            {user.is_superuser && (
-              <LinkContainer to="/manage_groups">
-                <Nav.Link className="fw-bold nav-hover-glow">Groups</Nav.Link>
-              </LinkContainer>
-            )}
-            {user.is_superuser && (
+
+            {user.is_groupadmin && (
               <LinkContainer to="/manage_users">
                 <Nav.Link className="fw-bold nav-hover-glow">Users</Nav.Link>
               </LinkContainer>
             )}
             {/* Right side - User menu */}
             {user.isLogged && (
-              <Dropdown className="nav-hover-glow">
-                <Dropdown.Toggle variant="" id="nav-dropdown-logout">
-                  <Navbar.Text className="me-2 fw-bold">
+              <Dropdown className="nav-hover-glow ms-3">
+                <Dropdown.Toggle
+                  variant=""
+                  id="nav-dropdown-logout"
+                  className="d-flex align-items-center py-0"
+                >
+                  <Navbar.Text className="fw-bold me-2">
                     {user.full_name || user.user_name || user.email}
                   </Navbar.Text>
-                  <PersonCircle size={"28"} />
+                  <PersonCircle size={24} />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <LinkContainer to="/change_password">

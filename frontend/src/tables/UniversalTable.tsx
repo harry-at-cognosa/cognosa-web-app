@@ -39,7 +39,10 @@ export default function UniversalTable({ useStore }: Props) {
             >
               {/* edit button cell */}
               {data.table_options.update__ask_columns.length ? (
-                <td style={{ width: "1px" }}>
+                <td
+                  key={row[data.table_options.pk]?.toString() + "__edit"}
+                  style={{ width: "1px" }}
+                >
                   <UpdateRowButton
                     row={row}
                     useStore={useStore}
@@ -53,12 +56,18 @@ export default function UniversalTable({ useStore }: Props) {
                     data={data}
                     row={row}
                     col={col}
+                    key={
+                      row[data.table_options.pk]?.toString() + "__vce__" + col
+                    }
                   ></ViewCellElement>
                 )
               )}
               {/* delete button cell */}
               {data.table_options.delete__ask_columns.length ? (
-                <td style={{ width: "1px" }}>
+                <td
+                  key={row[data.table_options.pk]?.toString() + "__delete"}
+                  style={{ width: "1px" }}
+                >
                   <Button
                     type="button"
                     variant="secondary"

@@ -5,7 +5,7 @@ from common.sql_db_async import async_get_session
 from common.sql_models import User
 from cwa_lib.pydantic_schemas.user import ChangePasswordRequest
 from cwa_lib.app import current_active_user, password_helper
-from cwa_lib.pages.server_status import ServerStatusPage
+from cwa_lib.pages.su_server_status import SuServerStatusPage
 
 
 router__misc = APIRouter()
@@ -37,6 +37,4 @@ async def server_status(
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(async_get_session),
 ):
-    if user.is_superuser:
-        return await ServerStatusPage().get_all_data(session)    
     return {}

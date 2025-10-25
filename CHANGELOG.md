@@ -13,6 +13,11 @@
    amber, yellow, lime, green, emerald, teal, cyan,
    sky, blue, indigo, violet, purple, fuchsia, pink, rose.
 
+3. Renamed RAG Documents to Query Documents.
+
+4. All Superuser routes now have prefix `/su/`.
+   All Superuser pages are under `SuperUser` dropdown.
+
 ## [0.9e] (2025-10-19)
 
 1. fixed:

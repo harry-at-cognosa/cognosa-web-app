@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from common.sql_db_async import AsyncSession, async_get_session
 from common.sql_models import User
 from cwa_lib.app import current_active_user
-from cwa_lib.pages.rag_documents import RAGDocumentsOptions
+from cwa_lib.pages.query_documents import QueryDocumentsOptions
 from cwa_lib.pydantic_schemas.doc_tasks import (
     DocTaskCreate, DocTaskQueryResult, DocTaskQueryShort, DocTaskDeleteResult, DocTaskOptionsResult
 )
@@ -11,8 +11,8 @@ from cwa_lib.sql_tables.doc_tasks import DocTasksTable
 
 router__doc_tasks = APIRouter()
 
-# Create a new RAG document task
-@router__doc_tasks.post("/doc_tasks", tags=["Document RAG tasks"], response_model=DocTaskQueryResult, status_code=201)
+# Create a new Query Documents task
+@router__doc_tasks.post("/doc_tasks", tags=["Query Documents tasks"], response_model=DocTaskQueryResult, status_code=201)
 async def create_task(
     payload: DocTaskCreate, 
     user: User = Depends(current_active_user), 
@@ -33,8 +33,8 @@ async def create_task(
     return task
 
 
-# Fetch RAG document task
-@router__doc_tasks.get("/doc_tasks/{doc_task_id:int}", tags=["Document RAG tasks"], response_model=DocTaskQueryResult)
+# Fetch Query Documents task
+@router__doc_tasks.get("/doc_tasks/{doc_task_id:int}", tags=["Query Documents tasks"], response_model=DocTaskQueryResult)
 async def get_task(
     doc_task_id: int, 
     user: User = Depends(current_active_user), 
@@ -49,8 +49,8 @@ async def get_task(
         raise HTTPException(status_code=404, detail="DocTask not found")
     return task
 
-# Delete RAG document task
-@router__doc_tasks.delete("/doc_tasks/{doc_task_id}", tags=["Document RAG tasks"], response_model=DocTaskDeleteResult)
+# Delete Query Documents task
+@router__doc_tasks.delete("/doc_tasks/{doc_task_id}", tags=["Query Documents tasks"], response_model=DocTaskDeleteResult)
 async def delete_task(
     doc_task_id: int, 
     user: User = Depends(current_active_user), 
@@ -62,8 +62,8 @@ async def delete_task(
     result = await DocTasksTable(session).delete_one_by_doc_task_id_group_id(doc_task_id=doc_task_id, group_id=use_group_id)
     return DocTaskDeleteResult(doc_task_id=doc_task_id, success=result, error_msg="" if result else "DocTask not found")
 
-# Fetch previous RAG document tasks (for left tab)
-@router__doc_tasks.post("/doc_tasks/query_short", tags=["Document RAG tasks"], response_model=DocTaskQueryShort)
+# Fetch previous Query Documents tasks (for left tab)
+@router__doc_tasks.post("/doc_tasks/query_short", tags=["Query Documents tasks"], response_model=DocTaskQueryShort)
 async def doc_tasks__query_short(
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(async_get_session),
@@ -72,10 +72,10 @@ async def doc_tasks__query_short(
     return result
 
 
-# Fetch RAG document options: LLM, VDB, Contexts
-@router__doc_tasks.get("/doc_tasks/options", tags=["Document RAG tasks"], response_model=DocTaskOptionsResult)
+# Fetch Query Documents options: LLM, VDB, Contexts
+@router__doc_tasks.get("/doc_tasks/options", tags=["Query Documents tasks"], response_model=DocTaskOptionsResult)
 async def get_task_options(
     user: User = Depends(current_active_user), 
     session: AsyncSession = Depends(async_get_session),
     ):
-    return await RAGDocumentsOptions(session, user).get_options()
+    return await QueryDocumentsOptions(session, user).get_options()
