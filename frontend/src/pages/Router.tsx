@@ -11,6 +11,7 @@ import ChangePasswordPage from "./ChangePassword/ChangePasswordPage";
 import SuManageGroupsPage from "./SuManageGroups/SuManageGroupsPage";
 import SuManageLLMsPage from "./SuManageLLMs/SuManageLLMsPage";
 import SuManageVDBsPage from "./SuManageVDBs/SuManageVDBsPage";
+import SuperuserRoute from "../components/SuperUserRoute";
 
 export const Router = createBrowserRouter([
   {
@@ -38,24 +39,30 @@ export const Router = createBrowserRouter([
         element: <ManageContextsPage />,
       },
       {
-        path: "su/manage_groups",
-        element: <SuManageGroupsPage />,
-      },
-      {
-        path: "su/manage_llms",
-        element: <SuManageLLMsPage />,
-      },
-      {
-        path: "su/manage_vdbs",
-        element: <SuManageVDBsPage />,
-      },
-      {
-        path: "su/server_status",
-        element: <SuServerStatusPage />,
-      },
-      {
-        path: "su/manage_users",
-        element: <SuManageUsersPage />,
+        path: "su",
+        element: <SuperuserRoute />,
+        children: [
+          {
+            path: "manage_groups",
+            element: <SuManageGroupsPage />,
+          },
+          {
+            path: "manage_llms",
+            element: <SuManageLLMsPage />,
+          },
+          {
+            path: "manage_vdbs",
+            element: <SuManageVDBsPage />,
+          },
+          {
+            path: "server_status",
+            element: <SuServerStatusPage />,
+          },
+          {
+            path: "manage_users",
+            element: <SuManageUsersPage />,
+          },
+        ],
       },
     ],
   },

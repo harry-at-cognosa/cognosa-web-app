@@ -15,7 +15,8 @@
 
 3. Renamed RAG Documents to Query Documents.
 
-4. All Superuser routes now have prefix `/su/`.
+4. All Superuser routes now have prefix `/su/`
+   and now are "protected" - redirect to login if user is not superuser.
    All Superuser pages are under `SuperUser` dropdown.
 
 ## [0.9e] (2025-10-19)
