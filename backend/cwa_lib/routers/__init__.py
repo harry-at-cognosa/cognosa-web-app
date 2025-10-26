@@ -7,6 +7,7 @@ from cwa_lib.users import fastapi_users, auth_backend
 from cwa_lib.routers.users import router__users
 from cwa_lib.routers.doc_tasks import router__doc_tasks
 from cwa_lib.routers.manage_contexts import router__manage_contexts
+from cwa_lib.routers.ga_manage_users import router__ga_manage_users
 from cwa_lib.routers.su_manage_api_settings import router__su_manage_api_settings
 from cwa_lib.routers.su_manage_users import router__su_manage_users
 from cwa_lib.routers.su_manage_groups import router__su_manage_groups
@@ -29,6 +30,8 @@ api_router.include_router(router__doc_tasks)
 api_router.include_router(router__manage_contexts, tags=["Manage Contexts"])
 api_router.include_router(router__misc)
 api_router.include_router(router__webapp_options)
+
+api_router.include_router(router__ga_manage_users, tags=["Manage Users (For group admins only)"])
 
 api_router.include_router(router__su_manage_groups, tags=["Manage Groups"], include_in_schema=False)
 api_router.include_router(router__su_manage_vdbs, tags=["Manage VDBs"], include_in_schema=False)

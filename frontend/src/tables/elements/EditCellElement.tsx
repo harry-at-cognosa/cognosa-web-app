@@ -25,6 +25,7 @@ export default function EditCellElement({ useStore, col }: Props) {
       <Form.Check
         checked={!!value}
         key={key}
+        className="ms-2"
         onChange={(e) => onChange(e.target.checked)}
       ></Form.Check>
     );
@@ -59,7 +60,7 @@ export default function EditCellElement({ useStore, col }: Props) {
       return (
         <Form.Control
           type="text"
-          value={value as string}
+          value={(value === null ? "" : value) as string}
           key={key}
           onChange={(e) => onChange(e.target.value)}
         />
@@ -139,5 +140,17 @@ export default function EditCellElement({ useStore, col }: Props) {
       ></Form.Control>
     );
   }
+
+  if (cellType === "groupadmin_user_password") {
+    return (
+      <Form.Control
+        type="password"
+        value={(value === null ? "" : value) as string}
+        key={key}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    );
+  }
+
   return value?.toString();
 }

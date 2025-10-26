@@ -13,6 +13,8 @@ import SuManageLLMsPage from "./SuManageLLMs/SuManageLLMsPage";
 import SuManageVDBsPage from "./SuManageVDBs/SuManageVDBsPage";
 import SuperuserRoute from "../components/SuperUserRoute";
 import SuManageApiSettingsPage from "./SuManageApiSettings copy/SuManageApiSettingsPage";
+import GaManageUsersPage from "./GaManageUsers/GaManageUsersPage";
+import GroupAdminRoute from "../components/GroupAdminRoute";
 
 export const Router = createBrowserRouter([
   {
@@ -38,6 +40,16 @@ export const Router = createBrowserRouter([
       {
         path: "manage_contexts",
         element: <ManageContextsPage />,
+      },
+      {
+        path: "groupadmin",
+        element: <GroupAdminRoute />,
+        children: [
+          {
+            path: "manage_users",
+            element: <GaManageUsersPage />,
+          },
+        ],
       },
       {
         path: "su",

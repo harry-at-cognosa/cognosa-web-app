@@ -60,6 +60,18 @@ const TopNavBar = () => {
                 </Dropdown.Menu>
               </Dropdown>
             )}
+            {user.is_groupadmin && (
+              <Dropdown className="nav-hover-glow">
+                <Dropdown.Toggle variant="" id="nav-dropdown-groupadmin">
+                  <Navbar.Text className="me-2 fw-bold">GroupAdmin</Navbar.Text>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <LinkContainer to="/groupadmin/manage_users">
+                    <Dropdown.Item>Users</Dropdown.Item>
+                  </LinkContainer>
+                </Dropdown.Menu>
+              </Dropdown>
+            )}
             {user.is_superuser && (
               <Dropdown className="nav-hover-glow">
                 <Dropdown.Toggle variant="" id="nav-dropdown-superuser">
@@ -88,11 +100,6 @@ const TopNavBar = () => {
               </Dropdown>
             )}
 
-            {user.is_groupadmin && (
-              <LinkContainer to="/manage_users">
-                <Nav.Link className="fw-bold nav-hover-glow">Users</Nav.Link>
-              </LinkContainer>
-            )}
             {/* Right side - User menu */}
             {user.isLogged && (
               <Dropdown className="nav-hover-glow ms-3">

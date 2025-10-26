@@ -49,14 +49,17 @@ class TableQueryResult(BaseModel, Generic[RowType]):
 
 class TableCreateRowResult(BaseModel):
     result: str
+    error_msg: str | None = None
     total_created: int
 
 
 class TableUpdateRowResult(BaseModel):
     result: str
+    error_msg: str | None = None
     total_updated: int
 
 
 class TableDeleteRowResult(BaseModel):
     result: str
+    error_msg: str | None = None
     total_deleted: int

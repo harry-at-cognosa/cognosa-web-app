@@ -23,6 +23,18 @@
    view/edit existing `api_settings` PostgreSQL table values.
    Theme color changes on-the-fly after editing.
 
+6. added `GroupAdmin -> Users` page:
+   Only for groupadmins.
+   CRUD operations on `api_users` PostgreSQL table.
+   View/edit: only it's own group users, without superadmins (if it is not himself).
+   Edit for other users: `user_name`, `full_name`, `email`, `password`, `is_active`, `is_contentmanager`, `is_groupadmin`.
+   Edit for himself: only `full_name`, `password`, `is_contentmanager`.
+   Create/edit: error if user_name or email existing.
+   Delete: only it's own group users, without superusers or himself.
+   Note: errors are not showing for now. Will just do nothing.
+
+7. fixed `/logout`. Should work fine now.
+
 ## [0.9e] (2025-10-19)
 
 1. fixed:

@@ -29,13 +29,11 @@ export default function DeleteDialog({ useStore }: Props) {
                 </th>
               </tr>
               <tr key={col + "__col_value"}>
-                <td>
-                  <ViewCellElement
-                    data={data}
-                    row={deleteRow}
-                    col={col}
-                  ></ViewCellElement>
-                </td>
+                <ViewCellElement
+                  data={data}
+                  row={deleteRow}
+                  col={col}
+                ></ViewCellElement>
               </tr>
             </tbody>
           </Table>

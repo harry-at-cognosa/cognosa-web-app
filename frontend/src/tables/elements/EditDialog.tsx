@@ -30,7 +30,7 @@ export default function EditDialog({ useStore }: Props) {
         {ask_columns.map((col) => (
           <div key={"div__" + col}>
             <div className="fw-bold ms-2" key={"div_label__" + col}>
-              <ColumnDisplayName data={data} col={col}></ColumnDisplayName>
+              {data.columns[col].display || col}
             </div>
             <div className="mb-2" key={"div_value__" + col}>
               <EditCellElement useStore={useStore} col={col}></EditCellElement>
