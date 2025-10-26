@@ -19,6 +19,10 @@
    and now are "protected" - redirect to login if user is not superuser.
    All Superuser pages are under `SuperUser` dropdown.
 
+5. added `SuperUsers -> Api Settings` page:
+   view/edit existing `api_settings` PostgreSQL table values.
+   Theme color changes on-the-fly after editing.
+
 ## [0.9e] (2025-10-19)
 
 1. fixed:

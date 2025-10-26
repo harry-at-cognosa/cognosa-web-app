@@ -7,6 +7,7 @@ from cwa_lib.users import fastapi_users, auth_backend
 from cwa_lib.routers.users import router__users
 from cwa_lib.routers.doc_tasks import router__doc_tasks
 from cwa_lib.routers.manage_contexts import router__manage_contexts
+from cwa_lib.routers.su_manage_api_settings import router__su_manage_api_settings
 from cwa_lib.routers.su_manage_users import router__su_manage_users
 from cwa_lib.routers.su_manage_groups import router__su_manage_groups
 from cwa_lib.routers.su_manage_llms import router__su_manage_llms
@@ -34,3 +35,4 @@ api_router.include_router(router__su_manage_vdbs, tags=["Manage VDBs"], include_
 api_router.include_router(router__su_manage_llms, tags=["Manage LLMs"], include_in_schema=False)
 api_router.include_router(router__su_server_status, tags=["Superuser Server Status"], include_in_schema=False)
 api_router.include_router(router__su_manage_users, tags=["Superuser Manage Users"], include_in_schema=False)
+api_router.include_router(router__su_manage_api_settings, tags=["Manage Api Settings"], include_in_schema=False)

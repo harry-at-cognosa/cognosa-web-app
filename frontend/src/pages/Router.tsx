@@ -12,6 +12,7 @@ import SuManageGroupsPage from "./SuManageGroups/SuManageGroupsPage";
 import SuManageLLMsPage from "./SuManageLLMs/SuManageLLMsPage";
 import SuManageVDBsPage from "./SuManageVDBs/SuManageVDBsPage";
 import SuperuserRoute from "../components/SuperUserRoute";
+import SuManageApiSettingsPage from "./SuManageApiSettings copy/SuManageApiSettingsPage";
 
 export const Router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ export const Router = createBrowserRouter([
           {
             path: "manage_users",
             element: <SuManageUsersPage />,
+          },
+          {
+            path: "manage_api_settings",
+            element: <SuManageApiSettingsPage />,
           },
         ],
       },

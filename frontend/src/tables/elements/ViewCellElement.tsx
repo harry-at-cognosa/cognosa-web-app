@@ -1,3 +1,4 @@
+import getColor from "../../api/getColor";
 import BooleanCheck from "../CellRenders/BooleanCheck";
 import TextCell from "../CellRenders/TextCell";
 import type { TableResponse, TableRow } from "../TableStoreFactory";
@@ -13,6 +14,7 @@ export default function ViewCellElement({ data, row, col }: Props) {
   const pk_value_str = (row[data.table_options.pk] || -1).toString();
   const key = "td__" + pk_value_str + "__" + col;
   const value = row[col];
+  const value_str = value?.toString() || "";
   const cellType = data.columns[col].type;
   const add_values = data.table_options.add_values;
 
@@ -45,5 +47,24 @@ export default function ViewCellElement({ data, row, col }: Props) {
       </td>
     );
   }
-  return <td key={key}>{value?.toString()}</td>;
+  if (cellType === "api_settings_value") {
+    if (pk_value_str === "webapp_main_color")
+      return (
+        <td
+          key={key}
+          className="fw-bold"
+          style={{
+            backgroundColor: getColor(value_str, 300),
+          }}
+        >
+          {value}
+        </td>
+      );
+    return (
+      <td key={key}>
+        <TextCell value={value} rows={2}></TextCell>
+      </td>
+    );
+  }
+  return <td key={key}>{value_str}</td>;
 }

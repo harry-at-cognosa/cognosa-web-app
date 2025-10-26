@@ -90,12 +90,18 @@ interface createTableStoreProps {
   title: string;
   name: string;
   endpoint: string;
+  afterRead?: (get: () => TableStore) => Promise<void>;
+  afterEdit?: (get: () => TableStore) => Promise<void>;
+  afterDelete?: (get: () => TableStore) => Promise<void>;
 }
 
 export function createTableStore({
   title,
   name,
   endpoint,
+  afterRead,
+  afterEdit,
+  afterDelete,
 }: createTableStoreProps) {
   return createResettableStore<TableStore>((set, get) => ({
     title,
@@ -121,6 +127,7 @@ export function createTableStore({
             order_dir: res.data.order_dir,
           },
         });
+        if (afterRead) await afterRead(get);
       } catch (err: any) {
         set({ error: err.response?.data?.message || err.message });
       } finally {
@@ -151,6 +158,7 @@ export function createTableStore({
             endpoint,
             get().editRow
           );
+        if (afterEdit) await afterEdit(get);
       } catch (err: any) {
         set({
           error: err.response?.data?.message || err.message,
@@ -181,6 +189,7 @@ export function createTableStore({
         await axiosClient.delete<TableRowDeleteResponse>(
           endpoint + "/" + pkValue.toString()
         );
+        if (afterDelete) await afterDelete(get);
       } catch (err: any) {
         set({
           error: err.response?.data?.message || err.message,

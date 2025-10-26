@@ -1,5 +1,6 @@
 import { Form } from "react-bootstrap";
 import type { createTableStore, TableCellValue } from "../TableStoreFactory";
+import getColor from "../../api/getColor";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -12,6 +13,7 @@ export default function EditCellElement({ useStore, col }: Props) {
   const columns = tableStore.data.columns;
   if (!(columns && tableStore.editRow)) return null;
   const value = tableStore.editRow[col];
+  const value_str = value?.toString() || "";
   const cellType = columns[col].type;
   function onChange(value: TableCellValue) {
     tableStore.setEditRow({ ...tableStore.editRow, [col]: value });
@@ -40,7 +42,7 @@ export default function EditCellElement({ useStore, col }: Props) {
     else
       return (
         <Form.Select
-          value={value?.toString() || ""}
+          value={value_str}
           onChange={(e) => onChange(Number(e.target.value))}
         >
           {select_values.map((row) => (
@@ -65,7 +67,7 @@ export default function EditCellElement({ useStore, col }: Props) {
     else
       return (
         <Form.Select
-          value={value?.toString() || ""}
+          value={value_str}
           onChange={(e) => onChange(e.target.value)}
         >
           {select_values.map((row) => (
@@ -92,7 +94,7 @@ export default function EditCellElement({ useStore, col }: Props) {
       return <h3 style={{ color: "red" }}>No groups found!</h3>;
     return (
       <Form.Select
-        value={value?.toString() || ""}
+        value={value_str}
         onChange={(e) => onChange(Number(e.target.value))}
       >
         {select_group_id_name.map((gin) => (
@@ -101,6 +103,40 @@ export default function EditCellElement({ useStore, col }: Props) {
           </option>
         ))}
       </Form.Select>
+    );
+  }
+  if (cellType === "api_settings_value") {
+    const pk_value_str = tableStore.editRow["name"]?.toString() || "";
+    if (pk_value_str === "webapp_main_color") {
+      const all_values = tableStore.data.table_options.add_values[
+        "webapp_main_color_values"
+      ] as string[];
+      return (
+        <Form.Select
+          value={value_str}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          {all_values.map((color) => (
+            <option
+              key={key + "__" + color}
+              value={color}
+              style={{ backgroundColor: getColor(color, 300) }}
+            >
+              {color}
+            </option>
+          ))}
+        </Form.Select>
+      );
+    }
+
+    return (
+      <Form.Control
+        as="textarea"
+        value={value_str}
+        key={key}
+        onChange={(e) => onChange(e.target.value)}
+        rows={3}
+      ></Form.Control>
     );
   }
   return value?.toString();

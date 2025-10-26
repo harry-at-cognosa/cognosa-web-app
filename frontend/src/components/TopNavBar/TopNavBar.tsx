@@ -81,6 +81,9 @@ const TopNavBar = () => {
                   <LinkContainer to="/su/server_status">
                     <Dropdown.Item>Server Status</Dropdown.Item>
                   </LinkContainer>
+                  <LinkContainer to="/su/manage_api_settings">
+                    <Dropdown.Item>Api Settings</Dropdown.Item>
+                  </LinkContainer>
                 </Dropdown.Menu>
               </Dropdown>
             )}
