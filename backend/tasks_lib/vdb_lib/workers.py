@@ -6,7 +6,7 @@ from traceback import format_exc
 from common import log, LOG_SQLALCHEMY_RT, RT_VDB_PROCESS_NUM
 from common.helpers import utcnow
 from tasks_lib.entities.task_queue_msg import VDBDocTaskQueueMsg, VDBTaskExitMsg
-from common.sql_db_sync import SqlSyncSession, Session
+from common.sql_db_sync import Session, get_engine_sessionmaker
 from common.sql_models import DocTasks
 from common.enums.doc_task_status import TaskStatus
 from tasks_lib.vdb_lib.vdb_ops import VectorDBOps
@@ -42,35 +42,42 @@ class VDBWorker(Process):
         task.vdb_query_seconds=vdb_query_seconds
         session.commit()
 
-    def update_ap_status(self, ap_status: str):
-        ApiProcessesTable.upsert_api_process(
+    def update_ap_status(self, session: Session, ap_status: str):
+        ApiProcessesTable(session).upsert_api_process(
             ap_type='run_tasks',
             ap_name=AP_NAME,
             ap_subname=self.ap_subname,
             ap_status=ap_status
         )
+        session.commit()
 
     def run(self):
         log.init(prefix=f'rt-p{self.process_index}', log_sqlalchemy=LOG_SQLALCHEMY_RT)        
-        self.update_ap_status('starting')
+        engine, sessionmaker = get_engine_sessionmaker()
+        with sessionmaker() as session:
+            self.update_ap_status(session, 'starting')
         emb_models = EmbModels(preload_emb_models=True)
         log.info(f"VDB Worker {self.process_index} ready.")        
-        self.update_ap_status('running')
+        with sessionmaker() as session:
+            self.update_ap_status(session, 'running')
         while True:
             try:
                 try:
                     msg: VDBDocTaskQueueMsg | VDBTaskExitMsg = self.task_queue.get(timeout=AP_SLEEP_TIME)
                 except Empty:
-                    self.update_ap_status('running')
+                    with sessionmaker() as session:
+                        self.update_ap_status(session, 'running')
                     continue
                 if isinstance(msg, VDBTaskExitMsg):
                     log.debug('Process exit')
                     self.task_queue.put(msg)
-                    self.update_ap_status('exit')
+                    with sessionmaker() as session:
+                        self.update_ap_status(session, 'exit')
+                    engine.dispose()
                     return
                 log.info(f"Catched {msg.doc_task_id=}")
                 log.debug(f"Catched {msg=}")            
-                with SqlSyncSession() as session:
+                with sessionmaker() as session:
                     task = session.get(DocTasks, msg.doc_task_id)
                     if not task:
                         log.error(f"Task row not found")
@@ -102,12 +109,16 @@ class VDBWorker(Process):
             except (KeyboardInterrupt, SystemExit):
                 log.debug('Process exit')
                 try:
-                    self.update_ap_status('exit')
+                    with sessionmaker() as session:
+                        self.update_ap_status(session, 'exit')
+                    engine.dispose()
                 except Exception:
                     pass
                 return
             except Exception:
                 log.error(f"Undefined exception:\n{format_exc()}")
+                engine.dispose()
+                engine, sessionmaker = get_engine_sessionmaker()
 
 
 class AllVDBWorkers:

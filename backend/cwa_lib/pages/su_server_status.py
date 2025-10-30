@@ -2,10 +2,10 @@ import json
 from time import time
 from traceback import format_exc
 from common import log
-from common.watchdogs.api_processes_table import ApiProcessesTable, ApiProcesses
 from common.watchdogs.group_vdbs import GroupVDBSTable
 from common.watchdogs.group_llms import GroupLLMsTable
 from common.sql_db_async import AsyncSession
+from cwa_lib.sql_tables.api_processes import ApiProcessesTable, ApiProcesses
 from cwa_lib.sql_tables.api_settings import ApiSettingsTable
 
 class SuServerStatusPage:
@@ -35,7 +35,7 @@ class SuServerStatusPage:
         ], ...
         """
         result_list = []
-        ap_list = await ApiProcessesTable.select_all_running(session)
+        ap_list = await ApiProcessesTable(session).select_all_running()
         type__name__subname__ap: dict[str, dict[str, dict[str, ApiProcesses]]] = dict()
         for ap in ap_list:
             type__name__subname__ap.setdefault(ap.ap_type, dict()).setdefault(ap.ap_name, dict())[ap.ap_subname] = ap

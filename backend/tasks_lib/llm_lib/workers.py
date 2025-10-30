@@ -6,7 +6,7 @@ from sqlalchemy import select, func
 from common import log
 from common.enums.doc_task_status import TaskStatus
 from common.sql_models import DocTasks, GroupContexts, GroupLLMs
-from common.sql_db_sync import SqlSyncSession, Session
+from common.sql_db_sync import Session, get_engine_sessionmaker
 from tasks_lib.entities.llm_worker_msg import LLMWorkerMsg
 from tasks_lib.llm_lib.llm_ops import LLMOps
 from .tiktoken_count import TikTokenCount
@@ -48,8 +48,8 @@ class LLMWorker(Thread):
 
     def write_sent_to_llm(self, session: Session, task: DocTasks, sent_to_llm: str):
         if sent_to_llm and (not task.sent_to_llm):
-            task.sent_to_llm = sent_to_llm
-            task.llm_tokens_sent = self.tiktoken_count.count(sent_to_llm)
+            task.sent_to_llm = str(sent_to_llm)
+            task.llm_tokens_sent = int(self.tiktoken_count.count(sent_to_llm))
             session.commit()
 
     def write_llm_writing(self, session: Session, task: DocTasks, answer: str):
@@ -84,8 +84,9 @@ class LLMWorker(Thread):
 
     def run(self) -> None:
         log.info(f"Starting LLM task ID {self.doc_task_id}...")
+        engine, sessionmaker = get_engine_sessionmaker()
         try:
-            with SqlSyncSession() as session:
+            with sessionmaker() as session:
                 task = session.get(DocTasks, self.doc_task_id)
                 if not task:
                     raise Exception(f"LLM run error: tasks.task_id={self.doc_task_id} not found")
@@ -132,3 +133,4 @@ class LLMWorker(Thread):
         except Exception:
             log.error(format_exc())
         log.info(f"Finished LLM task ID {self.doc_task_id}")
+        engine.dispose()

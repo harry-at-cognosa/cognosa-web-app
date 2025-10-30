@@ -1,4 +1,25 @@
-## [0.10b] (2025-10-25)
+## [0.11a] (2025-10-30)
+
+Changes for initial deploy:
+
+1. harder default user passwords
+
+2. Added VDB/LLM URLs like:
+   ollama_local
+   qdrant_local
+   pg_local
+   chroma_local
+   They are taken from .env, e.g. URL_OLLAMA_LOCAL.
+
+3. Separate requirements.txt for:
+   run_tasks.py: req_run_tasks.txt
+   webapp.py: req_webapp.txt
+
+4. Rewrote sql connections for run_tasks due different type of process spawning on Linux.
+
+5. Added `release` folder. Check out `release/.../!README.MD`.
+
+## [0.10c] (2025-10-26)
 
 1. added:
    Ability to use Anthropic API - Claude LLM models.

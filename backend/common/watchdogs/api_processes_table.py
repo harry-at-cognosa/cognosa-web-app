@@ -1,34 +1,16 @@
 from datetime import timedelta
 import json
-from sqlalchemy import select, func, text
+from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import insert
-from common.sql_db_sync import SqlSyncSession
-from common.sql_db_async import AsyncSession
+from common.sql_db_sync import Session
 from common.sql_models.api_processes import ApiProcesses
 
 
-class ApiProcessesAlreadyExists(Exception):
-    pass
-
-
 class ApiProcessesTable:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, session: Session) -> None:
+        self.session = session
 
-    @classmethod
-    async def select_all_running(cls, session: AsyncSession) -> list[ApiProcesses]:
-        stmt = (
-            select(ApiProcesses)
-            .where(
-                ApiProcesses.ap_updated_at > func.now() - text("interval '10 seconds'"),
-                ApiProcesses.ap_status != "exit"
-                )
-            )
-        result = await session.execute(stmt)
-        return list(result.scalars().all())
-    
-    @classmethod
-    def check_exists_running(cls, ap_name: str, max_before: float) -> bool:
+    def check_exists_running(self, ap_name: str, max_before: float) -> bool:
         """
         Check if a row exists with given ap_name and ap_subname 
         where ap_updated_at >= now - max_before and ap_status is not "exit".
@@ -44,11 +26,9 @@ class ApiProcessesTable:
                    & (ApiProcesses.ap_status != 'exit')
                    )\
             .limit(1)
-        with SqlSyncSession() as session:
-            return bool(session.execute(stmt).scalar_one_or_none())
+        return bool(self.session.execute(stmt).scalar_one_or_none())
 
-    @classmethod
-    def upsert_api_process(cls, 
+    def upsert_api_process(self, 
                            ap_type: str, 
                            ap_name: str, 
                            ap_subname: str, 
@@ -63,23 +43,23 @@ class ApiProcessesTable:
             values_dict['ap_status'] = ap_status
         if ap_json is not None:
             values_dict['ap_json'] = ap_json if isinstance(ap_json, str) else json.dumps(ap_json)
-        with SqlSyncSession() as session:
-            stmt = insert(ApiProcesses)\
-                .values(
-                    ap_type=ap_type,
-                    ap_name=ap_name,
-                    ap_subname=ap_subname,
+        
+        stmt = insert(ApiProcesses)\
+            .values(
+                ap_type=ap_type,
+                ap_name=ap_name,
+                ap_subname=ap_subname,
+                **values_dict,
+                ap_updated_at=func.now()
+            ).on_conflict_do_update(
+                index_elements=['ap_name', 'ap_subname'],
+                set_={
                     **values_dict,
-                    ap_updated_at=func.now()
-                ).on_conflict_do_update(
-                    index_elements=['ap_name', 'ap_subname'],
-                    set_={
-                        **values_dict,
-                        'ap_updated_at': func.now(),
-                    }
-                ).returning(ApiProcesses.ap_id)
-            try:
-                session.execute(stmt)
-                session.commit()                
-            except Exception as e:
-                raise Exception(f"Failed to upsert api_process: {str(e)}")
+                    'ap_updated_at': func.now(),
+                }
+            ).returning(ApiProcesses.ap_id)
+        try:
+            self.session.execute(stmt)
+            self.session.commit()                
+        except Exception as e:
+            raise Exception(f"Failed to upsert api_process: {str(e)}")

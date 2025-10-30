@@ -19,7 +19,7 @@ su_manage_vdbs__query_columns = {
     'gvdbs_seqn': ColumnType(display='Seqn #', type='number', default=0),
     'gvdbs_type': ColumnType(display='Type', type='string', default=GVDBsTypes.QDRANT, select=select__gvdbs_type),
     'gvdbs_name': ColumnType(display='Name', type='string', default="New VDB"),
-    'gvdbs_url': ColumnType(display='URL', type='string', default="localhost:6333"),
+    'gvdbs_url': ColumnType(display='URL', type='string', default="qdrant_local"),
     'gvdbs_collection': ColumnType(display='Collection', type='string', default="New Collection"),
     'gvdbs_status': ColumnType(display='Status', type='gvdbs_status'),
 }

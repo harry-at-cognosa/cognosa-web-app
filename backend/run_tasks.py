@@ -1,7 +1,17 @@
+import multiprocessing
+if __name__ == "__main__":
+    multiprocessing.set_start_method('spawn')
+
+import os
 from time import time, sleep
 from common import log, LOG_SQLALCHEMY_RT
 log.init('rt', log_sqlalchemy=LOG_SQLALCHEMY_RT)
+from common.sql_db_sync import wait_for_database
+if bool(os.getenv("WAIT_FOR_PG_AT_START", "")):
+    wait_for_database()
+
 from common.helpers import start_main
+from common.sql_db_sync import get_engine_sessionmaker
 from tasks_lib.cmd_line_opts import AP_NAME, IS_PRIMARY_INSTANCE
 from tasks_lib.entities.task_queue_msg import VDBTaskExitMsg
 from tasks_lib.main_iteration import MainIteration
@@ -14,7 +24,9 @@ from tasks_lib.vdb_llm_status_worker import VDBLLMStatusWorker
 
 class RunTasks():
     def __init__(self) -> None:
-        check_name_is_still_running(ap_name=AP_NAME)
+        self.engine, self.sessionmaker = get_engine_sessionmaker()
+        with self.sessionmaker() as session:
+            check_name_is_still_running(session, ap_name=AP_NAME)
         self.all_vdb_workers = AllVDBWorkers()
         self.watchdog_thread = WatchdogThread(ap_type='run_tasks', ap_name=AP_NAME)
         self.watchdog_thread.start()
@@ -27,20 +39,21 @@ class RunTasks():
         cur_time = time()
         if check_time and (cur_time < (self.polling_last_updated + AP_SLEEP_TIME)):
             return
-        ApiProcessesTable.upsert_api_process(
-            ap_type='run_tasks', 
-            ap_name=AP_NAME, 
-            ap_subname='polling_loop', 
-            ap_status=ap_status, 
-            ap_json=ap_dict
-        )
+        with self.sessionmaker() as session:
+            ApiProcessesTable(session).upsert_api_process(
+                ap_type='run_tasks', 
+                ap_name=AP_NAME, 
+                ap_subname='polling_loop', 
+                ap_status=ap_status, 
+                ap_json=ap_dict
+            )
         self.polling_last_updated = cur_time
         
     def run(self):
         log.info("Starting task polling loop...")
         self.update_polling_loop_status('starting', check_time=False)
         self.all_vdb_workers.start_all()
-        main_iteration = MainIteration(all_vdb_workers=self.all_vdb_workers)
+        main_iteration = MainIteration(self.engine, all_vdb_workers=self.all_vdb_workers)
         self.update_polling_loop_status(
             ap_status='running', 
             ap_dict={
@@ -75,6 +88,10 @@ class RunTasks():
 
     def on_close(self):
         log.info('stopping...')
+        try:
+            self.engine.dispose()
+        except Exception:
+            pass
         try:
             self.watchdog_thread.stop()
         except Exception:

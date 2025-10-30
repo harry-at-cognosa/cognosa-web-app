@@ -15,11 +15,6 @@ class PGVectorOps:
         self.parsed_url.scheme = 'postgresql'
         self.connection_string = self.parsed_url.full_url
 
-    @classmethod
-    def _convert_host(cls, host: str) -> str:
-        """ Convert 'localhost' to '127.0.0.1'. It will query faster like that. """
-        return '127.0.0.1' if (host == 'localhost') else host
-    
     def collection_exists(
             self,
             collection_name: str

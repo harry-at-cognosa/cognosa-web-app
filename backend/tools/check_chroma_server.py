@@ -9,12 +9,13 @@
 #
 ###
 import argparse
+import json
 from multiprocessing import Queue
 from traceback import format_exc
 from common import log
 from common.parsed_url import ParsedUrl
-from common.sql_db_sync import SqlSyncSession
-from common.sql_models import DocTasks
+from common.sql_db_sync import get_engine_sessionmaker
+from common.sql_models import DocTasks, GroupVDBs
 from tasks_lib.qd_lib.qd_init import QueryDocumentInit
 from tasks_lib.vdb_lib.emb_models import EmbModels
 from tasks_lib.vdb_lib.chromadb_ops import ChromaDBOps
@@ -37,9 +38,10 @@ class QDInitPatched(QueryDocumentInit):
             if not self.input_text:
                 raise Exception
             self.error_msg = "No VectorDB settings found for this group"
-            gvdbs = self.query_gvdbs()
-            if not gvdbs:
+            gvdbs_dict = json.loads(self.task.gvdbs_json)
+            if not gvdbs_dict:
                 raise Exception
+            gvdbs = GroupVDBs(**gvdbs_dict)
             self.error_msg = 'VectorDB URL is not specified'
             self.gvdbs_url = gvdbs.gvdbs_url.strip()
             if not self.gvdbs_url:
@@ -67,7 +69,8 @@ class QDInitPatched(QueryDocumentInit):
 def check_chroma(check_query: str, group_id: int):
     log.info("Checking ChromaDB server...")
     emb_models = EmbModels()
-    with SqlSyncSession() as session:
+    engine, sessionmaker = get_engine_sessionmaker()
+    with sessionmaker() as session:
         task = DocTasks()
         task.input_text = check_query
         task.group_id = group_id
@@ -96,6 +99,7 @@ def check_chroma(check_query: str, group_id: int):
         else:
             log.info(f"Retrieved {len(docs)} documents. Saved to debug logs")
             log.debug(f"Docs json:\n{docs}")
+    engine.dispose()
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ const NavigationInjector = () => {
   useEffect(() => {
     setOnUnauthenticated(() => {
       // Show toast or alert
-      alert("Session expired. Redirecting to logout...");
+      console.log("Session expired. Redirecting to logout...");
 
       // Delay navigation by 1 second
       setTimeout(() => {

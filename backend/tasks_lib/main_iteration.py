@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from common import log
-from common.sql_db_sync import SqlSyncSession, Session
+from common.sql_db_sync import Engine, Session, get_sessionmaker
 from common.sql_models import DocTasks
 from common.enums.doc_task_status import TaskStatus
 from tasks_lib.qd_lib.qd_init import QueryDocumentInit, QueryDocumentInitException
@@ -16,7 +16,8 @@ class MainIteration:
     STATUS__TASK_ERROR = -2
     STATUS__SQL_ERROR = -3
     
-    def __init__(self, all_vdb_workers: AllVDBWorkers) -> None:
+    def __init__(self, engine: Engine, all_vdb_workers: AllVDBWorkers) -> None:
+        self.engine = engine
         self.all_vdb_workers = all_vdb_workers
         self.vdb_task_queue = self.all_vdb_workers.task_queue
     
@@ -41,7 +42,7 @@ class MainIteration:
     def process_next_task(self) -> int:
         """Use get_session() to acquire session and process one task."""
         try:
-            with SqlSyncSession() as session:
+            with get_sessionmaker(self.engine)() as session:
                 task = self.find_next_task(session)
                 if not task:
                     return self.STATUS__NOT_FOUND

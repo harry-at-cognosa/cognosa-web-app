@@ -6,6 +6,7 @@ qdrant/*
 backend/static/
 vite.svg
 backend/t.py
+release/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

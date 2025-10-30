@@ -39,7 +39,7 @@ class LLMTypeOpenAI:
         Check if LLM is working
         """
         try:
-            parsed_url = ParsedUrl.from_url(self.llm_api_base)  # to convert localhost -> 127.0.0.1
+            parsed_url = ParsedUrl.from_url(self.llm_api_base)
             parsed_url.path = 'v1/models'
             return requests.get(parsed_url.full_url, timeout=5).status_code == 200
         except Exception:

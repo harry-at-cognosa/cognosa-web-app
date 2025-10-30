@@ -1,7 +1,7 @@
 from threading import Thread
 from time import time, sleep
 from common.watchdogs import AP_SLEEP_TIME
-from common.sql_db_sync import SqlSyncSession, Session
+from common.sql_db_sync import Session, get_engine_sessionmaker
 from common.sql_models import GroupVDBs, GroupLLMs
 from tasks_lib.cmd_line_opts import AP_NAME
 from tasks_lib.vdb_lib.vdb_ops import VectorDBOps
@@ -22,12 +22,13 @@ class VDBLLMStatusWorker(Thread):
         self._is_running = False
 
     def update_ap_status(self, ap_status: str):
-        ApiProcessesTable.upsert_api_process(
-            ap_type='run_tasks',
-            ap_name=AP_NAME,
-            ap_subname=self.ap_subname,
-            ap_status=ap_status
-        )
+        with self.sessionmaker() as session:
+            ApiProcessesTable(session).upsert_api_process(
+                ap_type='run_tasks',
+                ap_name=AP_NAME,
+                ap_subname=self.ap_subname,
+                ap_status=ap_status
+            )
 
     def check_one_vdb(self, session: Session, gvdbs: GroupVDBs):
         """Check one row from group_vdbs table"""
@@ -69,7 +70,7 @@ class VDBLLMStatusWorker(Thread):
         set_status(gllms_status='success', gllms_status_text='Ready')
 
     def check_all(self):
-        with SqlSyncSession() as session:
+        with self.sessionmaker() as session:
             gvdbs_rows = GroupVDBSTable.sync_select_all(session)
             for gvdbs in gvdbs_rows:
                 self.check_one_vdb(session, gvdbs)
@@ -85,15 +86,17 @@ class VDBLLMStatusWorker(Thread):
 
     def run(self):
         self._is_running = True
+        self.engine, self.sessionmaker = get_engine_sessionmaker()
         self.update_ap_status('starting')
         while self._is_running:
             try:
                 self.update_ap_status('running')
                 self.check_all()
-                self.sleep()                
+                self.sleep()
             except (SystemExit, KeyboardInterrupt):
                 break
         try:
             self.update_ap_status('exit')
+            self.engine.dispose()
         except Exception:
             pass

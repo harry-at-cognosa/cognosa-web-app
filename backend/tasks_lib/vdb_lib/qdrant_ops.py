@@ -11,13 +11,11 @@ class QdrantOps:
         self.parsed_url = parsed_url
         self.host = self.parsed_url.host
         self.port = self.parsed_url.port
-        self.client = QdrantClient(host=self.host, port=self.port)
+        self.api_key: str | None = None
+        if (self.parsed_url.user == 'api_key') and self.parsed_url.password:
+            self.api_key = self.parsed_url.password
+        self.client = QdrantClient(host=self.host, port=self.port, api_key=self.api_key)
 
-    @classmethod
-    def _convert_host(cls, host: str) -> str:
-        """ Convert 'localhost' to '127.0.0.1'. It will query faster like that. """
-        return '127.0.0.1' if (host == 'localhost') else host
-    
     def collection_exists(self, collection_name: str) -> bool | None:
         """Check if collection exists. None if server not responds"""
         try:

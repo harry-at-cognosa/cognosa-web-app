@@ -43,6 +43,7 @@ export const useWebAppOptionsStore = createResettableStore<WebAppOptionsState>(
     needReload: true,
     setNeedReload: (needReload: boolean) => set({ needReload }),
     fetchData: async () => {
+      if (!localStorage.getItem("token")) return;
       set({ needReload: false });
       try {
         const res = await axiosClient.get<WebAppOptionsState>(

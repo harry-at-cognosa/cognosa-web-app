@@ -19,7 +19,7 @@ su_manage_llms__query_columns = {
     'gllms_seqn': ColumnType(display='Seqn #', type='number', default=0),
     'gllms_type': ColumnType(display='Type', type='string', default=GLLMsTypes.OLLAMA_LOCAL, select=select__gllms_type),
     'gllms_name': ColumnType(display='Name', type='string', default="New LLM"),
-    'gllms_api_base': ColumnType(display='API Base', type='string', default="http://localhost:11434/v1"),
+    'gllms_api_base': ColumnType(display='API Base', type='string', default="ollama_local"),
     'gllms_model': ColumnType(display='Model', type='string', default="gemma3"),
     'gllms_api_key': ColumnType(display='API Key', type='text', default=""),
     'gllms_status': ColumnType(display='Status', type='gllms_status'),

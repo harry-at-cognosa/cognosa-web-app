@@ -1,5 +1,13 @@
 from dataclasses import dataclass
+import os
 from urllib.parse import urlparse
+
+local_key__url = {
+    'qdrant_local': os.environ.get('URL_QDRANT_LOCAL', '127.0.0.1:6333'),
+    'pg_local': os.environ.get('URL_PG_LOCAL', 'postgresql://postgres:12345678@127.0.0.1:5432/cwa_db'),
+    'ollama_local': os.environ.get('URL_OLLAMA_LOCAL', 'http://127.0.0.1:11434/v1'),
+    'chroma_local': os.environ.get('URL_CHROMA_LOCAL', '127.0.0.1:8010')
+}
 
 @dataclass
 class ParsedUrl:
@@ -32,6 +40,8 @@ class ParsedUrl:
 
     @classmethod
     def from_url(cls, url: str) -> "ParsedUrl":
+        # if qdrant_local, pg_local, ollama_local, chroma_local:
+        url = str(local_key__url.get(url.lower(), url))
         # Add a default scheme if missing so urlparse works correctly
         if "://" not in url:
             url = "noscheme://" + url
