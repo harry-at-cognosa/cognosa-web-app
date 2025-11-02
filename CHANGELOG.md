@@ -27,6 +27,13 @@ Changes for initial deploy:
    Delete: cannot delete himself.
    Note: errors are not showing for now. Will just do nothing.
 
+7. `SuperUsers`/`GroupAdmin` -> `Users` pages:
+   deleting user will change `api_users` columns:
+   `deleted` = 1
+   `email` = `deleted_{user_id}__<email>`
+   `user_name` = `deleted_{user_id}__<user_name>`
+   So superuser or groupadmin can delete and made user with same email/user_name.
+
 ## [0.10c] (2025-10-26)
 
 1. added:
