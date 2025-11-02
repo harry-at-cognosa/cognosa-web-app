@@ -39,6 +39,7 @@ export default function EditDialog({ useStore }: Props) {
       </Modal.Body>
       <Modal.Footer>
         <Button
+          className="mx-auto fw-bold"
           variant={isCreate ? "warning" : "primary"}
           onClick={tableStore.queryEditRow}
           disabled={tableStore.busy != ""}

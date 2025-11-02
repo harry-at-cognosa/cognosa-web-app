@@ -19,6 +19,13 @@ export default function EditCellElement({ useStore, col }: Props) {
     tableStore.setEditRow({ ...tableStore.editRow, [col]: value });
   }
   const key = "edit_cell_element__" + col;
+  const dummy_username = ["email", "username", "user"].includes(col) ? (
+    <input
+      type="text"
+      style={{ display: "none", position: "absolute" }}
+      autoComplete="username"
+    />
+  ) : null;
 
   if (cellType === "boolean")
     return (
@@ -27,6 +34,7 @@ export default function EditCellElement({ useStore, col }: Props) {
         key={key}
         className="ms-2"
         onChange={(e) => onChange(e.target.checked)}
+        autoComplete="off"
       ></Form.Check>
     );
   if (cellType === "number") {
@@ -38,6 +46,7 @@ export default function EditCellElement({ useStore, col }: Props) {
           value={value as string | number}
           key={key}
           onChange={(e) => onChange(parseFloat(e.target.value) || null)}
+          autoComplete="off"
         />
       );
     else
@@ -45,6 +54,7 @@ export default function EditCellElement({ useStore, col }: Props) {
         <Form.Select
           value={value_str}
           onChange={(e) => onChange(Number(e.target.value))}
+          autoComplete="off"
         >
           {select_values.map((row) => (
             <option key={row.value.toString()} value={row.value.toString()}>
@@ -58,18 +68,23 @@ export default function EditCellElement({ useStore, col }: Props) {
     const select_values = columns[col].select;
     if (select_values === null)
       return (
-        <Form.Control
-          type="text"
-          value={(value === null ? "" : value) as string}
-          key={key}
-          onChange={(e) => onChange(e.target.value)}
-        />
+        <>
+          {dummy_username}
+          <Form.Control
+            type="text"
+            value={(value === null ? "" : value) as string}
+            key={key}
+            onChange={(e) => onChange(e.target.value)}
+            autoComplete="off"
+          />
+        </>
       );
     else
       return (
         <Form.Select
           value={value_str}
           onChange={(e) => onChange(e.target.value)}
+          autoComplete="off"
         >
           {select_values.map((row) => (
             <option key={row.value.toString()} value={row.value.toString()}>
@@ -87,6 +102,7 @@ export default function EditCellElement({ useStore, col }: Props) {
         key={key}
         onChange={(e) => onChange(e.target.value)}
         rows={5}
+        autoComplete="off"
       ></Form.Control>
     );
   if (cellType === "group_id_name") {
@@ -97,6 +113,7 @@ export default function EditCellElement({ useStore, col }: Props) {
       <Form.Select
         value={value_str}
         onChange={(e) => onChange(Number(e.target.value))}
+        autoComplete="off"
       >
         {select_group_id_name.map((gin) => (
           <option key={gin.value.toString()} value={gin.value.toString()}>
@@ -116,6 +133,7 @@ export default function EditCellElement({ useStore, col }: Props) {
         <Form.Select
           value={value_str}
           onChange={(e) => onChange(e.target.value)}
+          autoComplete="off"
         >
           {all_values.map((color) => (
             <option
@@ -137,18 +155,27 @@ export default function EditCellElement({ useStore, col }: Props) {
         key={key}
         onChange={(e) => onChange(e.target.value)}
         rows={3}
+        autoComplete="off"
       ></Form.Control>
     );
   }
 
   if (cellType === "groupadmin_user_password") {
     return (
-      <Form.Control
-        type="password"
-        value={(value === null ? "" : value) as string}
-        key={key}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      <>
+        <input
+          type="password"
+          style={{ display: "none", position: "absolute" }}
+          autoComplete="new-password"
+        />
+        <Form.Control
+          type="password"
+          value={(value === null ? "" : value) as string}
+          key={key}
+          onChange={(e) => onChange(e.target.value)}
+          autoComplete="off"
+        />
+      </>
     );
   }
 
