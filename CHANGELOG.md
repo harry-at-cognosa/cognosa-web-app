@@ -1,4 +1,4 @@
-## [0.11a] (2025-10-30)
+## [0.11b] (2025-10-30)
 
 Changes for initial deploy:
 

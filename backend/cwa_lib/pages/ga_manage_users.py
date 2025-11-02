@@ -47,7 +47,7 @@ class GaManageUsersTable:
             cur_user_id: int,
             cur_group_id: int,
             payload: TableQuery
-            ) -> GaManageUsersQueryResult:
+        ) -> GaManageUsersQueryResult:
         order_clause, order_by, order_dir = create_order_clause(
             model=User, 
             default_order_by=ga_manage_users__table_options.pk, 

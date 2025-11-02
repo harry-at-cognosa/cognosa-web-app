@@ -48,20 +48,25 @@ class SuManageUsersTable:
 
     async def query_all(
             self,
-            payload: TableQuery
-            ) -> SuManageUsersQueryResult:
-        order_clause, order_by, order_dir = create_order_clause(User, su_manage_users__table_options.pk, payload.order_by, payload.order_dir)
-        result = await self.session.execute(
-            select(User)
-            .order_by(order_clause)
-            .limit(payload.limit)
-            .offset(payload.offset)
-        )
+            payload: TableQuery,
+            deleted: int | None
+        ) -> SuManageUsersQueryResult:
         # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
         manage_users__qc, manage_users__to = await get_qc_to_with_group_id_name(
             self.session, su_manage_users__query_columns, su_manage_users__table_options
         )
         #
+        order_clause, order_by, order_dir = create_order_clause(User, su_manage_users__table_options.pk, payload.order_by, payload.order_dir)
+        where_clause = User.user_id > -1
+        if deleted is not None:
+            where_clause &= User.deleted == deleted
+        result = await self.session.execute(
+            select(User)
+            .where(where_clause)
+            .order_by(order_clause)
+            .limit(payload.limit)
+            .offset(payload.offset)
+        )
         rows = result.scalars().all()
         return SuManageUsersQueryResult(
             name='su_manage_users',
@@ -107,7 +112,8 @@ class SuManageUsersTable:
         Update one row
         """
         # get existing row from `api_users`
-        result = await self.session.execute(select(User).where(User.user_id == data.user_id))
+        where_clause = (User.user_id == data.user_id) & (User.deleted == 0)
+        result = await self.session.execute(select(User).where(where_clause))
         user = result.scalar_one_or_none()
         if not user:
             return TableUpdateRowResult(result='error', total_updated=0)
@@ -155,7 +161,8 @@ class SuManageUsersTable:
         if user_id == cur_user_id:
             return TableDeleteRowResult(result='error', error_msg='User cannot delete himself', total_deleted=0)
         try:
-            result = await self.session.execute(select(User).where(User.user_id == user_id))
+            where_clause = (User.user_id == user_id) & (User.deleted == 0)
+            result = await self.session.execute(select(User).where(where_clause))
             if not (row := result.scalar_one_or_none()):            
                 return TableDeleteRowResult(result='error', total_deleted=0)
             row.deleted = 1

@@ -19,7 +19,7 @@ async def su_manage_users__query(
     if not user.is_superuser:
         raise HTTPException(404, detail="Not found")
 
-    result = await SuManageUsersTable(session).query_all(payload=payload)
+    result = await SuManageUsersTable(session).query_all(payload=payload, deleted=0)
     return result
 
 @router__su_manage_users.post("/su/manage_users", response_model=TableCreateRowResult)
