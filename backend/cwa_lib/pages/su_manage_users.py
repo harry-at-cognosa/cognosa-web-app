@@ -166,8 +166,8 @@ class SuManageUsersTable:
             if not (row := result.scalar_one_or_none()):            
                 return TableDeleteRowResult(result='error', total_deleted=0)
             row.deleted = 1
-            row.email = f'deleted_{user_id}__' + row.email
-            row.user_name = f'deleted_{user_id}__' + row.user_name
+            row.email = (f'deleted_{user_id}__' + row.email)[:320]
+            row.user_name = (f'deleted_{user_id}__' + row.user_name)[:32]
             await self.session.commit()
             return TableDeleteRowResult(result='success', total_deleted=1)
         except Exception as exc:
