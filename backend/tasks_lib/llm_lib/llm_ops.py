@@ -1,7 +1,10 @@
 import json
 from typing import Generator
 from tasks_lib.cmd_line_opts import IS_DUMMY_LLM
+from common import log
 from common.enums.gllms_types import GLLMsTypes
+from common.helpers import shorten
+from common.parsed_url import ParsedUrl
 from .llm_type_dummy import LLMTypeDummy
 from .llm_type_openai import LLMTypeOpenAI
 from .llm_type_claude import LLMTypeClaude
@@ -17,6 +20,8 @@ class LLMOps:
                  llm_model: str, 
                  llm_api_key: str
                  ) -> None:
+        # convert 'ollama_local', 'ollama_remote' to URL
+        llm_api_base = ParsedUrl.from_url(llm_api_base).full_url
         query_text = query_text
         if optional_text and optional_text.strip():
             query_text += f'\n   \n{optional_text.strip()}\n   '
