@@ -1,4 +1,3 @@
-from copy import deepcopy
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models.group_vdbs import GroupVDBs, GVDBsTypes, GVDBS_TYPE_VALUES
@@ -8,8 +7,9 @@ from cwa_lib.pydantic_schemas.generic_table import (
     SelectOption, ColumnType, 
     TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
+from cwa_lib.pages import get_qc_to_with_group_id_name
 from cwa_lib.pydantic_schemas.su_manage_vdbs import SuManageVDBsQueryResult, SuManageVDBsCreate, SuManageVDBsUpdate
-from cwa_lib.sql_tables.api_groups import ApiGroupsTable
+
 
 select__gvdbs_type = [SelectOption(name=value, value=value) for value in GVDBS_TYPE_VALUES]
 
@@ -48,15 +48,11 @@ class SuManageVDBsTable:
             payload: TableQuery,
             deleted: int | None
             ) -> SuManageVDBsQueryResult:
-        
-        manage_vdbs__qc = deepcopy(su_manage_vdbs__query_columns)
-        manage_vdbs__to = deepcopy(su_manage_vdbs__table_options)
         # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-        select__api_groups = await ApiGroupsTable(self.session).get_all_not_deleted_as_select_options()
-        manage_vdbs__qc['group_id'].select = select__api_groups
-        manage_vdbs__qc['group_id'].default = select__api_groups[0].value if select__api_groups else 1
-        manage_vdbs__to.add_values['group_id_name'] = {api_group.value:api_group.name for api_group in select__api_groups}
-        #
+        manage_vdbs__qc, manage_vdbs__to = await get_qc_to_with_group_id_name(
+            self.session, su_manage_vdbs__query_columns, su_manage_vdbs__table_options
+        )
+        # 
         where_clause = GroupVDBs.gvdbs_id > -1
         if deleted is not None:
             where_clause &= GroupVDBs.deleted == deleted

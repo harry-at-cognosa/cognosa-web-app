@@ -68,7 +68,7 @@ class GaManageUsersTable:
         for row in rows:
             row.password = ''
         return GaManageUsersQueryResult(
-            name='manage_users',
+            name='ga_manage_users',
             rows=rows,
             columns=ga_manage_users__query_columns,
             table_options=ga_manage_users__table_options,
@@ -169,5 +169,5 @@ class GaManageUsersTable:
             await self.session.commit()
             return TableDeleteRowResult(result='success', total_deleted=1)
         except Exception as exc:
-            log.error(f"Exception in GaManageUsersTable.delete_by_user_id ({cur_user_id=}, {cur_group_id=}, {user_id=}):\n{exc}")
+            log.error(f"Exception in GaManageUsersTable.mark_deleted_by_user_id ({cur_user_id=}, {cur_group_id=}, {user_id=}):\n{exc}")
             return TableDeleteRowResult(result='error', total_deleted=0)

@@ -19,6 +19,14 @@ Changes for initial deploy:
 
 5. Added `release` folder. Check out `release/.../!README.MD`.
 
+6. Updated `SuperUsers -> Users` page:
+   Only for superusers.
+   CRUD operations on `api_users` PostgreSQL table.
+   Disable edit for himself: `user_name`, `email`, `is_active`, `is_superuser`.
+   Create/edit: error if user_name or email existing.
+   Delete: cannot delete himself.
+   Note: errors are not showing for now. Will just do nothing.
+
 ## [0.10c] (2025-10-26)
 
 1. added:

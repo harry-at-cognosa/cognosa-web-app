@@ -1,4 +1,3 @@
-from copy import deepcopy
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models.group_llms import GroupLLMs, GLLMsTypes, GLLMS_TYPE_VALUES
@@ -8,8 +7,8 @@ from cwa_lib.pydantic_schemas.generic_table import (
     SelectOption, ColumnType, 
     TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
+from cwa_lib.pages import get_qc_to_with_group_id_name
 from cwa_lib.pydantic_schemas.su_manage_llms import SuManageLLMsQueryResult, SuManageLLMsCreate, SuManageLLMsUpdate
-from cwa_lib.sql_tables.api_groups import ApiGroupsTable
 
 select__gllms_type = [SelectOption(name=value, value=value) for value in GLLMS_TYPE_VALUES]
 
@@ -49,14 +48,10 @@ class SuManageLLMsTable:
             payload: TableQuery,
             deleted: int | None
             ) -> SuManageLLMsQueryResult:
-        
-        manage_llms__qc = deepcopy(su_manage_llms__query_columns)
-        manage_llms__to = deepcopy(su_manage_llms__table_options)
         # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-        select__api_groups = await ApiGroupsTable(self.session).get_all_not_deleted_as_select_options()
-        manage_llms__qc['group_id'].select = select__api_groups
-        manage_llms__qc['group_id'].default = select__api_groups[0].value if select__api_groups else 1
-        manage_llms__to.add_values['group_id_name'] = {api_group.value:api_group.name for api_group in select__api_groups}
+        manage_llms__qc, manage_llms__to = await get_qc_to_with_group_id_name(
+            self.session, su_manage_llms__query_columns, su_manage_llms__table_options
+        )
         #
         where_clause = GroupLLMs.gllms_id > -1
         if deleted is not None:

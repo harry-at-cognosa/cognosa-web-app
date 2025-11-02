@@ -33,7 +33,7 @@ async def ga_manage_users__create(
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(async_get_session),
     ):
-    if not user.is_superuser:
+    if not user.is_groupadmin:
         raise HTTPException(status_code=404, detail="Not found")
     log_table = LogCRUDTable(session)
     await log_table.add_one(user, request, dict(payload))
@@ -52,7 +52,7 @@ async def ga_manage_users__update(
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(async_get_session),
     ):
-    if not user.is_superuser:
+    if not user.is_groupadmin:
         raise HTTPException(status_code=404, detail="Not found")
     log_table = LogCRUDTable(session)
     await log_table.add_one(user, request, dict(payload))
@@ -72,7 +72,7 @@ async def ga_manage_users__delete(
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(async_get_session),
     ):
-    if not user.is_superuser:
+    if not user.is_groupadmin:
         raise HTTPException(status_code=404, detail="Not found")
     log_table = LogCRUDTable(session)
     await log_table.add_one(user, request)

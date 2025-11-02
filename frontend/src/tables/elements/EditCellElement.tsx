@@ -19,7 +19,9 @@ export default function EditCellElement({ useStore, col }: Props) {
     tableStore.setEditRow({ ...tableStore.editRow, [col]: value });
   }
   const key = "edit_cell_element__" + col;
-  const dummy_username = ["email", "username", "user"].includes(col) ? (
+  const dummy_username = ["email", "user_name", "username", "user"].includes(
+    col
+  ) ? (
     <input
       type="text"
       style={{ display: "none", position: "absolute" }}
