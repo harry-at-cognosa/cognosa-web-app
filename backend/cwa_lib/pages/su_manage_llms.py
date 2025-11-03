@@ -7,7 +7,7 @@ from cwa_lib.pydantic_schemas.generic_table import (
     SelectOption, ColumnType, 
     TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
-from cwa_lib.pages import get_qc_to_with_group_id_name
+from cwa_lib.pages import get_qc_to_with_user_id_name_group_id_name
 from cwa_lib.pydantic_schemas.su_manage_llms import SuManageLLMsQueryResult, SuManageLLMsCreate, SuManageLLMsUpdate
 
 select__gllms_type = [SelectOption(name=value, value=value) for value in GLLMS_TYPE_VALUES]
@@ -49,8 +49,9 @@ class SuManageLLMsTable:
             deleted: int | None
             ) -> SuManageLLMsQueryResult:
         # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-        manage_llms__qc, manage_llms__to = await get_qc_to_with_group_id_name(
-            self.session, su_manage_llms__query_columns, su_manage_llms__table_options
+        manage_llms__qc, manage_llms__to = await get_qc_to_with_user_id_name_group_id_name(
+            self.session, su_manage_llms__query_columns, su_manage_llms__table_options,
+            {'group_id': ('add_values', 'select_default')}
         )
         #
         where_clause = GroupLLMs.gllms_id > -1

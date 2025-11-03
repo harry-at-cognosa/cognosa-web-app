@@ -8,7 +8,7 @@ from cwa_lib.pydantic_schemas.generic_table import (
     ColumnType, TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
 from cwa_lib.pydantic_schemas.su_manage_users import SuManageUsersQueryResult, SuManageUsersCreate, SuManageUsersUpdate
-from cwa_lib.pages import get_qc_to_with_group_id_name
+from cwa_lib.pages import get_qc_to_with_user_id_name_group_id_name
 
 from cwa_lib.sql_tables.api_users import ApiUsersTable
 from cwa_lib.app import password_helper
@@ -52,8 +52,9 @@ class SuManageUsersTable:
             deleted: int | None
         ) -> SuManageUsersQueryResult:
         # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-        manage_users__qc, manage_users__to = await get_qc_to_with_group_id_name(
-            self.session, su_manage_users__query_columns, su_manage_users__table_options
+        manage_users__qc, manage_users__to = await get_qc_to_with_user_id_name_group_id_name(
+            self.session, su_manage_users__query_columns, su_manage_users__table_options,
+            {'group_id': ('add_values', 'select_default')}
         )
         #
         order_clause, order_by, order_dir = create_order_clause(User, su_manage_users__table_options.pk, payload.order_by, payload.order_dir)
@@ -93,7 +94,7 @@ class SuManageUsersTable:
         if exists:
             return TableCreateRowResult(result='error', error_msg='This user_name already exists', total_created=0)
         
-        await ApiUsersTable().create_user(
+        await ApiUsersTable.create_user(
             user_id=None,
             email=data.email,
             password=data.password,

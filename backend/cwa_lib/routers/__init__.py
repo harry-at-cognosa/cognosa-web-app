@@ -12,6 +12,7 @@ from cwa_lib.routers.su_manage_api_settings import router__su_manage_api_setting
 from cwa_lib.routers.su_manage_doc_tasks import router__su_manage_doc_tasks
 from cwa_lib.routers.su_manage_users import router__su_manage_users
 from cwa_lib.routers.su_manage_groups import router__su_manage_groups
+from cwa_lib.routers.su_manage_log_crud import router__su_manage_log_crud
 from cwa_lib.routers.su_manage_llms import router__su_manage_llms
 from cwa_lib.routers.su_manage_vdbs import router__su_manage_vdbs
 from cwa_lib.routers.su_server_status import router__su_server_status
@@ -41,3 +42,4 @@ api_router.include_router(router__su_server_status, tags=["Superuser Server Stat
 api_router.include_router(router__su_manage_users, tags=["Superuser Manage Users"], include_in_schema=False)
 api_router.include_router(router__su_manage_api_settings, tags=["Manage Api Settings"], include_in_schema=False)
 api_router.include_router(router__su_manage_doc_tasks, tags=["Manage Doc Tasks"], include_in_schema=False)
+api_router.include_router(router__su_manage_log_crud, tags=["Manage Log CRUD"], include_in_schema=False)

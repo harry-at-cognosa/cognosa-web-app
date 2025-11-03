@@ -92,7 +92,7 @@ class GaManageUsersTable:
         if exists:
             return TableCreateRowResult(result='error', error_msg='This user_name already exists', total_created=0)
         
-        await ApiUsersTable().create_user(
+        await ApiUsersTable.create_user(
             user_id=None,
             email=data.email,
             password=data.password,

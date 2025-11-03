@@ -16,6 +16,7 @@ import SuManageApiSettingsPage from "./SuManageApiSettings copy/SuManageApiSetti
 import GaManageUsersPage from "./GaManageUsers/GaManageUsersPage";
 import GroupAdminRoute from "../components/GroupAdminRoute";
 import SuManageDocTasksPage from "./SuManageDocTasks/SuManageDocTasksPage";
+import SuManageLogCRUDPage from "./SuManageLogCRUD/SuManageLogCRUDPage";
 
 export const Router = createBrowserRouter([
   {
@@ -83,6 +84,10 @@ export const Router = createBrowserRouter([
           {
             path: "manage_doc_tasks",
             element: <SuManageDocTasksPage />,
+          },
+          {
+            path: "manage_log_crud",
+            element: <SuManageLogCRUDPage />,
           },
         ],
       },

@@ -1,10 +1,12 @@
 import contextlib
+from typing import Sequence
 from fastapi_users.exceptions import UserAlreadyExists
 from sqlalchemy import select
 from common.helpers import utcnow
 from common.sql_db_async import async_get_session, async_get_user_db, AsyncSession
 from common.sql_models import User
 from common.sql_models.api_users import User
+from cwa_lib.pydantic_schemas.generic_table import SelectOption
 from cwa_lib.pydantic_schemas.user import UserCreate
 from cwa_lib.users import get_user_manager
 
@@ -14,11 +16,24 @@ get_user_db_context = contextlib.asynccontextmanager(async_get_user_db)
 get_user_manager_context = contextlib.asynccontextmanager(get_user_manager)
 
 class ApiUsersTable:
-    @staticmethod
-    async def async_select_by_user_name(session: AsyncSession, user_name: str) -> User | None:
+    def __init__(self, session: AsyncSession):
+        self.session = session
+    
+    async def async_select_by_user_name(self, user_name: str) -> User | None:
         stmt = select(User).where(User.user_name == user_name)
-        result = await session.scalar(stmt)
+        result = await self.session.scalar(stmt)
         return result
+    
+    async def get_all_not_deleted(self) -> Sequence[User]:
+        result = await self.session.execute(select(User).where(User.deleted==0).order_by(User.user_id))
+        return result.scalars().all()
+    
+    async def get_all_not_deleted_as_select_options(self) -> list[SelectOption]:
+        """Get e.g. list[SelectOption(name='1: User1', value=1), ...]"""
+        return [
+            SelectOption(name=f"{api_user.user_id}: {api_user.user_name}", value=api_user.user_id) 
+            for api_user in (await self.get_all_not_deleted())
+        ]
 
     @staticmethod
     async def create_user(

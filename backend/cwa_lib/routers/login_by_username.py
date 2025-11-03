@@ -15,7 +15,7 @@ async def custom_auth_route(
     password: str = Form(...),
     session: AsyncSession = Depends(async_get_session),
 ):
-    user = await ApiUsersTable.async_select_by_user_name(session, user_name=username)
+    user = await ApiUsersTable(session).async_select_by_user_name(user_name=username)
     if not (user and user.is_active):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

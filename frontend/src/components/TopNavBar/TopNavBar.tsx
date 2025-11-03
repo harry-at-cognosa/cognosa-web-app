@@ -99,6 +99,9 @@ const TopNavBar = () => {
                   <LinkContainer to="/su/manage_api_settings">
                     <Dropdown.Item>Api Settings</Dropdown.Item>
                   </LinkContainer>
+                  <LinkContainer to="/su/manage_log_crud">
+                    <Dropdown.Item>Log CRUD</Dropdown.Item>
+                  </LinkContainer>
                 </Dropdown.Menu>
               </Dropdown>
             )}

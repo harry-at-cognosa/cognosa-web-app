@@ -28,15 +28,21 @@ export default function ViewCellElement({ data, row, col }: Props) {
         ></BooleanCheck>
       </td>
     );
-  if (cellType === "text")
+  if (cellType === "text") {
+    if (!value) return <td key={key}></td>;
     return (
       <td key={key}>
         <TextCell value={value}></TextCell>
       </td>
     );
+  }
   if (cellType === "group_id_name") {
     const group_id_name: Record<number, string> = add_values["group_id_name"];
     return <td key={key}>{group_id_name[Number(value)]}</td>;
+  }
+  if (cellType === "user_id_name") {
+    const user_id_name: Record<number, string> = add_values["user_id_name"];
+    return <td key={key}>{user_id_name[Number(value)]}</td>;
   }
   if (["gllms_status", "gvdbs_status"].includes(cellType)) {
     const cellText =

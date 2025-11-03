@@ -6,7 +6,7 @@ from sqlalchemy import select, delete
 from cwa_lib.pydantic_schemas.generic_table import (
     ColumnType, TableOptions, TableQuery, TableDeleteRowResult
 )
-from cwa_lib.pages import get_qc_to_with_group_id_name
+from cwa_lib.pages import get_qc_to_with_user_id_name_group_id_name
 from cwa_lib.pydantic_schemas.su_manage_doc_tasks import SuManageDocTasksQueryResult
 
 su_manage_doc_tasks__query_columns = {
@@ -56,9 +56,10 @@ class SuManageDocTasksTable:
             payload: TableQuery,
             deleted: int | None
             ) -> SuManageDocTasksQueryResult:
-        # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-        manage_doc_tasks__qc, manage_doc_tasks__to = await get_qc_to_with_group_id_name(
-            self.session, su_manage_doc_tasks__query_columns, su_manage_doc_tasks__table_options
+        # get values to make 'User ID: Name', 'Group ID: Name' columns
+        manage_doc_tasks__qc, manage_doc_tasks__to = await get_qc_to_with_user_id_name_group_id_name(
+            self.session, su_manage_doc_tasks__query_columns, su_manage_doc_tasks__table_options,
+            {'user_id': ('add_values', 'select_default'), 'group_id': ('add_values', 'select_default')}
         )
         #
         where_clause = DocTasks.doc_task_id > -1

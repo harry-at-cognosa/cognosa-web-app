@@ -37,6 +37,9 @@ Changes for initial deploy:
 8. Added `SuperUsers -> Doc Tasks` page:
    view/delete `doc_tasks` PostgreSQL table values.
 
+9. Added `SuperUsers -> Log CRUD` page:
+   view/delete `log_crud` PostgreSQL table values.
+
 ## [0.10c] (2025-10-26)
 
 1. added:
