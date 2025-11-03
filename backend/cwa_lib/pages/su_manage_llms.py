@@ -56,7 +56,7 @@ class SuManageLLMsTable:
         where_clause = GroupLLMs.gllms_id > -1
         if deleted is not None:
             where_clause &= GroupLLMs.deleted == deleted
-        order_clause, order_by, order_dir = create_order_clause(GroupLLMs, 'gllms_id', payload.order_by, payload.order_dir)
+        order_clause, order_by, order_dir = create_order_clause(GroupLLMs, manage_llms__to.pk, payload.order_by, payload.order_dir)
         result = await self.session.execute(
             select(GroupLLMs)
             .where(where_clause)

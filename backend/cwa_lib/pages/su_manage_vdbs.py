@@ -56,7 +56,7 @@ class SuManageVDBsTable:
         where_clause = GroupVDBs.gvdbs_id > -1
         if deleted is not None:
             where_clause &= GroupVDBs.deleted == deleted
-        order_clause, order_by, order_dir = create_order_clause(GroupVDBs, 'gvdbs_id', payload.order_by, payload.order_dir)
+        order_clause, order_by, order_dir = create_order_clause(GroupVDBs, manage_vdbs__to.pk, payload.order_by, payload.order_dir)
         result = await self.session.execute(
             select(GroupVDBs)
             .where(where_clause)

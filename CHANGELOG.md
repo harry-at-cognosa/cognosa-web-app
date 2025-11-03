@@ -34,6 +34,9 @@ Changes for initial deploy:
    `user_name` = `deleted_{user_id}__<user_name>`
    So superuser or groupadmin can delete and made user with same email/user_name.
 
+8. Added `SuperUsers -> Doc Tasks` page:
+   view/delete `doc_tasks` PostgreSQL table values.
+
 ## [0.10c] (2025-10-26)
 
 1. added:

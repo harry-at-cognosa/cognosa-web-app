@@ -90,6 +90,9 @@ const TopNavBar = () => {
                   <LinkContainer to="/su/manage_vdbs">
                     <Dropdown.Item>VDBs</Dropdown.Item>
                   </LinkContainer>
+                  <LinkContainer to="/su/manage_doc_tasks">
+                    <Dropdown.Item>Doc Tasks</Dropdown.Item>
+                  </LinkContainer>
                   <LinkContainer to="/su/server_status">
                     <Dropdown.Item>Server Status</Dropdown.Item>
                   </LinkContainer>

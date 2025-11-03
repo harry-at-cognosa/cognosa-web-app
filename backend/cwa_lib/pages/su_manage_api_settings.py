@@ -37,7 +37,9 @@ class SuManageApiSettingsTable:
             payload: TableQuery,
             ) -> SuManageApiSettingsQueryResult:
         
-        order_clause, order_by, order_dir = create_order_clause(ApiSettings, 'name', payload.order_by, payload.order_dir)
+        order_clause, order_by, order_dir = create_order_clause(
+            ApiSettings, su_manage_api_settings__table_options.pk, payload.order_by, payload.order_dir
+        )
         result = await self.session.execute(
             select(ApiSettings)
             .order_by(order_clause)

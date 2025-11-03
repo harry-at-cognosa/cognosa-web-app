@@ -15,6 +15,7 @@ import SuperuserRoute from "../components/SuperUserRoute";
 import SuManageApiSettingsPage from "./SuManageApiSettings copy/SuManageApiSettingsPage";
 import GaManageUsersPage from "./GaManageUsers/GaManageUsersPage";
 import GroupAdminRoute from "../components/GroupAdminRoute";
+import SuManageDocTasksPage from "./SuManageDocTasks/SuManageDocTasksPage";
 
 export const Router = createBrowserRouter([
   {
@@ -78,6 +79,10 @@ export const Router = createBrowserRouter([
           {
             path: "manage_api_settings",
             element: <SuManageApiSettingsPage />,
+          },
+          {
+            path: "manage_doc_tasks",
+            element: <SuManageDocTasksPage />,
           },
         ],
       },

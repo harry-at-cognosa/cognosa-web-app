@@ -37,7 +37,9 @@ class SuManageGroupsTable:
         where_clause = ApiGroups.group_id > -1
         if deleted is not None:
             where_clause &= ApiGroups.deleted == deleted
-        order_clause, order_by, order_dir = create_order_clause(ApiGroups, 'group_id', payload.order_by, payload.order_dir)
+        order_clause, order_by, order_dir = create_order_clause(
+            ApiGroups, su_manage_groups__table_options.pk, payload.order_by, payload.order_dir
+        )
         result = await self.session.execute(
             select(ApiGroups)
             .where(where_clause)
