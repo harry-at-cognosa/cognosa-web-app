@@ -30,6 +30,10 @@ export default function ViewCellElement({ data, row, col }: Props) {
     );
   if (cellType === "text") {
     if (!value) return <td key={key}></td>;
+    const value_str = value.toString();
+    if (value_str.length < 10 && !value_str.includes("\n")) {
+      return <td key={key}>{value}</td>;
+    }
     return (
       <td key={key}>
         <TextCell value={value}></TextCell>
@@ -69,6 +73,28 @@ export default function ViewCellElement({ data, row, col }: Props) {
     return (
       <td key={key}>
         <TextCell value={value} rows={2}></TextCell>
+      </td>
+    );
+  }
+  if (cellType === "datetime") {
+    const date = new Date(value as string);
+    // Format date (e.g., "October 28, 2025")
+    const dateString = date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    // Format time (e.g., "10:22:30 PM")
+    const timeString = date.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    return (
+      <td key={key}>
+        <div className="text-nowrap">{dateString}</div>
+        <div className="text-nowrap">{timeString}</div>
       </td>
     );
   }
