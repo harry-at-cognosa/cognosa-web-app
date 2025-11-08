@@ -1,6 +1,7 @@
 import type { createTableStore } from "../TableStoreFactory";
 import CreateRowButton from "./CreateRowButton";
 import HeaderColumnsRow from "./HeaderColumnsRow";
+import PaginationControls from "./PaginationControls";
 import TableReloadButton from "./TableReloadButton";
 import TableTitle from "./TableTitle";
 
@@ -17,6 +18,7 @@ export default function TableHeader({ useStore }: Props) {
             <CreateRowButton useStore={useStore}></CreateRowButton>
             <TableTitle useStore={useStore}></TableTitle>
             <TableReloadButton useStore={useStore}></TableReloadButton>
+            <PaginationControls useStore={useStore}></PaginationControls>
           </div>
         </th>
       </tr>

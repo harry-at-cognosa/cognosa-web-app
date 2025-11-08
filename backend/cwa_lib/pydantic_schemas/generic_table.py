@@ -27,7 +27,8 @@ class TableOptions(BaseModel):
     add_values: dict[str, Any] = dict()
     # default/max LIMIT
     default_limit: int = 20
-    max_limit: int = 50
+    max_limit: int = 20
+    select_limit: list[int] = [5, 10, 20]
 
 
 class TableQuery(BaseModel):

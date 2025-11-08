@@ -3,8 +3,8 @@ import { createResettableStore } from "../api/createResettableStore";
 
 export interface TableRequest {
   name: string;
-  limit?: number;
-  offset?: number;
+  limit: number;
+  offset: number;
   order_by?: string;
   order_dir?: "asc" | "desc";
   filters?: Record<string, any>;
@@ -32,6 +32,9 @@ export interface TableOptions {
   delete__ask_columns: string[];
   order_by__allow: string[];
   add_values: Record<string, any>;
+  default_limit: number;
+  max_limit: number;
+  select_limit: number[];
 }
 
 export type TableCellValue = string | number | boolean | null | undefined;
@@ -44,7 +47,9 @@ export interface TableResponse {
   table_options: TableOptions;
   order_by: string;
   order_dir: "asc" | "desc";
-  total?: number;
+  total: number;
+  limit: number;
+  offset: number;
 }
 
 export interface TableRowCreateResponse {
@@ -71,6 +76,8 @@ export interface TableStore {
   setNeedReload: (needReload: boolean) => void;
   nextRequest: TableRequest;
   queryTable: () => Promise<void>;
+  setLimit: (newLimit: number) => void;
+  setOffset: (newOffset: number) => void;
 
   showCreateOrUpdateDialog: "" | "create" | "update";
   editRow: TableRow | null;
@@ -114,7 +121,7 @@ export function createTableStore({
     data: null,
     needReload: false,
     setNeedReload: (needReload) => set({ needReload }),
-    nextRequest: { name, order_by, order_dir },
+    nextRequest: { name, order_by, order_dir, limit: 0, offset: 0 },
     queryTable: async () => {
       if (get().busy) return;
       set({ busy: "read", error: null });
@@ -123,12 +130,15 @@ export function createTableStore({
           endpoint + "/query",
           get().nextRequest
         );
+        console.log(res.data);
         set({
           data: res.data,
           nextRequest: {
             ...get().nextRequest,
             order_by: res.data.order_by,
             order_dir: res.data.order_dir,
+            limit: res.data.limit,
+            offset: res.data.offset,
           },
         });
         if (afterRead) await afterRead(get);
@@ -138,7 +148,20 @@ export function createTableStore({
         set({ busy: "", needReload: false });
       }
     },
-
+    setLimit: (newLimit: number) => {
+      if (newLimit !== get().nextRequest.limit)
+        set({
+          nextRequest: { ...get().nextRequest, limit: newLimit, offset: 0 },
+          needReload: true,
+        });
+    },
+    setOffset: (newOffset: number) => {
+      if (newOffset !== get().nextRequest.offset)
+        set({
+          nextRequest: { ...get().nextRequest, offset: newOffset },
+          needReload: true,
+        });
+    },
     showCreateOrUpdateDialog: "",
     editRow: null,
     setShowCreateOrUpdateDialog: (

@@ -1,7 +1,18 @@
 ## [0.12a] (2025-11-07)
 
 1. Generic tables: added default order by/dir.
-   Specified `desc` for LogCRUD.
+   Specified `desc` for `SuperUser` -> `Doc Tasks` and `Log CRUD`
+
+2. Added pagination controls for all tables:
+   Button `fast-backward` - goes to offset 0;
+   Button `backward` - previous page;
+   Button `forward` - next page;
+   Button `fast-forward` - last page;
+   Label `a-b/c`, where
+   `a` - displayed rows first number (from 1),
+   `b` - displayed rows last number,
+   `c` - total rows that can be displayed;
+   Select box with `5/10/20` rows per page.
 
 ## [0.11b] (2025-11-02)
 
