@@ -1,3 +1,4 @@
+import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 import type { createTableStore } from "../TableStoreFactory";
 import ColumnDisplayName from "./ColumnDisplayName";
 import HeaderColumnOrderArrow from "./HeaderColumnOrderArrow";
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function HeaderColumnsRow({ useStore }: Props) {
+  const { color } = useWebAppOptionsStore();
   const tableStore = useStore();
   const { data } = tableStore;
   if (!data) return null;
@@ -37,7 +39,9 @@ export default function HeaderColumnsRow({ useStore }: Props) {
       }}
     >
       {/* edit th */}
-      {data.table_options.update__ask_columns.length ? <th></th> : null}
+      {data.table_options.update__ask_columns.length ? (
+        <th style={{ backgroundColor: color.c100 }}></th>
+      ) : null}
       {/* visible columns display names */}
       {data.table_options.read__visible_columns.map((col) => (
         <th
@@ -48,6 +52,7 @@ export default function HeaderColumnsRow({ useStore }: Props) {
               ? styles.sortableHeader
               : null
           )}
+          style={{ backgroundColor: color.c100 }}
           onClick={() => {
             onHeaderClick(col);
           }}
@@ -62,7 +67,9 @@ export default function HeaderColumnsRow({ useStore }: Props) {
         </th>
       ))}
       {/* delete th */}
-      {data.table_options.delete__ask_columns.length ? <th></th> : null}
+      {data.table_options.delete__ask_columns.length ? (
+        <th style={{ backgroundColor: color.c100 }}></th>
+      ) : null}
     </tr>
   );
 }
