@@ -93,6 +93,8 @@ interface createTableStoreProps {
   afterRead?: (get: () => TableStore) => Promise<void>;
   afterEdit?: (get: () => TableStore) => Promise<void>;
   afterDelete?: (get: () => TableStore) => Promise<void>;
+  order_by?: string;
+  order_dir?: "asc" | "desc";
 }
 
 export function createTableStore({
@@ -102,6 +104,8 @@ export function createTableStore({
   afterRead,
   afterEdit,
   afterDelete,
+  order_by,
+  order_dir,
 }: createTableStoreProps) {
   return createResettableStore<TableStore>((set, get) => ({
     title,
@@ -110,7 +114,7 @@ export function createTableStore({
     data: null,
     needReload: false,
     setNeedReload: (needReload) => set({ needReload }),
-    nextRequest: { name },
+    nextRequest: { name, order_by, order_dir },
     queryTable: async () => {
       if (get().busy) return;
       set({ busy: "read", error: null });

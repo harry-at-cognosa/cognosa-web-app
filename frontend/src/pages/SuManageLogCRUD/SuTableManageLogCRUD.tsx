@@ -5,6 +5,8 @@ const useTableSuManageLogCRUDStore = createTableStore({
   title: "Manage Log CRUD",
   name: "su_manage_log_crud",
   endpoint: "/su/manage_log_crud",
+  order_by: "lc_id",
+  order_dir: "desc",
 });
 
 export default function TableSuManageLogCRUD() {
