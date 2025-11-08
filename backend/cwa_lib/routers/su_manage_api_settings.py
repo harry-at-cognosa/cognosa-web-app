@@ -4,7 +4,7 @@ from common.sql_models.api_users import User
 from cwa_lib.app import current_active_user
 from cwa_lib.pydantic_schemas.generic_table import TableQuery, TableUpdateRowResult
 from cwa_lib.pydantic_schemas.su_manage_api_settings import SuManageApiSettingsQueryResult, SuManageApiSettingsUpdate
-from cwa_lib.pages.su_manage_api_settings import SuManageApiSettingsTable
+from cwa_lib.pages.su_manage_api_settings import SuManageApiSettingsTableRead, SuManageApiSettingsTable
 from cwa_lib.sql_tables.log_crud import LogCRUDTable
 
 router__su_manage_api_settings = APIRouter()
@@ -18,7 +18,7 @@ async def su_manage_api_settings__query(
     ):
     if not user.is_superuser:
         raise HTTPException(status_code=404, detail="Not found")
-    result = await SuManageApiSettingsTable(session).query_all(payload=payload)
+    result = await SuManageApiSettingsTableRead(session, payload).query()
     return result
 
 

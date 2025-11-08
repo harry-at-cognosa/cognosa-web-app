@@ -25,6 +25,9 @@ class TableOptions(BaseModel):
     order_by__allow: list[str] = []
     # additional values e.g. {'group_id_name': {<group_id>: <group_name>, ...}, ...}
     add_values: dict[str, Any] = dict()
+    # default/max LIMIT
+    default_limit: int = 20
+    max_limit: int = 50
 
 
 class TableQuery(BaseModel):
@@ -35,14 +38,16 @@ class TableQuery(BaseModel):
     offset: int | None = None
 
 
-RowType = TypeVar("RowType")
+RowModel = TypeVar("RowModel", bound=BaseModel)
 
-class TableQueryResult(BaseModel, Generic[RowType]):
+class TableQueryResult(BaseModel, Generic[RowModel]):
     name: str
-    rows: Sequence[RowType]
+    rows: Sequence[RowModel]
     columns: dict[str, ColumnType]
     table_options: TableOptions
     total: int
+    limit: int = 20
+    offset: int = 0
     order_by: str
     order_dir: Literal['asc', 'desc']
 

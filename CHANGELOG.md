@@ -1,3 +1,8 @@
+## [0.12a] (2025-11-07)
+
+1. Generic tables: added default order by/dir.
+   Specified `desc` for LogCRUD.
+
 ## [0.11b] (2025-11-02)
 
 Changes for initial deploy:

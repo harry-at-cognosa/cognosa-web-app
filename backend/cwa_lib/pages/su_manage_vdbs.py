@@ -1,14 +1,14 @@
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models.group_vdbs import GroupVDBs, GVDBsTypes, GVDBS_TYPE_VALUES
-from common.sql_tools import create_order_clause, async_reseqn_by_group_id, fix_autoincrement
+from common.sql_tools import async_reseqn_by_group_id, fix_autoincrement
 from sqlalchemy import select
 from cwa_lib.pydantic_schemas.generic_table import (
     SelectOption, ColumnType, 
-    TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
+    TableOptions, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
-from cwa_lib.pages import get_qc_to_with_user_id_name_group_id_name
-from cwa_lib.pydantic_schemas.su_manage_vdbs import SuManageVDBsQueryResult, SuManageVDBsCreate, SuManageVDBsUpdate
+from cwa_lib.pages import GenericTableRead
+from cwa_lib.pydantic_schemas.su_manage_vdbs import SuManageVDBsRead, SuManageVDBsCreate, SuManageVDBsUpdate
 
 
 select__gvdbs_type = [SelectOption(name=value, value=value) for value in GVDBS_TYPE_VALUES]
@@ -35,6 +35,20 @@ su_manage_vdbs__table_options = TableOptions(
     order_by__allow=['gvdbs_id', ] + gvdbs_edit_columns
 )
 
+class SuManageVDBsTableRead(GenericTableRead):
+    sa_model = GroupVDBs
+    read_model = SuManageVDBsRead
+    name = 'manage_vdbs'
+    query_columns = su_manage_vdbs__query_columns
+    table_options = su_manage_vdbs__table_options
+    default_order_by = table_options.pk
+    qc_to_user_group = {'group_id': ('add_values', 'select_default', 'allow_all')}
+
+    def _get_where_clause(self):
+        where_clause = GroupVDBs.gvdbs_id > -1
+        if (deleted := self.kwargs.get('deleted', 0)) is not None:
+            where_clause &= GroupVDBs.deleted == deleted
+        return where_clause
 
 class SuManageVDBsTable:
     def __init__(self, session: AsyncSession) -> None:
@@ -43,39 +57,6 @@ class SuManageVDBsTable:
     async def resequence_group_vdbs(self, group_id: int, prioritize_gvdbs_id: int) -> None:
         await async_reseqn_by_group_id(self.session, GroupVDBs, group_id, prioritize_gvdbs_id)
 
-    async def query_all(
-            self,
-            payload: TableQuery,
-            deleted: int | None
-            ) -> SuManageVDBsQueryResult:
-        # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-        manage_vdbs__qc, manage_vdbs__to = await get_qc_to_with_user_id_name_group_id_name(
-            self.session, su_manage_vdbs__query_columns, su_manage_vdbs__table_options,
-            {'group_id': ('add_values', 'select_default')}
-        )
-        # 
-        where_clause = GroupVDBs.gvdbs_id > -1
-        if deleted is not None:
-            where_clause &= GroupVDBs.deleted == deleted
-        order_clause, order_by, order_dir = create_order_clause(GroupVDBs, manage_vdbs__to.pk, payload.order_by, payload.order_dir)
-        result = await self.session.execute(
-            select(GroupVDBs)
-            .where(where_clause)
-            .order_by(order_clause)
-            .limit(payload.limit)
-            .offset(payload.offset)
-        )
-        rows = result.scalars().all()
-        return SuManageVDBsQueryResult(
-            name='manage_vdbs',
-            rows=rows,
-            columns=manage_vdbs__qc,
-            table_options=manage_vdbs__to,
-            order_by=order_by,
-            order_dir=order_dir,
-            total=len(rows)
-        )
-    
     async def create_one(self, data: SuManageVDBsCreate) -> TableCreateRowResult:
         """
         Create one row

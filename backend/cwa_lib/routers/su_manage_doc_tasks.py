@@ -4,7 +4,7 @@ from common.sql_models.api_users import User
 from cwa_lib.app import current_active_user
 from cwa_lib.pydantic_schemas.generic_table import TableQuery, TableDeleteRowResult
 from cwa_lib.pydantic_schemas.su_manage_doc_tasks import SuManageDocTasksQueryResult
-from cwa_lib.pages.su_manage_doc_tasks import SuManageDocTasksTable
+from cwa_lib.pages.su_manage_doc_tasks import SuManageDocTasksTableRead, SuManageDocTasksTable
 from cwa_lib.sql_tables.log_crud import LogCRUDTable
 
 router__su_manage_doc_tasks = APIRouter()
@@ -18,7 +18,7 @@ async def su_manage_doc_tasks__query(
     ):
     if not user.is_superuser:
         raise HTTPException(status_code=404, detail="Not found")
-    result = await SuManageDocTasksTable(session).query_all(payload=payload, deleted=0)
+    result = await SuManageDocTasksTableRead(session, payload, deleted=0).query()
     return result
 
 @router__su_manage_doc_tasks.delete("/su/manage_doc_tasks/{doc_task_id:int}", response_model=TableDeleteRowResult)

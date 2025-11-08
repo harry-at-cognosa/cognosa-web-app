@@ -4,7 +4,7 @@ from common.sql_models.api_users import User
 from cwa_lib.app import current_active_user
 from cwa_lib.pydantic_schemas.generic_table import TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 from cwa_lib.pydantic_schemas.manage_contexts import ManageContextsQueryResult, ManageContextsCreate, ManageContextsUpdate
-from cwa_lib.pages.manage_contexts import ManageContextsTable
+from cwa_lib.pages.manage_contexts import ManageContextsTableRead, ManageContextsTable
 from cwa_lib.sql_tables.log_crud import LogCRUDTable
 
 router__manage_contexts = APIRouter()
@@ -16,11 +16,11 @@ async def manage_contexts__query(
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(async_get_session),
     ):
-    result = await ManageContextsTable(session).query_all_by_group_id(
+    result = await ManageContextsTableRead(
+        session, payload, 
         group_id=user.group_id, 
-        payload=payload,
         deleted=0
-    )
+    ).query()
     return result
 
 @router__manage_contexts.post("/manage_contexts", response_model=TableCreateRowResult)

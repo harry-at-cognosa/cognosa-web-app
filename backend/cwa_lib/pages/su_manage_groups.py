@@ -1,12 +1,13 @@
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import ApiGroups
-from common.sql_tools import create_order_clause, fix_autoincrement
+from common.sql_tools import fix_autoincrement
 from sqlalchemy import select, update
 from cwa_lib.pydantic_schemas.generic_table import (
-    ColumnType, TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
+    ColumnType, TableOptions, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
-from cwa_lib.pydantic_schemas.su_manage_groups import SuManageGroupsQueryResult, SuManageGroupsCreate, SuManageGroupsUpdate
+from cwa_lib.pydantic_schemas.su_manage_groups import SuManageGroupsRead, SuManageGroupsCreate, SuManageGroupsUpdate
+from cwa_lib.pages import GenericTableRead
 
 
 su_manage_groups__query_columns = {
@@ -24,40 +25,25 @@ su_manage_groups__table_options = TableOptions(
     order_by__allow=['group_id', 'group_name'],
 )
 
+class SuManageGroupsTableRead(GenericTableRead):
+    sa_model = ApiGroups
+    read_model = SuManageGroupsRead
+    name = 'manage_groups'
+    query_columns = su_manage_groups__query_columns
+    table_options = su_manage_groups__table_options
+    default_order_by = table_options.pk
+
+    def _get_where_clause(self):
+        where_clause = ApiGroups.group_id > -1
+        if (deleted := self.kwargs.get('deleted', 0)) is not None:
+            where_clause &= ApiGroups.deleted == deleted
+        return where_clause
+
 
 class SuManageGroupsTable:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def query_all(
-            self,
-            payload: TableQuery,
-            deleted: int | None
-            ) -> SuManageGroupsQueryResult:
-        where_clause = ApiGroups.group_id > -1
-        if deleted is not None:
-            where_clause &= ApiGroups.deleted == deleted
-        order_clause, order_by, order_dir = create_order_clause(
-            ApiGroups, su_manage_groups__table_options.pk, payload.order_by, payload.order_dir
-        )
-        result = await self.session.execute(
-            select(ApiGroups)
-            .where(where_clause)
-            .order_by(order_clause)
-            .limit(payload.limit)
-            .offset(payload.offset)
-        )
-        rows = result.scalars().all()
-        return SuManageGroupsQueryResult(
-            name='manage_groups',
-            rows=rows,
-            columns=su_manage_groups__query_columns,
-            table_options=su_manage_groups__table_options,
-            order_by=order_by,
-            order_dir=order_dir,
-            total=len(rows)
-        )
-    
     async def create_one(self, data: SuManageGroupsCreate) -> TableCreateRowResult:
         """
         Create one row

@@ -1,13 +1,14 @@
-from sqlalchemy import select
+from sqlalchemy import ColumnElement, select
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import User
 from common.sql_models.api_users import User
-from common.sql_tools import create_order_clause, fix_autoincrement
+from common.sql_tools import fix_autoincrement
 from cwa_lib.pydantic_schemas.generic_table import (
-    ColumnType, TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
+    ColumnType, TableOptions, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
-from cwa_lib.pydantic_schemas.ga_manage_users import GaManageUsersQueryResult, GaManageUsersCreate, GaManageUsersUpdate
+from cwa_lib.pydantic_schemas.ga_manage_users import GaManageUsersRead, GaManageUsersCreate, GaManageUsersUpdate
+from cwa_lib.pages import GenericTableRead
 from cwa_lib.sql_tables.api_users import ApiUsersTable
 from cwa_lib.app import password_helper
 
@@ -37,46 +38,32 @@ ga_manage_users__table_options = TableOptions(
     order_by__allow=ga_manage_users__all_columns,
 )
 
+class GaManageUsersTableRead(GenericTableRead):
+    sa_model = User
+    read_model = GaManageUsersRead
+    name = 'ga_manage_users'
+    query_columns = ga_manage_users__query_columns
+    table_options = ga_manage_users__table_options
+    default_order_by = table_options.pk
+
+    def _get_where_clause(self) -> ColumnElement | None:
+        # ignore deleted users, users from other groups, superusers (if it is not the same user)
+        cur_user_id = self.kwargs.get('cur_user_id', -1)
+        cur_group_id = self.kwargs.get('cur_group_id', -1)
+        where_clause = (User.deleted == 0) & (User.group_id == cur_group_id)
+        where_clause &= ((User.user_id == cur_user_id) | (User.is_superuser == False))
+        return where_clause
+    
+    async def _get_rows_orm(self):
+        await super()._get_rows_orm()
+        for row in self._rows_orm:
+            row.password = ''
+        
 
 class GaManageUsersTable:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def query_all(
-            self,
-            cur_user_id: int,
-            cur_group_id: int,
-            payload: TableQuery
-        ) -> GaManageUsersQueryResult:
-        order_clause, order_by, order_dir = create_order_clause(
-            model=User, 
-            default_order_by=ga_manage_users__table_options.pk, 
-            order_by=payload.order_by, 
-            order_dir=payload.order_dir
-        )
-        # ignore deleted users, users from other groups, superusers (if it is not the same user)
-        where_clause = (User.deleted == 0) & (User.group_id == cur_group_id)
-        where_clause &= ((User.user_id == cur_user_id) | (User.is_superuser == False))
-        result = await self.session.execute(
-            select(User)
-            .where(where_clause)
-            .order_by(order_clause)
-            .limit(payload.limit)
-            .offset(payload.offset)
-        )
-        rows = result.scalars().all()
-        for row in rows:
-            row.password = ''
-        return GaManageUsersQueryResult(
-            name='ga_manage_users',
-            rows=rows,
-            columns=ga_manage_users__query_columns,
-            table_options=ga_manage_users__table_options,
-            order_by=order_by,
-            order_dir=order_dir,
-            total=len(rows)
-        )
-    
     async def create_one(self, cur_group_id: int, data: GaManageUsersCreate) -> TableCreateRowResult:
         """
         Create one row

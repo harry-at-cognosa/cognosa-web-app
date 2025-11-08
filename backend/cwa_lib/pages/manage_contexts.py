@@ -1,12 +1,13 @@
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import GroupContexts
-from common.sql_tools import create_order_clause, async_reseqn_by_group_id, fix_autoincrement
-from sqlalchemy import select, update
+from common.sql_tools import async_reseqn_by_group_id, fix_autoincrement
+from sqlalchemy import ColumnElement, select, update
 from cwa_lib.pydantic_schemas.generic_table import (
-    ColumnType, TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
+    ColumnType, TableOptions, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
-from cwa_lib.pydantic_schemas.manage_contexts import ManageContextsQueryResult, ManageContextsCreate, ManageContextsUpdate
+from cwa_lib.pydantic_schemas.manage_contexts import ManageContextsRead, ManageContextsCreate, ManageContextsUpdate
+from cwa_lib.pages import GenericTableRead
 
 default_gc_text = """
 Use the following pieces of context to answer the question at the end.
@@ -38,6 +39,20 @@ manage_contexts__table_options = TableOptions(
     order_by__allow=['gc_seqn', 'gc_name']
 )
 
+class ManageContextsTableRead(GenericTableRead):
+    sa_model = GroupContexts
+    read_model = ManageContextsRead
+    name = 'manage_contexts'
+    query_columns = manage_contexts__query_columns
+    table_options = manage_contexts__table_options
+    default_order_by = 'gc_seqn'    
+
+    def _get_where_clause(self) -> ColumnElement | None:
+        group_id = self.kwargs.get('group_id', -1)
+        where_clause = GroupContexts.group_id == group_id
+        if (deleted:=self.kwargs.get('deleted', 0)) is not None:
+            where_clause &= GroupContexts.deleted == deleted
+        return where_clause
 
 class ManageContextsTable:
     def __init__(self, session: AsyncSession) -> None:
@@ -53,34 +68,6 @@ class ManageContextsTable:
     async def resequence_group_contexts(self, group_id: int, prioritize_gc_id: int) -> None:
         await async_reseqn_by_group_id(self.session, GroupContexts, group_id, prioritize_gc_id)
 
-    async def query_all_by_group_id(
-            self,
-            group_id: int,
-            payload: TableQuery,
-            deleted: int | None
-            ) -> ManageContextsQueryResult:
-        where_clause = GroupContexts.group_id == group_id
-        if deleted is not None:
-            where_clause &= GroupContexts.deleted == deleted
-        order_clause, order_by, order_dir = create_order_clause(GroupContexts, 'gc_seqn', payload.order_by, payload.order_dir)
-        result = await self.session.execute(
-            select(GroupContexts)
-            .where(where_clause)
-            .order_by(order_clause)
-            .limit(payload.limit)
-            .offset(payload.offset)
-        )
-        rows = result.scalars().all()
-        return ManageContextsQueryResult(
-            name='manage_contexts',
-            rows=rows,
-            columns=manage_contexts__query_columns,
-            table_options=manage_contexts__table_options,
-            order_by=order_by,
-            order_dir=order_dir,
-            total=len(rows)
-        )
-    
     async def create_one(self, group_id: int, data: ManageContextsCreate) -> TableCreateRowResult:
         """
         Create one row

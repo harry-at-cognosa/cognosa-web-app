@@ -1,14 +1,14 @@
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models.group_llms import GroupLLMs, GLLMsTypes, GLLMS_TYPE_VALUES
-from common.sql_tools import create_order_clause, async_reseqn_by_group_id, fix_autoincrement
+from common.sql_tools import async_reseqn_by_group_id, fix_autoincrement
 from sqlalchemy import select
 from cwa_lib.pydantic_schemas.generic_table import (
     SelectOption, ColumnType, 
-    TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
+    TableOptions, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
-from cwa_lib.pages import get_qc_to_with_user_id_name_group_id_name
-from cwa_lib.pydantic_schemas.su_manage_llms import SuManageLLMsQueryResult, SuManageLLMsCreate, SuManageLLMsUpdate
+from cwa_lib.pages import GenericTableRead
+from cwa_lib.pydantic_schemas.su_manage_llms import SuManageLLMsRead, SuManageLLMsCreate, SuManageLLMsUpdate
 
 select__gllms_type = [SelectOption(name=value, value=value) for value in GLLMS_TYPE_VALUES]
 
@@ -35,6 +35,20 @@ su_manage_llms__table_options = TableOptions(
     order_by__allow=['gllms_id', ] + gllms_edit_columns
 )
 
+class SuManageLLMsTableRead(GenericTableRead):
+    sa_model = GroupLLMs
+    read_model = SuManageLLMsRead
+    name = 'manage_llms'
+    query_columns = su_manage_llms__query_columns
+    table_options = su_manage_llms__table_options
+    default_order_by = table_options.pk
+    qc_to_user_group = {'group_id': ('add_values', 'select_default', 'allow_all')}
+
+    def _get_where_clause(self):
+        where_clause = GroupLLMs.gllms_id > -1
+        if (deleted := self.kwargs.get('deleted', 0)) is not None:
+            where_clause &= GroupLLMs.deleted == deleted
+        return where_clause
 
 class SuManageLLMsTable:
     def __init__(self, session: AsyncSession) -> None:
@@ -43,39 +57,6 @@ class SuManageLLMsTable:
     async def resequence_group_llms(self, group_id: int, prioritize_gllms_id: int) -> None:
         await async_reseqn_by_group_id(self.session, GroupLLMs, group_id, prioritize_gllms_id)
 
-    async def query_all(
-            self,
-            payload: TableQuery,
-            deleted: int | None
-            ) -> SuManageLLMsQueryResult:
-        # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-        manage_llms__qc, manage_llms__to = await get_qc_to_with_user_id_name_group_id_name(
-            self.session, su_manage_llms__query_columns, su_manage_llms__table_options,
-            {'group_id': ('add_values', 'select_default')}
-        )
-        #
-        where_clause = GroupLLMs.gllms_id > -1
-        if deleted is not None:
-            where_clause &= GroupLLMs.deleted == deleted
-        order_clause, order_by, order_dir = create_order_clause(GroupLLMs, manage_llms__to.pk, payload.order_by, payload.order_dir)
-        result = await self.session.execute(
-            select(GroupLLMs)
-            .where(where_clause)
-            .order_by(order_clause)
-            .limit(payload.limit)
-            .offset(payload.offset)
-        )
-        rows = result.scalars().all()
-        return SuManageLLMsQueryResult(
-            name='manage_llms',
-            rows=rows,
-            columns=manage_llms__qc,
-            table_options=manage_llms__to,
-            order_by=order_by,
-            order_dir=order_dir,
-            total=len(rows)
-        )
-    
     async def create_one(self, data: SuManageLLMsCreate) -> TableCreateRowResult:
         """
         Create one row

@@ -1,13 +1,12 @@
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import LogCRUD
-from common.sql_tools import create_order_clause
-from sqlalchemy import select, delete
+from sqlalchemy import delete
 from cwa_lib.pydantic_schemas.generic_table import (
-    ColumnType, TableOptions, TableQuery, TableDeleteRowResult
+    ColumnType, TableOptions, TableDeleteRowResult
 )
-from cwa_lib.pages import get_qc_to_with_user_id_name_group_id_name
-from cwa_lib.pydantic_schemas.su_manage_log_crud import SuManageLogCRUDQueryResult
+from cwa_lib.pages import GenericTableRead
+from cwa_lib.pydantic_schemas.su_manage_log_crud import SuManageLogCRUDRead
 
 su_manage_log_crud__query_columns = {
     'lc_id': ColumnType(display='ID', type='number'),
@@ -32,41 +31,20 @@ su_manage_log_crud__table_options = TableOptions(
     order_by__allow=['lc_id', ]
 )
 
+class SuManageLogCRUDTableRead(GenericTableRead):
+    sa_model = LogCRUD
+    read_model = SuManageLogCRUDRead
+    name = 'su_manage_log_crud'
+    query_columns = su_manage_log_crud__query_columns
+    table_options = su_manage_log_crud__table_options
+    default_order_by = table_options.pk
+    qc_to_user_group = {'user_id': ('add_values', 'select_default', 'allow_all'), 'group_id': ('add_values', 'select_default', 'allow_all')}
 
+    
 class SuManageLogCRUDTable:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def query_all(
-            self,
-            payload: TableQuery
-            ) -> SuManageLogCRUDQueryResult:
-        # get values to make 'User ID: Name', 'Group ID: Name' columns
-        manage_log_crud__qc, manage_log_crud__to = await get_qc_to_with_user_id_name_group_id_name(
-            self.session, su_manage_log_crud__query_columns, su_manage_log_crud__table_options,
-            {'user_id': ('add_values', 'select_default'), 'group_id': ('add_values', 'select_default')}
-        )
-        #
-        order_clause, order_by, order_dir = create_order_clause(
-            LogCRUD, manage_log_crud__to.pk, payload.order_by, payload.order_dir
-        )
-        result = await self.session.execute(
-            select(LogCRUD)
-            .order_by(order_clause)
-            .limit(payload.limit)
-            .offset(payload.offset)
-        )
-        rows = result.scalars().all()
-        return SuManageLogCRUDQueryResult(
-            name='su_manage_log_crud',
-            rows=rows,
-            columns=manage_log_crud__qc,
-            table_options=manage_log_crud__to,
-            order_by=order_by,
-            order_dir=order_dir,
-            total=len(rows)
-        )
-    
     async def delete_by_lc_id(self, lc_id: int) -> TableDeleteRowResult:
         """
         Delete one by lc_id

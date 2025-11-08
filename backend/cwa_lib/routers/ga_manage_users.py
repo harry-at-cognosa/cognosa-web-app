@@ -4,7 +4,7 @@ from common.sql_models.api_users import User
 from cwa_lib.app import current_active_user
 from cwa_lib.pydantic_schemas.generic_table import TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 from cwa_lib.pydantic_schemas.ga_manage_users import GaManageUsersQueryResult, GaManageUsersCreate, GaManageUsersUpdate
-from cwa_lib.pages.ga_manage_users import GaManageUsersTable
+from cwa_lib.pages.ga_manage_users import GaManageUsersTableRead, GaManageUsersTable
 from cwa_lib.sql_tables.log_crud import LogCRUDTable
 
 router__ga_manage_users = APIRouter()
@@ -19,11 +19,10 @@ async def ga_manage_users__query(
     if not user.is_groupadmin:
         raise HTTPException(status_code=404, detail="Not found")
 
-    result = await GaManageUsersTable(session).query_all(
+    result = await GaManageUsersTableRead(session, payload, 
         cur_user_id=user.user_id, 
-        cur_group_id=user.group_id, 
-        payload=payload
-    )
+        cur_group_id=user.group_id
+    ).query()
     return result
 
 @router__ga_manage_users.post("/groupadmin/manage_users", response_model=TableCreateRowResult)

@@ -3,12 +3,12 @@ from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import User
 from common.sql_models.api_users import User
-from common.sql_tools import create_order_clause, fix_autoincrement
+from common.sql_tools import fix_autoincrement
 from cwa_lib.pydantic_schemas.generic_table import (
-    ColumnType, TableOptions, TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
+    ColumnType, TableOptions, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
-from cwa_lib.pydantic_schemas.su_manage_users import SuManageUsersQueryResult, SuManageUsersCreate, SuManageUsersUpdate
-from cwa_lib.pages import get_qc_to_with_user_id_name_group_id_name
+from cwa_lib.pydantic_schemas.su_manage_users import SuManageUsersRead, SuManageUsersCreate, SuManageUsersUpdate
+from cwa_lib.pages import GenericTableRead
 
 from cwa_lib.sql_tables.api_users import ApiUsersTable
 from cwa_lib.app import password_helper
@@ -41,44 +41,25 @@ su_manage_users__table_options = TableOptions(
     order_by__allow=su_manage_users__all_columns,
 )
 
+class SuManageUsersTableRead(GenericTableRead):
+    sa_model = User
+    read_model = SuManageUsersRead
+    name = 'su_manage_users'
+    query_columns = su_manage_users__query_columns
+    table_options = su_manage_users__table_options
+    default_order_by = table_options.pk
+    qc_to_user_group = {'group_id': ('add_values', 'select_default', 'allow_all')}
+
+    def _get_where_clause(self):
+        where_clause = User.user_id > -1
+        if (deleted := self.kwargs.get('deleted', 0)) is not None:
+            where_clause &= User.deleted == deleted
+        return where_clause
 
 class SuManageUsersTable:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def query_all(
-            self,
-            payload: TableQuery,
-            deleted: int | None
-        ) -> SuManageUsersQueryResult:
-        # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-        manage_users__qc, manage_users__to = await get_qc_to_with_user_id_name_group_id_name(
-            self.session, su_manage_users__query_columns, su_manage_users__table_options,
-            {'group_id': ('add_values', 'select_default')}
-        )
-        #
-        order_clause, order_by, order_dir = create_order_clause(User, su_manage_users__table_options.pk, payload.order_by, payload.order_dir)
-        where_clause = User.user_id > -1
-        if deleted is not None:
-            where_clause &= User.deleted == deleted
-        result = await self.session.execute(
-            select(User)
-            .where(where_clause)
-            .order_by(order_clause)
-            .limit(payload.limit)
-            .offset(payload.offset)
-        )
-        rows = result.scalars().all()
-        return SuManageUsersQueryResult(
-            name='su_manage_users',
-            rows=rows,
-            columns=manage_users__qc,
-            table_options=manage_users__to,
-            order_by=order_by,
-            order_dir=order_dir,
-            total=len(rows)
-        )
-    
     async def create_one(self, data: SuManageUsersCreate) -> TableCreateRowResult:
         """
         Create one row

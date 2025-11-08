@@ -4,7 +4,7 @@ from common.sql_models.api_users import User
 from cwa_lib.app import current_active_user
 from cwa_lib.pydantic_schemas.generic_table import TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 from cwa_lib.pydantic_schemas.su_manage_vdbs import SuManageVDBsQueryResult, SuManageVDBsCreate, SuManageVDBsUpdate
-from cwa_lib.pages.su_manage_vdbs import SuManageVDBsTable
+from cwa_lib.pages.su_manage_vdbs import SuManageVDBsTableRead, SuManageVDBsTable
 from cwa_lib.sql_tables.log_crud import LogCRUDTable
 
 router__su_manage_vdbs = APIRouter()
@@ -18,7 +18,7 @@ async def su_manage_vdbs__query(
     ):
     if not user.is_superuser:
         raise HTTPException(status_code=404, detail="Not found")
-    result = await SuManageVDBsTable(session).query_all(payload=payload, deleted=0)
+    result = await SuManageVDBsTableRead(session, payload, deleted=0).query()
     return result
 
 @router__su_manage_vdbs.post("/su/manage_vdbs", response_model=TableCreateRowResult)

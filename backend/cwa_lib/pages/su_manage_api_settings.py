@@ -1,10 +1,10 @@
 from common.enums.api_settings_names import API_SETTINGS_NAMES_LIST
 from common.sql_db_async import AsyncSession
 from common.sql_models import ApiSettings
-from common.sql_tools import create_order_clause
 from sqlalchemy import select
-from cwa_lib.pydantic_schemas.generic_table import ColumnType, TableOptions, TableQuery, TableUpdateRowResult
-from cwa_lib.pydantic_schemas.su_manage_api_settings import SuManageApiSettingsQueryResult, SuManageApiSettingsUpdate
+from cwa_lib.pydantic_schemas.generic_table import ColumnType, TableOptions, TableUpdateRowResult
+from cwa_lib.pydantic_schemas.su_manage_api_settings import SuManageApiSettingsRead, SuManageApiSettingsUpdate
+from cwa_lib.pages import GenericTableRead
 
 
 su_manage_api_settings__query_columns = {
@@ -27,36 +27,18 @@ su_manage_api_settings__table_options = TableOptions(
     }
 )
 
+class SuManageApiSettingsTableRead(GenericTableRead):
+    sa_model = ApiSettings
+    read_model = SuManageApiSettingsRead
+    name = 'api_settings'
+    query_columns = su_manage_api_settings__query_columns
+    table_options = su_manage_api_settings__table_options
+    default_order_by = table_options.pk
 
 class SuManageApiSettingsTable:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def query_all(
-            self,
-            payload: TableQuery,
-            ) -> SuManageApiSettingsQueryResult:
-        
-        order_clause, order_by, order_dir = create_order_clause(
-            ApiSettings, su_manage_api_settings__table_options.pk, payload.order_by, payload.order_dir
-        )
-        result = await self.session.execute(
-            select(ApiSettings)
-            .order_by(order_clause)
-            .limit(payload.limit)
-            .offset(payload.offset)
-        )
-        rows = result.scalars().all()
-        return SuManageApiSettingsQueryResult(
-            name='manage_vdbs',
-            rows=rows,
-            columns=su_manage_api_settings__query_columns,
-            table_options=su_manage_api_settings__table_options,
-            order_by=order_by,
-            order_dir=order_dir,
-            total=len(rows)
-        )
-    
     async def update_one(self, data: SuManageApiSettingsUpdate) -> TableUpdateRowResult:
         """
         Update one row
