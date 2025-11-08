@@ -5,6 +5,8 @@ const useTableSuManageDocTasksStore = createTableStore({
   title: "Manage Doc Tasks",
   name: "su_manage_doc_tasks",
   endpoint: "/su/manage_doc_tasks",
+  order_by: "doc_task_id",
+  order_dir: "desc",
 });
 
 export default function TableSuManageDocTasks() {
