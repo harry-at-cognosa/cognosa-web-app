@@ -130,7 +130,6 @@ export function createTableStore({
           endpoint + "/query",
           get().nextRequest
         );
-        console.log(res.data);
         set({
           data: res.data,
           nextRequest: {
