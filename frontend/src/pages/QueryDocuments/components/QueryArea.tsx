@@ -12,9 +12,12 @@ import {
   type DocTaskOptionsResponse,
 } from "../stores/useDocTaskOptionsStore";
 import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
+import DocTasksGVDBsCfg from "./DocTasksGVDBsCfg";
+import { useDocTasksGVDBsCfgStore } from "../stores/useDocTasksGVDBsCfg";
 
 function QueryArea() {
   const { color } = useWebAppOptionsStore();
+  const gvdbsCfgStore = useDocTasksGVDBsCfgStore();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [pollingInterval, setPollingInterval] = useState<number | null>(null);
   const current = useDocTasksCurrentStore();
@@ -60,6 +63,10 @@ function QueryArea() {
         short_name: current.short_name || "",
         input_text,
         gvdbs_id,
+        gvdbs_cfg_json: {
+          search_type: gvdbsCfgStore.search_type,
+          search_kwargs: gvdbsCfgStore.search_kwargs,
+        },
         gllms_id,
         gc_id,
         optional_text: current.optional_text || "",
@@ -198,11 +205,7 @@ function QueryArea() {
 
   return (
     <div className="p-3 border-bottom bg-light">
-      <InputGroup
-        className={clsx("mb-2", {
-          "d-none": !(docTaskOptionsStore.data.group_vdbs.length > 1),
-        })}
-      >
+      <InputGroup className="mb-2">
         <InputGroup.Text
           id="input-group__query_documents__query_area__select_gvdbs_id"
           className="fw-bold"
@@ -224,6 +227,7 @@ function QueryArea() {
             </option>
           ))}
         </Form.Select>
+        <DocTasksGVDBsCfg></DocTasksGVDBsCfg>
       </InputGroup>
       <Form.Control
         type="text"

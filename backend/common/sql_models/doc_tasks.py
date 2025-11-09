@@ -37,6 +37,9 @@ class DocTasks(Base):
     # group_vdbs.gvdbs_id
     gvdbs_id: Mapped[int] = mapped_column(Integer, nullable=False)
 
+    # gvdbs_cfg_json. VDB Search Configuration JSON
+    gvdbs_cfg_json: Mapped[str] = mapped_column(Text, nullable=False, server_default=text("'{}'"))
+    
     # gvdbs_json TEXT - dictionary of group_vdbs row
     gvdbs_json: Mapped[str] = mapped_column(Text, nullable=False)
 

@@ -1,13 +1,14 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import Sequence
-
+from common.enums.gvdbs_cfg_json import SEARCH_TYPES
 
 class DocTaskCreate(BaseModel):
     short_name: str
     input_text: str
     optional_text: str
     gvdbs_id: int
+    gvdbs_cfg_json: dict[str, str | dict[str, float | int]]
     gllms_id: int
     gc_id: int
 
@@ -87,7 +88,12 @@ class DocTasksOptionsGroupVDBsRow(BaseModel):
         from_attributes = True
 
 
+class GVDBsCfgDefaults(BaseModel):
+    search_type: SEARCH_TYPES
+    search_kwargs_per_type: dict
+
 class DocTaskOptionsResult(BaseModel):
     group_contexts: Sequence[DocTasksOptionsGroupContextsRow]
     group_llms: Sequence[DocTasksOptionsGroupLLMsRow]
     group_vdbs: Sequence[DocTasksOptionsGroupVDBsRow]
+    gvdbs_cfg_defaults: GVDBsCfgDefaults

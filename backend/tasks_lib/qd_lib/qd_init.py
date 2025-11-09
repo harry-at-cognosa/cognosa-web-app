@@ -1,9 +1,9 @@
 from datetime import datetime
 import json
 from multiprocessing import Queue
+from common.enums.doc_task_status import TaskStatus
 from common.sql_models import DocTasks, GroupVDBs
 from common.sql_db_sync import Session
-from common.enums.doc_task_status import TaskStatus
 from tasks_lib.entities.task_queue_msg import VDBDocTaskQueueMsg
 
 class QueryDocumentInitException(Exception):
@@ -75,7 +75,7 @@ class QueryDocumentInit:
                 gvdbs_type=self.gvdbs_type,
                 gvdbs_url=self.gvdbs_url,
                 gvdbs_collection=self.gvdbs_collection,
-                gvdbs_emb_model=self.gvdbs_emb_model
+                gvdbs_emb_model=self.gvdbs_emb_model,
                 )
             )
         

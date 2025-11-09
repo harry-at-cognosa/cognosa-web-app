@@ -71,14 +71,14 @@ class QdrantOps:
             log.error(f"Error storing documents in Qdrant: {str(e)}")
             return "Error storing documents in Qdrant"
 
-    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str) -> list[dict]:
+    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str, gvdbs_cfg_json: dict) -> list[dict]:
         vectorstore = QdrantVectorStore(
                 client=self.client,
                 collection_name=collection_name,
                 embedding=emb_obj,
             )
         # Create retriever
-        retriever = vectorstore.as_retriever(search_kwargs={"k": 10})        
+        retriever = vectorstore.as_retriever(**gvdbs_cfg_json)
         
         # Retrieve documents first
         docs = retriever.invoke(query_text)

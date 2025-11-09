@@ -1,4 +1,4 @@
-## [0.12a] (2025-11-07)
+## [0.12a] (2025-11-08)
 
 1. Generic tables: added default order by/dir.
    Specified `desc` for `SuperUser` -> `Doc Tasks` and `Log CRUD`
@@ -13,6 +13,25 @@
    `b` - displayed rows last number,
    `c` - total rows that can be displayed;
    Select box with `5/10/20` rows per page.
+
+3. Using Alembic to upgrade PostgreSQL db.
+   Install python library:
+   `pip install alembic`
+   Upgrade db:
+   `cd backend`
+   `alembic upgrade head`
+
+4. Added `doc_tasks`.`gvdbs_cfg_json`.
+   This is configurable on `Document Queries` page (top right corner).
+   This can be used to choose different vector db search parameters:
+   `search_type` - Defines the type of search that the Retriever should perform.
+   Can be `similarity` (default), `mmr`, or `similarity_score_threshold`.
+   `search_kwargs` - Keyword arguments to pass to the search function. Can include things like:
+   `k`: Amount of documents to return (Default: 10)
+   `score_threshold`: Minimum relevance threshold for `similarity_score_threshold`. (Default: 0.5)
+   `fetch_k`: Amount of documents to pass to `MMR` algorithm (Default: 20)
+   `lambda_mult`: Diversity of results returned by `MMR`; 1 for minimum diversity and 0 for maximum. (Default: 0.5)
+   Also visible on `SuperUsers` -> `Doc Tasks` page.
 
 ## [0.11b] (2025-11-02)
 

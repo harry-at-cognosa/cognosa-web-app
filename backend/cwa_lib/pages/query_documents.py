@@ -1,12 +1,14 @@
 from typing import Sequence
 from sqlalchemy import select
+from common.enums.gvdbs_cfg_json import DEFAULT_SEARCH_TYPE, DEFAULT_dicts
 from common.sql_db_async import AsyncSession
 from common.sql_models import User, GroupContexts, GroupLLMs, GroupVDBs
 from cwa_lib.pydantic_schemas.doc_tasks import (
     DocTaskOptionsResult, 
     DocTasksOptionsGroupContextsRow, 
     DocTasksOptionsGroupLLMsRow, 
-    DocTasksOptionsGroupVDBsRow
+    DocTasksOptionsGroupVDBsRow,
+    GVDBsCfgDefaults
 )
 
 
@@ -36,9 +38,12 @@ class QueryDocumentsOptions:
             1) `group_contexts`
             2) `group_llms`
             3) `group_vdbs`
+        Also:
+        `gvdbs_cfg_defaults`: default values for `doc_tasks.gvdbs_cfg_json`.
         """
         return DocTaskOptionsResult(
             group_contexts=await self._from__group_contexts(),
             group_llms=await self._from__group_llms(),
             group_vdbs=await self._from__group_vdbs(),
+            gvdbs_cfg_defaults=GVDBsCfgDefaults(search_type=DEFAULT_SEARCH_TYPE, search_kwargs_per_type=DEFAULT_dicts)
         )

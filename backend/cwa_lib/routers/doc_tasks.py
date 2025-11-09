@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from common.enums.gvdbs_cfg_json import GVDBsCfgJSON
 from common.sql_db_async import AsyncSession, async_get_session
 from common.sql_models import User
 from cwa_lib.app import current_active_user
@@ -22,6 +23,7 @@ async def create_task(
         group_id=user.group_id, 
         user_id=user.user_id, 
         gvdbs_id=payload.gvdbs_id,
+        gvdbs_cfg_json=GVDBsCfgJSON.from_dict(payload.gvdbs_cfg_json).as_dict(),
         gllms_id=payload.gllms_id,
         gc_id=payload.gc_id,
         short_name=payload.short_name, 

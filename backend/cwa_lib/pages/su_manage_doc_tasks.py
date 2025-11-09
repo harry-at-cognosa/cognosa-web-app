@@ -18,6 +18,7 @@ su_manage_doc_tasks__query_columns = {
     'input_text': ColumnType(display='', type='text'),
     'optional_text': ColumnType(display='', type='text'),
     'gvdbs_id': ColumnType(display='', type='number'),
+    'gvdbs_cfg_json': ColumnType(display='', type='text'),
     'gvdbs_json': ColumnType(display='', type='text'),
     'gllms_id': ColumnType(display='', type='number'),
     'gllms_json': ColumnType(display='', type='text'),

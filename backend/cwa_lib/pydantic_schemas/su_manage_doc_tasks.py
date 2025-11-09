@@ -13,6 +13,7 @@ class SuManageDocTaskRead(BaseModel):
     input_text: str
     optional_text: str
     gvdbs_id: int
+    gvdbs_cfg_json: str
     gvdbs_json: str
     gllms_id: int
     gllms_json: str

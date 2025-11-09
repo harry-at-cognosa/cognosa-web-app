@@ -12,7 +12,7 @@ pgvector_ops = PGVectorOps(ParsedUrl.from_url(POSTGRESQL_URL))
 emb_obj = EmbModels(preload_emb_models=True)
 
 t1 = time()
-results = pgvector_ops.get_docs(emb_obj.get_by_name(TRANSFORMER_MODEL), COLLECTION_NAME, QUERY_TEXT)
+results = pgvector_ops.get_docs(emb_obj.get_by_name(TRANSFORMER_MODEL), COLLECTION_NAME, QUERY_TEXT, gvdbs_cfg_json={'k': 10})
 # print(f"Found {len(results)} documents")
 for doc in results:
     print(f"Content: {doc['page_content'][:1000]}...")

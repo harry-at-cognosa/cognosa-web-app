@@ -12,7 +12,7 @@ import SuManageGroupsPage from "./SuManageGroups/SuManageGroupsPage";
 import SuManageLLMsPage from "./SuManageLLMs/SuManageLLMsPage";
 import SuManageVDBsPage from "./SuManageVDBs/SuManageVDBsPage";
 import SuperuserRoute from "../components/SuperUserRoute";
-import SuManageApiSettingsPage from "./SuManageApiSettings copy/SuManageApiSettingsPage";
+import SuManageApiSettingsPage from "./SuManageApiSettings/SuManageApiSettingsPage";
 import GaManageUsersPage from "./GaManageUsers/GaManageUsersPage";
 import GroupAdminRoute from "../components/GroupAdminRoute";
 import SuManageDocTasksPage from "./SuManageDocTasks/SuManageDocTasksPage";

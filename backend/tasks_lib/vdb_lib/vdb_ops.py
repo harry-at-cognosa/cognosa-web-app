@@ -41,15 +41,15 @@ class VectorDBOps:
                 return PGVectorOps(self.parsed_url).collection_exists(collection_name)
         raise NotImplementedError
     
-    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str) -> list[dict]:
+    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str, gvdbs_cfg_json: dict) -> list[dict]:
         if IS_DUMMY_VDB:
             sleep(2)
             return [{'page_content': 'Fake page content', 'metadata': 'Fake metadata'}]
         match self.vdb_type:
             case 'chroma':
-                return ChromaDBOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text)
+                return ChromaDBOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text, gvdbs_cfg_json)
             case 'qdrant':
-                return QdrantOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text)
+                return QdrantOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text, gvdbs_cfg_json)
             case 'pgvector':
-                return PGVectorOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text)
+                return PGVectorOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text, gvdbs_cfg_json)
         raise NotImplementedError

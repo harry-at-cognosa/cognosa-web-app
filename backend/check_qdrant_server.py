@@ -12,7 +12,7 @@ qdrant_ops = QdrantOps(ParsedUrl.from_url(QDRANT_URL))
 emb_obj = EmbModels(preload_emb_models=True)
 
 t1 = time()
-results = qdrant_ops.get_docs(emb_obj.get_by_name(TRANSFORMER_MODEL), COLLECTION_NAME, QUERY_TEXT)
+results = qdrant_ops.get_docs(emb_obj.get_by_name(TRANSFORMER_MODEL), COLLECTION_NAME, QUERY_TEXT, gvdbs_cfg_json={'k': 10})
 # print(f"Found {len(results)} documents")
 for doc in results:
     print(f"Content: {doc['page_content'][:1000]}...")
