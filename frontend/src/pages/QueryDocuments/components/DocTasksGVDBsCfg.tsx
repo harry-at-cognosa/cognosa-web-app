@@ -68,10 +68,10 @@ export default function DocTasksGVDBsCfg() {
   function getModalOpenButtonText() {
     let text = "Search Options: ";
     if (cfgStore.search_type === "similarity") {
-      text += "SIM:" + cfgStore.search_kwargs.k;
+      text += "SIM: " + cfgStore.search_kwargs.k;
     } else if (cfgStore.search_type === "mmr") {
       text +=
-        "MMR:" +
+        "MMR: " +
         cfgStore.search_kwargs.k +
         "/" +
         cfgStore.search_kwargs.fetch_k +
@@ -79,7 +79,7 @@ export default function DocTasksGVDBsCfg() {
         cfgStore.search_kwargs.lambda_mult;
     } else if (cfgStore.search_type === "similarity_score_threshold") {
       text +=
-        "SST:" +
+        "SST: " +
         cfgStore.search_kwargs.k +
         "/" +
         cfgStore.search_kwargs.score_threshold;
@@ -109,7 +109,7 @@ export default function DocTasksGVDBsCfg() {
         <Modal.Body>
           <InputGroup className="mb-2">
             <InputGroup.Text
-              className="fw-bold"
+              className="fw-bold justify-content-end"
               style={{ width: "16ch", backgroundColor: color.c300 }}
             >
               Search Type:
