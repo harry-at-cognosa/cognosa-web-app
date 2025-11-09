@@ -1,4 +1,4 @@
-## [0.12a] (2025-11-08)
+## [0.12b] (2025-11-09)
 
 1. Generic tables: added default order by/dir.
    Specified `desc` for `SuperUser` -> `Doc Tasks` and `Log CRUD`

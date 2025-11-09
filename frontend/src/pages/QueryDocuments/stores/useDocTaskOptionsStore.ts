@@ -1,5 +1,4 @@
 import { createResettableStore } from "../../../api/createResettableStore";
-import type { SearchKwargsType, SearchType } from "./useDocTasksGVDBsCfg";
 
 export type GroupContexts = {
   gc_id: number;
@@ -23,16 +22,10 @@ export type GroupVDBs = {
   gvdbs_status: "success" | "warning" | "danger";
 };
 
-export type GVDBsCfgDefaults = {
-  search_type: SearchType;
-  search_kwargs_per_type: Record<SearchType, SearchKwargsType>;
-};
-
 export interface DocTaskOptionsResponse {
   group_contexts: GroupContexts[];
   group_llms: GroupLLMs[];
   group_vdbs: GroupVDBs[];
-  gvdbs_cfg_defaults: GVDBsCfgDefaults;
 }
 
 interface DocTaskOptionsState {
@@ -48,14 +41,6 @@ export const useDocTaskOptionsStore =
       group_contexts: [],
       group_llms: [],
       group_vdbs: [],
-      gvdbs_cfg_defaults: {
-        search_type: "similarity",
-        search_kwargs_per_type: {
-          similarity: { k: 10 },
-          mmr: { k: 10, fetch_k: 20, lambda_mult: 0.5 },
-          similarity_score_threshold: { k: 10, score_threshold: 0.5 },
-        },
-      },
     },
     setData: (data) => set({ data }),
     needReload: true,
