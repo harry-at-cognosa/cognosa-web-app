@@ -24,11 +24,17 @@ interface Actions {
 }
 
 interface ModalGVDBsCfgState {
+  search_type_name: [SearchType, string][];
   search_type: SearchType;
   search_kwargs: SearchKwargsType;
 }
 export const useModalGVDBsCfgStore = create<ModalGVDBsCfgState & Actions>(
   (set) => ({
+    search_type_name: [
+      ["similarity", "Similarity"],
+      ["mmr", "MMR"],
+      ["similarity_score_threshold", "Similarity Score Threshold"],
+    ],
     search_type: "similarity",
     search_kwargs: {
       k: 10,

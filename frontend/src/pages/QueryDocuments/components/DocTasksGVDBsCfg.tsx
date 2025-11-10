@@ -30,34 +30,22 @@ export default function DocTasksGVDBsCfg() {
     setShow(true);
   };
 
-  const handleKChange = (value: string) => {
+  const handleKandFetchKChange = (name: "k" | "fetch_k", value: string) => {
     let value_int = parseInt(value, 10);
     if (isNaN(value_int)) return;
     if (value_int <= 0) value_int = 1;
-    modalStore.setKwargsField("k", value_int);
+    modalStore.setKwargsField(name, value_int);
   };
 
-  const handleFetchKChange = (value: string) => {
-    let value_int = parseInt(value, 10);
-    if (isNaN(value_int)) return;
-    if (value_int <= 0) value_int = 1;
-    modalStore.setKwargsField("fetch_k", value_int);
-  };
-
-  const handleLambdaMultChange = (value: string) => {
+  const handleLMandSTChange = (
+    name: "lambda_mult" | "score_threshold",
+    value: string
+  ) => {
     let value_float = Number(value);
     if (isNaN(value_float)) return;
     if (value_float < 0) value_float = 0;
     if (value_float > 1) value_float = 1;
-    modalStore.setKwargsField("lambda_mult", value_float);
-  };
-
-  const handleScoreThresholdChange = (value: string) => {
-    let value_float = Number(value);
-    if (isNaN(value_float)) return;
-    if (value_float < 0) value_float = 0;
-    if (value_float > 1) value_float = 1;
-    modalStore.setKwargsField("score_threshold", value_float);
+    modalStore.setKwargsField(name, value_float);
   };
 
   const disabledFetchK = modalStore.search_type !== "mmr";
@@ -67,22 +55,13 @@ export default function DocTasksGVDBsCfg() {
 
   function getModalOpenButtonText() {
     let text = "Search Options: ";
+    const { k, fetch_k, lambda_mult, score_threshold } = cfgStore.search_kwargs;
     if (cfgStore.search_type === "similarity") {
-      text += "SIM: " + cfgStore.search_kwargs.k;
+      text += "SIM: " + k;
     } else if (cfgStore.search_type === "mmr") {
-      text +=
-        "MMR: " +
-        cfgStore.search_kwargs.k +
-        "/" +
-        cfgStore.search_kwargs.fetch_k +
-        "/" +
-        cfgStore.search_kwargs.lambda_mult;
+      text += "MMR: " + k + "/" + fetch_k + "/" + lambda_mult;
     } else if (cfgStore.search_type === "similarity_score_threshold") {
-      text +=
-        "SST: " +
-        cfgStore.search_kwargs.k +
-        "/" +
-        cfgStore.search_kwargs.score_threshold;
+      text += "SST: " + k + "/" + score_threshold;
     }
     return text;
   }
@@ -122,18 +101,11 @@ export default function DocTasksGVDBsCfg() {
               }
               autoComplete="off"
             >
-              <option key={"similarity"} value={"similarity"}>
-                Similarity
-              </option>
-              <option key={"mmr"} value={"mmr"}>
-                MMR
-              </option>
-              <option
-                key={"similarity_score_threshold"}
-                value={"similarity_score_threshold"}
-              >
-                Similarity Score Threshold
-              </option>
+              {modalStore.search_type_name.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </Form.Select>
           </InputGroup>
           <hr />
@@ -151,7 +123,7 @@ export default function DocTasksGVDBsCfg() {
               type="number"
               className="fw-bold"
               value={modalStore.search_kwargs.k}
-              onChange={(e) => handleKChange(e.target.value)}
+              onChange={(e) => handleKandFetchKChange("k", e.target.value)}
               min={1}
             />
           </InputGroup>
@@ -170,7 +142,9 @@ export default function DocTasksGVDBsCfg() {
               className="fw-bold"
               value={modalStore.search_kwargs.fetch_k}
               disabled={disabledFetchK}
-              onChange={(e) => handleFetchKChange(e.target.value)}
+              onChange={(e) =>
+                handleKandFetchKChange("fetch_k", e.target.value)
+              }
               min={1}
             />
           </InputGroup>
@@ -190,7 +164,9 @@ export default function DocTasksGVDBsCfg() {
               className="fw-bold"
               disabled={disabledLambdaMult}
               value={modalStore.search_kwargs.lambda_mult}
-              onChange={(e) => handleLambdaMultChange(e.target.value)}
+              onChange={(e) =>
+                handleLMandSTChange("lambda_mult", e.target.value)
+              }
               min={0}
               max={1}
             />
@@ -213,7 +189,9 @@ export default function DocTasksGVDBsCfg() {
               className="fw-bold"
               disabled={disabledScoreThreshold}
               value={modalStore.search_kwargs.score_threshold}
-              onChange={(e) => handleScoreThresholdChange(e.target.value)}
+              onChange={(e) =>
+                handleLMandSTChange("score_threshold", e.target.value)
+              }
               min={0}
               max={1}
             />
