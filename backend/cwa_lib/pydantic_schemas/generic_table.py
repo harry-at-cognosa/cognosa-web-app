@@ -12,6 +12,7 @@ class ColumnType(BaseModel):
     type: str
     default: str | int | bool | None = None
     select: list[SelectOption] | None = None
+    min_width: str | None = None
 
 
 class TableOptions(BaseModel):

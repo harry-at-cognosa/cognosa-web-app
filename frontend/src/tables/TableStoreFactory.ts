@@ -20,6 +20,7 @@ export interface TableColumnData {
   type: string;
   default: string | number | boolean | null;
   select: SelectOption[] | null;
+  min_width: string | null;
 }
 
 export interface TableOptions {

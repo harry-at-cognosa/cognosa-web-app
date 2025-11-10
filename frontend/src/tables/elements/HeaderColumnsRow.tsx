@@ -52,7 +52,10 @@ export default function HeaderColumnsRow({ useStore }: Props) {
               ? styles.sortableHeader
               : null
           )}
-          style={{ backgroundColor: color.c100 }}
+          style={{
+            backgroundColor: color.c100,
+            minWidth: data.columns[col].min_width || "",
+          }}
           onClick={() => {
             onHeaderClick(col);
           }}
