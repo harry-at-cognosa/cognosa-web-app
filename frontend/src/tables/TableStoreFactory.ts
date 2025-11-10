@@ -80,6 +80,9 @@ export interface TableStore {
   setLimit: (newLimit: number) => void;
   setOffset: (newOffset: number) => void;
 
+  readRow: TableRow | null;
+  setReadRow: (askRead: TableRow | null) => void;
+
   showCreateOrUpdateDialog: "" | "create" | "update";
   editRow: TableRow | null;
   setShowCreateOrUpdateDialog: (
@@ -199,7 +202,8 @@ export function createTableStore({
         });
       }
     },
-
+    readRow: null,
+    setReadRow: (readRow: TableRow | null) => set({ readRow }),
     deleteRow: null,
     setDeleteRow: (deleteRow: TableRow | null) => set({ deleteRow }),
     queryDeleteRow: async () => {

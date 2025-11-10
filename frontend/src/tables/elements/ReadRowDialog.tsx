@@ -2,25 +2,27 @@ import { Button, Modal, Table } from "react-bootstrap";
 import type { createTableStore } from "../TableStoreFactory";
 import ColumnDisplayName from "./ColumnDisplayName";
 import ViewCellElement from "./ViewCellElement";
+import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
 }
 
-export default function DeleteDialog({ useStore }: Props) {
+export default function ReadRowDialog({ useStore }: Props) {
+  const { color } = useWebAppOptionsStore();
   const tableStore = useStore();
-  const { data, deleteRow, setDeleteRow } = tableStore;
+  const { data, readRow, setReadRow } = tableStore;
   if (!data) return null;
-  if (!deleteRow) return null;
-  const { delete__ask_columns } = data.table_options;
-  const handleClose = () => setDeleteRow(null);
+  if (!readRow) return null;
+  const { read__visible_columns } = data.table_options;
+  const handleClose = () => setReadRow(null);
   return (
-    <Modal show={Boolean(deleteRow)} onHide={handleClose}>
+    <Modal show={Boolean(readRow)} onHide={handleClose} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Confirm delete:</Modal.Title>
+        <Modal.Title>Row values:</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {delete__ask_columns.map((col) => (
+        {read__visible_columns.map((col) => (
           <Table bordered key={col + "__col_table"}>
             <tbody>
               <tr key={col + "__col_name"}>
@@ -31,7 +33,7 @@ export default function DeleteDialog({ useStore }: Props) {
               <tr key={col + "__col_value"}>
                 <ViewCellElement
                   useStore={useStore}
-                  row={deleteRow}
+                  row={readRow}
                   col={col}
                 ></ViewCellElement>
               </tr>
@@ -41,12 +43,12 @@ export default function DeleteDialog({ useStore }: Props) {
       </Modal.Body>
       <Modal.Footer>
         <Button
-          variant="danger"
-          onClick={tableStore.queryDeleteRow}
-          disabled={tableStore.busy != ""}
+          variant=""
+          onClick={handleClose}
           className="fw-bold"
+          style={{ backgroundColor: color.c300 }}
         >
-          Delete
+          Close
         </Button>
       </Modal.Footer>
     </Modal>

@@ -1,15 +1,16 @@
 import getColor from "../../api/getColor";
 import BooleanCheck from "../CellRenders/BooleanCheck";
 import TextCell from "../CellRenders/TextCell";
-import type { TableResponse, TableRow } from "../TableStoreFactory";
+import type { createTableStore, TableRow } from "../TableStoreFactory";
 
 interface Props {
-  data: TableResponse | null;
+  useStore: ReturnType<typeof createTableStore>;
   row: TableRow;
   col: string;
 }
 
-export default function ViewCellElement({ data, row, col }: Props) {
+export default function ViewCellElement({ useStore, row, col }: Props) {
+  const { data } = useStore();
   if (!data) return null;
   const pk_value_str = (row[data.table_options.pk] || -1).toString();
   const key = "td__" + pk_value_str + "__" + col;

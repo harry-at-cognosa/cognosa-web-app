@@ -38,10 +38,8 @@ export default function HeaderColumnsRow({ useStore }: Props) {
         verticalAlign: "middle",
       }}
     >
-      {/* edit th */}
-      {data.table_options.update__ask_columns.length ? (
-        <th style={{ backgroundColor: color.c100 }}></th>
-      ) : null}
+      {/* view/edit th */}
+      <th style={{ backgroundColor: color.c100 }}></th>
       {/* visible columns display names */}
       {data.table_options.read__visible_columns.map((col) => (
         <th

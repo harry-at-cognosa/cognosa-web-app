@@ -1,4 +1,4 @@
-## [0.12b] (2025-11-09)
+## [0.12c] (2025-11-09)
 
 1. Generic tables: added default order by/dir.
    Specified `desc` for `SuperUser` -> `Doc Tasks` and `Log CRUD`
@@ -32,6 +32,9 @@
    `fetch_k`: Amount of documents to pass to `MMR` algorithm (Default: 20)
    `lambda_mult`: Diversity of results returned by `MMR`; 1 for minimum diversity and 0 for maximum. (Default: 0.5)
    Also visible on `SuperUsers` -> `Doc Tasks` page.
+
+5. `SuperUser` -> `Doc Tasks` and `Log CRUD` pages:
+   added `View` button to tables. Click on it will show vertical modal with row values.
 
 ## [0.11b] (2025-11-02)
 
