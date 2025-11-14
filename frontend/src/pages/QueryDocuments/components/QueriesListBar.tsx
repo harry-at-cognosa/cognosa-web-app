@@ -6,10 +6,12 @@ import axiosClient from "../../../api/axiosClient";
 import type { DocTasksShortQuery } from "../models/docTasksShortQuery";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
+import { useDocTasksGVDBsCfgStore } from "../stores/useDocTasksGVDBsCfg";
 
 function QueriesListBar() {
   const queriesStore = useDocTasksShortStore();
   const currentStore = useDocTasksCurrentStore();
+  const gvdbsCfgStore = useDocTasksGVDBsCfgStore();
   const { color } = useWebAppOptionsStore();
 
   useEffect(() => {
@@ -40,7 +42,10 @@ function QueriesListBar() {
         variant="light"
         className="w-100 fw-bold mt-2"
         style={{ backgroundColor: color.c300 }}
-        onClick={() => currentStore.setNewQuery()}
+        onClick={() => {
+          currentStore.setNewQuery();
+          gvdbsCfgStore.setDefaultValues();
+        }}
       >
         New Query
       </Button>

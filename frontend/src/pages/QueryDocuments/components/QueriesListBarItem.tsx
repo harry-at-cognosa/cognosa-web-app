@@ -64,7 +64,7 @@ function QueriesListBarItem({ item, showDate }: QueriesListBarItemProps) {
           <Form.Check.Input
             type="radio"
             checked={item.doc_task_id === currentStore.doc_task_id}
-            onChange={() => loadQuery(item.doc_task_id)}
+            onChange={() => {}}
           />
           <Form.Check.Label>{item.short_name}</Form.Check.Label>
         </Form.Check>

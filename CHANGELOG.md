@@ -1,3 +1,9 @@
+## [0.13a] (2025-11-14)
+
+1. `Document Queries` page:
+   Set search type from history queries.
+   Set default search type for a new query.
+
 ## [0.12c] (2025-11-09)
 
 1. Generic tables: added default order by/dir.

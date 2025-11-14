@@ -23,6 +23,7 @@ class DocTaskQueryResult(BaseModel):
     input_text: str
     optional_text: str
     gvdbs_id: int
+    gvdbs_cfg_json: str
     gllms_id: int
     gc_id: int
     output_text: str | None = None

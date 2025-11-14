@@ -14,6 +14,7 @@ import {
 import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import DocTasksGVDBsCfg from "./DocTasksGVDBsCfg";
 import { useDocTasksGVDBsCfgStore } from "../stores/useDocTasksGVDBsCfg";
+import generateUUID from "../../../api/generateUUID";
 
 function QueryArea() {
   const { color } = useWebAppOptionsStore();
@@ -21,6 +22,7 @@ function QueryArea() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [pollingInterval, setPollingInterval] = useState<number | null>(null);
   const current = useDocTasksCurrentStore();
+  const currentOpUUID = useDocTasksCurrentStore((state) => state.opUUID);
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const docTaskOptionsLastUsedStore = useDocTaskOptionsLastUsedStore();
   const docTasksShortStore = useDocTasksShortStore();
@@ -73,12 +75,16 @@ function QueryArea() {
       };
       docTaskOptionsLastUsedStore.setLastUsed(gc_id, gllms_id, gvdbs_id);
       current.setBeforeServerResponse(query);
+      const opUUID = generateUUID();
+      current.setOpUUID(opUUID);
       const response = await axiosClient.post<DocTasksResponse>(
         "/doc_tasks",
         query
       );
+      if (currentOpUUID !== opUUID) return;
       const data = response.data;
       current.setFromServerResponse(data);
+      gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
       startPolling(data.doc_task_id);
       docTasksShortStore.setNeedReload(true);
     } catch {
@@ -92,11 +98,17 @@ function QueryArea() {
     const poll = async () => {
       if (!doc_task_id) return;
       try {
+        const opUUID = generateUUID();
+        current.setOpUUID(opUUID);
+        console.log(opUUID);
         const response = await axiosClient.get<DocTasksResponse>(
           `doc_tasks/${doc_task_id}`
         );
+        console.log(useDocTasksCurrentStore.getState().opUUID);
+        if (useDocTasksCurrentStore.getState().opUUID !== opUUID) return;
         const data = response.data;
         current.setFromServerResponse(data);
+        gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
         docTasksShortStore.setNeedReload(true);
         // Continue polling until status becomes 6
         if (data.is_processing) {
