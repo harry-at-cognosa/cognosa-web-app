@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Button, Form, ProgressBar } from "react-bootstrap";
 import axiosClient from "../../../api/axiosClient";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
@@ -15,13 +15,12 @@ import QuerySelectVDB from "./QuerySelectVDB";
 import QuerySelectLLM from "./QuerySelectLLM";
 import QuerySelectContext from "./QuerySelectContext";
 import QueryTokensCounter from "./QueryTokensCounter";
+import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 
 function QueryArea() {
+  const queryStore = useQueryDocumentsStore();
   const gvdbsCfgStore = useDocTasksGVDBsCfgStore();
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [pollingInterval, setPollingInterval] = useState<number | null>(null);
   const current = useDocTasksCurrentStore();
-  const currentOpUUID = useDocTasksCurrentStore((state) => state.opUUID);
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const docTaskOptionsLastUsedStore = useDocTaskOptionsLastUsedStore();
   const docTasksShortStore = useDocTasksShortStore();
@@ -46,7 +45,6 @@ function QueryArea() {
       return;
     }
 
-    setIsProcessing(true);
     try {
       const query: DocTasksQuery = {
         short_name: current.short_name || "",
@@ -67,58 +65,49 @@ function QueryArea() {
       );
       current.setBeforeServerResponse(query);
       const opUUID = generateUUID();
-      current.setOpUUID(opUUID);
+      queryStore.setOpUUID(opUUID);
       const response = await axiosClient.post<DocTasksResponse>(
         "/doc_tasks",
         query
       );
-      if (currentOpUUID !== opUUID) return;
+      if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
       const data = response.data;
       current.setFromServerResponse(data);
       gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
-      startPolling(data.doc_task_id);
+      startPolling(opUUID);
       docTasksShortStore.setNeedReload(true);
     } catch {
       alert("Error during post /doc_tasks");
-      setIsProcessing(false);
+      queryStore.stopPolling();
     }
   };
 
   // Poll /doc_tasks/<doc_task_id> until complete or error
-  const startPolling = (doc_task_id: number | null) => {
+  const startPolling = (uuid: string) => {
+    if (!uuid) return;
     const poll = async () => {
+      const doc_task_id = useDocTasksCurrentStore.getState().doc_task_id;
       if (!doc_task_id) return;
       try {
         const opUUID = generateUUID();
-        current.setOpUUID(opUUID);
+        queryStore.setOpUUID(opUUID);
         const response = await axiosClient.get<DocTasksResponse>(
           `doc_tasks/${doc_task_id}`
         );
-        if (useDocTasksCurrentStore.getState().opUUID !== opUUID) return;
+        if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
         const data = response.data;
         current.setFromServerResponse(data);
         gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
-        docTasksShortStore.setNeedReload(true);
         // Continue polling until status becomes 6
         if (data.is_processing) {
-          const interval = setTimeout(poll, 1000);
-          setPollingInterval(interval);
+          queryStore.setPollingTimeout(opUUID, startPolling);
         } else {
-          setIsProcessing(false);
-          if (pollingInterval) {
-            clearTimeout(pollingInterval);
-            setPollingInterval(null);
-          }
+          queryStore.stopPolling();
         }
       } catch (error) {
-        setIsProcessing(false);
-        if (pollingInterval) {
-          clearTimeout(pollingInterval);
-          setPollingInterval(null);
-        }
+        queryStore.stopPolling();
       }
     };
-    // Start first poll
     poll();
   };
 
@@ -126,18 +115,15 @@ function QueryArea() {
   useEffect(() => {
     if (!current.needReload) return;
     current.setNeedReload(false);
-    setIsProcessing(true);
-    startPolling(current.doc_task_id);
+    const opUUID = generateUUID();
+    queryStore.setOpUUID(opUUID);
+    startPolling(opUUID);
   }, [current.needReload]);
 
-  // Clean up polling interval on unmount
   useEffect(() => {
-    return () => {
-      if (pollingInterval) {
-        clearTimeout(pollingInterval);
-      }
-    };
-  }, [pollingInterval]);
+    current.setNeedReload(true);
+    return () => queryStore.stopPolling();
+  }, []);
 
   useEffect(() => {
     if (!docTaskOptionsStore.needReload) return;
@@ -178,14 +164,14 @@ function QueryArea() {
       />
       <Button
         onClick={handleSubmit}
-        disabled={isProcessing}
+        disabled={queryStore.isPolling}
         variant="outline-secondary"
         className="w-100"
       >
         Ask
       </Button>
       <br className="mt-0" />
-      <div style={{ visibility: isProcessing ? "visible" : "hidden" }}>
+      <div style={{ visibility: queryStore.isPolling ? "visible" : "hidden" }}>
         <ProgressBar animated now={current.status_pct || 0} />
       </div>
       <h5>{current.status_text || ""}</h5>

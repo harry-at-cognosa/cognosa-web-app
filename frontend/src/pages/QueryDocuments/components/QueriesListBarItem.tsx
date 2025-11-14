@@ -3,6 +3,7 @@ import type { DocTasksShortItem } from "../models/docTasksShortItem";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import axiosClient from "../../../api/axiosClient";
 import { useDocTasksShortStore } from "../stores/useDocTasksShort";
+import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 
 interface QueriesListBarItemProps {
   showDate: boolean;
@@ -10,10 +11,12 @@ interface QueriesListBarItemProps {
 }
 
 function QueriesListBarItem({ item, showDate }: QueriesListBarItemProps) {
+  const queryStore = useQueryDocumentsStore();
   const queriesStore = useDocTasksShortStore();
   const currentStore = useDocTasksCurrentStore();
   const loadQuery = (doc_task_id: number | null) => {
     if (doc_task_id === currentStore.doc_task_id) return;
+    queryStore.setOpUUID("");
     currentStore.setFromHistory(item);
   };
   if (!item.doc_task_id) return null;
@@ -37,7 +40,6 @@ function QueriesListBarItem({ item, showDate }: QueriesListBarItemProps) {
     try {
       // 2. Send DELETE request
       await axiosClient.delete(`/doc_tasks/${doc_task_id}`);
-
       queriesStore.deleteRow(doc_task_id); // if such a method exists
     } catch (error) {
       console.error("Failed to delete query:", error);

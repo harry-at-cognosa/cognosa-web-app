@@ -3,6 +3,7 @@
 1. `Document Queries` page:
    Set search type from history queries.
    Set default search type for a new query.
+   Various bugfixes.
 
 ## [0.12c] (2025-11-09)
 

@@ -31,8 +31,6 @@ interface DocTasksCurrentState {
   setFromServerResponse: (response: DocTasksResponse) => void;
   needReload: boolean;
   setNeedReload: (needReload: boolean) => void;
-  opUUID: string;
-  setOpUUID: (opUUID: string) => void;
   setFromHistory: (item: DocTasksShortItem) => void;
   setNewQuery: () => void;
 }
@@ -56,7 +54,6 @@ const defaultState = {
   is_error: null,
   status_pct: null,
   needReload: false,
-  opUUID: "",
 };
 
 export const useDocTasksCurrentStore =
@@ -71,7 +68,6 @@ export const useDocTasksCurrentStore =
     setBeforeServerResponse: (query: DocTasksQuery) => set(query),
     setFromServerResponse: (response: DocTasksResponse) => set(response),
     setNeedReload: (needReload: boolean) => set({ needReload }),
-    setOpUUID: (opUUID: string) => set({ opUUID }),
     setFromHistory: (item: DocTasksShortItem) =>
       set({
         doc_task_id: item.doc_task_id,

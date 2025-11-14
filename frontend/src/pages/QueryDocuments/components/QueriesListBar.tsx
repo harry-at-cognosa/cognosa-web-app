@@ -7,8 +7,10 @@ import type { DocTasksShortQuery } from "../models/docTasksShortQuery";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import { useDocTasksGVDBsCfgStore } from "../stores/useDocTasksGVDBsCfg";
+import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 
 function QueriesListBar() {
+  const queryStore = useQueryDocumentsStore();
   const queriesStore = useDocTasksShortStore();
   const currentStore = useDocTasksCurrentStore();
   const gvdbsCfgStore = useDocTasksGVDBsCfgStore();
@@ -43,6 +45,8 @@ function QueriesListBar() {
         className="w-100 fw-bold mt-2"
         style={{ backgroundColor: color.c300 }}
         onClick={() => {
+          queryStore.setOpUUID("");
+          queryStore.stopPolling();
           currentStore.setNewQuery();
           gvdbsCfgStore.setDefaultValues();
         }}
