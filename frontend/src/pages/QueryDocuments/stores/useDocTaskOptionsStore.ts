@@ -1,3 +1,4 @@
+import axiosClient from "../../../api/axiosClient";
 import { createResettableStore } from "../../../api/createResettableStore";
 
 export type GroupContexts = {
@@ -30,7 +31,7 @@ export interface DocTaskOptionsResponse {
 
 interface DocTaskOptionsState {
   data: DocTaskOptionsResponse;
-  setData: (data: DocTaskOptionsResponse) => void;
+  fetchData: () => Promise<void>;
   needReload: boolean;
   setNeedReload: (needReload: boolean) => void;
 }
@@ -42,7 +43,31 @@ export const useDocTaskOptionsStore =
       group_llms: [],
       group_vdbs: [],
     },
-    setData: (data) => set({ data }),
+    fetchData: async () => {
+      try {
+        const response = await axiosClient.get<DocTaskOptionsResponse>(
+          "/doc_tasks/options"
+        );
+        const data = response.data;
+        // use success rows first
+        data.group_vdbs.sort((a, b) => {
+          return (
+            Number(b.gvdbs_status === "success") -
+            Number(a.gvdbs_status === "success")
+          );
+        });
+        data.group_llms.sort((a, b) => {
+          return (
+            Number(b.gllms_status === "success") -
+            Number(a.gllms_status === "success")
+          );
+        });
+        set({ data, needReload: false });
+      } catch {
+        alert("Error during fetching /doc_tasks/options");
+      } finally {
+      }
+    },
     needReload: true,
     setNeedReload: (needReload: boolean) => set({ needReload }),
   }));
