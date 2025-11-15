@@ -1,9 +1,14 @@
-## [0.13a] (2025-11-14)
+## [0.13b] (2025-11-15)
 
 1. `Document Queries` page:
    Set search type from history queries.
    Set default search type for a new query.
    Various bugfixes.
+
+2. Generic tables -> Create / Update values dialog:
+   Show description for each field.
+   Added input validation.
+   Show errors for each field after Save.
 
 ## [0.12c] (2025-11-09)
 

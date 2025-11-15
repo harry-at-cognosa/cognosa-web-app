@@ -1,7 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from .generic_table import TableQueryResult
-from .ga_manage_users import validate_user_name
+from cwa_lib.validators.user_name import validate_user_name
 
 
 class SuManageUsersRead(BaseModel):

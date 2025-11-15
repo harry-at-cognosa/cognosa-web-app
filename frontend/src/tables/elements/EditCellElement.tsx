@@ -12,11 +12,16 @@ export default function EditCellElement({ useStore, col }: Props) {
   if (!tableStore.data) return null;
   const columns = tableStore.data.columns;
   if (!(columns && tableStore.editRow)) return null;
+  const editRowErrorMark = tableStore.editRowErrorMark[col];
+  const isInvalid = tableStore.showCreateOrUpdateDialog
+    ? editRowErrorMark
+    : false;
   const value = tableStore.editRow[col];
   const value_str = value?.toString() || "";
   const cellType = columns[col].type;
   function onChange(value: TableCellValue) {
     tableStore.setEditRow({ ...tableStore.editRow, [col]: value });
+    if (editRowErrorMark) tableStore.setEditRowErrorMark(col, false);
   }
   const key = "edit_cell_element__" + col;
   const dummy_username = ["email", "user_name", "username", "user"].includes(
@@ -49,6 +54,7 @@ export default function EditCellElement({ useStore, col }: Props) {
           key={key}
           onChange={(e) => onChange(parseFloat(e.target.value) || null)}
           autoComplete="off"
+          isInvalid={isInvalid}
         />
       );
     else
@@ -57,6 +63,7 @@ export default function EditCellElement({ useStore, col }: Props) {
           value={value_str}
           onChange={(e) => onChange(Number(e.target.value))}
           autoComplete="off"
+          isInvalid={isInvalid}
         >
           {select_values.map((row) => (
             <option key={row.value.toString()} value={row.value.toString()}>
@@ -78,6 +85,7 @@ export default function EditCellElement({ useStore, col }: Props) {
             key={key}
             onChange={(e) => onChange(e.target.value)}
             autoComplete="off"
+            isInvalid={isInvalid}
           />
         </>
       );
@@ -87,6 +95,7 @@ export default function EditCellElement({ useStore, col }: Props) {
           value={value_str}
           onChange={(e) => onChange(e.target.value)}
           autoComplete="off"
+          isInvalid={isInvalid}
         >
           {select_values.map((row) => (
             <option key={row.value.toString()} value={row.value.toString()}>
@@ -105,6 +114,7 @@ export default function EditCellElement({ useStore, col }: Props) {
         onChange={(e) => onChange(e.target.value)}
         rows={5}
         autoComplete="off"
+        isInvalid={isInvalid}
       ></Form.Control>
     );
   if (cellType === "group_id_name") {
@@ -116,6 +126,7 @@ export default function EditCellElement({ useStore, col }: Props) {
         value={value_str}
         onChange={(e) => onChange(Number(e.target.value))}
         autoComplete="off"
+        isInvalid={isInvalid}
       >
         {select_group_id_name.map((gin) => (
           <option key={gin.value.toString()} value={gin.value.toString()}>
@@ -136,6 +147,7 @@ export default function EditCellElement({ useStore, col }: Props) {
           value={value_str}
           onChange={(e) => onChange(e.target.value)}
           autoComplete="off"
+          isInvalid={isInvalid}
         >
           {all_values.map((color) => (
             <option
@@ -158,6 +170,7 @@ export default function EditCellElement({ useStore, col }: Props) {
         onChange={(e) => onChange(e.target.value)}
         rows={3}
         autoComplete="off"
+        isInvalid={isInvalid}
       ></Form.Control>
     );
   }
@@ -176,6 +189,7 @@ export default function EditCellElement({ useStore, col }: Props) {
           key={key}
           onChange={(e) => onChange(e.target.value)}
           autoComplete="off"
+          isInvalid={isInvalid}
         />
       </>
     );

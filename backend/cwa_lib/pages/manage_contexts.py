@@ -6,7 +6,9 @@ from sqlalchemy import ColumnElement, select, update
 from cwa_lib.pydantic_schemas.generic_table import (
     ColumnType, TableOptions, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 )
-from cwa_lib.pydantic_schemas.manage_contexts import ManageContextsRead, ManageContextsCreate, ManageContextsUpdate
+from cwa_lib.pydantic_schemas.manage_contexts import (
+    ManageContextsRead, ManageContextsCreate, ManageContextsUpdate, description__gc_name, description__gc_text
+)
 from cwa_lib.pages import GenericTableRead
 
 default_gc_text = """
@@ -24,9 +26,12 @@ Helpful Answer:
 manage_contexts__query_columns = {
     'gc_id': ColumnType(display='ID', type='number'),
     'group_id': ColumnType(display='Group ID', type='number'),
-    'gc_seqn': ColumnType(display='Seqn #', type='number', default=0),
-    'gc_name': ColumnType(display='Name', type='string', default="New context"),
-    'gc_text': ColumnType(display='Text', type='text', default=default_gc_text),
+    'gc_seqn': ColumnType(display='Seqn #', type='number', default=0, 
+                          cu_edit_msg="Placement # in the list"),
+    'gc_name': ColumnType(display='Name', type='string', default="New context", 
+                          cu_required=True, cu_edit_msg=description__gc_name),
+    'gc_text': ColumnType(display='Text', type='text', default=default_gc_text, 
+                          cu_required=True, cu_edit_msg=description__gc_text),
 }
 
 manage_contexts__table_options = TableOptions(

@@ -21,6 +21,8 @@ export interface TableColumnData {
   default: string | number | boolean | null;
   select: SelectOption[] | null;
   min_width: string | null;
+  cu_required: boolean;
+  cu_edit_msg: string;
 }
 
 export interface TableOptions {
@@ -53,24 +55,41 @@ export interface TableResponse {
   offset: number;
 }
 
+interface ErrorColumnDetail {
+  input: TableCellValue;
+  loc: string[];
+  msg: string;
+  type: string;
+}
+
 export interface TableRowCreateResponse {
   result: string;
   total_created: number;
+  detail?: ErrorColumnDetail[];
 }
 
 export interface TableRowUpdateResponse {
   result: string;
   total_updated: number;
+  detail?: ErrorColumnDetail[];
 }
 
 export interface TableRowDeleteResponse {
   result: string;
   total_deleted: number;
+  details?: ErrorColumnDetail[];
 }
 
 export interface TableStore {
   title: string;
-  busy: "" | "create" | "read" | "update" | "delete";
+  busy:
+    | ""
+    | "create"
+    | "create_pending"
+    | "read"
+    | "update"
+    | "update_pending"
+    | "delete";
   error: string | null;
   data: TableResponse | null;
   needReload: boolean;
@@ -85,6 +104,9 @@ export interface TableStore {
 
   showCreateOrUpdateDialog: "" | "create" | "update";
   editRow: TableRow | null;
+  editRowErrorMsg: Record<string, string>;
+  editRowErrorMark: Record<string, boolean>;
+  setEditRowErrorMark: (col: string, value: boolean) => void;
   setShowCreateOrUpdateDialog: (
     showCreateOrUpdateDialog: "" | "create" | "update",
     editRow: TableRow | null
@@ -167,39 +189,73 @@ export function createTableStore({
     },
     showCreateOrUpdateDialog: "",
     editRow: null,
+    editRowErrorMsg: {},
+    editRowErrorMark: {},
+    setEditRowErrorMark: (col: string, value: boolean) => {
+      set({ editRowErrorMark: { ...get().editRowErrorMark, [col]: value } });
+    },
+    busyCreateOrUpdateDialog: false,
     setShowCreateOrUpdateDialog: (
       showCreateOrUpdateDialog: "" | "create" | "update",
       editRow: TableRow | null
-    ) => set({ showCreateOrUpdateDialog, editRow }),
+    ) =>
+      set({
+        showCreateOrUpdateDialog,
+        editRow,
+        editRowErrorMsg: {},
+        editRowErrorMark: {},
+      }),
     setEditRow: (editRow: TableRow | null) => set({ editRow }),
     queryEditRow: async () => {
       if (get().busy) return;
       const showCreateOrUpdateDialog = get().showCreateOrUpdateDialog;
       if (!showCreateOrUpdateDialog) return;
-      set({ busy: showCreateOrUpdateDialog, error: null });
+      const valuesRow = get().editRow;
+      if (!valuesRow) return;
+      const isCreate = showCreateOrUpdateDialog === "create";
+      set({
+        busy: isCreate ? "create_pending" : "update_pending",
+        error: null,
+      });
       try {
-        if (showCreateOrUpdateDialog === "create")
-          await axiosClient.post<TableRowCreateResponse>(
-            endpoint,
-            get().editRow
-          );
-        else
-          await axiosClient.put<TableRowUpdateResponse>(
-            endpoint,
-            get().editRow
-          );
+        if (isCreate)
+          await axiosClient.post<TableRowCreateResponse>(endpoint, valuesRow);
+        else await axiosClient.put<TableRowUpdateResponse>(endpoint, valuesRow);
         if (afterEdit) await afterEdit(get);
-      } catch (err: any) {
-        set({
-          error: err.response?.data?.message || err.message,
-        });
-      } finally {
         set({
           busy: "",
           editRow: null,
+          editRowErrorMsg: {},
+          editRowErrorMark: {},
           showCreateOrUpdateDialog: "",
           needReload: true,
         });
+      } catch (err: any) {
+        const detailList: ErrorColumnDetail[] | undefined =
+          err.response?.data?.detail;
+        set({
+          busy: showCreateOrUpdateDialog,
+        });
+        if (detailList) {
+          // validation errors
+          const colList = Object.keys(valuesRow);
+          const editRowErrorMsg: Record<string, string> = {};
+          const editRowErrorMark: Record<string, boolean> = {};
+          for (const detail of detailList) {
+            for (const loc of detail.loc) {
+              if (colList.includes(loc)) {
+                editRowErrorMsg[loc] = detail.msg;
+                editRowErrorMark[loc] = true;
+                break;
+              }
+            }
+          }
+          set({ editRowErrorMsg, editRowErrorMark, busy: "" });
+        } else {
+          set({
+            error: err.response?.data?.message || err.message,
+          });
+        }
       }
     },
     readRow: null,

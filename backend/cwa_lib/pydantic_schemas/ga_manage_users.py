@@ -2,14 +2,8 @@ from datetime import datetime
 import re
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from .generic_table import TableQueryResult
-
-USERNAME_REGEX = re.compile(r"^[a-z0-9_-]+$")
-
-def validate_user_name(v: str) -> str:
-    v = v.lower()
-    if not USERNAME_REGEX.match(v):
-        raise ValueError("user_name must contain only lowercase letters, numbers, underscores, or hyphens")
-    return v
+from cwa_lib.validators.strings import StringValidator
+from cwa_lib.validators.user_name import validate_user_name
 
 
 class GaManageUsersRead(BaseModel):
@@ -30,8 +24,8 @@ GaManageUsersQueryResult = TableQueryResult[GaManageUsersRead]
 
 
 class GaManageUsersCreate(BaseModel):
-    user_name: str = Field(..., min_length=3, max_length=32)
-    full_name: str = Field(..., min_length=3, max_length=32)
+    user_name: str
+    full_name: str
     email: EmailStr
     password: str = Field(..., min_length=8)
     is_active: bool
@@ -40,15 +34,19 @@ class GaManageUsersCreate(BaseModel):
 
     @field_validator("user_name")
     @classmethod
-    def validate_user_name(cls, v: str) -> str:
+    def validate__user_name(cls, v: str) -> str:
         return validate_user_name(v)
+    @field_validator("full_name")
+    @classmethod
+    def validate__full_name(cls, v: str) -> str:
+        return StringValidator.replace_non_common_lang(v, 3, 32)
 
 
 class GaManageUsersUpdate(BaseModel):
     user_id: int
     user_name: str | None = None
     full_name: str | None = None
-    email: str | None = None
+    email: EmailStr | None = None
     password: str | None = None
     is_active: bool | None = None
     is_contentmanager: bool | None = None
@@ -56,8 +54,17 @@ class GaManageUsersUpdate(BaseModel):
 
     @field_validator("user_name")
     @classmethod
-    def validate_user_name(cls, v: str) -> str:
+    def validate__user_name(cls, v: str) -> str | None:
+        if not v:
+            return None
         return validate_user_name(v)
+    
+    @field_validator("full_name")
+    @classmethod
+    def validate__full_name(cls, v: str) -> str | None:
+        if not v:
+            return None
+        return StringValidator.replace_non_common_lang(v, 3, 32)
 
     @field_validator("password")
     @classmethod

@@ -8,6 +8,7 @@ import UpdateRowButton from "./elements/UpdateRowButton";
 import TableHeader from "./elements/TableHeader";
 import ReadRowDialog from "./elements/ReadRowDialog";
 import ReadRowButton from "./elements/ReadRowButton";
+import BusyModal from "./elements/BusyModal";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -23,7 +24,7 @@ export default function UniversalTable({ useStore }: Props) {
   }, [tableStore.needReload]);
   useEffect(() => tableStore.setNeedReload(true), []);
 
-  if (tableStore.busy) return <Spinner animation="border" />;
+  if (tableStore.busy === "read") return <Spinner animation="border" />;
   if (!data) return <p>No data</p>;
 
   return (
@@ -88,6 +89,7 @@ export default function UniversalTable({ useStore }: Props) {
       <ReadRowDialog useStore={useStore}></ReadRowDialog>
       <EditDialog useStore={useStore}></EditDialog>
       <DeleteDialog useStore={useStore}></DeleteDialog>
+      <BusyModal useStore={useStore}></BusyModal>
     </>
   );
 }

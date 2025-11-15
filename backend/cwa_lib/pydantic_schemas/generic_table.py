@@ -13,6 +13,8 @@ class ColumnType(BaseModel):
     default: str | int | bool | None = None
     select: list[SelectOption] | None = None
     min_width: str | None = None
+    cu_required: bool = False  # create/update edit control: mark *
+    cu_edit_msg: str = ''  # create/update edit control: description below
 
 
 class TableOptions(BaseModel):
