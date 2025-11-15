@@ -10,6 +10,8 @@ import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import { CheckCircleFill, GearFill } from "react-bootstrap-icons";
 
 export default function DocTasksGVDBsCfg() {
+  const [isHovered1, setIsHovered1] = useState(false);
+  const [isHovered2, setIsHovered2] = useState(false);
   const DocTaskOptionsStore = useDocTaskOptionsStore();
   const { color } = useWebAppOptionsStore();
   const cfgStore = useDocTasksGVDBsCfgStore();
@@ -72,9 +74,11 @@ export default function DocTasksGVDBsCfg() {
         className="fw-bold"
         style={{
           color: "black",
-          backgroundColor: color.c300,
+          backgroundColor: isHovered1 ? color.c400 : color.c300,
           borderColor: color.c300,
         }}
+        onMouseEnter={() => setIsHovered1(true)}
+        onMouseLeave={() => setIsHovered1(false)}
         onClick={handleShow}
       >
         <GearFill size={"20px"}></GearFill>&nbsp;
@@ -202,7 +206,12 @@ export default function DocTasksGVDBsCfg() {
             variant="success"
             className="fw-bold"
             onClick={handleApply}
-            style={{ color: "black", backgroundColor: color.c300 }}
+            onMouseEnter={() => setIsHovered2(true)}
+            onMouseLeave={() => setIsHovered2(false)}
+            style={{
+              color: "black",
+              backgroundColor: isHovered2 ? color.c400 : color.c300,
+            }}
           >
             <CheckCircleFill
               className="me-1 my-0"

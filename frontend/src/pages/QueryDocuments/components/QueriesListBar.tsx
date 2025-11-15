@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, ListGroup } from "react-bootstrap";
 import { useDocTasksShortStore } from "../stores/useDocTasksShort";
 import QueriesListBarItem from "./QueriesListBarItem";
@@ -8,8 +8,10 @@ import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import { useDocTasksGVDBsCfgStore } from "../stores/useDocTasksGVDBsCfg";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
+import { Search } from "react-bootstrap-icons";
 
 function QueriesListBar() {
+  const [isHovered, setIsHovered] = useState(false);
   const queryStore = useQueryDocumentsStore();
   const queriesStore = useDocTasksShortStore();
   const currentStore = useDocTasksCurrentStore();
@@ -43,7 +45,9 @@ function QueriesListBar() {
         type="button"
         variant="light"
         className="w-100 fw-bold mt-2"
-        style={{ backgroundColor: color.c300 }}
+        style={{ backgroundColor: isHovered ? color.c400 : color.c300 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         onClick={() => {
           queryStore.setOpUUID("");
           queryStore.stopPolling();
@@ -51,7 +55,7 @@ function QueriesListBar() {
           gvdbsCfgStore.setDefaultValues();
         }}
       >
-        New Query
+        <Search /> &nbsp; New Query
       </Button>
       {todayRows.length ? (
         <>
