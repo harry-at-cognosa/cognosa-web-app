@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { SkipStartFill, PlayFill, SkipEndFill } from "react-bootstrap-icons";
 import type { createTableStore } from "../TableStoreFactory";
@@ -9,6 +9,7 @@ interface Props {
 }
 
 export default function PaginationControls({ useStore }: Props) {
+  const [isHovered, setIsHovered] = useState(false);
   const { color } = useWebAppOptionsStore();
   const { nextRequest, data, setLimit, setOffset } = useStore();
   if (!data) return null;
@@ -110,7 +111,12 @@ export default function PaginationControls({ useStore }: Props) {
         value={limit}
         className="fw-bold"
         onChange={handleLimitSelect}
-        style={{ width: "auto", backgroundColor: color.c300 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          width: "auto",
+          backgroundColor: isHovered ? color.c400 : color.c300,
+        }}
         aria-label="Rows per page"
       >
         {table_options.select_limit.map((size) => (
