@@ -12,19 +12,44 @@ from cwa_lib.pages import GenericTableRead
 
 from cwa_lib.sql_tables.api_users import ApiUsersTable
 from cwa_lib.app import password_helper
+from cwa_lib.validators.user_name import check_unique__email, check_unique__user_name
 
 
 su_manage_users__query_columns = {
     'user_id': ColumnType(display='UserID', type='number'),
     'group_id': ColumnType(display='Group ID: Name', type='group_id_name', default=1, select=[]),
-    'user_name': ColumnType(display='User name', type='string'),
-    'full_name': ColumnType(display='Full name', type='string'),
-    'email': ColumnType(display='Email', type='string'),
-    'password': ColumnType(display='New Password', type='groupadmin_user_password'),
-    'is_active': ColumnType(display='Active', type='boolean'),
-    'is_contentmanager': ColumnType(display='Content\nManager', type='boolean', default=False),
-    'is_groupadmin': ColumnType(display='Group\nAdmin', type='boolean', default=False),
-    'is_superuser': ColumnType(display='Super\nUser', type='boolean', default=False),
+    'user_name': ColumnType(
+        display='User name', type='string', cu_required=True, 
+        cu_edit_msg="user_name must contain only lowercase letters, numbers, underscores, or hyphens"
+    ),
+    'full_name': ColumnType(
+        display='Full name', type='string', cu_required=True, 
+        cu_edit_msg="Full name must be from 3 to 32 characters"
+    ),
+    'email': ColumnType(
+        display='Email', type='string', cu_required=True, 
+        cu_edit_msg="Enter valid email"
+    ),
+    'password': ColumnType(
+        display='New Password', type='groupadmin_user_password',
+        cu_edit_msg="Password must be at least 8 characters"
+    ),
+    'is_active': ColumnType(
+        display='Active', type='boolean', default=True,
+        cu_edit_msg="User is enabled?"
+    ),
+    'is_contentmanager': ColumnType(
+        display='Content\nManager', type='boolean', default=False,
+        cu_edit_msg="User is Content Manager?"
+    ),
+    'is_groupadmin': ColumnType(
+        display='Group\nAdmin', type='boolean', default=False,
+        cu_edit_msg="User is Group Admin?"
+    ),
+    'is_superuser': ColumnType(
+        display='Super\nUser', type='boolean', default=False,
+        cu_edit_msg="User is Super User?"
+    ),
     'created_at': ColumnType(display='Created at', type='datetime'),
 }
 su_manage_users__all_columns = list(su_manage_users__query_columns.keys())
@@ -66,14 +91,8 @@ class SuManageUsersTable:
         """
         await fix_autoincrement(self.session, User)
         # check if user exists with the same email or user_name
-        result = await self.session.execute(select(User).where(User.email==data.email)) # type: ignore
-        exists = result.scalar_one_or_none()
-        if exists:
-            return TableCreateRowResult(result='error', error_msg='This email already exists', total_created=0)
-        result = await self.session.execute(select(User).where(User.user_name==data.user_name))
-        exists = result.scalar_one_or_none()
-        if exists:
-            return TableCreateRowResult(result='error', error_msg='This user_name already exists', total_created=0)
+        await check_unique__email(self.session, data.email)
+        await check_unique__user_name(self.session, data.user_name)
         
         await ApiUsersTable.create_user(
             user_id=None,
@@ -100,16 +119,10 @@ class SuManageUsersTable:
         if not user:
             return TableUpdateRowResult(result='error', total_updated=0)
         # check if user exists with the same email or user_name
-        if data.email != user.email:
-            result = await self.session.execute(select(User).where(User.email==data.email)) # type: ignore
-            exists = result.scalar_one_or_none()
-            if exists:
-                return TableUpdateRowResult(result='error', error_msg='This email already exists', total_updated=0)
-        if data.user_name != user.user_name:
-            result = await self.session.execute(select(User).where(User.user_name==data.user_name))
-            exists = result.scalar_one_or_none()
-            if exists:
-                return TableUpdateRowResult(result='error', error_msg='This user_name already exists', total_updated=0)
+        if data.email and (data.email != user.email):
+            await check_unique__email(self.session, data.email)
+        if data.user_name and (data.user_name != user.user_name):
+            await check_unique__user_name(self.session, data.user_name)
         total_updated = 0
         # update password if specified
         if data.password:
