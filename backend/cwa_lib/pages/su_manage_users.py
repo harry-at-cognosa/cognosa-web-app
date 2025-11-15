@@ -59,7 +59,7 @@ su_manage_users__table_options = TableOptions(
     title='SU Manage Users',
     pk='user_id',
     read__visible_columns=[x for x in su_manage_users__all_columns if (x != 'password')],
-    read__hide_on_false=['is_active', 'is_contentmanager', 'is_groupadmin', 'is_superuser'],  # table view: hide if false
+    read__hide_on_false=['is_contentmanager', 'is_groupadmin', 'is_superuser'],  # table view: hide if false
     create__ask_columns=su_manage_users_edit_columns,
     update__ask_columns=su_manage_users_edit_columns,
     delete__ask_columns=['user_name', 'full_name', 'email'],

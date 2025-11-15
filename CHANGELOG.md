@@ -9,6 +9,12 @@
    Show description for each field.
    Added input validation.
    Show errors for each field after Save.
+   Applied to pages/tables:
+   `Query Documents`->`Manage Contexts`
+   `GroupAdmin`->`Users`
+   `SuperUser`->`Users`
+
+3. Generic tables: miscellaneous visual updates.
 
 ## [0.12c] (2025-11-09)
 

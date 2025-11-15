@@ -1,6 +1,7 @@
 import { Form } from "react-bootstrap";
 import type { createTableStore, TableCellValue } from "../TableStoreFactory";
 import getColor from "../../api/getColor";
+import { Check, XCircle } from "react-bootstrap-icons";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -36,13 +37,21 @@ export default function EditCellElement({ useStore, col }: Props) {
 
   if (cellType === "boolean")
     return (
-      <Form.Check
-        checked={!!value}
-        key={key}
-        className="ms-2"
-        onChange={(e) => onChange(e.target.checked)}
-        autoComplete="off"
-      ></Form.Check>
+      <div key={"div_boolean__" + key} className="d-flex">
+        <Form.Check
+          type="switch"
+          checked={!!value}
+          key={"check_boolean__" + key}
+          className="ms-2"
+          onChange={(e) => onChange(e.target.checked)}
+          autoComplete="off"
+        ></Form.Check>
+        {Boolean(value) ? (
+          <Check size={"24px"} style={{ color: "green" }}></Check>
+        ) : (
+          <XCircle size={"24px"} style={{ color: "red" }}></XCircle>
+        )}
+      </div>
     );
   if (cellType === "number") {
     const select_values = columns[col].select;
