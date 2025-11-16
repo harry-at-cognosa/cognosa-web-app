@@ -1,78 +1,86 @@
 import { write, utils } from "xlsx";
 
+const EXCEL_MAX_CELL_LENGTH = 32700;
+const ELLIPSIS = "...";
+
 export interface ExcelExportColumnDefinition {
   key: string; // The property name in your data object
   header?: string; // The display name in the Excel file
 }
 
 export interface ExcelExportOptions {
-  fileName?: string;
-  sheetName?: string;
-  columns?: ExcelExportColumnDefinition[]; // Define columns in order with custom headers
+  fileName: string;
+  sheetName: string;
+  columns: ExcelExportColumnDefinition[]; // Define columns in order with custom headers
   autoWidthPadding?: number; // Additional padding for column width
 }
 
 export const useExcelExport = () => {
+  const processCellValue = (value: any): any => {
+    if (typeof value === "string") {
+      if (value.length > EXCEL_MAX_CELL_LENGTH) {
+        const availableLength = EXCEL_MAX_CELL_LENGTH - ELLIPSIS.length;
+        return value.substring(0, availableLength) + ELLIPSIS;
+      }
+    }
+    return value;
+  };
   const exportToExcel = <T extends Record<string, any>>(
-    data: T[],
-    options: ExcelExportOptions = {}
+    rowList: T[],
+    options: ExcelExportOptions
   ) => {
-    const {
-      fileName = "data.xlsx",
-      sheetName = "Sheet1",
-      columns = [],
-      autoWidthPadding = 2,
-    } = options;
+    const { fileName, sheetName, columns, autoWidthPadding = 2 } = options;
+    const data = rowList;
 
     let worksheetData: any[];
-    let headers: string[];
+    let headerNames: string[];
 
-    if (columns.length > 0) {
-      // Use specified columns in order
-      worksheetData = data.map((row) => {
-        const newRow: Record<string, any> = {};
-        columns.forEach((col) => {
-          const displayKey = col.header || col.key;
-          newRow[displayKey] = row[col.key];
-        });
-        return newRow;
+    // Use specified columns in order
+    worksheetData = data.map((row) => {
+      const newRow: Record<string, any> = {};
+      columns.forEach((col) => {
+        const displayKey = col.header || col.key;
+        newRow[displayKey] = processCellValue(row[col.key]);
       });
-      headers = columns.map((col) => col.header || col.key);
-    } else {
-      // Use all keys from first row (default order)
-      worksheetData = data.map((row) => ({ ...row }));
-      headers = data.length > 0 ? Object.keys(data[0]) : [];
-    }
+      return newRow;
+    });
+    headerNames = columns.map((col) => col.header || col.key);
 
     // Create worksheet
     const worksheet = utils.json_to_sheet(worksheetData);
 
-    // Calculate and set column widths
-    if (worksheet["!ref"]) {
+    // Calculate optimal column widths
+    if (worksheet["!ref"] && headerNames.length > 0) {
       const range = utils.decode_range(worksheet["!ref"]);
       const columnWidths = [];
 
       for (let C = range.s.c; C <= range.e.c; C++) {
-        const cellAddress = utils.encode_cell({ c: C, r: 0 }); // Header row
-        const cell = worksheet[cellAddress];
+        const colName = headerNames[C];
 
-        let headerText = cell ? cell.v : "";
-        if (columns.length > 0) {
-          // Get header from columns definition
-          const colIndex = C;
-          if (colIndex < columns.length) {
-            headerText = columns[colIndex].header || columns[colIndex].key;
+        // Calculate header width
+        const headerWidth = colName ? String(colName).length : 0;
+
+        // Calculate max content width for this column (capped for display)
+        let maxWidth = headerWidth;
+        for (let R = 1; R <= range.e.r; R++) {
+          const cellAddress = utils.encode_cell({ c: C, r: R });
+          const cell = worksheet[cellAddress];
+          if (cell && cell.v !== undefined) {
+            // For width calculation, we don't need the full length if it's truncated
+            const displayValue = String(cell.v);
+            const cellWidth =
+              displayValue.length > 50 ? 50 : displayValue.length; // Cap at 50 for display purposes
+            if (cellWidth > maxWidth) {
+              maxWidth = cellWidth;
+            }
           }
-        } else if (headers[C]) {
-          headerText = headers[C];
         }
 
-        // Calculate width based on header length + padding
-        const width = Math.min(
-          Math.max(String(headerText).length + autoWidthPadding, 8),
+        const finalWidth = Math.min(
+          Math.max(maxWidth + autoWidthPadding, 8),
           50
         );
-        columnWidths.push({ wch: width });
+        columnWidths.push({ wch: finalWidth });
       }
 
       worksheet["!cols"] = columnWidths;

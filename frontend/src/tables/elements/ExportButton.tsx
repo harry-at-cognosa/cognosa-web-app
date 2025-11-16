@@ -7,6 +7,7 @@ import type { createTableStore } from "../TableStoreFactory";
 import { FileEarmark } from "react-bootstrap-icons";
 import { useState } from "react";
 import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
+import { useJsonExport } from "../hooks/useJSONExport";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -29,14 +30,16 @@ function getFilename(title: string, fileExt: string) {
 }
 
 export default function ExportButton({ useStore }: Props) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered1, setIsHovered1] = useState(false);
+  const [isHovered2, setIsHovered2] = useState(false);
   const { color } = useWebAppOptionsStore();
   const { exportToExcel } = useExcelExport();
+  const { exportToJson } = useJsonExport();
   const tableStore = useStore();
   const exportList = tableStore.data?.table_options.export || [];
   if (!exportList.length) return null;
 
-  const handleExport = () => {
+  const handleExportExcel = () => {
     const data = tableStore.data;
     if (!data) return;
     const columns: ExcelExportColumnDefinition[] = [];
@@ -52,22 +55,45 @@ export default function ExportButton({ useStore }: Props) {
       columns,
     });
   };
+  const handleExportJSON = () => {
+    const data = tableStore.data;
+    if (!data) return;
+    exportToJson(data.rows, {
+      fileName: getFilename(tableStore.title, "json"),
+      indent: 2,
+      sortKeys: true,
+    });
+  };
   return (
     <>
       <span className="pt-1">Export:&nbsp;</span>
       <Button
         type="button"
         variant="warning"
+        className="fw-bold py-0 me-1"
+        style={{
+          fontSize: "smaller",
+          backgroundColor: isHovered1 ? color.c400 : color.c300,
+        }}
+        onMouseEnter={() => setIsHovered1(true)}
+        onMouseLeave={() => setIsHovered1(false)}
+        onClick={handleExportExcel}
+      >
+        <FileEarmark size={"16px"} /> Excel
+      </Button>
+      <Button
+        type="button"
+        variant="warning"
         className="fw-bold py-0"
         style={{
           fontSize: "smaller",
-          backgroundColor: isHovered ? color.c400 : color.c300,
+          backgroundColor: isHovered2 ? color.c400 : color.c300,
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={handleExport}
+        onMouseEnter={() => setIsHovered2(true)}
+        onMouseLeave={() => setIsHovered2(false)}
+        onClick={handleExportJSON}
       >
-        <FileEarmark size={"16px"} /> Excel
+        <FileEarmark size={"16px"} /> JSON
       </Button>
     </>
   );

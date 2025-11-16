@@ -1,4 +1,4 @@
-## [0.13f] (2025-11-16)
+## [0.13g] (2025-11-16)
 
 1. `Document Queries` page:
    Set search type from history queries.
@@ -27,6 +27,10 @@
 6. `Document Queries` page:
    Added `Found Documents (...)` button that will show modal with all found documents.
    Only for superusers.
+
+7. `SuperUser`->`Doc Tasks` table:
+   Added export (current rows) to JSON file.
+   File is made on frontend (client's side).
 
 ## [0.12c] (2025-11-09)
 
