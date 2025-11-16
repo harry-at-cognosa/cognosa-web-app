@@ -11,6 +11,7 @@ interface DocTasksCurrentState {
   setGLLMsID: (gllms_id: number | null) => void;
   gc_id: number | null;
   setGCID: (gc_id: number | null) => void;
+  context_json: string | null;
   status: number | null;
   status_text: string;
   short_name: string | null;
@@ -40,6 +41,7 @@ const defaultState = {
   gvdbs_id: null,
   gllms_id: null,
   gc_id: null,
+  context_json: null,
   status: null,
   status_text: "",
   short_name: null,

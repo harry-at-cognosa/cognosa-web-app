@@ -65,7 +65,7 @@ export const useWebAppOptionsStore = createResettableStore<WebAppOptionsState>(
           },
         });
       } catch (err: any) {
-        alert(
+        console.log(
           "webapp_options error: " +
             (err.response?.data?.message || err.message)
         );

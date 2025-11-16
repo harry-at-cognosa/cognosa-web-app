@@ -26,6 +26,7 @@ class DocTaskQueryResult(BaseModel):
     gvdbs_cfg_json: str
     gllms_id: int
     gc_id: int
+    context_json: str | None = None
     output_text: str | None = None
     created_at: datetime
     completed_at: datetime | None = None

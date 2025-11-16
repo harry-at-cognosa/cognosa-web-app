@@ -1,4 +1,4 @@
-## [0.13c] (2025-11-16)
+## [0.13d] (2025-11-16)
 
 1. `Document Queries` page:
    Set search type from history queries.
@@ -23,6 +23,10 @@
 5. `Document Queries` page:
    Added "No Document search, use only LLM" option as another `Document Collection` select choice.
    If it is chosen, question (and optional instruction) will be sent to LLM without vector db search.
+
+6. `Document Queries` page:
+   Added `Found Documents (...)` button that will show modal with all found documents.
+   Only for superusers.
 
 ## [0.12c] (2025-11-09)
 

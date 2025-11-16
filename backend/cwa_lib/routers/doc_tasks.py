@@ -49,6 +49,8 @@ async def get_task(
     # allow all tasks for superuser
     if (not user.is_superuser) and (task.group_id != user.group_id):
         raise HTTPException(status_code=404, detail="DocTask not found")
+    if not user.is_superuser:  # hide context_json for non superusers
+        task.context_json = None
     return task
 
 # Delete Query Documents task

@@ -16,6 +16,7 @@ import QuerySelectLLM from "./QuerySelectLLM";
 import QuerySelectContext from "./QuerySelectContext";
 import QueryTokensCounter from "./QueryTokensCounter";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
+import ContextJSON from "./ContextJSON";
 
 function QueryArea() {
   const queryStore = useQueryDocumentsStore();
@@ -174,8 +175,12 @@ function QueryArea() {
       <div style={{ visibility: queryStore.isPolling ? "visible" : "hidden" }}>
         <ProgressBar animated now={current.status_pct || 0} />
       </div>
+
       <h5>{current.status_text || ""}</h5>
-      <QueryTokensCounter />
+      <span>
+        <ContextJSON />
+        <QueryTokensCounter />
+      </span>
     </div>
   );
 }
