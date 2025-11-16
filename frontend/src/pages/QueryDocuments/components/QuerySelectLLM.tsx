@@ -20,7 +20,7 @@ export default function QuerySelectLLM() {
     if (current.gllms_id === null) {
       // get first available gllms_id
       const all_gllms_id = group_llms.map((row) => Number(row.gllms_id));
-      const defaultGLLMsID = all_gllms_id.includes(lastUsedGLLMsID || -1)
+      const defaultGLLMsID = all_gllms_id.includes(lastUsedGLLMsID || -999)
         ? lastUsedGLLMsID
         : Number(group_llms[0]?.gllms_id) || null;
       current.setGLLMsID(defaultGLLMsID);

@@ -19,7 +19,7 @@ export default function QuerySelectContext() {
     if (current.gc_id === null) {
       // get first available gc_id
       const all_gc_id = group_contexts.map((row) => Number(row.gc_id));
-      const defaultGCID = all_gc_id.includes(lastUsedGCID || -1)
+      const defaultGCID = all_gc_id.includes(lastUsedGCID || -999)
         ? lastUsedGCID
         : Number(group_contexts[0]?.gc_id) || null;
       current.setGCID(defaultGCID);
