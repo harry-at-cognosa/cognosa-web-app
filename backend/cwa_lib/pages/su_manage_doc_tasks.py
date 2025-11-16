@@ -44,7 +44,8 @@ su_manage_doc_tasks__table_options = TableOptions(
     read__visible_columns=su_manage_doc_tasks__all_columns,
     delete__ask_columns=['doc_task_id', 'short_name'],
     order_by__allow=['doc_task_id', 'group_id', 'user_id', 'status', 'created_at'],
-    default_limit=5
+    default_limit=5,
+    export=['xlsx-current']
 )
 
 class SuManageDocTasksTableRead(GenericTableRead):

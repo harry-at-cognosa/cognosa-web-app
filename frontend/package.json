@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
+    "@types/file-saver": "^2.0.7",
     "@types/react-router-bootstrap": "^0.26.8",
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "clsx": "^2.1.1",
+    "file-saver": "^2.0.5",
     "highlight.js": "^11.11.1",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.1.1",
@@ -28,6 +30,7 @@
     "react-use": "^17.6.0",
     "rehype-highlight": "^7.0.2",
     "rehype-raw": "^7.0.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

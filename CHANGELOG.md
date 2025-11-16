@@ -16,6 +16,9 @@
 
 3. Generic tables: miscellaneous visual updates.
 
+4. `SuperUser`->`Doc Tasks` table:
+   Added export (current rows) to Excel file.
+
 ## [0.12c] (2025-11-09)
 
 1. Generic tables: added default order by/dir.

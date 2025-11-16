@@ -32,6 +32,8 @@ class TableOptions(BaseModel):
     default_limit: int = 20
     max_limit: int = 20
     select_limit: list[int] = [5, 10, 20]
+    # allow export
+    export: list[Literal['xlsx-current', 'csv-current']] = []
 
 
 class TableQuery(BaseModel):

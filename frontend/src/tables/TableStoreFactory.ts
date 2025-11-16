@@ -25,6 +25,8 @@ export interface TableColumnData {
   cu_edit_msg: string;
 }
 
+type ExportType = "xlsx-current" | "csv_current";
+
 export interface TableOptions {
   title: string;
   pk: string;
@@ -38,6 +40,7 @@ export interface TableOptions {
   default_limit: number;
   max_limit: number;
   select_limit: number[];
+  export: ExportType[];
 }
 
 export type TableCellValue = string | number | boolean | null | undefined;
