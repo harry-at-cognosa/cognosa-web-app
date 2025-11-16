@@ -8,10 +8,12 @@ import {
 import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import { CheckCircleFill, GearFill } from "react-bootstrap-icons";
+import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 
 export default function DocTasksGVDBsCfg() {
   const [isHovered1, setIsHovered1] = useState(false);
   const [isHovered2, setIsHovered2] = useState(false);
+  const current = useDocTasksCurrentStore();
   const DocTaskOptionsStore = useDocTaskOptionsStore();
   const { color } = useWebAppOptionsStore();
   const cfgStore = useDocTasksGVDBsCfgStore();
@@ -80,6 +82,7 @@ export default function DocTasksGVDBsCfg() {
         onMouseEnter={() => setIsHovered1(true)}
         onMouseLeave={() => setIsHovered1(false)}
         onClick={handleShow}
+        disabled={current.gvdbs_id === -1}
       >
         <GearFill size={"20px"}></GearFill>&nbsp;
         {getModalOpenButtonText()}

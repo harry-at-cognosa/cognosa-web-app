@@ -1,4 +1,4 @@
-## [0.13b] (2025-11-15)
+## [0.13c] (2025-11-16)
 
 1. `Document Queries` page:
    Set search type from history queries.
@@ -18,6 +18,11 @@
 
 4. `SuperUser`->`Doc Tasks` table:
    Added export (current rows) to Excel file.
+   File is made on frontend (client's side).
+
+5. `Document Queries` page:
+   Added "No Document search, use only LLM" option as another `Document Collection` select choice.
+   If it is chosen, question (and optional instruction) will be sent to LLM without vector db search.
 
 ## [0.12c] (2025-11-09)
 

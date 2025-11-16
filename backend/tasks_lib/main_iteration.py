@@ -46,6 +46,9 @@ class MainIteration:
                 task = self.find_next_task(session)
                 if not task:
                     return self.STATUS__NOT_FOUND
+                if (task.gvdbs_id) == -1 and (task.status == TaskStatus.QD_INIT):
+                    # no document search, only ask LLM
+                    task.status = TaskStatus.QD_VDB_FETCHED
                 match task.status:
                     case TaskStatus.QD_INIT:  # Query Documents -> init
                         QueryDocumentInit(session, task, self.vdb_task_queue).run()

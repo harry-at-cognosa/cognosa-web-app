@@ -50,7 +50,7 @@ export default function QuerySelectContext() {
         <Form.Select
           value={current.gc_id?.toString() || ""}
           onChange={(e) => current.setGCID(Number(e.target.value))}
-          disabled={waitingState}
+          disabled={waitingState || current.gvdbs_id === -1}
         >
           {group_contexts.map((gc_obj) => (
             <option

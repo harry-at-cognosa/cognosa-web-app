@@ -18,7 +18,6 @@ class LLMTypeClaude:
             self, 
             query_text: str, 
             template: str, 
-            context_json_str: str,
             llm_type: str,
             llm_api_base: str, 
             llm_model: str, 
@@ -26,7 +25,6 @@ class LLMTypeClaude:
         ) -> None:
         self.query_text = query_text
         self.template = template
-        self.context_json_str = context_json_str
         self.llm_type = llm_type
         self.llm_api_base = llm_api_base
         self.llm_model = llm_model

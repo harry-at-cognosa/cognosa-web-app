@@ -89,10 +89,13 @@ class DocTasksTable:
             input_text: str, 
             optional_text: str) -> DocTaskQueryResult | None:
         # get group_vdbs and group_llms rows
-        if not (gvdbs_obj := await self.query_gvdbs(group_id, gvdbs_id)):
-            error_msg = 'DocTasksTable.add_one: group_vdbs row not found for {group_id=}, {gvdbs_id=}'
-            log.error(error_msg)
-            raise Exception(error_msg)
+        gvdbs_json = '{}'
+        if gvdbs_id != -1:  # -1 means no document search
+            if not (gvdbs_obj := await self.query_gvdbs(group_id, gvdbs_id)):
+                error_msg = 'DocTasksTable.add_one: group_vdbs row not found for {group_id=}, {gvdbs_id=}'
+                log.error(error_msg)
+                raise Exception(error_msg)
+            gvdbs_json = self.row_as_json(gvdbs_obj)
         
         if not (gllms_obj := await self.query_gllms(group_id, gllms_id)):
             error_msg = 'DocTasksTable.add_one: group_llms row not found for {group_id=}, {gllms_id=}'
@@ -104,7 +107,7 @@ class DocTasksTable:
             user_id=user_id, 
             gvdbs_id=gvdbs_id,
             gvdbs_cfg_json=json.dumps(gvdbs_cfg_json, indent=1, default=str),
-            gvdbs_json=self.row_as_json(gvdbs_obj),
+            gvdbs_json=gvdbs_json,
             gllms_id=gllms_id,
             gllms_json=self.row_as_json(gllms_obj),
             gc_id=gc_id,

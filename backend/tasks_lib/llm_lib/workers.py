@@ -95,23 +95,26 @@ class LLMWorker(Thread):
                 except LLMOptionsNotFound:
                     self.write_status_error(session, task, error_msg="LLM Options not found")
                     raise
-                try:
-                    group_context = self.fetch_group_context(session, task)                    
-                except LLMGroupContextNotFound:
-                    exc_msg = f"group_contexts row not found for {task.doc_task_id=}, {task.group_id=}, {task.gc_id=}"
-                    self.write_status_error(session, task, error_msg="LLM Group Context not found", exc_msg=exc_msg)
-                    raise
-                except LLMGroupContextWrong:
-                    exc_msg = f"group_contexts.gc_text is wrong for {task.doc_task_id=}, {task.group_id=}, {task.gc_id=}"
-                    self.write_status_error(session, task, error_msg="LLM Group Context text is wrong", exc_msg=exc_msg)
-                    raise
+                gc_text = '{question}{context}'
+                if task.gvdbs_id != -1:
+                    try:
+                        group_context = self.fetch_group_context(session, task)
+                        gc_text = group_context.gc_text
+                    except LLMGroupContextNotFound:
+                        exc_msg = f"group_contexts row not found for {task.doc_task_id=}, {task.group_id=}, {task.gc_id=}"
+                        self.write_status_error(session, task, error_msg="LLM Group Context not found", exc_msg=exc_msg)
+                        raise
+                    except LLMGroupContextWrong:
+                        exc_msg = f"group_contexts.gc_text is wrong for {task.doc_task_id=}, {task.group_id=}, {task.gc_id=}"
+                        self.write_status_error(session, task, error_msg="LLM Group Context text is wrong", exc_msg=exc_msg)
+                        raise
                 try:
                     self.tiktoken_count = TikTokenCount(gllms.gllms_model)
                     start_time = time()
                     llm_ops = LLMOps(
                         query_text=task.input_text,
                         optional_text=task.optional_text,
-                        template=group_context.gc_text,
+                        template=gc_text,
                         context_json_str=task.context_json,
                         llm_type=gllms.gllms_type,
                         llm_api_base=gllms.gllms_api_base,

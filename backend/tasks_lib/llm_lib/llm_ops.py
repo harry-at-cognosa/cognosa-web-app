@@ -36,7 +36,6 @@ class LLMOps:
             self.llm_obj = LLMTypeOpenAI(
                 query_text=query_text,
                 template=template,
-                context_json_str=context_json_str,
                 llm_type=llm_type,
                 llm_api_base=llm_api_base,
                 llm_model=llm_model,
@@ -47,7 +46,6 @@ class LLMOps:
             self.llm_obj = LLMTypeClaude(
                 query_text=query_text,
                 template=template,
-                context_json_str=context_json_str,
                 llm_type=llm_type,
                 llm_api_base=llm_api_base,
                 llm_model=llm_model,

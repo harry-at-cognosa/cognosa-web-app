@@ -56,6 +56,12 @@ export const useDocTaskOptionsStore =
             Number(a.gvdbs_status === "success")
           );
         });
+        data.group_vdbs.push({
+          gvdbs_id: -1,
+          group_id: -1,
+          gvdbs_name: "No Document search, use only LLM",
+          gvdbs_status: "success",
+        });
         data.group_llms.sort((a, b) => {
           return (
             Number(b.gllms_status === "success") -
