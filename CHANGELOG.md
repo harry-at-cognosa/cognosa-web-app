@@ -1,4 +1,4 @@
-## [0.13e] (2025-11-16)
+## [0.13f] (2025-11-16)
 
 1. `Document Queries` page:
    Set search type from history queries.

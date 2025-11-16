@@ -1,5 +1,4 @@
 import { write, utils } from "xlsx";
-import { saveAs } from "file-saver";
 
 export interface ExcelExportColumnDefinition {
   key: string; // The property name in your data object
@@ -83,13 +82,32 @@ export const useExcelExport = () => {
     const workbook = utils.book_new();
     utils.book_append_sheet(workbook, worksheet, sheetName);
 
-    // Generate and download
+    // Generate Excel file as ArrayBuffer
     const excelBuffer = write(workbook, { bookType: "xlsx", type: "array" });
+
+    // Create Blob
     const blob = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    saveAs(blob, fileName);
+    // Universal download approach
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+
+    // For Safari
+    if (
+      typeof navigator !== "undefined" &&
+      /iPad|iPhone|iPod|Safari/.test(navigator.userAgent)
+    ) {
+      link.target = "_blank";
+    }
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return { exportToExcel };
