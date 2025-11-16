@@ -19,11 +19,9 @@ export default function QuerySelectVDB() {
     if (waitingState) return;
     if (current.gvdbs_id === null) {
       const all_gvdbs_id = group_vdbs.map((row) => Number(row.gvdbs_id));
-      console.log(all_gvdbs_id);
       const defaultGVDBsID = all_gvdbs_id.includes(lastUsedGVDBsID || -999)
         ? lastUsedGVDBsID
         : Number(group_vdbs[0]?.gvdbs_id) || null;
-      console.log(defaultGVDBsID);
       current.setGVDBsID(defaultGVDBsID);
     }
   }, [waitingState, current.gvdbs_id]);
