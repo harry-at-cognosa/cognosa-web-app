@@ -75,7 +75,6 @@ function QueryArea() {
       );
       if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
       const data = response.data;
-      console.log(data);
       current.setFromServerResponse(data);
       gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
       startPolling(opUUID);
@@ -100,7 +99,6 @@ function QueryArea() {
         );
         if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
         const data = response.data;
-        console.log(data);
         current.setFromServerResponse(data);
         gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
         // Continue polling until status becomes 6
