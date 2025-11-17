@@ -55,14 +55,20 @@ class LLMWorker(Thread):
     def write_llm_writing(self, session: Session, task: DocTasks, answer: str):
         task.status = TaskStatus.QD_LLM_WRITING
         task.status_text = "LLM answering..."
-        task.output_text = answer
+        if task.question_number == 1:
+            task.output_text = answer
+        else:
+            task.output_text_2 = answer
         task.llm_tokens_received = self.tiktoken_count.count(answer)
         session.commit()
     
     def write_llm_finished(self, session: Session, task: DocTasks, answer: str, llm_query_seconds: float):
         task.status = TaskStatus.QD_LLM_FETCHED
         task.status_text = "Task completed"
-        task.output_text = answer
+        if task.question_number == 1:
+            task.output_text = answer
+        else:
+            task.output_text_2 = answer
         task.completed_at = func.now()
         task.llm_query_seconds = llm_query_seconds
         task.llm_tokens_received = self.tiktoken_count.count(answer)

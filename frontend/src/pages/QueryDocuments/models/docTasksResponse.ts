@@ -9,7 +9,9 @@ export type DocTasksResponse = {
   short_name: string;
   input_text: string;
   optional_text: string;
-  output_text: string;
+  output_text: string | null;
+  question_number: number;
+  output_text_2: string | null;
   vdb_query_seconds: number | null;
   llm_query_seconds: number | null;
   llm_tokens_sent: number | null;

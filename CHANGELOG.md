@@ -1,4 +1,4 @@
-## [0.13g] (2025-11-16)
+## [0.13h] (2025-11-16)
 
 1. `Document Queries` page:
    Set search type from history queries.
@@ -31,6 +31,19 @@
 7. `SuperUser`->`Doc Tasks` table:
    Added export (current rows) to JSON file.
    File is made on frontend (client's side).
+
+8. `Query Documents` page:
+   Added second follow-up question ability.
+   User can change all options and question.
+   Second request will rewrite everything in `doc_tasks`,
+   leaving only first answer from LLM in `doc_tasks`.`output_text`.
+   Second answer will be in `doc_tasks`.`output_text_2`.
+   Also will be updated `doc_tasks`.`question_number`.
+   Sequence number of question will be saved in `doc_tasks`.`context_json` -> `question_seqn` number.
+
+   Need to upgrade db:
+   `cd backend`
+   `alembic upgrade head`
 
 ## [0.12c] (2025-11-09)
 

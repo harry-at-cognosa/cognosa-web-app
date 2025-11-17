@@ -4,6 +4,7 @@ from typing import Sequence
 from common.enums.gvdbs_cfg_json import SEARCH_TYPES
 
 class DocTaskCreate(BaseModel):
+    doc_task_id: int | None
     short_name: str
     input_text: str
     optional_text: str
@@ -28,6 +29,8 @@ class DocTaskQueryResult(BaseModel):
     gc_id: int
     context_json: str | None = None
     output_text: str | None = None
+    question_number: int
+    output_text_2: str | None = None
     created_at: datetime
     completed_at: datetime | None = None
     vdb_query_seconds: float | None = None

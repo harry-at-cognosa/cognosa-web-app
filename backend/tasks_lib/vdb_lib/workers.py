@@ -15,6 +15,7 @@ from tasks_lib.vdb_lib.emb_models import EmbModels
 from tasks_lib.cmd_line_opts import AP_NAME
 from common.watchdogs import AP_SLEEP_TIME
 from common.watchdogs.api_processes_table import ApiProcessesTable
+from .found_documents import FoundDocuments
 
 
 class VDBWorker(Process):
@@ -32,16 +33,15 @@ class VDBWorker(Process):
         task.status = TaskStatus.QD_VDB_ERROR
         session.commit()        
 
-    def save_results_to_sql(self, session: Session, task: DocTasks, result_dict: list[dict], vdb_query_seconds: float):
-        doc_number = len(result_dict)
-        context_json=json.dumps(result_dict, indent=1)        
-        log.info(f"Task id {task.doc_task_id} completed")
+    def save_results_to_sql(self, session: Session, task: DocTasks, result_list: list[dict], vdb_query_seconds: float):
+        doc_number = len(result_list)
         task.context_at = utcnow()
-        task.context_json = context_json
+        FoundDocuments(task).append(result_list)  # save / append context_json
         task.status = TaskStatus.QD_VDB_FETCHED
         task.status_text = f"Documents search completed. Found {doc_number} documents. Sending to LLM..."
         task.vdb_query_seconds=vdb_query_seconds
         session.commit()
+        log.info(f"Task id {task.doc_task_id} completed")
 
     def update_ap_status(self, session: Session, ap_status: str):
         ApiProcessesTable(session).upsert_api_process(
@@ -89,7 +89,7 @@ class VDBWorker(Process):
                         if error_msg := vdb_ops.check_url():
                             raise Exception(f'VDB URL error: {error_msg}')
                         start_time = time()
-                        result_dict = vdb_ops.get_docs(
+                        result_list = vdb_ops.get_docs(
                             emb_obj=emb_models.get_by_name(msg.gvdbs_emb_model),
                             collection_name=msg.gvdbs_collection,
                             query_text=task.input_text,
@@ -98,7 +98,7 @@ class VDBWorker(Process):
                         self.save_results_to_sql(
                             session=session,
                             task=task,
-                            result_dict=result_dict,
+                            result_list=result_list,
                             vdb_query_seconds=round(time()-start_time, 3)
                         )
                     except Exception:

@@ -19,20 +19,34 @@ async def create_task(
     user: User = Depends(current_active_user), 
     session: AsyncSession = Depends(async_get_session)
 ):
-    task = await DocTasksTable(session).add_one(
-        group_id=user.group_id, 
-        user_id=user.user_id, 
-        gvdbs_id=payload.gvdbs_id,
-        gvdbs_cfg_json=GVDBsCfgJSON.from_dict(payload.gvdbs_cfg_json).as_dict(),
-        gllms_id=payload.gllms_id,
-        gc_id=payload.gc_id,
-        short_name=payload.short_name, 
-        input_text=payload.input_text, 
-        optional_text=payload.optional_text
-    )
-    if task is None:
+    if not payload.doc_task_id:
+        result = await DocTasksTable(session).add_one(
+            group_id=user.group_id, 
+            user_id=user.user_id, 
+            gvdbs_id=payload.gvdbs_id,
+            gvdbs_cfg_json=GVDBsCfgJSON.from_dict(payload.gvdbs_cfg_json).as_dict(),
+            gllms_id=payload.gllms_id,
+            gc_id=payload.gc_id,
+            short_name=payload.short_name, 
+            input_text=payload.input_text, 
+            optional_text=payload.optional_text
+        )
+    else:
+        result = await DocTasksTable(session).add_second(
+            doc_task_id=payload.doc_task_id,
+            user_group_id=user.group_id, 
+            gvdbs_id=payload.gvdbs_id,
+            gvdbs_cfg_json=GVDBsCfgJSON.from_dict(payload.gvdbs_cfg_json).as_dict(),
+            gllms_id=payload.gllms_id,
+            gc_id=payload.gc_id,
+            short_name=payload.short_name, 
+            input_text=payload.input_text, 
+            optional_text=payload.optional_text
+        )
+    
+    if result is None:
         raise HTTPException(status_code=404, detail="Cannot add new DocTask")
-    return task
+    return result
 
 
 # Fetch Query Documents task

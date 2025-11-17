@@ -77,17 +77,7 @@ class DocTasksTable:
             ) for row in rows
         ])
     
-    async def add_one(
-            self, 
-            group_id: int, 
-            user_id: int,
-            gvdbs_id: int,
-            gvdbs_cfg_json: dict,
-            gllms_id: int,
-            gc_id: int, 
-            short_name: str, 
-            input_text: str, 
-            optional_text: str) -> DocTaskQueryResult | None:
+    async def get_gvdbs_gllms_json(self, group_id: int, gvdbs_id: int, gllms_id: int)-> tuple[str, str]:
         # get group_vdbs and group_llms rows
         gvdbs_json = '{}'
         if gvdbs_id != -1:  # -1 means no document search
@@ -101,7 +91,23 @@ class DocTasksTable:
             error_msg = 'DocTasksTable.add_one: group_llms row not found for {group_id=}, {gllms_id=}'
             log.error(error_msg)
             raise Exception(error_msg)
-
+        gllms_json = self.row_as_json(gllms_obj)
+        return gvdbs_json, gllms_json
+    
+    async def add_one(
+            self, 
+            group_id: int, 
+            user_id: int,
+            gvdbs_id: int,
+            gvdbs_cfg_json: dict,
+            gllms_id: int,
+            gc_id: int, 
+            short_name: str, 
+            input_text: str, 
+            optional_text: str) -> DocTaskQueryResult | None:
+        # get group_vdbs and group_llms rows
+        gvdbs_json, gllms_json = await self.get_gvdbs_gllms_json(group_id, gvdbs_id, gllms_id)
+        
         task = DocTasks(
             group_id=group_id, 
             user_id=user_id, 
@@ -109,7 +115,7 @@ class DocTasksTable:
             gvdbs_cfg_json=json.dumps(gvdbs_cfg_json, indent=1, default=str),
             gvdbs_json=gvdbs_json,
             gllms_id=gllms_id,
-            gllms_json=self.row_as_json(gllms_obj),
+            gllms_json=gllms_json,
             gc_id=gc_id,
             short_name=short_name, 
             input_text=input_text, 
@@ -128,6 +134,55 @@ class DocTasksTable:
             )
         except Exception:
             log.debug(f"Can't add new doc_tasks row for {group_id=}, {user_id=}, {gvdbs_id=}, {gllms_id=}, {gc_id=}, {short_name=}\n"
+                      f"{input_text=}\n"
+                      f"{optional_text=}\n"
+                      f"Exception:\n{format_exc()}")
+            return None
+        
+    async def add_second(
+            self, 
+            doc_task_id: int,
+            user_group_id: int, 
+            gvdbs_id: int,
+            gvdbs_cfg_json: dict,
+            gllms_id: int,
+            gc_id: int, 
+            short_name: str, 
+            input_text: str, 
+            optional_text: str) -> DocTaskQueryResult | None:
+        # get group_vdbs and group_llms rows
+        gvdbs_json, gllms_json = await self.get_gvdbs_gllms_json(user_group_id, gvdbs_id, gllms_id)
+        where_clause = (DocTasks.doc_task_id==doc_task_id) & (DocTasks.group_id == user_group_id)
+        result = await self.session.execute(select(DocTasks).where(where_clause))
+        task = result.scalar_one_or_none()
+        if not task:
+            return None
+        if task.question_number > 1:
+            raise Exception("Task already has follow-up question")
+        
+        task.gvdbs_id = gvdbs_id
+        task.gvdbs_cfg_json=json.dumps(gvdbs_cfg_json, indent=1, default=str)
+        task.gvdbs_json=gvdbs_json
+        task.gllms_id=gllms_id
+        task.gllms_json=gllms_json
+        task.gc_id=gc_id
+        task.short_name=short_name
+        task.input_text=input_text
+        task.optional_text=optional_text
+        task.status=TaskStatus.QD_INIT
+        task.status_text="Task placed..."
+        task.question_number += 1
+        try:
+            await self.session.commit()
+            await self.session.refresh(task)
+            return DocTaskQueryResult(
+                **task.__dict__,
+                is_processing = True,
+                is_error = False,
+                status_pct=0,
+            )
+        except Exception:
+            log.debug(f"Can't add new doc_tasks row for {user_group_id=}, {gvdbs_id=}, {gllms_id=}, {gc_id=}, {short_name=}\n"
                       f"{input_text=}\n"
                       f"{optional_text=}\n"
                       f"Exception:\n{format_exc()}")

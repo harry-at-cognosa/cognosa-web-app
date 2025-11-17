@@ -21,6 +21,8 @@ class SuManageDocTaskRead(BaseModel):
     context_json: str | None
     sent_to_llm: str | None
     output_text: str | None
+    question_number: int
+    output_text_2: str | None
     exc_text: str | None
     created_at: datetime
     fetched_at: datetime | None

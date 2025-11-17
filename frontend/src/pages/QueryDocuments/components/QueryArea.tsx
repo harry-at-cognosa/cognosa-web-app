@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Button, Form, ProgressBar } from "react-bootstrap";
+import { Form, ProgressBar } from "react-bootstrap";
 import axiosClient from "../../../api/axiosClient";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import type { DocTasksQuery } from "../models/docTasksQuery";
@@ -17,6 +17,7 @@ import QuerySelectContext from "./QuerySelectContext";
 import QueryTokensCounter from "./QueryTokensCounter";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import ContextJSON from "./ContextJSON";
+import AskButton from "./AskButton";
 
 function QueryArea() {
   const queryStore = useQueryDocumentsStore();
@@ -48,6 +49,7 @@ function QueryArea() {
 
     try {
       const query: DocTasksQuery = {
+        doc_task_id: current.doc_task_id,
         short_name: current.short_name || "",
         input_text,
         gvdbs_id: current.gvdbs_id,
@@ -73,6 +75,7 @@ function QueryArea() {
       );
       if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
       const data = response.data;
+      console.log(data);
       current.setFromServerResponse(data);
       gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
       startPolling(opUUID);
@@ -97,6 +100,7 @@ function QueryArea() {
         );
         if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
         const data = response.data;
+        console.log(data);
         current.setFromServerResponse(data);
         gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
         // Continue polling until status becomes 6
@@ -163,14 +167,7 @@ function QueryArea() {
         value={current.optional_text || ""}
         onChange={(e) => current.setOptionalText(e.target.value)}
       />
-      <Button
-        onClick={handleSubmit}
-        disabled={queryStore.isPolling}
-        variant="outline-secondary"
-        className="w-100"
-      >
-        Ask
-      </Button>
+      <AskButton handleSubmit={handleSubmit} />
       <br className="mt-0" />
       <div style={{ visibility: queryStore.isPolling ? "visible" : "hidden" }}>
         <ProgressBar animated now={current.status_pct || 0} />

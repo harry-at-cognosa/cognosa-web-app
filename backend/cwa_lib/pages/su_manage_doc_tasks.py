@@ -26,6 +26,8 @@ su_manage_doc_tasks__query_columns = {
     'context_json': ColumnType(display='', type='text', min_width='20ch'),
     'sent_to_llm': ColumnType(display='', type='text', min_width='20ch'),
     'output_text': ColumnType(display='', type='text', min_width='20ch'),
+    'question_number': ColumnType(display='', type='number'),
+    'output_text_2': ColumnType(display='', type='text', min_width='20ch'),
     'exc_text': ColumnType(display='', type='text'),
     'created_at': ColumnType(display='', type='datetime'),
     'fetched_at': ColumnType(display='', type='datetime'),

@@ -61,6 +61,12 @@ class DocTasks(Base):
     # output_text TEXT
     output_text: Mapped[str | None] = mapped_column(Text, nullable=True)
 
+    # question_number INTEGER
+    question_number: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("1"))
+    
+    # output_text2 TEXT  - for the follow-up question
+    output_text_2: Mapped[str | None] = mapped_column(Text, nullable=True)
+
     # exc_text TEXT
     exc_text: Mapped[str | None] = mapped_column(Text, nullable=True)
 
