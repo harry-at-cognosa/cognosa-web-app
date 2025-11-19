@@ -31,7 +31,7 @@ cd /home/ubuntu/cognosa
 # nginx + let's encrypt preinstall
 ###
 # dummy configuration - just to get certificate
-cp nginx_default_dummy.conf ./nginx/conf.d/
+cp nginx_default_dummy.conf ./nginx/conf.d/default.conf
 sudo docker compose up -d nginx
 
 sudo docker compose run --rm certbot certonly \
@@ -42,7 +42,7 @@ sudo docker compose run --rm certbot certonly \
 
 sudo docker compose down
 # prod configuration
-cp nginx_default.conf ./nginx/conf.d/
+cp nginx_default.conf ./nginx/conf.d/default.conf
 ###
 
 sudo docker compose up -d --build
