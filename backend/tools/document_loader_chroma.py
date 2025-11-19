@@ -10,7 +10,7 @@ from langchain_community.document_loaders import (
     CSVLoader,
     UnstructuredExcelLoader
 )
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from common import WORK_DIR
 
 DOCUMENTS_PATH = os.path.join(WORK_DIR, "../documents_for_chromadb")

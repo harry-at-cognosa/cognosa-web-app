@@ -1,3 +1,12 @@
+## [0.14a] (2025-11-19)
+
+1. Updates for pushing to GitLab:
+   Secrets removed from git repo.
+   React public libraries are now compiled separately to `static` folder.
+   Added `static` and `release` folders to git repo.
+   Python libraries version numbers now are frozen.
+   Langchain libraries are updated to the latest.
+
 ## [0.13h] (2025-11-16)
 
 1. `Document Queries` page:
