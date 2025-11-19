@@ -1,0 +1,12 @@
+fastapi
+fastapi-users[sqlalchemy]
+uvicorn[standard]
+httpx
+jinja2
+greenlet
+sqlalchemy
+alembic
+asyncpg
+psycopg2-binary
+pydantic
+python-dotenv

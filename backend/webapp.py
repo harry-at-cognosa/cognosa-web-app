@@ -1,7 +1,6 @@
 import os
 from common.sql_db_sync import wait_for_database
-if bool(os.getenv("WAIT_FOR_PG_AT_START", "")):
-    wait_for_database()
+wait_for_database()
 
 from fastapi import HTTPException, Request
 from fastapi.responses import FileResponse

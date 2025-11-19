@@ -1,0 +1,86 @@
+﻿# /home/ubuntu/cognosa/docker-compose.yml
+
+services:
+  # --- PostgreSQL ---
+  db:
+    image: postgres:17
+    restart: always
+    env_file:
+      - env_db.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg_db_data:/var/lib/postgresql/data
+
+  # --- Qdrant Vector DB ---
+  qdrant:
+    image: qdrant/qdrant:v1.15.5
+    restart: always
+    ports:
+      - "6333:6333"
+    volumes:
+      - ./qdrantdb:/qdrant/storage
+
+  # --- FastAPI App ---
+  app:
+    build:
+      dockerfile: webapp.Dockerfile
+    restart: always
+    ports:
+      - "8000"
+    depends_on:
+      - db
+    env_file:
+      - env_app.env
+    environment:
+      - "CORS_ORIGINS=http://localhost:8000,http://127.0.0.1:8000,http://app:8000,https://dev.cognosa.net"
+      - "URL_QDRANT_LOCAL=qdrant:6333"
+      - "URL_OLLAMA_LOCAL=http://127.0.0.1:11434/v1"
+      - "URL_CHROMA_LOCAL=127.0.0.1:8010"
+
+    volumes:
+      - ./app_logs:/app/logs
+
+  # --- Nginx reverse-proxy ---
+  nginx:
+    image: nginx:stable
+    restart: always
+    ports:
+      - "80:80" # needed for ACME http-01 challenge and redirect to HTTPS
+      - "443:443" # HTTPS
+    depends_on:
+      - app
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - nginx_certs:/etc/letsencrypt # persistent certs
+      - nginx_vhost:/var/www/certbot # webroot for certbot challenges
+      - ./nginx/log:/var/log/nginx
+
+  # --- Certbot (used to obtain and renew certs) ---
+  certbot:
+    image: certbot/certbot
+    # command will be overridden for initial cert acquisition
+    volumes:
+      - nginx_certs:/etc/letsencrypt
+      - nginx_vhost:/var/www/certbot
+
+  # --- run_tasks ---
+  rt:
+    build:
+      dockerfile: run_tasks.Dockerfile
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - env_run_tasks.env
+    environment:
+      - "URL_QDRANT_LOCAL=qdrant:6333"
+      - "URL_OLLAMA_LOCAL=http://127.0.0.1:11434/v1"
+      - "URL_CHROMA_LOCAL=127.0.0.1:8010"
+
+    volumes:
+      - ./rt_logs:/app/logs
+
+volumes:
+  nginx_certs:
+  nginx_vhost:

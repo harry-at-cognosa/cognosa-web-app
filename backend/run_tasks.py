@@ -9,8 +9,7 @@ log.init('rt', log_sqlalchemy=LOG_SQLALCHEMY_RT)
 if __name__ == "__main__":
     log.info('Starting run_tasks.py...')
 from common.sql_db_sync import wait_for_database
-if bool(os.getenv("WAIT_FOR_PG_AT_START", "")):
-    wait_for_database()
+wait_for_database()
 
 from common.helpers import start_main
 from common.sql_db_sync import get_engine_sessionmaker
