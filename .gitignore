@@ -5,7 +5,7 @@ logs/
 qdrant/*
 vite.svg
 backend/t.py
-*.env
+env_*.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -97,7 +97,7 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
+
 .venv
 env/
 venv/
