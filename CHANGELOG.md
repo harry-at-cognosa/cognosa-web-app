@@ -1,4 +1,4 @@
-## [0.14a] (2025-11-19)
+## [0.14b] (2025-11-21)
 
 1. Updates for pushing to GitLab:
    Secrets removed from git repo.
@@ -6,6 +6,20 @@
    Added `static` and `release` folders to git repo.
    Python libraries version numbers now are frozen.
    Langchain libraries are updated to the latest.
+
+2. Moved webapp to `/app` route.
+   Added index page from `api_settings` -> `index_page` value.
+   Current routes:
+   `/` - Index page
+   `/login` - Login page
+   `/app/*` - Web app page
+
+3. `SuperUser` -> `Api Settings` page:
+   added `Add` row function. Currently only for options:
+   `app_version`
+   `db_version`
+   `webapp_main_color`
+   `index_page`
 
 ## [0.13h] (2025-11-16)
 

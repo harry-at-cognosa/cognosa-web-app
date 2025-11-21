@@ -17,10 +17,11 @@ import GaManageUsersPage from "./GaManageUsers/GaManageUsersPage";
 import GroupAdminRoute from "../components/GroupAdminRoute";
 import SuManageDocTasksPage from "./SuManageDocTasks/SuManageDocTasksPage";
 import SuManageLogCRUDPage from "./SuManageLogCRUD/SuManageLogCRUDPage";
+import HomePage from "./HomePage/HomePage";
 
 export const Router = createBrowserRouter([
   {
-    path: "/",
+    path: "/app/",
     element: <App />,
     children: [
       {
@@ -92,6 +93,10 @@ export const Router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "/",
+    element: <HomePage />,
   },
   {
     path: "login",

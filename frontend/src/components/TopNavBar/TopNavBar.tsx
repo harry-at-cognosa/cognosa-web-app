@@ -31,7 +31,7 @@ const TopNavBar = () => {
       </style>
       <Container fluid>
         {/* Left side - App name */}
-        <LinkContainer to="/">
+        <LinkContainer to="/app">
           <Navbar.Brand className="d-flex align-items-center">
             <FileEarmarkText className="me-2"></FileEarmarkText>
             {title}
@@ -51,10 +51,10 @@ const TopNavBar = () => {
                   </Navbar.Text>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <LinkContainer to="/manage_contexts">
+                  <LinkContainer to="/app/manage_contexts">
                     <Dropdown.Item>Manage Contexts</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/query_documents/queries">
+                  <LinkContainer to="/app/query_documents/queries">
                     <Dropdown.Item>Queries</Dropdown.Item>
                   </LinkContainer>
                 </Dropdown.Menu>
@@ -66,7 +66,7 @@ const TopNavBar = () => {
                   <Navbar.Text className="me-2 fw-bold">GroupAdmin</Navbar.Text>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <LinkContainer to="/groupadmin/manage_users">
+                  <LinkContainer to="/app/groupadmin/manage_users">
                     <Dropdown.Item>Users</Dropdown.Item>
                   </LinkContainer>
                 </Dropdown.Menu>
@@ -78,28 +78,28 @@ const TopNavBar = () => {
                   <Navbar.Text className="me-2 fw-bold">SuperUser</Navbar.Text>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <LinkContainer to="/su/manage_groups">
+                  <LinkContainer to="/app/su/manage_groups">
                     <Dropdown.Item>Groups</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/su/manage_users">
+                  <LinkContainer to="/app/su/manage_users">
                     <Dropdown.Item>Users</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/su/manage_llms">
+                  <LinkContainer to="/app/su/manage_llms">
                     <Dropdown.Item>LLMs</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/su/manage_vdbs">
+                  <LinkContainer to="/app/su/manage_vdbs">
                     <Dropdown.Item>VDBs</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/su/manage_doc_tasks">
+                  <LinkContainer to="/app/su/manage_doc_tasks">
                     <Dropdown.Item>Doc Tasks</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/su/server_status">
+                  <LinkContainer to="/app/su/server_status">
                     <Dropdown.Item>Server Status</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/su/manage_api_settings">
+                  <LinkContainer to="/app/su/manage_api_settings">
                     <Dropdown.Item>Api Settings</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/su/manage_log_crud">
+                  <LinkContainer to="/app/su/manage_log_crud">
                     <Dropdown.Item>Log CRUD</Dropdown.Item>
                   </LinkContainer>
                 </Dropdown.Menu>
@@ -120,10 +120,10 @@ const TopNavBar = () => {
                   <PersonCircle size={24} />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <LinkContainer to="/change_password">
+                  <LinkContainer to="/app/change_password">
                     <Dropdown.Item>Change password</Dropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to="/logout">
+                  <LinkContainer to="/app/logout">
                     <Dropdown.Item>Logout</Dropdown.Item>
                   </LinkContainer>
                 </Dropdown.Menu>

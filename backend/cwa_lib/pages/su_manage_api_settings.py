@@ -1,9 +1,10 @@
-from common.enums.api_settings_names import API_SETTINGS_NAMES_LIST
 from common.sql_db_async import AsyncSession
 from common.sql_models import ApiSettings
 from sqlalchemy import select
-from cwa_lib.pydantic_schemas.generic_table import ColumnType, TableOptions, TableUpdateRowResult
-from cwa_lib.pydantic_schemas.su_manage_api_settings import SuManageApiSettingsRead, SuManageApiSettingsUpdate
+from cwa_lib.pydantic_schemas.generic_table import ColumnType, TableOptions, TableCreateRowResult, TableUpdateRowResult
+from cwa_lib.pydantic_schemas.su_manage_api_settings import (
+    SuManageApiSettingsRead, SuManageApiSettingsCreate, SuManageApiSettingsUpdate
+)
 from cwa_lib.pages import GenericTableRead
 
 
@@ -16,6 +17,7 @@ su_manage_api_settings__table_options = TableOptions(
     title='Api Settings',
     pk='name',
     read__visible_columns=['name', 'value'],
+    create__ask_columns=['name', 'value'],
     update__ask_columns=['value', ],
     order_by__allow=['name', 'value'],
     add_values={
@@ -39,14 +41,27 @@ class SuManageApiSettingsTable:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
+    async def create_one(self, data: SuManageApiSettingsCreate) -> TableCreateRowResult:
+        """
+        Create one row
+        """
+        new_row = ApiSettings(
+            name=data.name,
+            value=data.value
+        )
+        try:
+            self.session.add(new_row)
+            await self.session.commit()
+            return TableCreateRowResult(result='success', total_created=1)
+        except Exception:
+            await self.session.rollback()
+            return TableCreateRowResult(result='error', total_created=0)
+
     async def update_one(self, data: SuManageApiSettingsUpdate) -> TableUpdateRowResult:
         """
         Update one row
         """
-        name = data.name
-        if name not in API_SETTINGS_NAMES_LIST:
-            raise Exception(f"Wrong {name=}")
-        result = await self.session.execute(select(ApiSettings).where(ApiSettings.name == name))
+        result = await self.session.execute(select(ApiSettings).where(ApiSettings.name == data.name))
         vdbs_row = result.scalar_one_or_none()
         if not vdbs_row:
             return TableUpdateRowResult(result='error', total_updated=0)

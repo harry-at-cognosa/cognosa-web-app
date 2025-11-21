@@ -32,7 +32,7 @@ export default function ChangePasswordPage() {
     });
     if (res.ok) {
       setMessage("Password changed successfully.");
-      navigate("/");
+      navigate("/app");
     } else {
       const err = await res.json().catch(() => ({}));
       setMessage(err?.detail[0]?.msg || "Password change failed.");

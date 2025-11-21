@@ -42,7 +42,7 @@ export default function LoginPage() {
       const data = await res.json();
       resetAllStores();
       localStorage.setItem("token", data.access_token);
-      navigate("/");
+      navigate("/app");
     } else {
       setError("Invalid login");
     }
