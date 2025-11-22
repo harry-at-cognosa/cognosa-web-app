@@ -1,19 +1,19 @@
-import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { SkipStartFill, PlayFill, SkipEndFill } from "react-bootstrap-icons";
-import type { createTableStore } from "../TableStoreFactory";
-import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
+import type { createTableStore } from "../../TableStoreFactory";
+import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
+import PaginationLimit from "./PaginationLimit";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
 }
 
 export default function PaginationControls({ useStore }: Props) {
-  const [isHovered, setIsHovered] = useState(false);
   const { color } = useWebAppOptionsStore();
-  const { nextRequest, data, setLimit, setOffset } = useStore();
+  const { nextRequest, data, setOffset } = useStore();
+
   if (!data) return null;
-  const { total, table_options } = data;
+  const { total } = data;
   const { offset, limit } = nextRequest;
   const isFirstPage = offset === 0;
   const isLastPage = offset + limit >= total;
@@ -36,18 +36,6 @@ export default function PaginationControls({ useStore }: Props) {
   // Handle fast forward (last page)
   const handleFastForward = () => {
     setOffset(Math.max(0, total - limit));
-  };
-
-  // Handle limit change
-  const handleLimitSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLimit = parseInt(e.target.value, 10);
-    setLimit(newLimit);
-
-    // Adjust offset if it would exceed the new total pages
-    const newMaxOffset = Math.max(0, total - newLimit);
-    if (offset > newMaxOffset) {
-      setOffset(newMaxOffset);
-    }
   };
 
   return (
@@ -104,27 +92,8 @@ export default function PaginationControls({ useStore }: Props) {
       <div className="text-muted small mx-1">
         {offset + 1}-{offset + data.rows.length}/{total}
       </div>
-
       {/* Limit selector */}
-      <Form.Select
-        size="sm"
-        value={limit}
-        className="fw-bold"
-        onChange={handleLimitSelect}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        style={{
-          width: "auto",
-          backgroundColor: isHovered ? color.c400 : color.c300,
-        }}
-        aria-label="Rows per page"
-      >
-        {table_options.select_limit.map((size) => (
-          <option key={size} value={size}>
-            {size}
-          </option>
-        ))}
-      </Form.Select>
+      <PaginationLimit useStore={useStore} />
     </div>
   );
 }

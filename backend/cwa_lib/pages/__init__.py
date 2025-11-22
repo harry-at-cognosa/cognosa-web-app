@@ -63,8 +63,8 @@ class GenericTableRead(Generic[SA, RowModel]):
             self._to.max_limit, 
             self.payload.limit if self.payload.limit else self._to.default_limit
         )
-        if self._limit:
-            self._stmt = self._stmt.limit(self._limit)
+        self._limit = max(1, self._limit)
+        self._stmt = self._stmt.limit(self._limit)
         self._offset = max(0, self.payload.offset if self.payload.offset else 0)
         if self._offset:
             self._stmt = self._stmt.offset(self._offset)

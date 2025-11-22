@@ -3,7 +3,7 @@ import type { createTableStore } from "../TableStoreFactory";
 import CreateRowButton from "./CreateRowButton";
 import ExportButton from "./ExportButton";
 import HeaderColumnsRow from "./HeaderColumnsRow";
-import PaginationControls from "./PaginationControls";
+import PaginationControls from "./PaginationControls/PaginationControls";
 import TableReloadButton from "./TableReloadButton";
 import TableTitle from "./TableTitle";
 

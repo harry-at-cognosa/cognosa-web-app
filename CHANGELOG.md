@@ -1,4 +1,4 @@
-## [0.14d] (2025-11-22)
+## [0.14e] (2025-11-22)
 
 1. Updates for pushing to GitLab:
    Secrets removed from git repo.
@@ -31,6 +31,9 @@
    App / DB versions.
    Available VDB and LLM tables (for current user group_ip):
    `name` and `status` (Ready or error)
+
+6. Generic tables:
+   Pagination limit control now can be edited, or selected from list.
 
 ## [0.13h] (2025-11-16)
 
