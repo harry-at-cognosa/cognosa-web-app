@@ -51,7 +51,8 @@ export default function HeaderColumnsRow({ useStore }: Props) {
               : null
           )}
           style={{
-            backgroundColor: color.c100,
+            backgroundColor:
+              tableStore.nextRequest.order_by === col ? color.c300 : color.c100,
             minWidth: data.columns[col].min_width || "",
           }}
           onClick={() => {

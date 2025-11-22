@@ -34,6 +34,7 @@
 
 6. Generic tables:
    Pagination limit control now can be edited, or selected from list.
+   Order column is marked by color.
 
 ## [0.13h] (2025-11-16)
 
