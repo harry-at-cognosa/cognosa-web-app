@@ -1,4 +1,4 @@
-## [0.14b] (2025-11-21)
+## [0.14c] (2025-11-22)
 
 1. Updates for pushing to GitLab:
    Secrets removed from git repo.
