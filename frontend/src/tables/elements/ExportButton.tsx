@@ -3,7 +3,7 @@ import {
   useExcelExport,
   type ExcelExportColumnDefinition,
 } from "../hooks/useExcelExport";
-import type { createTableStore } from "../TableStoreFactory";
+import type { createTableStore, TableRow } from "../TableStoreFactory";
 import { FileEarmark } from "react-bootstrap-icons";
 import { useState } from "react";
 import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
@@ -11,6 +11,7 @@ import { useJsonExport } from "../hooks/useJSONExport";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
+  row?: TableRow | undefined;
 }
 function getCurrentDateTimeString() {
   const now = new Date();
@@ -29,7 +30,7 @@ function getFilename(title: string, fileExt: string) {
   );
 }
 
-export default function ExportButton({ useStore }: Props) {
+export default function ExportButton({ useStore, row }: Props) {
   const [isHovered1, setIsHovered1] = useState(false);
   const [isHovered2, setIsHovered2] = useState(false);
   const { color } = useWebAppOptionsStore();
@@ -49,7 +50,7 @@ export default function ExportButton({ useStore }: Props) {
         header: data.columns[col].display || col,
       });
     }
-    exportToExcel(data.rows, {
+    exportToExcel(row ? [row] : data.rows, {
       fileName: getFilename(tableStore.title, "xlsx"),
       sheetName: tableStore.title,
       columns,
@@ -58,7 +59,7 @@ export default function ExportButton({ useStore }: Props) {
   const handleExportJSON = () => {
     const data = tableStore.data;
     if (!data) return;
-    exportToJson(data.rows, {
+    exportToJson(row ? [row] : data.rows, {
       fileName: getFilename(tableStore.title, "json"),
       indent: 2,
       sortKeys: true,
@@ -67,34 +68,38 @@ export default function ExportButton({ useStore }: Props) {
   return (
     <>
       <span className="pt-1">Export:&nbsp;</span>
-      <Button
-        type="button"
-        variant="warning"
-        className="fw-bold py-0 me-1"
-        style={{
-          fontSize: "smaller",
-          backgroundColor: isHovered1 ? color.c400 : color.c300,
-        }}
-        onMouseEnter={() => setIsHovered1(true)}
-        onMouseLeave={() => setIsHovered1(false)}
-        onClick={handleExportExcel}
-      >
-        <FileEarmark size={"16px"} /> Excel
-      </Button>
-      <Button
-        type="button"
-        variant="warning"
-        className="fw-bold py-0"
-        style={{
-          fontSize: "smaller",
-          backgroundColor: isHovered2 ? color.c400 : color.c300,
-        }}
-        onMouseEnter={() => setIsHovered2(true)}
-        onMouseLeave={() => setIsHovered2(false)}
-        onClick={handleExportJSON}
-      >
-        <FileEarmark size={"16px"} /> JSON
-      </Button>
+      {exportList.includes("xlsx-current") ? (
+        <Button
+          type="button"
+          variant="warning"
+          className="fw-bold py-0 me-1"
+          style={{
+            fontSize: "smaller",
+            backgroundColor: isHovered1 ? color.c400 : color.c300,
+          }}
+          onMouseEnter={() => setIsHovered1(true)}
+          onMouseLeave={() => setIsHovered1(false)}
+          onClick={handleExportExcel}
+        >
+          <FileEarmark size={"16px"} /> Excel
+        </Button>
+      ) : null}
+      {exportList.includes("json-current") ? (
+        <Button
+          type="button"
+          variant="warning"
+          className="fw-bold py-0"
+          style={{
+            fontSize: "smaller",
+            backgroundColor: isHovered2 ? color.c400 : color.c300,
+          }}
+          onMouseEnter={() => setIsHovered2(true)}
+          onMouseLeave={() => setIsHovered2(false)}
+          onClick={handleExportJSON}
+        >
+          <FileEarmark size={"16px"} /> JSON
+        </Button>
+      ) : null}
     </>
   );
 }

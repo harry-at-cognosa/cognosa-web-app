@@ -3,6 +3,7 @@ import type { createTableStore } from "../TableStoreFactory";
 import ColumnDisplayName from "./ColumnDisplayName";
 import ViewCellElement from "./ViewCellElement";
 import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
+import ExportButton from "./ExportButton";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -20,6 +21,9 @@ export default function ReadRowDialog({ useStore }: Props) {
     <Modal show={Boolean(readRow)} onHide={handleClose} size="lg">
       <Modal.Header closeButton>
         <Modal.Title>Row values:</Modal.Title>
+        <div className="mx-auto mt-1" style={{ fontSize: "large" }}>
+          <ExportButton useStore={useStore} row={readRow} />
+        </div>
       </Modal.Header>
       <Modal.Body>
         {read__visible_columns.map((col) => (

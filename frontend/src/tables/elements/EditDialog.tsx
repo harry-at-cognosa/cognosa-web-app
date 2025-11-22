@@ -2,6 +2,7 @@ import { Button, Modal } from "react-bootstrap";
 import type { createTableStore } from "../TableStoreFactory";
 import EditCellElement from "./EditCellElement";
 import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
+import ExportButton from "./ExportButton";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -34,7 +35,6 @@ export default function EditDialog({ useStore }: Props) {
   const ask_columns = isCreate ? create__ask_columns : update__ask_columns;
   const handleClose = () => tableStore.setShowCreateOrUpdateDialog("", null);
   const haveErrors = !!Object.keys(tableStore.editRowErrorMsg).length;
-
   return (
     <Modal
       size="xl"
@@ -49,6 +49,11 @@ export default function EditDialog({ useStore }: Props) {
             <span className="fw-bold ms-5" style={{ color: "red" }}>
               Found errors!
             </span>
+          ) : null}
+          {tableStore.editRow ? (
+            <div className="mx-auto mt-1" style={{ fontSize: "large" }}>
+              <ExportButton useStore={useStore} row={tableStore.editRow} />
+            </div>
           ) : null}
         </Modal.Title>
       </Modal.Header>

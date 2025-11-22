@@ -25,7 +25,7 @@ export interface TableColumnData {
   cu_edit_msg: string;
 }
 
-type ExportType = "xlsx-current" | "csv_current";
+type ExportType = "xlsx-current" | "json-current";
 
 export interface TableOptions {
   title: string;
