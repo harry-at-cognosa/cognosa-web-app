@@ -1,4 +1,4 @@
-## [0.14f] (2025-11-22)
+## [0.14g] (2025-11-22)
 
 1. Updates for pushing to GitLab:
    Secrets removed from git repo.
@@ -36,6 +36,7 @@
    Pagination limit control now can be edited, or selected from list.
    Order column is marked by color.
    Added Export to Excel/JSON for each row (in `View` modal dialog).
+   Now table cells are dimmed while page reloading.
 
 ## [0.13h] (2025-11-16)
 
