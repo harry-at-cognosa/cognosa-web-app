@@ -71,7 +71,7 @@ export default function ExportButton({ useStore, row }: Props) {
       {exportList.includes("xlsx-current") ? (
         <Button
           type="button"
-          variant="warning"
+          variant=""
           className="fw-bold py-0 me-1"
           style={{
             fontSize: "smaller",
@@ -87,7 +87,7 @@ export default function ExportButton({ useStore, row }: Props) {
       {exportList.includes("json-current") ? (
         <Button
           type="button"
-          variant="warning"
+          variant=""
           className="fw-bold py-0"
           style={{
             fontSize: "smaller",
