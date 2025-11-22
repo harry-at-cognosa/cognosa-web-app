@@ -9,7 +9,7 @@ export default function LogoutPage() {
     clearLoggedUser();
     localStorage.removeItem("token");
     resetAllStores();
-    window.location.replace("/login");
+    setTimeout(() => window.location.replace("/login"), 100);
   }, []);
   return <div>Logout</div>;
 }
