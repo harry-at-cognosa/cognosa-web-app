@@ -21,6 +21,10 @@
    `webapp_main_color`
    `index_page`
 
+4. Now only authorized users can get `/app` page.
+   Non-authorized will be redirected to `/login` page,
+   frontend libraries will not be downloaded by them.
+
 ## [0.13h] (2025-11-16)
 
 1. `Document Queries` page:

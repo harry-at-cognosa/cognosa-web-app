@@ -19,7 +19,7 @@ export default function App() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/logout");
+      window.location.replace("/");
       return;
     }
 
@@ -31,7 +31,7 @@ export default function App() {
         const user = await res.json();
         setLoggedUser(user);
       } else {
-        navigate("/logout");
+        window.location.replace("/");
       }
     }
 

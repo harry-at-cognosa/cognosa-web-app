@@ -5,14 +5,44 @@ wait_for_database()
 from fastapi import HTTPException, Depends, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from common.sql_db_async import AsyncSession, async_get_session
-from cwa_lib.app import app, templates
+from cwa_lib.app import app, templates, current_active_user_or_none
 from cwa_lib.routers import api_router
 from cwa_lib.sql_tables.api_settings import ApiSettingsTable
+from common.sql_models import User
+
 
 app.include_router(api_router)  # must be here, after all other API routes, and before page routes
 
+@app.get("/app/assets/{filename:path}" , tags=["App"], include_in_schema=False)
+async def app_assets(filename: str):
+    file_path = os.path.join("static", 'assets', filename)
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    raise HTTPException(404)    
 
-@app.get("/", tags=[" page"], include_in_schema=False, response_class=HTMLResponse)
+@app.get("/app" , tags=["App"], include_in_schema=False)
+@app.get("/app/{fullpath:path}" , tags=["App"], include_in_schema=False)
+async def app_index(request: Request, user: User | None = Depends(current_active_user_or_none)):
+    url_path = request.url.path.lstrip('/')
+    if url_path.startswith('assets/'):
+        file_path = os.path.join("static", url_path.replace('app/', '').lstrip('/'))
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+        raise HTTPException(404)
+    if not user:
+        return templates.TemplateResponse(name="app_redirect.html", request=request)
+    return templates.TemplateResponse(name="index.html", request=request)    
+
+
+@app.get("/login", tags=["Login page"], include_in_schema=False)
+async def login(request: Request):
+    """
+    Login page
+    """
+    return templates.TemplateResponse(name="login.html", request=request)
+
+
+@app.get("/", tags=["Index page"], include_in_schema=False, response_class=HTMLResponse)
 async def index(session: AsyncSession = Depends(async_get_session)):
     """
     Index page
@@ -24,12 +54,10 @@ async def index(session: AsyncSession = Depends(async_get_session)):
 
 @app.get("/{full_path:path}", include_in_schema=False)
 async def catch_all(full_path: str, request: Request):
-    url_path = request.url.path
-    if url_path.startswith("/api/"):
-        raise HTTPException(status_code=404, detail="Not found")
-    file_path = os.path.join("static", full_path)    
-    if os.path.exists(file_path):
+    url_path = request.url.path.lstrip('/')
+    if url_path.startswith("api/"):
+        raise HTTPException(404)
+    file_path = os.path.join("static", url_path)
+    if os.path.isfile(file_path):
         return FileResponse(file_path)
-    if url_path.startswith('/login') or url_path.startswith('/app'):
-        return templates.TemplateResponse(name="index.html", request=request)
     raise HTTPException(404)

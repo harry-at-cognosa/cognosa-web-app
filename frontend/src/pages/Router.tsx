@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import LoginPage from "./Login/LoginPage";
 import LogoutPage from "./Logout/LogoutPage";
 import IndexPage from "./Index/IndexPage";
 import QueryDocumentsPage from "./QueryDocuments/QueryDocumentsPage";
@@ -21,7 +20,7 @@ import HomePage from "./HomePage/HomePage";
 
 export const Router = createBrowserRouter([
   {
-    path: "/app/",
+    path: "app",
     element: <App />,
     children: [
       {
@@ -95,11 +94,7 @@ export const Router = createBrowserRouter([
     ],
   },
   {
-    path: "/",
+    path: "home",
     element: <HomePage />,
-  },
-  {
-    path: "login",
-    element: <LoginPage />,
   },
 ]);

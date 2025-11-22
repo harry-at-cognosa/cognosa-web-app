@@ -25,11 +25,24 @@ export default defineConfig({
       },
     },
   },
+  base: "/app",
   server: {
+    port: 5173,
     proxy: {
       "/api": {
         target: "http://localhost:8000", // FastAPI server
         changeOrigin: true,
+      },
+      "/login": {
+        target: "http://localhost:8000", // FastAPI server
+        changeOrigin: true,
+      },
+      // use a negative lookahead: match "/" but not "/app"
+      "^/(?!app)(.*)": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        // keep path as-is
+        rewrite: (path) => path,
       },
     },
   },

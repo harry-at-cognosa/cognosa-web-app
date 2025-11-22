@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/app/favicon.ico" />
+    <link rel="apple-touch-icon" href="/app/apple-touch-icon.png" />
+    <link rel="manifest" href="/app/manifest.webmanifest" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cognosa WebApp</title>
+  </head>
+  <script>
+    (async function () {
+      const token = localStorage.getItem("token");
+      // no token → go to login
+      if (!token) {
+        window.location.href = "/login";
+        return;
+      }
+      try {
+        const headers = { Authorization: "Bearer " + token };
+        // 1. Check token using /auth/me
+        const meRes = await fetch("/api/v1/users/me", { headers });
+
+        if (!meRes.ok) throw new Error("Invalid token");
+        const redirectUrl = "/app";
+        // 2. Token valid → request protected /app
+        const appRes = await fetch(redirectUrl, { headers });
+
+        if (!appRes.ok) throw new Error("Unauthorized");
+
+        // Replace current document with returned HTML
+        const html = await appRes.text();
+        document.open();
+        document.write(html);
+        document.close();
+      } catch (err) {
+        localStorage.removeItem("token");
+        console.error("Auth failed:", err);
+        window.location.replace("/login");
+      }
+    })();
+  </script>
+  <body>
+    ...
+  </body>
+</html>
