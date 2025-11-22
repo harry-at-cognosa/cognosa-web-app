@@ -9,6 +9,13 @@ class GroupLLMsTable:
         pass
 
     @classmethod
+    async def async_select_by_group_id_order_by_seqn(cls, session: AsyncSession, group_id: int) -> list[GroupLLMs]:
+        where_clause = (GroupLLMs.deleted == 0) & (GroupLLMs.group_id == group_id)
+        stmt = select(GroupLLMs).where(where_clause).order_by(GroupLLMs.gllms_seqn)
+        result = await session.execute(stmt)
+        return list(result.scalars().all())
+
+    @classmethod
     async def async_select_all_order_by_group_id_seqn(cls, session: AsyncSession) -> list[GroupLLMs]:
         stmt = select(GroupLLMs).where(GroupLLMs.deleted==0).order_by(GroupLLMs.group_id, GroupLLMs.gllms_seqn)
         result = await session.execute(stmt)

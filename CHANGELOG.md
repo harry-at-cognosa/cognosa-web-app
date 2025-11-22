@@ -1,4 +1,4 @@
-## [0.14c] (2025-11-22)
+## [0.14d] (2025-11-22)
 
 1. Updates for pushing to GitLab:
    Secrets removed from git repo.
@@ -24,6 +24,13 @@
 4. Now only authorized users can get `/app` page.
    Non-authorized will be redirected to `/login` page,
    frontend libraries will not be downloaded by them.
+
+5. Added `/app` index page for authorized users.
+   There will be:
+   Description card and link to `Query Documents` -> `Queries` page.
+   App / DB versions.
+   Available VDB and LLM tables (for current user group_ip):
+   `name` and `status` (Ready or error)
 
 ## [0.13h] (2025-11-16)
 
