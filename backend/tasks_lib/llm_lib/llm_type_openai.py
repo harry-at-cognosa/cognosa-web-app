@@ -38,9 +38,14 @@ class LLMTypeOpenAI:
         Check if LLM is working
         """
         try:
-            parsed_url = ParsedUrl.from_url(self.llm_api_base)
-            parsed_url.path = 'v1/models'
-            return requests.get(parsed_url.full_url, timeout=5).status_code == 200
+            if self.llm_type == GLLMsTypes.CHATGPT:
+                full_url = f"https://api.openai.com/v1/models/{self.llm_model}"
+                headers = {"Authorization": f"Bearer {self.llm_api_key.get_secret_value()}"}
+                return requests.get(full_url, timeout=5, headers=headers).status_code == 200
+            else:
+                parsed_url = ParsedUrl.from_url(self.llm_api_base)
+                parsed_url.path = 'v1/models'
+                return requests.get(parsed_url.full_url, timeout=5).status_code == 200
         except Exception:
             return False
         
