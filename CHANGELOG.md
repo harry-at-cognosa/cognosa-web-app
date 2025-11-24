@@ -1,3 +1,14 @@
+## [0.15a] (2025-11-24)
+
+1. Added new variants for `group_llms`.`gllms_type`: `chatgpt`, `gemini`.
+   For these ones - use empty `API Base` url in `SuperUsers` -> `LLMs`.
+   Added functionality for `Gemini`. Need to install python library:
+   `pip install langchain-google-genai==3.1.0`
+
+   Need to upgrade db:
+   `cd backend`
+   `alembic upgrade head`
+
 ## [0.14g] (2025-11-22)
 
 1. Updates for pushing to GitLab:

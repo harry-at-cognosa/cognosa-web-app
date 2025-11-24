@@ -1,13 +1,12 @@
 import json
 from typing import Generator
 from tasks_lib.cmd_line_opts import IS_DUMMY_LLM
-from common import log
 from common.enums.gllms_types import GLLMsTypes
-from common.helpers import shorten
 from common.parsed_url import ParsedUrl
 from .llm_type_dummy import LLMTypeDummy
 from .llm_type_openai import LLMTypeOpenAI
 from .llm_type_claude import LLMTypeClaude
+from .llm_type_gemini import LLMTypeGemini
 
 class LLMOps:
     def __init__(self, 
@@ -32,7 +31,7 @@ class LLMOps:
         if IS_DUMMY_LLM or (llm_type == GLLMsTypes.DUMMY):
             self.llm_obj = LLMTypeDummy(query_text=query_text)
         # Ollama / OpenAI LLM
-        elif llm_type in (GLLMsTypes.OLLAMA_LOCAL, GLLMsTypes.OLLAMA_REMOTE):
+        elif llm_type in (GLLMsTypes.OLLAMA_LOCAL, GLLMsTypes.OLLAMA_REMOTE, GLLMsTypes.CHATGPT):
             self.llm_obj = LLMTypeOpenAI(
                 query_text=query_text,
                 template=template,
@@ -48,6 +47,14 @@ class LLMOps:
                 template=template,
                 llm_type=llm_type,
                 llm_api_base=llm_api_base,
+                llm_model=llm_model,
+                llm_api_key=llm_api_key
+            )
+        elif llm_type == GLLMsTypes.GEMINI:
+            self.llm_obj = LLMTypeGemini(
+                query_text=query_text,
+                template=template,
+                llm_type=llm_type,
                 llm_model=llm_model,
                 llm_api_key=llm_api_key
             )
