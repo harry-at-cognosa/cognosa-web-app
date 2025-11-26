@@ -46,7 +46,6 @@ class LLMOps:
                 query_text=query_text,
                 template=template,
                 llm_type=llm_type,
-                llm_api_base=llm_api_base,
                 llm_model=llm_model,
                 llm_api_key=llm_api_key
             )

@@ -1,4 +1,5 @@
 from typing import Generator
+from urllib.parse import quote
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
@@ -39,7 +40,7 @@ class LLMTypeOpenAI:
         """
         try:
             if self.llm_type == GLLMsTypes.CHATGPT:
-                full_url = f"https://api.openai.com/v1/models/{self.llm_model}"
+                full_url = f"https://api.openai.com/v1/models/{quote(self.llm_model)}"
                 headers = {"Authorization": f"Bearer {self.llm_api_key.get_secret_value()}"}
                 return requests.get(full_url, timeout=5, headers=headers).status_code == 200
             else:
