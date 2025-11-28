@@ -1,4 +1,4 @@
-## [0.15c] (2025-11-28)
+## [0.15d] (2025-11-28)
 
 1. Added new variants for `group_llms`.`gllms_type`: `chatgpt`, `gemini`.
    For these ones - use empty `API Base` url in `SuperUsers` -> `LLMs`.
@@ -15,6 +15,14 @@
 
 3. Less checks for public LLM API (ChatGPT, Gemini, Claude):
    only once in 5 minutes.
+
+4. `Query Documents` -> `Queries` page:
+   Added `Reload` buttons for `Document Collection` and `LLM` lists.
+   Now non-ready VDBs and LLMs are marked:
+   yellow (warning, mostly for ChromaDB) or red.
+   Sort VDBs and LLMs by: (is ready?, seqn number).
+   Not ready rows goes after ready ones.
+   `No document search` will be the last anyway.
 
 ## [0.14g] (2025-11-22)
 

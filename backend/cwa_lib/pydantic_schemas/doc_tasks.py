@@ -79,6 +79,7 @@ class DocTasksOptionsGroupContextsRow(BaseModel):
 class DocTasksOptionsGroupLLMsRow(BaseModel):
     gllms_id: int
     group_id: int
+    gllms_seqn: int
     gllms_name: str
     gllms_status: str
     class Config:
@@ -87,6 +88,7 @@ class DocTasksOptionsGroupLLMsRow(BaseModel):
 class DocTasksOptionsGroupVDBsRow(BaseModel):
     gvdbs_id: int
     group_id: int
+    gvdbs_seqn: int
     gvdbs_name: str
     gvdbs_status: str
     class Config:

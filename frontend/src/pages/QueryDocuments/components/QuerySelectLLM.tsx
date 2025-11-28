@@ -1,4 +1,4 @@
-import { Form, InputGroup, Spinner } from "react-bootstrap";
+import { Button, Form, InputGroup, Spinner } from "react-bootstrap";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import {
@@ -6,11 +6,13 @@ import {
   useDocTaskOptionsStore,
 } from "../stores/useDocTaskOptionsStore";
 import clsx from "clsx";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ArrowRepeat } from "react-bootstrap-icons";
 
 export default function QuerySelectLLM() {
+  const [isHovered, setIsHovered] = useState(false);
   const current = useDocTasksCurrentStore();
-  const { color } = useWebAppOptionsStore();
+  const { color, setNeedReload } = useWebAppOptionsStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const { gllms_id: lastUsedGLLMsID } = useDocTaskOptionsLastUsedStore();
   const waitingState = docTaskOptionsStore.needReload;
@@ -27,6 +29,24 @@ export default function QuerySelectLLM() {
     }
   }, [waitingState, current.gllms_id]);
 
+  function getSelectBgColor(gllms_id: number | null): string {
+    if (waitingState || !gllms_id) return "";
+    const row = docTaskOptionsStore.gllms_id__row[gllms_id];
+    if (!row) return "#ECCCCF";
+    if (row.gllms_status === "danger") return "#ECCCCF";
+    if (row.gllms_status === "warning") return "#F2E7C3";
+    return "";
+  }
+
+  function getOptionText(gllms_id: number | null): string {
+    if (waitingState || !gllms_id) return "";
+    const row = docTaskOptionsStore.gllms_id__row[gllms_id];
+    if (!row) return "⛔ Not Found";
+    if (row.gllms_status === "danger") return row.gllms_name + " ⛔";
+    if (row.gllms_status === "warning") return row.gllms_name + " ⚠️";
+    return row.gllms_name;
+  }
+
   return (
     <InputGroup
       className={clsx("mb-2", {
@@ -38,6 +58,22 @@ export default function QuerySelectLLM() {
         className="fw-bold"
         style={{ backgroundColor: color.c300 }}
       >
+        <Button
+          type="button"
+          className="p-0 me-2 fw-bold"
+          style={{
+            color: "black",
+            backgroundColor: isHovered ? color.c400 : color.c300,
+            borderColor: isHovered ? color.c400 : color.c300,
+            verticalAlign: "middle",
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={() => setNeedReload(true)}
+          disabled={waitingState}
+        >
+          <ArrowRepeat size="20px" style={{ marginBottom: "3px" }} />
+        </Button>
         LLM:
       </InputGroup.Text>
       {waitingState ? (
@@ -56,14 +92,15 @@ export default function QuerySelectLLM() {
         <Form.Select
           value={current.gllms_id?.toString() || ""}
           onChange={(e) => current.setGLLMsID(Number(e.target.value))}
-          disabled={waitingState}
+          style={{ backgroundColor: getSelectBgColor(current.gllms_id) }}
         >
           {group_llms.map((gllms_obj) => (
             <option
               key={gllms_obj.gllms_id.toString()}
               value={gllms_obj.gllms_id.toString()}
+              style={{ backgroundColor: getSelectBgColor(gllms_obj.gllms_id) }}
             >
-              {gllms_obj.gllms_name}
+              {getOptionText(gllms_obj.gllms_id)}
             </option>
           ))}
         </Form.Select>
