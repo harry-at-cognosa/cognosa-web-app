@@ -5,6 +5,7 @@ import { useLoggedUserStore } from "../stores/useLoggedUserStore";
 import NavigationInjector from "../api/NavigationInjector";
 import { API_URL } from "../api/apiURL";
 import { useWebAppOptionsStore } from "../stores/useWebAppOptionsStore";
+import ThemeColor from "../components/ThemeColor";
 
 export default function App() {
   const { setLoggedUser } = useLoggedUserStore();
@@ -41,6 +42,7 @@ export default function App() {
   return (
     <div className="min-vh-100">
       <NavigationInjector />
+      <ThemeColor />
       <TopNavBar />
       <main>
         <Outlet />

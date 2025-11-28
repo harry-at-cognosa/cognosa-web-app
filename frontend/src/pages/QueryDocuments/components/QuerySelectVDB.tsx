@@ -1,18 +1,15 @@
 import { Button, Form, InputGroup, Spinner } from "react-bootstrap";
 import DocTasksGVDBsCfg from "./DocTasksGVDBsCfg";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
-import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import {
   useDocTaskOptionsLastUsedStore,
   useDocTaskOptionsStore,
 } from "../stores/useDocTaskOptionsStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ArrowRepeat } from "react-bootstrap-icons";
 
 export default function QuerySelectVDB() {
-  const [isHovered, setIsHovered] = useState(false);
   const current = useDocTasksCurrentStore();
-  const { color, setNeedReload } = useWebAppOptionsStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const { gvdbs_id: lastUsedGVDBsID } = useDocTaskOptionsLastUsedStore();
   const waitingState = docTaskOptionsStore.needReload;
@@ -48,22 +45,13 @@ export default function QuerySelectVDB() {
 
   return (
     <InputGroup className="mb-2">
-      <InputGroup.Text
-        className="fw-bold"
-        style={{ backgroundColor: color.c300 }}
-      >
+      <InputGroup.Text className="fw-bold bg-tc-300">
         <Button
           type="button"
-          className="p-0 me-2 fw-bold"
-          style={{
-            color: "black",
-            backgroundColor: isHovered ? color.c400 : color.c300,
-            borderColor: isHovered ? color.c400 : color.c300,
-            verticalAlign: "middle",
-          }}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onClick={() => setNeedReload(true)}
+          variant=""
+          className="p-0 me-2 fw-bold btn-tc-300-400"
+          style={{ verticalAlign: "middle" }}
+          onClick={() => docTaskOptionsStore.setNeedReload(true)}
           disabled={waitingState}
         >
           <ArrowRepeat size="20px" style={{ marginBottom: "3px" }} />

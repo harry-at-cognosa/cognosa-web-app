@@ -2,13 +2,11 @@ import { Card, Container } from "react-bootstrap";
 import { useTopNavBarTitle } from "../../hooks/useTopNavBarTitle";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 import { BoxArrowRight, Link45deg } from "react-bootstrap-icons";
 import ServerStatusAll from "./ServerStatusAll";
 
 export default function IndexPage() {
   const [isHovered1, setIsHovered1] = useState(false);
-  const { color } = useWebAppOptionsStore();
   const navigate = useNavigate();
   useTopNavBarTitle("");
   return (
@@ -21,7 +19,11 @@ export default function IndexPage() {
       >
         <Card.Header
           className="fw-bold"
-          style={{ backgroundColor: isHovered1 ? color.c400 : color.c300 }}
+          style={{
+            backgroundColor: isHovered1
+              ? "var(--theme-color-400)"
+              : "var(--theme-color-300)",
+          }}
         >
           <BoxArrowRight className="me-2" />
           Query Documents / Queries
@@ -30,7 +32,7 @@ export default function IndexPage() {
             style={{ visibility: isHovered1 ? "visible" : "hidden" }}
           />
         </Card.Header>
-        <Card.Body style={{ backgroundColor: color.c100 }}>
+        <Card.Body className="bg-tc-100">
           <Card.Title>Ask questions across your knowledge base</Card.Title>
           <Card.Text>
             Query any document collection using natural language.

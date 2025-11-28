@@ -1,4 +1,3 @@
-import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 import type { createTableStore } from "../TableStoreFactory";
 import ColumnDisplayName from "./ColumnDisplayName";
 import HeaderColumnOrderArrow from "./HeaderColumnOrderArrow";
@@ -10,7 +9,6 @@ interface Props {
 }
 
 export default function HeaderColumnsRow({ useStore }: Props) {
-  const { color } = useWebAppOptionsStore();
   const tableStore = useStore();
   const { data } = tableStore;
   if (!data) return null;
@@ -39,22 +37,19 @@ export default function HeaderColumnsRow({ useStore }: Props) {
       }}
     >
       {/* view/edit th */}
-      <th style={{ backgroundColor: color.c100 }}></th>
+      <th className="bg-tc-100"></th>
       {/* visible columns display names */}
       {data.table_options.read__visible_columns.map((col) => (
         <th
           key={col}
           className={clsx(
             "text-nowrap",
+            tableStore.nextRequest.order_by === col ? "bg-tc-300" : "bg-tc-100",
             data.table_options.order_by__allow.includes(col)
               ? styles.sortableHeader
               : null
           )}
-          style={{
-            backgroundColor:
-              tableStore.nextRequest.order_by === col ? color.c300 : color.c100,
-            minWidth: data.columns[col].min_width || "",
-          }}
+          style={{ minWidth: data.columns[col].min_width || "" }}
           onClick={() => {
             onHeaderClick(col);
           }}
@@ -70,7 +65,7 @@ export default function HeaderColumnsRow({ useStore }: Props) {
       ))}
       {/* delete th */}
       {data.table_options.delete__ask_columns.length ? (
-        <th style={{ backgroundColor: color.c100 }}></th>
+        <th className="bg-tc-100"></th>
       ) : null}
     </tr>
   );

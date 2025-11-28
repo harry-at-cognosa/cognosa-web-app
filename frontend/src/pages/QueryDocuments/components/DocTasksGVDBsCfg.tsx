@@ -5,17 +5,14 @@ import {
   useModalGVDBsCfgStore,
   type SearchType,
 } from "../stores/useDocTasksGVDBsCfg";
-import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import { CheckCircleFill, GearFill } from "react-bootstrap-icons";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
+import clsx from "clsx";
 
 export default function DocTasksGVDBsCfg() {
-  const [isHovered1, setIsHovered1] = useState(false);
-  const [isHovered2, setIsHovered2] = useState(false);
   const current = useDocTasksCurrentStore();
   const DocTaskOptionsStore = useDocTaskOptionsStore();
-  const { color } = useWebAppOptionsStore();
   const cfgStore = useDocTasksGVDBsCfgStore();
   const [show, setShow] = useState(false);
   const modalStore = useModalGVDBsCfgStore();
@@ -73,14 +70,10 @@ export default function DocTasksGVDBsCfg() {
     <>
       <Button
         variant="outline-secondary"
-        className="fw-bold"
+        className="fw-bold btn-tc-300-400"
         style={{
           color: "black",
-          backgroundColor: isHovered1 ? color.c400 : color.c300,
-          borderColor: color.c300,
         }}
-        onMouseEnter={() => setIsHovered1(true)}
-        onMouseLeave={() => setIsHovered1(false)}
         onClick={handleShow}
         disabled={current.gvdbs_id === -1}
       >
@@ -95,8 +88,8 @@ export default function DocTasksGVDBsCfg() {
         <Modal.Body>
           <InputGroup className="mb-2">
             <InputGroup.Text
-              className="fw-bold justify-content-end"
-              style={{ width: "16ch", backgroundColor: color.c300 }}
+              className="fw-bold justify-content-end bg-tc-300"
+              style={{ width: "16ch" }}
             >
               Search Type:
             </InputGroup.Text>
@@ -118,11 +111,8 @@ export default function DocTasksGVDBsCfg() {
           <hr />
           <InputGroup className="mb-2">
             <InputGroup.Text
-              className="fw-bold justify-content-end"
-              style={{
-                width: "16ch",
-                backgroundColor: color.c300,
-              }}
+              className="fw-bold justify-content-end bg-tc-300"
+              style={{ width: "16ch" }}
             >
               k:
             </InputGroup.Text>
@@ -136,11 +126,11 @@ export default function DocTasksGVDBsCfg() {
           </InputGroup>
           <InputGroup className="mb-2">
             <InputGroup.Text
-              className="fw-bold justify-content-end"
-              style={{
-                width: "16ch",
-                backgroundColor: disabledFetchK ? color.c100 : color.c300,
-              }}
+              className={clsx(
+                "fw-bold justify-content-end",
+                disabledFetchK ? "bg-tc-100" : "bg-tc-300"
+              )}
+              style={{ width: "16ch" }}
             >
               fetch_k:
             </InputGroup.Text>
@@ -157,11 +147,11 @@ export default function DocTasksGVDBsCfg() {
           </InputGroup>
           <InputGroup className="mb-2">
             <InputGroup.Text
-              className="fw-bold justify-content-end"
-              style={{
-                width: "16ch",
-                backgroundColor: disabledLambdaMult ? color.c100 : color.c300,
-              }}
+              className={clsx(
+                "fw-bold justify-content-end",
+                disabledLambdaMult ? "bg-tc-100" : "bg-tc-300"
+              )}
+              style={{ width: "16ch" }}
             >
               lambda_mult:
             </InputGroup.Text>
@@ -180,13 +170,11 @@ export default function DocTasksGVDBsCfg() {
           </InputGroup>
           <InputGroup className="mb-2">
             <InputGroup.Text
-              className="fw-bold justify-content-end"
-              style={{
-                width: "16ch",
-                backgroundColor: disabledScoreThreshold
-                  ? color.c100
-                  : color.c300,
-              }}
+              className={clsx(
+                "fw-bold justify-content-end",
+                disabledScoreThreshold ? "bg-tc-100" : "bg-tc-300"
+              )}
+              style={{ width: "16ch" }}
             >
               score_threshold:
             </InputGroup.Text>
@@ -207,14 +195,9 @@ export default function DocTasksGVDBsCfg() {
         <Modal.Footer className="justify-content-center">
           <Button
             variant="success"
-            className="fw-bold"
+            className="fw-bold btn-tc-300-400"
             onClick={handleApply}
-            onMouseEnter={() => setIsHovered2(true)}
-            onMouseLeave={() => setIsHovered2(false)}
-            style={{
-              color: "black",
-              backgroundColor: isHovered2 ? color.c400 : color.c300,
-            }}
+            style={{ color: "black" }}
           >
             <CheckCircleFill
               className="me-1 my-0"

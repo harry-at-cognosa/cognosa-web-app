@@ -1,7 +1,6 @@
 import { Button, Card, Form, Modal } from "react-bootstrap";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useState } from "react";
-import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 
 interface JsonItem {
   page_content: string;
@@ -10,10 +9,8 @@ interface JsonItem {
 }
 
 export default function ContextJSON() {
-  const [isHovered, setIsHovered] = useState(false);
   const [show, setShow] = useState(false);
   const { context_json } = useDocTasksCurrentStore();
-  const { color } = useWebAppOptionsStore();
   if (!context_json) return null;
 
   // Parse the JSON string
@@ -36,15 +33,10 @@ export default function ContextJSON() {
     <>
       <Button
         type="button"
-        className="me-2 fw-bold"
+        variant=""
+        className="me-2 fw-bold btn-tc-300-400"
         size="sm"
         onClick={() => setShow(true)}
-        style={{
-          color: "black",
-          backgroundColor: isHovered ? color.c400 : color.c300,
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         {headerText + "..."}
       </Button>
@@ -66,7 +58,7 @@ export default function ContextJSON() {
             <div className="d-flex flex-column gap-4">
               {parsedData.map((item, index) => (
                 <Card key={index} className="shadow-sm">
-                  <Card.Header className="d-flex justify-content-between align-items-center">
+                  <Card.Header className="d-flex justify-content-between align-items-center bg-tc-100">
                     <h6 className="mb-0">Item {index + 1}</h6>
                     <small className="text-muted">{getItemHeader(item)}</small>
                   </Card.Header>

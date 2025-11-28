@@ -44,7 +44,6 @@ export const useWebAppOptionsStore = createResettableStore<WebAppOptionsState>(
     setNeedReload: (needReload: boolean) => set({ needReload }),
     fetchData: async () => {
       if (!localStorage.getItem("token")) return;
-      set({ needReload: false });
       try {
         const res = await axiosClient.get<WebAppOptionsState>(
           "/webapp_options"
@@ -69,6 +68,8 @@ export const useWebAppOptionsStore = createResettableStore<WebAppOptionsState>(
           "webapp_options error: " +
             (err.response?.data?.message || err.message)
         );
+      } finally {
+        set({ needReload: false });
       }
     },
   })

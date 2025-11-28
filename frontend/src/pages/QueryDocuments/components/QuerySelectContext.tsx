@@ -1,6 +1,5 @@
 import { Form, InputGroup, Spinner } from "react-bootstrap";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
-import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import {
   useDocTaskOptionsLastUsedStore,
   useDocTaskOptionsStore,
@@ -9,7 +8,6 @@ import { useEffect } from "react";
 
 export default function QuerySelectContext() {
   const current = useDocTasksCurrentStore();
-  const { color } = useWebAppOptionsStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const { gc_id: lastUsedGCID } = useDocTaskOptionsLastUsedStore();
   const waitingState = docTaskOptionsStore.needReload;
@@ -28,12 +26,7 @@ export default function QuerySelectContext() {
 
   return (
     <InputGroup className="mb-2">
-      <InputGroup.Text
-        className="fw-bold"
-        style={{ backgroundColor: color.c300 }}
-      >
-        Context:
-      </InputGroup.Text>
+      <InputGroup.Text className="fw-bold bg-tc-300">Context:</InputGroup.Text>
       {waitingState ? (
         <InputGroup.Text
           style={{

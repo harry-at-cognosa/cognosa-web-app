@@ -2,7 +2,6 @@ import { Button, Modal, Table } from "react-bootstrap";
 import type { createTableStore } from "../TableStoreFactory";
 import ColumnDisplayName from "./ColumnDisplayName";
 import ViewCellElement from "./ViewCellElement";
-import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 import ExportButton from "./ExportButton";
 
 interface Props {
@@ -10,7 +9,6 @@ interface Props {
 }
 
 export default function ReadRowDialog({ useStore }: Props) {
-  const { color } = useWebAppOptionsStore();
   const tableStore = useStore();
   const { data, readRow, setReadRow } = tableStore;
   if (!data) return null;
@@ -49,8 +47,7 @@ export default function ReadRowDialog({ useStore }: Props) {
         <Button
           variant=""
           onClick={handleClose}
-          className="fw-bold"
-          style={{ backgroundColor: color.c300 }}
+          className="fw-bold btn-tc-300-400"
         >
           Close
         </Button>

@@ -5,8 +5,6 @@ import {
 } from "../hooks/useExcelExport";
 import type { createTableStore, TableRow } from "../TableStoreFactory";
 import { FileEarmark } from "react-bootstrap-icons";
-import { useState } from "react";
-import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 import { useJsonExport } from "../hooks/useJSONExport";
 
 interface Props {
@@ -31,9 +29,6 @@ function getFilename(title: string, fileExt: string) {
 }
 
 export default function ExportButton({ useStore, row }: Props) {
-  const [isHovered1, setIsHovered1] = useState(false);
-  const [isHovered2, setIsHovered2] = useState(false);
-  const { color } = useWebAppOptionsStore();
   const { exportToExcel } = useExcelExport();
   const { exportToJson } = useJsonExport();
   const tableStore = useStore();
@@ -72,13 +67,10 @@ export default function ExportButton({ useStore, row }: Props) {
         <Button
           type="button"
           variant=""
-          className="fw-bold py-0 me-1"
+          className="fw-bold py-0 me-1 btn-tc-300-400"
           style={{
             fontSize: "smaller",
-            backgroundColor: isHovered1 ? color.c400 : color.c300,
           }}
-          onMouseEnter={() => setIsHovered1(true)}
-          onMouseLeave={() => setIsHovered1(false)}
           onClick={handleExportExcel}
         >
           <FileEarmark size={"16px"} /> Excel
@@ -88,13 +80,10 @@ export default function ExportButton({ useStore, row }: Props) {
         <Button
           type="button"
           variant=""
-          className="fw-bold py-0"
+          className="fw-bold py-0 btn-tc-300-400"
           style={{
             fontSize: "smaller",
-            backgroundColor: isHovered2 ? color.c400 : color.c300,
           }}
-          onMouseEnter={() => setIsHovered2(true)}
-          onMouseLeave={() => setIsHovered2(false)}
           onClick={handleExportJSON}
         >
           <FileEarmark size={"16px"} /> JSON

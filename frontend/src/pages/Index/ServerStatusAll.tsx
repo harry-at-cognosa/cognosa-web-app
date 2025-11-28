@@ -5,7 +5,6 @@ import {
 } from "./useServerStatusStore";
 import { useEffect } from "react";
 import axiosClient from "../../api/axiosClient";
-import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 
 async function fetchBackendData() {
   try {
@@ -21,7 +20,6 @@ async function fetchBackendData() {
 }
 
 export default function ServerStatusAll() {
-  const { color } = useWebAppOptionsStore();
   const { api_settings, group_vdbs_rows, group_llms_rows } =
     useServerStatusStore();
   useEffect(() => {
@@ -45,10 +43,7 @@ export default function ServerStatusAll() {
         </div>
       </div>
       <Card className="rounded-3 shadow-sm mb-4">
-        <Card.Header
-          className="fw-bold"
-          style={{ backgroundColor: color.c300 }}
-        >
+        <Card.Header className="fw-bold bg-tc-300">
           Vector Databases and Collections:
         </Card.Header>
         <Card.Body className="p-0">
@@ -67,12 +62,7 @@ export default function ServerStatusAll() {
         </Card.Body>
       </Card>
       <Card className="rounded-3 shadow-sm mb-3">
-        <Card.Header
-          className="fw-bold"
-          style={{ backgroundColor: color.c300 }}
-        >
-          Available LLM:
-        </Card.Header>
+        <Card.Header className="fw-bold bg-tc-300">Available LLM:</Card.Header>
         <Card.Body className="p-0">
           <Table className="mb-0" striped hover size="sm">
             <tbody>

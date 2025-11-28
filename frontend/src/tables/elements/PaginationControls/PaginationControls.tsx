@@ -1,15 +1,14 @@
 import { Button } from "react-bootstrap";
 import { SkipStartFill, PlayFill, SkipEndFill } from "react-bootstrap-icons";
 import type { createTableStore } from "../../TableStoreFactory";
-import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import PaginationLimit from "./PaginationLimit";
+import clsx from "clsx";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
 }
 
 export default function PaginationControls({ useStore }: Props) {
-  const { color } = useWebAppOptionsStore();
   const { nextRequest, data, setOffset } = useStore();
 
   if (!data) return null;
@@ -44,45 +43,41 @@ export default function PaginationControls({ useStore }: Props) {
       <div className="d-flex gap-2">
         <Button
           variant="outline-secondary"
-          className="p-0"
+          className={clsx("p-0", isFirstPage ? "bg-tc-100" : "bg-tc-300")}
           size="sm"
           onClick={handleFastBackward}
           disabled={isFirstPage}
           aria-label="First page"
-          style={{ backgroundColor: isFirstPage ? color.c100 : color.c300 }}
         >
           <SkipStartFill size={"28px"} />
         </Button>
         <Button
           variant="outline-secondary"
           size="sm"
-          className="p-0"
+          className={clsx("p-0", isFirstPage ? "bg-tc-100" : "bg-tc-300")}
           onClick={handleBackward}
           disabled={isFirstPage}
           aria-label="Previous page"
-          style={{ backgroundColor: isFirstPage ? color.c100 : color.c300 }}
         >
           <PlayFill size={"28px"} style={{ transform: "rotate(180deg)" }} />
         </Button>
         <Button
           variant="outline-secondary"
           size="sm"
-          className="p-0"
+          className={clsx("p-0", isLastPage ? "bg-tc-100" : "bg-tc-300")}
           onClick={handleForward}
           disabled={isLastPage}
           aria-label="Next page"
-          style={{ backgroundColor: isLastPage ? color.c100 : color.c300 }}
         >
           <PlayFill size={"28px"} />
         </Button>
         <Button
           variant="outline-secondary"
           size="sm"
-          className="p-0"
+          className={clsx("p-0", isLastPage ? "bg-tc-100" : "bg-tc-300")}
           onClick={handleFastForward}
           disabled={isLastPage}
           aria-label="Last page"
-          style={{ backgroundColor: isLastPage ? color.c100 : color.c300 }}
         >
           <SkipEndFill size={"28px"} />
         </Button>

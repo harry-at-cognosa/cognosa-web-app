@@ -1,4 +1,3 @@
-import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 import type { createTableStore } from "../TableStoreFactory";
 import CreateRowButton from "./CreateRowButton";
 import ExportButton from "./ExportButton";
@@ -12,11 +11,10 @@ interface Props {
 }
 
 export default function TableHeader({ useStore }: Props) {
-  const { color } = useWebAppOptionsStore();
   return (
     <thead>
       <tr>
-        <th colSpan={100} style={{ backgroundColor: color.c200 }}>
+        <th colSpan={100} className="bg-tc-200">
           <div className="d-flex">
             <CreateRowButton useStore={useStore} />
             <TableTitle useStore={useStore} />

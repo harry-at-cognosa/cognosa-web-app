@@ -1,7 +1,6 @@
 import { Button, Modal } from "react-bootstrap";
 import type { createTableStore } from "../TableStoreFactory";
 import EditCellElement from "./EditCellElement";
-import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 import ExportButton from "./ExportButton";
 
 interface Props {
@@ -25,7 +24,6 @@ function EditMsg({ msg, key_ }: { msg: string; key_: string }) {
 }
 
 export default function EditDialog({ useStore }: Props) {
-  const { color } = useWebAppOptionsStore();
   const tableStore = useStore();
   const { data, showCreateOrUpdateDialog } = tableStore;
   if (!data) return null;
@@ -61,8 +59,8 @@ export default function EditDialog({ useStore }: Props) {
         {ask_columns.map((col) => (
           <div
             key={"div__" + col}
-            className="p-1 mb-4"
-            style={{ borderRadius: "5px", backgroundColor: color.c100 }}
+            className="p-1 mb-4 bg-tc-100"
+            style={{ borderRadius: "5px" }}
           >
             <div className="fw-bold mt-0 ms-2" key={"div_label__" + col}>
               <span>

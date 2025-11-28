@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import type { createTableStore } from "../../TableStoreFactory";
-import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import { Dropdown, Form, InputGroup } from "react-bootstrap";
 
 interface Props {
@@ -8,7 +7,6 @@ interface Props {
 }
 
 export default function PaginationLimit({ useStore }: Props) {
-  const { color } = useWebAppOptionsStore();
   const { nextRequest, data, setLimit, setOffset } = useStore();
   const [inputLimit, setInputLimit] = useState(nextRequest.limit); // local input state
   const debounceRef = useRef<number | null>(null);
@@ -61,10 +59,7 @@ export default function PaginationLimit({ useStore }: Props) {
 
   return (
     <InputGroup size="sm" className="mb-0">
-      <InputGroup.Text
-        className="fw-bold"
-        style={{ backgroundColor: color.c300, borderColor: color.c300 }}
-      >
+      <InputGroup.Text className="fw-bold bg-tc-300 bc-tc-300">
         Limit:
       </InputGroup.Text>
 
@@ -73,7 +68,7 @@ export default function PaginationLimit({ useStore }: Props) {
         type="number"
         size="sm"
         value={inputLimit}
-        className="fw-bold"
+        className="fw-bold bg-tc-100 bc-tc-300"
         onChange={(e) => {
           const rawValue = e.target.value;
           const value = parseInt(rawValue, 10);
@@ -82,21 +77,14 @@ export default function PaginationLimit({ useStore }: Props) {
           }
         }}
         aria-label="Rows per page"
-        style={{
-          width: "8ch",
-          backgroundColor: color.c100,
-          borderColor: color.c300,
-        }}
+        style={{ width: "8ch" }}
       />
       {table_options.select_limit.length ? (
         <Dropdown>
           <Dropdown.Toggle
             size="sm"
-            style={{
-              color: "black",
-              borderColor: color.c300,
-              backgroundColor: color.c300,
-            }}
+            className="bc-tc-300 bg-tc-300"
+            style={{ color: "black" }}
           />
           <Dropdown.Menu
             align={"end"}

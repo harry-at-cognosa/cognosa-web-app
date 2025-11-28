@@ -1,22 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button, ListGroup } from "react-bootstrap";
 import { useDocTasksShortStore } from "../stores/useDocTasksShort";
 import QueriesListBarItem from "./QueriesListBarItem";
 import axiosClient from "../../../api/axiosClient";
 import type { DocTasksShortQuery } from "../models/docTasksShortQuery";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
-import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import { useDocTasksGVDBsCfgStore } from "../stores/useDocTasksGVDBsCfg";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import { Search } from "react-bootstrap-icons";
 
 function QueriesListBar() {
-  const [isHovered, setIsHovered] = useState(false);
   const queryStore = useQueryDocumentsStore();
   const queriesStore = useDocTasksShortStore();
   const currentStore = useDocTasksCurrentStore();
   const gvdbsCfgStore = useDocTasksGVDBsCfgStore();
-  const { color } = useWebAppOptionsStore();
 
   useEffect(() => {
     if (!queriesStore.needReload) return;
@@ -44,10 +41,7 @@ function QueriesListBar() {
       <Button
         type="button"
         variant="light"
-        className="w-100 fw-bold mt-2"
-        style={{ backgroundColor: isHovered ? color.c400 : color.c300 }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        className="w-100 fw-bold mt-2 btn-tc-300-400"
         onClick={() => {
           queryStore.setOpUUID("");
           queryStore.stopPolling();
@@ -59,12 +53,7 @@ function QueriesListBar() {
       </Button>
       {todayRows.length ? (
         <>
-          <h5
-            className="p-2 mb-0 bg-opacity-10"
-            style={{ backgroundColor: color.c100 }}
-          >
-            Today:
-          </h5>
+          <h5 className="p-2 mb-0 bg-opacity-10 bg-tc-100">Today:</h5>
           <ListGroup as="ul" className="m-0">
             {todayRows.map((item) => (
               <QueriesListBarItem
@@ -78,12 +67,7 @@ function QueriesListBar() {
       ) : null}
       {weekRows.length ? (
         <>
-          <h5
-            className="p-2 mb-0 bg-opacity-10"
-            style={{ backgroundColor: color.c100 }}
-          >
-            This week:
-          </h5>
+          <h5 className="p-2 mb-0 bg-opacity-10 bg-tc-100">This week:</h5>
           <ListGroup as="ul" className="m-0">
             {weekRows.map((item) => (
               <QueriesListBarItem
@@ -97,12 +81,7 @@ function QueriesListBar() {
       ) : null}
       {beforeRows.length ? (
         <>
-          <h5
-            className="p-2 mb-0 bg-opacity-10"
-            style={{ backgroundColor: color.c100 }}
-          >
-            Before:
-          </h5>
+          <h5 className="p-2 mb-0 bg-opacity-10 bg-tc-100">Before:</h5>
           <ListGroup as="ul" className="m-0">
             {beforeRows.map((item) => (
               <QueriesListBarItem
