@@ -1,4 +1,4 @@
-## [0.15b] (2025-11-26)
+## [0.15c] (2025-11-28)
 
 1. Added new variants for `group_llms`.`gllms_type`: `chatgpt`, `gemini`.
    For these ones - use empty `API Base` url in `SuperUsers` -> `LLMs`.
@@ -12,6 +12,9 @@
 2. Additional checks for LLM urls.
    Now no need to fill API Base URL for Claude LLMs.
    It will use `https://api.anthropic.com/v1` by default.
+
+3. Less checks for public LLM API (ChatGPT, Gemini, Claude):
+   only once in 5 minutes.
 
 ## [0.14g] (2025-11-22)
 

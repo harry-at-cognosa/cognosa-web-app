@@ -27,7 +27,7 @@ class GroupLLMs(Base):
     gllms_status: Mapped[str] = mapped_column(VARCHAR, nullable=False, server_default=text("'warning'"))
     # more info:
     gllms_status_text: Mapped[str] = mapped_column(VARCHAR, nullable=False, server_default=text("''"))
-    gllms_status_updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    gllms_status_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     # 
     from common.sql_models import ApiGroups
     api_groups_id: Mapped["ApiGroups"] = relationship("ApiGroups", back_populates="group_llms_id_list")

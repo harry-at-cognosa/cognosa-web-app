@@ -2,6 +2,7 @@ import json
 from time import time
 from traceback import format_exc
 from common import log
+from common.watchdogs import get_outdated_status
 from common.watchdogs.group_vdbs import GroupVDBSTable
 from common.watchdogs.group_llms import GroupLLMsTable
 from common.sql_db_async import AsyncSession
@@ -103,12 +104,6 @@ class SuServerStatusPage:
         result_list = []
         gvdbs_rows = await GroupVDBSTable.async_select_all_order_by_group_id_seqn(session)
         for row in gvdbs_rows:
-            status_text = row.gvdbs_status_text if row.gvdbs_status_text else ''
-            if not row.gvdbs_status_updated_at:
-                status_text = '[Not updated] ' + status_text
-            # check if outdated: updated > 2 minutes before
-            elif row.gvdbs_status_updated_at.timestamp() < (time() - 120):
-                status_text = '[Outdated] ' + status_text
             result_list.append({
                 'gvdbs_id': row.gvdbs_id,
                 'group_id': row.group_id,
@@ -118,7 +113,7 @@ class SuServerStatusPage:
                 'gvdbs_url': row.gvdbs_url,
                 'gvdbs_collection': row.gvdbs_collection,
                 'gvdbs_status': row.gvdbs_status,
-                'gvdbs_status_text': status_text,
+                'gvdbs_status_text': get_outdated_status(row),
             })
         return result_list
     
@@ -143,12 +138,6 @@ class SuServerStatusPage:
         result_list = []
         gllms_rows = await GroupLLMsTable.async_select_all_order_by_group_id_seqn(session)
         for row in gllms_rows:
-            status_text = row.gllms_status_text if row.gllms_status_text else ''
-            if not row.gllms_status_updated_at:
-                status_text = '[Not updated] ' + status_text
-            # check if outdated: updated > 2 minutes before
-            elif row.gllms_status_updated_at.timestamp() < (time() - 120):
-                status_text = '[Outdated] ' + status_text
             result_list.append({
                 'gllms_id': row.gllms_id,
                 'group_id': row.group_id,
@@ -158,7 +147,7 @@ class SuServerStatusPage:
                 'gllms_api_base': row.gllms_api_base,
                 'gllms_model': row.gllms_model,
                 'gllms_status': row.gllms_status,
-                'gllms_status_text': status_text,
+                'gllms_status_text': get_outdated_status(row),
             })
         return result_list
 

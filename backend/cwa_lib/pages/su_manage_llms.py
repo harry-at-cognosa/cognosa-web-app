@@ -99,6 +99,9 @@ class SuManageLLMsTable:
                 setattr(llms_row, col, value)
                 total_updated = 1
         
+        if total_updated:
+            llms_row.gllms_status_updated_at = None
+        
         await self.session.commit()
         await self.session.refresh(llms_row)  # to get real group_id
         if data.gllms_seqn != prev_gllms_seqn:

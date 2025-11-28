@@ -99,6 +99,9 @@ class SuManageVDBsTable:
                 setattr(vdbs_row, col, value)
                 total_updated = 1
         
+        if total_updated:
+            vdbs_row.gvdbs_status_updated_at = None
+
         await self.session.commit()
         await self.session.refresh(vdbs_row)  # to get real group_id
         if data.gvdbs_seqn != prev_gvdbs_seqn:

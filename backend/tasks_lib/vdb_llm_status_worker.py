@@ -1,6 +1,6 @@
 from threading import Thread
 from time import time, sleep
-from common.watchdogs import AP_SLEEP_TIME
+from common.watchdogs import AP_SLEEP_TIME, is_need_to_check_llm
 from common.sql_db_sync import Session, get_engine_sessionmaker
 from common.sql_models import GroupVDBs, GroupLLMs
 from tasks_lib.cmd_line_opts import AP_NAME
@@ -56,6 +56,8 @@ class VDBLLMStatusWorker(Thread):
     
     def check_one_llm(self, session: Session, gllms: GroupLLMs):
         """Check one row from group_vdbs table"""
+        if not is_need_to_check_llm(gllms):  # less checks for public LLM API
+            return
         def set_status(gllms_status: str, gllms_status_text: str):
             GroupLLMsTable.sync_update_gllms_status(session, gllms.gllms_id, gllms_status, gllms_status_text)
         # check if URL is specified
