@@ -1,4 +1,11 @@
-import { Button, Dropdown, Form, InputGroup, Modal } from "react-bootstrap";
+import {
+  Button,
+  Dropdown,
+  Form,
+  InputGroup,
+  Modal,
+  Spinner,
+} from "react-bootstrap";
 import { useSuChangeOneselfStore } from "./useSuChangeOneselfStore";
 import { useEffect, useState } from "react";
 import { CheckCircleFill } from "react-bootstrap-icons";
@@ -27,7 +34,6 @@ export default function SuChangeOneself() {
     }
     setOneself();
   };
-  if (store.firstLoad) return null;
   return (
     <>
       <Dropdown.Item onClick={() => setShow(true)}>Change Group</Dropdown.Item>
@@ -43,77 +49,83 @@ export default function SuChangeOneself() {
           {store.error_msg ? (
             <h3 style={{ color: "red" }}>{store.error_msg}</h3>
           ) : null}
-          <InputGroup className="mb-2">
-            <InputGroup.Text
-              className="fw-bold justify-content-end bg-tc-300"
-              style={{ width: "17ch" }}
-            >
-              Group:
-            </InputGroup.Text>
-            <Form.Select
-              className="fw-bold"
-              value={store.group_id}
-              autoComplete="off"
-              disabled={store.needReload}
-              onChange={(e) => {
-                store.setGroupId(Number(e.target.value));
-              }}
-            >
-              {store.group_list.map((group) => (
-                <option key={group.group_id} value={group.group_id}>
-                  {group.group_id}: {group.group_name}
-                </option>
-              ))}
-            </Form.Select>
-          </InputGroup>
-          <InputGroup className="mb-2">
-            <InputGroup.Text
-              className="fw-bold justify-content-end bg-tc-300"
-              style={{ width: "17ch" }}
-            >
-              ContentManager:
-            </InputGroup.Text>
-            <Form.Select
-              className="fw-bold"
-              value={store.is_contentmanager ? 1 : 0}
-              autoComplete="off"
-              disabled={store.needReload}
-              onChange={(e) => {
-                store.setIsContentManager(Boolean(Number(e.target.value)));
-              }}
-            >
-              <option key={"is_cm_yes"} value={1}>
-                Yes
-              </option>
-              <option key={"is_cm_no"} value={0}>
-                No
-              </option>
-            </Form.Select>
-          </InputGroup>
-          <InputGroup className="mb-2">
-            <InputGroup.Text
-              className="fw-bold justify-content-end bg-tc-300"
-              style={{ width: "17ch" }}
-            >
-              GroupAdmin:
-            </InputGroup.Text>
-            <Form.Select
-              className="fw-bold"
-              value={store.is_groupadmin ? 1 : 0}
-              autoComplete="off"
-              disabled={store.needReload}
-              onChange={(e) => {
-                store.setIsGroupAdmin(Boolean(Number(e.target.value)));
-              }}
-            >
-              <option key={"is_ga_yes"} value={1}>
-                Yes
-              </option>
-              <option key={"is_ga_no"} value={0}>
-                No
-              </option>
-            </Form.Select>
-          </InputGroup>
+          {store.firstLoad ? (
+            <Spinner />
+          ) : (
+            <>
+              <InputGroup className="mb-2">
+                <InputGroup.Text
+                  className="fw-bold justify-content-end bg-tc-300"
+                  style={{ width: "17ch" }}
+                >
+                  Group:
+                </InputGroup.Text>
+                <Form.Select
+                  className="fw-bold"
+                  value={store.group_id}
+                  autoComplete="off"
+                  disabled={store.needReload}
+                  onChange={(e) => {
+                    store.setGroupId(Number(e.target.value));
+                  }}
+                >
+                  {store.group_list.map((group) => (
+                    <option key={group.group_id} value={group.group_id}>
+                      {group.group_id}: {group.group_name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </InputGroup>
+              <InputGroup className="mb-2">
+                <InputGroup.Text
+                  className="fw-bold justify-content-end bg-tc-300"
+                  style={{ width: "17ch" }}
+                >
+                  ContentManager:
+                </InputGroup.Text>
+                <Form.Select
+                  className="fw-bold"
+                  value={store.is_contentmanager ? 1 : 0}
+                  autoComplete="off"
+                  disabled={store.needReload}
+                  onChange={(e) => {
+                    store.setIsContentManager(Boolean(Number(e.target.value)));
+                  }}
+                >
+                  <option key={"is_cm_yes"} value={1}>
+                    Yes
+                  </option>
+                  <option key={"is_cm_no"} value={0}>
+                    No
+                  </option>
+                </Form.Select>
+              </InputGroup>
+              <InputGroup className="mb-2">
+                <InputGroup.Text
+                  className="fw-bold justify-content-end bg-tc-300"
+                  style={{ width: "17ch" }}
+                >
+                  GroupAdmin:
+                </InputGroup.Text>
+                <Form.Select
+                  className="fw-bold"
+                  value={store.is_groupadmin ? 1 : 0}
+                  autoComplete="off"
+                  disabled={store.needReload}
+                  onChange={(e) => {
+                    store.setIsGroupAdmin(Boolean(Number(e.target.value)));
+                  }}
+                >
+                  <option key={"is_ga_yes"} value={1}>
+                    Yes
+                  </option>
+                  <option key={"is_ga_no"} value={0}>
+                    No
+                  </option>
+                </Form.Select>
+              </InputGroup>
+            </>
+          )}
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
           <Button
