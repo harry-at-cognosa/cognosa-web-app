@@ -3,6 +3,7 @@ import { Container, Dropdown, Nav, Navbar } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { useNavbarStore } from "./useTopNavBarStore";
 import { useLoggedUserStore } from "../../stores/useLoggedUserStore";
+import SuChangeOneself from "./SuChangeOneself/SuChangeOneself";
 
 const TopNavBar = () => {
   const user = useLoggedUserStore();
@@ -75,6 +76,7 @@ const TopNavBar = () => {
                   <Navbar.Text className="me-2 fw-bold">SuperUser</Navbar.Text>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
+                  <SuChangeOneself />
                   <LinkContainer to="/app/su/manage_groups">
                     <Dropdown.Item>Groups</Dropdown.Item>
                   </LinkContainer>

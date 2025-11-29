@@ -1,4 +1,4 @@
-## [0.15d] (2025-11-28)
+## [0.15e] (2025-11-29)
 
 1. Added new variants for `group_llms`.`gllms_type`: `chatgpt`, `gemini`.
    For these ones - use empty `API Base` url in `SuperUsers` -> `LLMs`.
@@ -23,6 +23,13 @@
    Sort VDBs and LLMs by: (is ready?, seqn number).
    Not ready rows goes after ready ones.
    `No document search` will be the last anyway.
+
+5. Added `SuperUser` -> `Change Group` option.
+   There superuser can change his own:
+   `group_id`
+   `is_contentmanager`
+   `is_groupadmin`
+   Page will be reloaded after change.
 
 ## [0.14g] (2025-11-22)
 

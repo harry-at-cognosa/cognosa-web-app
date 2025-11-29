@@ -14,6 +14,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes("node_modules/highlight.js")) {
+            return "highlight.js";
+          }
           if (id.includes("node_modules/xlsx/xlsx")) {
             return "xlsx";
           }
