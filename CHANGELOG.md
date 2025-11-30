@@ -34,6 +34,7 @@
 6. `Query Documents` -> `Queries` page:
    If query parameters are the same as previously sent, user will be asked:
    `Query is the same as previous. Please, change something.`
+   Added `Clone this query` button.
 
 ## [0.14g] (2025-11-22)
 

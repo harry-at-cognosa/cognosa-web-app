@@ -38,6 +38,7 @@ interface DocTasksCurrentState {
   setNewQuery: () => void;
   previousQuery: DocTasksQuery | null;
   isSameAsPreviousQuery: (query: DocTasksQuery) => boolean;
+  cloneQuery: () => void;
 }
 
 const defaultState = {
@@ -133,11 +134,37 @@ export const useDocTasksCurrentStore =
     setFromHistory: (item: DocTasksShortItem) =>
       set({
         doc_task_id: item.doc_task_id,
+        status: null,
+        status_text: "",
+        question_number: 0,
+        context_json: null,
         previousQuery: null,
         needReload: true,
+        output_text: null,
+        output_text_2: null,
+        vdb_query_seconds: null,
+        llm_query_seconds: null,
+        llm_tokens_sent: null,
+        llm_tokens_received: null,
+        is_error: null,
       }),
     setNewQuery: () => set(defaultState),
     isSameAsPreviousQuery: (query: DocTasksQuery) => {
       return compareWithPreviousQuery(query, get().previousQuery);
     },
+    cloneQuery: () =>
+      set({
+        doc_task_id: null,
+        status: null,
+        status_text: "",
+        question_number: 0,
+        context_json: null,
+        output_text: null,
+        output_text_2: null,
+        vdb_query_seconds: null,
+        llm_query_seconds: null,
+        llm_tokens_sent: null,
+        llm_tokens_received: null,
+        is_error: null,
+      }),
   }));

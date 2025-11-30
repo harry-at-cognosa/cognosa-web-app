@@ -15,6 +15,7 @@ import QueryTokensCounter from "./QueryTokensCounter";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import ContextJSON from "./ContextJSON";
 import AskButton from "./AskButton";
+import CloneQueryButton from "./CloneQueryButton";
 
 function QueryArea() {
   const queryStore = useQueryDocumentsStore();
@@ -166,10 +167,11 @@ function QueryArea() {
       </div>
 
       <h5>{current.status_text || ""}</h5>
-      <span>
+      <div className="d-flex justify-content-between">
         <ContextJSON />
         <QueryTokensCounter />
-      </span>
+        <CloneQueryButton />
+      </div>
     </div>
   );
 }
