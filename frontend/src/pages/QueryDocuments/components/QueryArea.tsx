@@ -46,21 +46,24 @@ function QueryArea() {
       alert("No LLM specified");
       return;
     }
-
+    const query: DocTasksQuery = {
+      doc_task_id: current.doc_task_id,
+      short_name: current.short_name || "",
+      input_text,
+      gvdbs_id: current.gvdbs_id,
+      gvdbs_cfg_json: {
+        search_type: gvdbsCfgStore.search_type,
+        search_kwargs: gvdbsCfgStore.search_kwargs,
+      },
+      gllms_id: current.gllms_id,
+      gc_id: current.gc_id,
+      optional_text: current.optional_text || "",
+    };
+    if (current.isSameAsPreviousQuery(query)) {
+      alert("Query is the same as previous. Please, change something.");
+      return;
+    }
     try {
-      const query: DocTasksQuery = {
-        doc_task_id: current.doc_task_id,
-        short_name: current.short_name || "",
-        input_text,
-        gvdbs_id: current.gvdbs_id,
-        gvdbs_cfg_json: {
-          search_type: gvdbsCfgStore.search_type,
-          search_kwargs: gvdbsCfgStore.search_kwargs,
-        },
-        gllms_id: current.gllms_id,
-        gc_id: current.gc_id,
-        optional_text: current.optional_text || "",
-      };
       docTaskOptionsLastUsedStore.setLastUsed(
         current.gc_id,
         current.gllms_id,

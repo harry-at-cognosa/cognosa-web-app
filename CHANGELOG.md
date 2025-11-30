@@ -1,4 +1,4 @@
-## [0.15e] (2025-11-29)
+## [0.15f] (2025-11-30)
 
 1. Added new variants for `group_llms`.`gllms_type`: `chatgpt`, `gemini`.
    For these ones - use empty `API Base` url in `SuperUsers` -> `LLMs`.
@@ -30,6 +30,10 @@
    `is_contentmanager`
    `is_groupadmin`
    Page will be reloaded after change.
+
+6. `Query Documents` -> `Queries` page:
+   If query parameters are the same as previously sent, user will be asked:
+   `Query is the same as previous. Please, change something.`
 
 ## [0.14g] (2025-11-22)
 
