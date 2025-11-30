@@ -1,9 +1,6 @@
 import { Button, Form, InputGroup, Spinner } from "react-bootstrap";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
-import {
-  useDocTaskOptionsLastUsedStore,
-  useDocTaskOptionsStore,
-} from "../stores/useDocTaskOptionsStore";
+import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import clsx from "clsx";
 import { useEffect } from "react";
 import { ArrowRepeat } from "react-bootstrap-icons";
@@ -11,15 +8,15 @@ import { ArrowRepeat } from "react-bootstrap-icons";
 export default function QuerySelectLLM() {
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
-  const { gllms_id: lastUsedGLLMsID } = useDocTaskOptionsLastUsedStore();
   const waitingState = docTaskOptionsStore.needReload;
   const group_llms = docTaskOptionsStore.data.group_llms;
+  const lastUsedGLLMsID = current.previousQuery?.gllms_id || -999;
   useEffect(() => {
     if (waitingState) return;
     if (current.gllms_id === null) {
       // get first available gllms_id
       const all_gllms_id = group_llms.map((row) => Number(row.gllms_id));
-      const defaultGLLMsID = all_gllms_id.includes(lastUsedGLLMsID || -999)
+      const defaultGLLMsID = all_gllms_id.includes(lastUsedGLLMsID)
         ? lastUsedGLLMsID
         : Number(group_llms[0]?.gllms_id) || null;
       current.setGLLMsID(defaultGLLMsID);

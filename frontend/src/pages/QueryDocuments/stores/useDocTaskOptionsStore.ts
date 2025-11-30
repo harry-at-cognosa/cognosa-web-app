@@ -103,19 +103,3 @@ export const useDocTaskOptionsStore =
     needReload: true,
     setNeedReload: (needReload: boolean) => set({ needReload }),
   }));
-
-interface DocTaskOptionsLastUsedState {
-  gc_id: number | null;
-  gllms_id: number | null;
-  gvdbs_id: number | null;
-  setLastUsed: (gc_id: number, gllms_id: number, gvdbs_id: number) => void;
-}
-
-export const useDocTaskOptionsLastUsedStore =
-  createResettableStore<DocTaskOptionsLastUsedState>((set) => ({
-    gc_id: null,
-    gllms_id: null,
-    gvdbs_id: null,
-    setLastUsed: (gc_id: number, gllms_id: number, gvdbs_id: number) =>
-      set({ gc_id, gllms_id, gvdbs_id }),
-  }));

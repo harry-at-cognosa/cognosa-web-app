@@ -5,10 +5,7 @@ import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import type { DocTasksQuery } from "../models/docTasksQuery";
 import type { DocTasksResponse } from "../models/docTasksResponse";
 import { useDocTasksShortStore } from "../stores/useDocTasksShort";
-import {
-  useDocTaskOptionsLastUsedStore,
-  useDocTaskOptionsStore,
-} from "../stores/useDocTaskOptionsStore";
+import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import { useDocTasksGVDBsCfgStore } from "../stores/useDocTasksGVDBsCfg";
 import generateUUID from "../../../api/generateUUID";
 import QuerySelectVDB from "./QuerySelectVDB";
@@ -24,7 +21,6 @@ function QueryArea() {
   const gvdbsCfgStore = useDocTasksGVDBsCfgStore();
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
-  const docTaskOptionsLastUsedStore = useDocTaskOptionsLastUsedStore();
   const docTasksShortStore = useDocTasksShortStore();
 
   // Send POST request to url
@@ -64,11 +60,6 @@ function QueryArea() {
       return;
     }
     try {
-      docTaskOptionsLastUsedStore.setLastUsed(
-        current.gc_id,
-        current.gllms_id,
-        current.gvdbs_id
-      );
       current.setBeforeServerResponse(query);
       const opUUID = generateUUID();
       queryStore.setOpUUID(opUUID);
