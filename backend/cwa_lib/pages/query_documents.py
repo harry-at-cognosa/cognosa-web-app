@@ -21,9 +21,12 @@ class QueryDocumentsPage:
         self.user = user
 
     async def create_task(self, payload: DocTaskCreate) -> DocTaskQueryResult | str:
-        gvdbs = await DocTasksTable(self.session).query_gvdbs(self.user.group_id, payload.gvdbs_id)
-        if not (gvdbs and (gvdbs.gvdbs_status != 'danger')):
-            return "Document collection is not ready"
+        # check if VDBs and LLMs are ready (status != 'danger')
+        if payload.gvdbs_id != -1:  # ignore "No Document search"
+            gvdbs = await DocTasksTable(self.session).query_gvdbs(self.user.group_id, payload.gvdbs_id)
+            if not (gvdbs and (gvdbs.gvdbs_status != 'danger')):
+                return "Document collection is not ready"
+        
         gllms = await DocTasksTable(self.session).query_gllms(self.user.group_id, payload.gllms_id)
         if not (gllms and (gllms.gllms_status != 'danger')):
             return "LLM is not ready"

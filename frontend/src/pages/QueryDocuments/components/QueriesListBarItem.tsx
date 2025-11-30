@@ -29,21 +29,22 @@ function QueriesListBarItem({ item, showDate }: QueriesListBarItemProps) {
       new Date(item.created_at).toLocaleTimeString()
     : new Date(item.created_at).toLocaleTimeString();
 
-  // handle function: Delete this item
   const handleDelete = async (doc_task_id: number) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${item.short_name}"?`
-    );
-
-    if (!confirmed) return; // User canceled
-
+    const confirmStr = `Are you sure you want to delete "${item.short_name}"?`;
+    if (!window.confirm(confirmStr)) return;
     try {
-      // 2. Send DELETE request
       await axiosClient.delete(`/doc_tasks/${doc_task_id}`);
-      queriesStore.deleteRow(doc_task_id); // if such a method exists
+      queriesStore.deleteRow(doc_task_id);
     } catch (error) {
       console.error("Failed to delete query:", error);
       alert("Failed to delete query. Please try again.");
+    } finally {
+      if (doc_task_id === currentStore.doc_task_id) {
+        // clear query if it was current
+        queryStore.setOpUUID("");
+        queryStore.stopPolling();
+        currentStore.cloneQuery();
+      }
     }
   };
   return (

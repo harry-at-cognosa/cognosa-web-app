@@ -37,6 +37,12 @@
    Added `Clone this query` button.
    Restrict usage of VDBs and LLMs marked red (on both frontend and backend).
 
+7. Fixes:
+   `Query Documents` -> `Queries` page:
+   clone current query if it is being deleted on left panel.
+   `SuperUser` -> `LLMs` and `VDBs` pages:
+   Set new VDBs and LLMs statuses as `danger`: `Not checked yet`.
+
 ## [0.14g] (2025-11-22)
 
 1. Updates for pushing to GitLab:

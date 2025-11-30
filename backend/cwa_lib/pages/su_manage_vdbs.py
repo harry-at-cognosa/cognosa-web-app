@@ -73,6 +73,8 @@ class SuManageVDBsTable:
             gvdbs_url=data.gvdbs_url,
             gvdbs_collection=data.gvdbs_collection,
             gvdbs_emb_model="sentence-transformers/all-MiniLM-L6-v2",
+            gvdbs_status='danger',
+            gvdbs_status_text='Not checked yet',
         )
         self.session.add(new_row)
         await self.session.commit()
@@ -100,6 +102,8 @@ class SuManageVDBsTable:
                 total_updated = 1
         
         if total_updated:
+            vdbs_row.gvdbs_status='danger'
+            vdbs_row.gvdbs_status_text='Not checked yet'
             vdbs_row.gvdbs_status_updated_at = None
 
         await self.session.commit()

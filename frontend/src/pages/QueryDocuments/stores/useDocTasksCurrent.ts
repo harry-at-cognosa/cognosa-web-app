@@ -165,6 +165,7 @@ export const useDocTasksCurrentStore =
         llm_query_seconds: null,
         llm_tokens_sent: null,
         llm_tokens_received: null,
+        is_processing: null,
         is_error: null,
       }),
   }));

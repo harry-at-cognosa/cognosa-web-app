@@ -73,6 +73,8 @@ class SuManageLLMsTable:
             gllms_api_base=data.gllms_api_base,
             gllms_model=data.gllms_model,
             gllms_api_key=data.gllms_api_key,
+            gllms_status='danger',
+            gllms_status_text='Not checked yet',
         )
         self.session.add(new_row)
         await self.session.commit()
@@ -100,6 +102,8 @@ class SuManageLLMsTable:
                 total_updated = 1
         
         if total_updated:
+            llms_row.gllms_status='danger'
+            llms_row.gllms_status_text='Not checked yet'
             llms_row.gllms_status_updated_at = None
         
         await self.session.commit()
