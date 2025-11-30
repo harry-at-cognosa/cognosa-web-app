@@ -34,6 +34,7 @@ interface DocTasksCurrentState {
   setFromServerResponse: (response: DocTasksResponse) => void;
   needReload: boolean;
   setNeedReload: (needReload: boolean) => void;
+  needReloadFromHistory: boolean;
   setFromHistory: (item: DocTasksShortItem) => void;
   setNewQuery: () => void;
   previousQuery: DocTasksQuery | null;
@@ -63,6 +64,7 @@ const defaultState = {
   is_error: null,
   status_pct: null,
   needReload: false,
+  needReloadFromHistory: false,
   previousQuery: null,
 };
 
@@ -128,7 +130,7 @@ export const useDocTasksCurrentStore =
     },
     setFromServerResponse: (response: DocTasksResponse) => {
       const previousQuery = get().previousQuery || responseToQuery(response);
-      set({ ...response, previousQuery });
+      set({ ...response, previousQuery, needReloadFromHistory: false });
     },
     setNeedReload: (needReload: boolean) => set({ needReload }),
     setFromHistory: (item: DocTasksShortItem) =>
@@ -140,6 +142,7 @@ export const useDocTasksCurrentStore =
         context_json: null,
         previousQuery: null,
         needReload: true,
+        needReloadFromHistory: true,
         output_text: null,
         output_text_2: null,
         vdb_query_seconds: null,

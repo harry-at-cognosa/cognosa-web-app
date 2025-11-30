@@ -18,6 +18,8 @@ export default function AskButton({ handleSubmit }: Props) {
   }
   const disabled =
     queryStore.isPolling ||
+    current.needReload ||
+    current.needReloadFromHistory ||
     current.is_processing === true ||
     current.question_number >= 2;
   const showSpinner = Boolean(current.is_processing);

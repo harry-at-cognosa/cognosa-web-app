@@ -43,6 +43,8 @@
    `SuperUser` -> `LLMs` and `VDBs` pages:
    Set new VDBs and LLMs statuses as `danger`: `Not checked yet`.
 
+8. Added spinner on `after login` redirection page.
+
 ## [0.14g] (2025-11-22)
 
 1. Updates for pushing to GitLab:
