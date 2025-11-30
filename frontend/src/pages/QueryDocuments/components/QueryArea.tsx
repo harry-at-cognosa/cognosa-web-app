@@ -39,8 +39,20 @@ function QueryArea() {
       alert("No group vector DB specified");
       return;
     }
+    const gvdbs_row = docTaskOptionsStore.gvdbs_id__row[current.gvdbs_id];
+    if (gvdbs_row.gvdbs_status === "danger") {
+      alert(
+        `Document Collection "${gvdbs_row.gvdbs_name}" is not ready to use`
+      );
+      return;
+    }
     if (!current.gllms_id) {
       alert("No LLM specified");
+      return;
+    }
+    const gllms_row = docTaskOptionsStore.gllms_id__row[current.gllms_id];
+    if (gllms_row.gllms_status === "danger") {
+      alert(`LLM "${gllms_row.gllms_name}" is not ready to use`);
       return;
     }
     const query: DocTasksQuery = {

@@ -35,6 +35,7 @@
    If query parameters are the same as previously sent, user will be asked:
    `Query is the same as previous. Please, change something.`
    Added `Clone this query` button.
+   Restrict usage of VDBs and LLMs marked red (on both frontend and backend).
 
 ## [0.14g] (2025-11-22)
 

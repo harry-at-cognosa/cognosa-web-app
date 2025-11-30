@@ -1,16 +1,60 @@
 from typing import Sequence
 from sqlalchemy import select
-from common.enums.gvdbs_cfg_json import DEFAULT_SEARCH_TYPE, DEFAULT_dicts
+from common.enums.gvdbs_cfg_json import DEFAULT_SEARCH_TYPE, DEFAULT_dicts, GVDBsCfgJSON
 from common.sql_db_async import AsyncSession
 from common.sql_models import User, GroupContexts, GroupLLMs, GroupVDBs
 from cwa_lib.pydantic_schemas.doc_tasks import (
+    DocTaskCreate,
+    DocTaskQueryResult,
     DocTaskOptionsResult, 
     DocTasksOptionsGroupContextsRow, 
     DocTasksOptionsGroupLLMsRow, 
     DocTasksOptionsGroupVDBsRow,
     GVDBsCfgDefaults
 )
+from cwa_lib.sql_tables.doc_tasks import DocTasksTable
 
+
+class QueryDocumentsPage:
+    def __init__(self, session: AsyncSession, user: User):
+        self.session = session
+        self.user = user
+
+    async def create_task(self, payload: DocTaskCreate) -> DocTaskQueryResult | str:
+        gvdbs = await DocTasksTable(self.session).query_gvdbs(self.user.group_id, payload.gvdbs_id)
+        if not (gvdbs and (gvdbs.gvdbs_status != 'danger')):
+            return "Document collection is not ready"
+        gllms = await DocTasksTable(self.session).query_gllms(self.user.group_id, payload.gllms_id)
+        if not (gllms and (gllms.gllms_status != 'danger')):
+            return "LLM is not ready"
+        
+        if not payload.doc_task_id:
+            result = await DocTasksTable(self.session).add_one(
+                group_id=self.user.group_id, 
+                user_id=self.user.user_id, 
+                gvdbs_id=payload.gvdbs_id,
+                gvdbs_cfg_json=GVDBsCfgJSON.from_dict(payload.gvdbs_cfg_json).as_dict(),
+                gllms_id=payload.gllms_id,
+                gc_id=payload.gc_id,
+                short_name=payload.short_name, 
+                input_text=payload.input_text, 
+                optional_text=payload.optional_text
+            )
+        else:
+            result = await DocTasksTable(self.session).add_second(
+                doc_task_id=payload.doc_task_id,
+                user_group_id=self.user.group_id,
+                gvdbs_id=payload.gvdbs_id,
+                gvdbs_cfg_json=GVDBsCfgJSON.from_dict(payload.gvdbs_cfg_json).as_dict(),
+                gllms_id=payload.gllms_id,
+                gc_id=payload.gc_id,
+                short_name=payload.short_name, 
+                input_text=payload.input_text, 
+                optional_text=payload.optional_text
+            )
+        if result is None:
+            return "Cannot add new DocTask"
+        return result
 
 class QueryDocumentsOptions:
     def __init__(self, session: AsyncSession, user: User):
