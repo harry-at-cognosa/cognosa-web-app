@@ -1,3 +1,8 @@
+## [0.16a] (2025-12-04)
+
+1. `Query Documents` -> `Queries` page -> left panel:
+   added `doc_tasks`.`doc_task_id` value for each history query.
+
 ## [0.15f] (2025-11-30)
 
 1. Added new variants for `group_llms`.`gllms_type`: `chatgpt`, `gemini`.

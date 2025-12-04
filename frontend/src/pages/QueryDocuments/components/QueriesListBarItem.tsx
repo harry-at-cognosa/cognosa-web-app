@@ -69,7 +69,10 @@ function QueriesListBarItem({ item, showDate }: QueriesListBarItemProps) {
             checked={item.doc_task_id === currentStore.doc_task_id}
             onChange={() => {}}
           />
-          <Form.Check.Label>{item.short_name}</Form.Check.Label>
+          <Form.Check.Label>
+            <span className="fw-bold">{item.doc_task_id}</span>&nbsp;
+            {item.short_name}
+          </Form.Check.Label>
         </Form.Check>
         {/* Delete button */}
         <Button
