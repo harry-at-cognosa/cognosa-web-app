@@ -1,4 +1,4 @@
-import type { DocTasksGVDBsCfgState } from "../stores/useDocTasksGVDBsCfg";
+import type { DocTasksGVDBsCfgState } from "../../../components/GVDBsCfg/stores";
 
 export type DocTasksQuery = {
   doc_task_id: number | null;

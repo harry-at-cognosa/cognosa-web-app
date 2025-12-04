@@ -5,9 +5,9 @@ import QueriesListBarItem from "./QueriesListBarItem";
 import axiosClient from "../../../api/axiosClient";
 import type { DocTasksShortQuery } from "../models/docTasksShortQuery";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
-import { useDocTasksGVDBsCfgStore } from "../stores/useDocTasksGVDBsCfg";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import { Search } from "react-bootstrap-icons";
+import { useDocTasksGVDBsCfgStore } from "../../../components/GVDBsCfg/stores";
 
 function QueriesListBar() {
   const queryStore = useQueryDocumentsStore();

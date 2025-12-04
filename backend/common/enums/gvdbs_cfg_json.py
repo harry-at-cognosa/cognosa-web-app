@@ -34,7 +34,7 @@ class GVDBsCfgJSON:
     ALLOWED_SEARCH_TYPES = ['similarity', 'mmr', 'similarity_score_threshold']
     
     def __init__(self, search_type: SEARCH_TYPES, search_kwargs: dict[str, int | float]):
-        self.search_type = search_type
+        self.search_type: SEARCH_TYPES = search_type
         self.search_kwargs = search_kwargs
     
     def as_dict(self):

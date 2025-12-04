@@ -1,6 +1,6 @@
 from typing import Sequence
 from sqlalchemy import select
-from common.enums.gvdbs_cfg_json import DEFAULT_SEARCH_TYPE, DEFAULT_dicts, GVDBsCfgJSON
+from common.enums.gvdbs_cfg_json import GVDBsCfgJSON
 from common.sql_db_async import AsyncSession
 from common.sql_models import User, GroupContexts, GroupLLMs, GroupVDBs
 from cwa_lib.pydantic_schemas.doc_tasks import (
@@ -13,6 +13,7 @@ from cwa_lib.pydantic_schemas.doc_tasks import (
     GVDBsCfgDefaults
 )
 from cwa_lib.sql_tables.doc_tasks import DocTasksTable
+from cwa_lib.sql_tables.api_settings import ApiSettingsTable
 
 
 class QueryDocumentsPage:
@@ -78,6 +79,11 @@ class QueryDocumentsOptions:
         where_clause = (GroupVDBs.group_id == self.user.group_id) & (GroupVDBs.deleted == 0) & (GroupVDBs.enabled == True)
         result = await self.session.execute(select(GroupVDBs).where(where_clause).order_by(GroupVDBs.gvdbs_id))
         return result.scalars().all()
+    
+    async def _get_gvdbs_cfg_defaults(self) -> GVDBsCfgDefaults:
+        gvdbs_cfg_json = (await ApiSettingsTable(self.session).select_by_names(['gvdbs_cfg_json']))['gvdbs_cfg_json']
+        gvdbs_cfg_obj = GVDBsCfgJSON.from_dict(gvdbs_cfg_json)        
+        return GVDBsCfgDefaults(search_type=gvdbs_cfg_obj.search_type, search_kwargs=gvdbs_cfg_obj.search_kwargs)
 
     async def get_options(self) -> DocTaskOptionsResult:
         """
@@ -88,9 +94,10 @@ class QueryDocumentsOptions:
         Also:
         `gvdbs_cfg_defaults`: default values for `doc_tasks.gvdbs_cfg_json`.
         """
+        
         return DocTaskOptionsResult(
             group_contexts=await self._from__group_contexts(),
             group_llms=await self._from__group_llms(),
             group_vdbs=await self._from__group_vdbs(),
-            gvdbs_cfg_defaults=GVDBsCfgDefaults(search_type=DEFAULT_SEARCH_TYPE, search_kwargs_per_type=DEFAULT_dicts)
+            gvdbs_cfg_defaults=await self._get_gvdbs_cfg_defaults(),
         )

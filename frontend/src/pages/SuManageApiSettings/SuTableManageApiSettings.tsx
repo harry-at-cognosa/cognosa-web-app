@@ -1,6 +1,8 @@
 import UniversalTable from "../../tables/UniversalTable";
 import { createTableStore } from "../../tables/TableStoreFactory";
 import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
+import { useDocTaskOptionsStore } from "../QueryDocuments/stores/useDocTaskOptionsStore";
+import { useDocTasksGVDBsCfgStore } from "../../components/GVDBsCfg/stores";
 
 const useTableSuManageApiSettingsStore = createTableStore({
   title: "Manage Api Settings",
@@ -8,8 +10,13 @@ const useTableSuManageApiSettingsStore = createTableStore({
   endpoint: "/su/manage_api_settings",
   afterEdit: async (get) => {
     const editRow = get().editRow;
-    if (editRow?.name === "webapp_main_color") {
+    const name = editRow?.name?.toString();
+    if (name === "webapp_main_color") {
       useWebAppOptionsStore.getState().setNeedReload(true);
+    }
+    if (name === "gvdbs_cfg_json") {
+      useDocTaskOptionsStore.getState().setNeedReload(true);
+      useDocTasksGVDBsCfgStore.getState().setDefaultValues();
     }
   },
 });

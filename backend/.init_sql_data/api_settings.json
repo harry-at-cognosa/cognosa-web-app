@@ -2,5 +2,9 @@
   { "name": "app_version", "value": "0.12" },
   { "name": "db_version", "value": "0.12" },
   { "name": "webapp_main_color", "value": "gray" },
-  { "name": "index_page", "value": "Empty index page" }
+  { "name": "index_page", "value": "Empty index page" },
+  {
+    "name": "gvdbs_cfg_json",
+    "value": "{\"search_type\": \"similarity\", \"search_kwargs\": {\"k\": 20}}"
+  }
 ]

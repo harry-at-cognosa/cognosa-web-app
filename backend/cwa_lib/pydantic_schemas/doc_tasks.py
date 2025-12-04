@@ -97,7 +97,7 @@ class DocTasksOptionsGroupVDBsRow(BaseModel):
 
 class GVDBsCfgDefaults(BaseModel):
     search_type: SEARCH_TYPES
-    search_kwargs_per_type: dict
+    search_kwargs: dict
 
 class DocTaskOptionsResult(BaseModel):
     group_contexts: Sequence[DocTasksOptionsGroupContextsRow]

@@ -2,6 +2,7 @@ import { Form } from "react-bootstrap";
 import type { createTableStore, TableCellValue } from "../TableStoreFactory";
 import getColor from "../../api/getColor";
 import { Check, XCircle } from "react-bootstrap-icons";
+import ApiSettingsGVDBsCfg from "../EditRenders/ApiSettingsGVDBsCfg";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -168,6 +169,14 @@ export default function EditCellElement({ useStore, col }: Props) {
             </option>
           ))}
         </Form.Select>
+      );
+    }
+    if (pk_value_str === "gvdbs_cfg_json") {
+      return (
+        <ApiSettingsGVDBsCfg
+          valueStr={value_str}
+          onChange={(newValueStr) => onChange(newValueStr)}
+        />
       );
     }
 

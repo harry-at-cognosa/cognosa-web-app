@@ -1,5 +1,9 @@
 import axiosClient from "../../../api/axiosClient";
 import { createResettableStore } from "../../../api/createResettableStore";
+import {
+  defaultGVDBsCfgState,
+  type DocTasksGVDBsCfgState,
+} from "../../../components/GVDBsCfg/stores";
 
 export type GroupContexts = {
   gc_id: number;
@@ -29,6 +33,7 @@ export interface DocTaskOptionsResponse {
   group_contexts: GroupContexts[];
   group_llms: GroupLLMs[];
   group_vdbs: GroupVDBs[];
+  gvdbs_cfg_defaults: DocTasksGVDBsCfgState;
 }
 
 interface DocTaskOptionsState {
@@ -46,6 +51,7 @@ export const useDocTaskOptionsStore =
       group_contexts: [],
       group_llms: [],
       group_vdbs: [],
+      gvdbs_cfg_defaults: defaultGVDBsCfgState,
     },
     gvdbs_id__row: {},
     gllms_id__row: {},
@@ -94,6 +100,12 @@ export const useDocTaskOptionsStore =
           },
           {}
         );
+        const gvdbs_cfg_defaults = data.gvdbs_cfg_defaults;
+        defaultGVDBsCfgState.search_type = gvdbs_cfg_defaults.search_type;
+        defaultGVDBsCfgState.search_kwargs = {
+          ...defaultGVDBsCfgState.search_kwargs,
+          ...gvdbs_cfg_defaults.search_kwargs,
+        };
         set({ data, gvdbs_id__row, gllms_id__row, needReload: false });
       } catch {
         alert("Error during fetching /doc_tasks/options");

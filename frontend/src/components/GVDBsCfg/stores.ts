@@ -27,13 +27,13 @@ interface ActionsFromData {
   setFromData: (gvdbs_cfg_json: string) => void;
 }
 
-interface ModalGVDBsCfgState {
+interface TempGVDBsCfgState {
   search_type_name: [SearchType, string][];
   search_type: SearchType;
   search_kwargs: SearchKwargsType;
 }
 
-const defaultGVDBsCfgState: DocTasksGVDBsCfgState = {
+export const defaultGVDBsCfgState: DocTasksGVDBsCfgState = {
   search_type: "similarity",
   search_kwargs: {
     k: 10,
@@ -43,7 +43,9 @@ const defaultGVDBsCfgState: DocTasksGVDBsCfgState = {
   },
 };
 
-export const useModalGVDBsCfgStore = create<ModalGVDBsCfgState & Actions>(
+export type TempGVDBsCfgStore = TempGVDBsCfgState & Actions;
+
+export const useTempGVDBsCfgStore = create<TempGVDBsCfgState & Actions>(
   (set) => ({
     search_type: defaultGVDBsCfgState.search_type,
     search_kwargs: { ...defaultGVDBsCfgState.search_kwargs },
@@ -60,6 +62,10 @@ export const useModalGVDBsCfgStore = create<ModalGVDBsCfgState & Actions>(
       })),
   })
 );
+
+export type DocTasksGVDBsCfgStore = DocTasksGVDBsCfgState &
+  Actions &
+  ActionsFromData;
 
 export const useDocTasksGVDBsCfgStore = create<
   DocTasksGVDBsCfgState & Actions & ActionsFromData

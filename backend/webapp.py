@@ -1,6 +1,8 @@
 import os
 from common.sql_db_sync import wait_for_database
 wait_for_database()
+from cwa_lib.sql_tables.api_settings import ApiSettingsTable
+ApiSettingsTable.prepare_default_values_at_start()
 
 from fastapi import HTTPException, Depends, Request
 from fastapi.responses import FileResponse, HTMLResponse

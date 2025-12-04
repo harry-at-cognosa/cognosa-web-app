@@ -6,7 +6,6 @@ import type { DocTasksQuery } from "../models/docTasksQuery";
 import type { DocTasksResponse } from "../models/docTasksResponse";
 import { useDocTasksShortStore } from "../stores/useDocTasksShort";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
-import { useDocTasksGVDBsCfgStore } from "../stores/useDocTasksGVDBsCfg";
 import generateUUID from "../../../api/generateUUID";
 import QuerySelectVDB from "./QuerySelectVDB";
 import QuerySelectLLM from "./QuerySelectLLM";
@@ -16,6 +15,7 @@ import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import ContextJSON from "./ContextJSON";
 import AskButton from "./AskButton";
 import CloneQueryButton from "./CloneQueryButton";
+import { useDocTasksGVDBsCfgStore } from "../../../components/GVDBsCfg/stores";
 
 function QueryArea() {
   const queryStore = useQueryDocumentsStore();
