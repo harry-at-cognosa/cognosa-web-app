@@ -5,6 +5,7 @@ from .generic_table import TableQueryResult
 class SuManageVDBsRead(BaseModel):
     gvdbs_id: int
     group_id: int
+    enabled: bool
     gvdbs_seqn: int
     gvdbs_type: str
     gvdbs_name: str
@@ -21,6 +22,7 @@ SuManageVDBsQueryResult = TableQueryResult[SuManageVDBsRead]
 
 class SuManageVDBsCreate(BaseModel):
     group_id: int
+    enabled: bool
     gvdbs_seqn: int | None = None
     gvdbs_type: str
     gvdbs_name: str
@@ -31,6 +33,7 @@ class SuManageVDBsCreate(BaseModel):
 class SuManageVDBsUpdate(BaseModel):
     gvdbs_id: int
     group_id: int | None = None
+    enabled: bool | None = None
     gvdbs_seqn: int | None = None
     gvdbs_type: str | None = None
     gvdbs_name: str | None = None

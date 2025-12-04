@@ -10,20 +10,22 @@ class GroupVDBSTable:
 
     @classmethod
     async def async_select_by_group_id_order_by_seqn(cls, session: AsyncSession, group_id: int) -> list[GroupVDBs]:
-        where_clause = (GroupVDBs.deleted == 0) & (GroupVDBs.group_id == group_id)
+        where_clause = (GroupVDBs.deleted == 0) & (GroupVDBs.enabled == True) & (GroupVDBs.group_id == group_id)
         stmt = select(GroupVDBs).where(where_clause).order_by(GroupVDBs.gvdbs_seqn)
         result = await session.execute(stmt)
         return list(result.scalars().all())
 
     @classmethod
     async def async_select_all_order_by_group_id_seqn(cls, session: AsyncSession) -> list[GroupVDBs]:
-        stmt = select(GroupVDBs).where(GroupVDBs.deleted==0).order_by(GroupVDBs.group_id, GroupVDBs.gvdbs_seqn)
+        where_clause = (GroupVDBs.deleted == 0) & (GroupVDBs.enabled == True)
+        stmt = select(GroupVDBs).where(where_clause).order_by(GroupVDBs.group_id, GroupVDBs.gvdbs_seqn)
         result = await session.execute(stmt)
         return list(result.scalars().all())
     
     @classmethod
-    def sync_select_all(cls, session: Session) -> list[GroupVDBs]:
-        stmt = select(GroupVDBs).where(GroupVDBs.deleted==0).order_by(GroupVDBs.gvdbs_id)
+    def sync_select_all_enabled(cls, session: Session) -> list[GroupVDBs]:
+        where_clause = (GroupVDBs.deleted == 0) & (GroupVDBs.enabled == True)
+        stmt = select(GroupVDBs).where((where_clause) & (GroupVDBs.enabled==True)).order_by(GroupVDBs.gvdbs_id)
         return list(session.execute(stmt).scalars().all())
     
     @classmethod

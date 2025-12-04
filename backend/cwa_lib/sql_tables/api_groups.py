@@ -14,7 +14,7 @@ class ApiGroupsTable:
         return result.scalar_one_or_none()
 
     async def get_all_not_deleted(self) -> Sequence[ApiGroups]:
-        result = await self.session.execute(select(ApiGroups).where(ApiGroups.deleted==0).order_by(ApiGroups.group_id))
+        result = await self.session.execute(select(ApiGroups).where(ApiGroups.deleted == 0).order_by(ApiGroups.group_id))
         return result.scalars().all()
 
     async def get_all_not_deleted_as_select_options(self) -> list[SelectOption]:

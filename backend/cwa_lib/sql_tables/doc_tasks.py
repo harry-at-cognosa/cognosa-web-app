@@ -32,6 +32,8 @@ class DocTasksTable:
                 (GroupVDBs.gvdbs_id == gvdbs_id)
                 & 
                 (GroupVDBs.deleted == 0)
+                & 
+                (GroupVDBs.enabled == True)
             )
             )
         return result.scalar_one_or_none()
@@ -45,6 +47,8 @@ class DocTasksTable:
                 (GroupLLMs.gllms_id == gllms_id)
                 & 
                 (GroupLLMs.deleted == 0)
+                &
+                (GroupLLMs.enabled == True)
             )
             )
         return result.scalar_one_or_none()

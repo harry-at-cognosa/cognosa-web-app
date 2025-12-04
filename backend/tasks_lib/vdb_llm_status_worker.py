@@ -73,10 +73,10 @@ class VDBLLMStatusWorker(Thread):
 
     def check_all(self):
         with self.sessionmaker() as session:
-            gvdbs_rows = GroupVDBSTable.sync_select_all(session)
+            gvdbs_rows = GroupVDBSTable.sync_select_all_enabled(session)
             for gvdbs in gvdbs_rows:
                 self.check_one_vdb(session, gvdbs)
-            gllms_rows = GroupLLMsTable.sync_select_all(session)
+            gllms_rows = GroupLLMsTable.sync_select_all_enabled(session)
             for gllms in gllms_rows:
                 self.check_one_llm(session, gllms)
 

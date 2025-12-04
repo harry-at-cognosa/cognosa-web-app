@@ -15,6 +15,7 @@ select__gllms_type = [SelectOption(name=value, value=value) for value in GLLMS_T
 su_manage_llms__query_columns = {
     'gllms_id': ColumnType(display='ID', type='number'),
     'group_id': ColumnType(display='Group ID: Name', type='group_id_name', default=1, select=[]),
+    'enabled': ColumnType(display='Enabled?', type='boolean', default=True),
     'gllms_seqn': ColumnType(display='Seqn #', type='number', default=0),
     'gllms_type': ColumnType(display='Type', type='string', default=GLLMsTypes.OLLAMA_LOCAL, select=select__gllms_type),
     'gllms_name': ColumnType(display='Name', type='string', default="New LLM"),
@@ -74,7 +75,7 @@ class SuManageLLMsTable:
             gllms_model=data.gllms_model,
             gllms_api_key=data.gllms_api_key,
             gllms_status='danger',
-            gllms_status_text='Not checked yet',
+            gllms_status_text='Not checked yet' if data.enabled else 'Disabled',
         )
         self.session.add(new_row)
         await self.session.commit()
@@ -91,7 +92,7 @@ class SuManageLLMsTable:
         llms_row = result.scalar_one_or_none()
         if not llms_row:
             return TableUpdateRowResult(result='error', total_updated=0)
-        prev_gllms_seqn = llms_row.gllms_seqn        
+        prev_gllms_seqn = llms_row.gllms_seqn
         total_updated = 0
         for col in gllms_edit_columns:
             value = getattr(data, col, None)
@@ -103,7 +104,7 @@ class SuManageLLMsTable:
         
         if total_updated:
             llms_row.gllms_status='danger'
-            llms_row.gllms_status_text='Not checked yet'
+            llms_row.gllms_status_text='Not checked yet' if llms_row.enabled else 'Disabled'
             llms_row.gllms_status_updated_at = None
         
         await self.session.commit()

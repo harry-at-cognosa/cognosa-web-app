@@ -25,7 +25,7 @@ class ApiUsersTable:
         return result
     
     async def get_all_not_deleted(self) -> Sequence[User]:
-        result = await self.session.execute(select(User).where(User.deleted==0).order_by(User.user_id))
+        result = await self.session.execute(select(User).where(User.deleted == 0).order_by(User.user_id))
         return result.scalars().all()
     
     async def get_all_not_deleted_as_select_options(self) -> list[SelectOption]:

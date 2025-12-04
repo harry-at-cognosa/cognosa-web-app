@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import VARCHAR, Integer, ForeignKey, DateTime, func, text, Index, Enum as SQLEnum
+from sqlalchemy import VARCHAR, Integer, Boolean, ForeignKey, DateTime, func, text, Index, Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from common.sql_models import Base
 from common.enums.gvdbs_types import GVDBsTypes
@@ -14,6 +14,7 @@ class GroupVDBs(Base):
     gvdbs_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     # deleted INT DEFAULT 0
     deleted: Mapped[int] = mapped_column(Integer, index=True, nullable=False, server_default=text("0"))
+    enabled: Mapped[bool] = mapped_column(Boolean, index=True, nullable=False, server_default=text("'TRUE'"))    
     group_id = mapped_column(Integer, ForeignKey('api_groups.group_id', name="fk_group_vdbs_group_id"), nullable=False)
     gvdbs_seqn: Mapped[int] = mapped_column(Integer, nullable=False)
     # gvdbs_type = chroma / qdrant / pgvector

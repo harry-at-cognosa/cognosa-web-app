@@ -5,6 +5,7 @@ from .generic_table import TableQueryResult
 class SuManageLLMsRead(BaseModel):
     gllms_id: int
     group_id: int
+    enabled: bool
     gllms_seqn: int
     gllms_type: str
     gllms_name: str
@@ -22,6 +23,7 @@ SuManageLLMsQueryResult = TableQueryResult[SuManageLLMsRead]
 
 class SuManageLLMsCreate(BaseModel):
     group_id: int
+    enabled: bool
     gllms_seqn: int | None = None
     gllms_type: str
     gllms_name: str
@@ -33,6 +35,7 @@ class SuManageLLMsCreate(BaseModel):
 class SuManageLLMsUpdate(BaseModel):
     gllms_id: int
     group_id: int | None = None
+    enabled: bool | None = None
     gllms_seqn: int | None = None
     gllms_type: str | None = None
     gllms_name: str | None = None

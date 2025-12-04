@@ -70,12 +70,12 @@ class QueryDocumentsOptions:
         return result.scalars().all()
     
     async def _from__group_llms(self) -> Sequence[DocTasksOptionsGroupLLMsRow]:
-        where_clause = (GroupLLMs.group_id == self.user.group_id) & (GroupLLMs.deleted == 0)
+        where_clause = (GroupLLMs.group_id == self.user.group_id) & (GroupLLMs.deleted == 0) & (GroupLLMs.enabled == True)
         result = await self.session.execute(select(GroupLLMs).where(where_clause).order_by(GroupLLMs.gllms_id))
         return result.scalars().all()
     
     async def _from__group_vdbs(self) -> Sequence[DocTasksOptionsGroupVDBsRow]:
-        where_clause = (GroupVDBs.group_id == self.user.group_id) & (GroupVDBs.deleted == 0)
+        where_clause = (GroupVDBs.group_id == self.user.group_id) & (GroupVDBs.deleted == 0) & (GroupVDBs.enabled == True)
         result = await self.session.execute(select(GroupVDBs).where(where_clause).order_by(GroupVDBs.gvdbs_id))
         return result.scalars().all()
 

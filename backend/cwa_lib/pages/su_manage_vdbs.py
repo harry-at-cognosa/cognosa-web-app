@@ -10,12 +10,12 @@ from cwa_lib.pydantic_schemas.generic_table import (
 from cwa_lib.pages import GenericTableRead
 from cwa_lib.pydantic_schemas.su_manage_vdbs import SuManageVDBsRead, SuManageVDBsCreate, SuManageVDBsUpdate
 
-
 select__gvdbs_type = [SelectOption(name=value, value=value) for value in GVDBS_TYPE_VALUES]
 
 su_manage_vdbs__query_columns = {
     'gvdbs_id': ColumnType(display='ID', type='number'),
     'group_id': ColumnType(display='Group ID: Name', type='group_id_name', default=1, select=[]),
+    'enabled': ColumnType(display='Enabled?', type='boolean', default=True),
     'gvdbs_seqn': ColumnType(display='Seqn #', type='number', default=0),
     'gvdbs_type': ColumnType(display='Type', type='string', default=GVDBsTypes.QDRANT, select=select__gvdbs_type),
     'gvdbs_name': ColumnType(display='Name', type='string', default="New VDB"),
@@ -74,7 +74,7 @@ class SuManageVDBsTable:
             gvdbs_collection=data.gvdbs_collection,
             gvdbs_emb_model="sentence-transformers/all-MiniLM-L6-v2",
             gvdbs_status='danger',
-            gvdbs_status_text='Not checked yet',
+            gvdbs_status_text='Not checked yet' if data.enabled else 'Disabled',
         )
         self.session.add(new_row)
         await self.session.commit()
@@ -103,7 +103,7 @@ class SuManageVDBsTable:
         
         if total_updated:
             vdbs_row.gvdbs_status='danger'
-            vdbs_row.gvdbs_status_text='Not checked yet'
+            vdbs_row.gvdbs_status_text='Not checked yet' if vdbs_row.enabled else 'Disabled'
             vdbs_row.gvdbs_status_updated_at = None
 
         await self.session.commit()

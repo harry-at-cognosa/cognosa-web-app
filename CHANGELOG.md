@@ -11,6 +11,13 @@ Need to upgrade db:
    `GroupAdmin` -> `Users`
    `SuperUser` -> `Users`
 
+3. Added `group_llms`.`enabled` and `group_vdbs`.`enabled`.
+   These columns are editable on `SuperUsers` -> `LLM` and `VDBs` pages.
+   Disabled VDBs/LLMs won't be checked and be shown on:
+   `SuperUsers` -> `Server Status`
+   `Query` page
+   main index page
+
 ## [0.15f] (2025-11-30)
 
 1. Added new variants for `group_llms`.`gllms_type`: `chatgpt`, `gemini`.
