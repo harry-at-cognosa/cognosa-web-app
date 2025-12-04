@@ -13,6 +13,7 @@ class GaManageUsersRead(BaseModel):
     email: str
     password: str | None = None
     created_at: datetime
+    last_seen: datetime | None
     is_active: bool
     is_contentmanager: bool
     is_groupadmin: bool

@@ -5,7 +5,8 @@ wait_for_database()
 from fastapi import HTTPException, Depends, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from common.sql_db_async import AsyncSession, async_get_session
-from cwa_lib.app import app, templates, current_active_user_or_none
+from cwa_lib.app import app, templates
+from cwa_lib.users import current_active_user_or_none
 from cwa_lib.routers import api_router
 from cwa_lib.sql_tables.api_settings import ApiSettingsTable
 from common.sql_models import User

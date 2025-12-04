@@ -10,7 +10,7 @@ from cwa_lib.pydantic_schemas.generic_table import (
 from cwa_lib.pydantic_schemas.ga_manage_users import GaManageUsersRead, GaManageUsersCreate, GaManageUsersUpdate
 from cwa_lib.pages import GenericTableRead
 from cwa_lib.sql_tables.api_users import ApiUsersTable
-from cwa_lib.app import password_helper
+from cwa_lib.users import password_helper
 from cwa_lib.validators.user_name import check_unique__email, check_unique__user_name
 
 
@@ -44,6 +44,7 @@ ga_manage_users__query_columns = {
         display='Group\nAdmin', type='boolean', default=False,
         cu_edit_msg="User is Group Admin?"
     ),
+    'last_seen': ColumnType(display='Last seen', type='datetime'),
     'created_at': ColumnType(display='Created at', type='datetime'),
 }
 ga_manage_users__all_columns = list(ga_manage_users__query_columns.keys())

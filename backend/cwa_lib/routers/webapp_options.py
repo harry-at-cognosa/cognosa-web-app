@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from common.sql_db_async import async_get_session
 from common.sql_models import User
-from cwa_lib.app import current_active_user
+from cwa_lib.users import current_active_user
 from cwa_lib.sql_tables.api_settings import ApiSettingsTable
 
 class WAOptsApiSettings(BaseModel):

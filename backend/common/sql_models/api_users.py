@@ -18,6 +18,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     user_name: Mapped[str] = mapped_column(VARCHAR(32), nullable=False, unique=True)
     full_name: Mapped[str] = mapped_column(VARCHAR, nullable=False, server_default=text("''"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    last_seen: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     is_groupadmin: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("'FALSE'"))
     is_contentmanager: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("'FALSE'"))
     from common.sql_models import ApiGroups

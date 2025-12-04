@@ -1,7 +1,15 @@
 ## [0.16a] (2025-12-04)
 
+Need to upgrade db:
+`cd backend`
+`alembic upgrade head`
+
 1. `Query Documents` -> `Queries` page -> left panel:
    added `doc_tasks`.`doc_task_id` value for each history query.
+
+2. Added `api_users`.`last_seen` + show it on pages:
+   `GroupAdmin` -> `Users`
+   `SuperUser` -> `Users`
 
 ## [0.15f] (2025-11-30)
 

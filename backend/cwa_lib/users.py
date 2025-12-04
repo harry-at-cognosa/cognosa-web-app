@@ -6,6 +6,7 @@ from fastapi import Depends
 from fastapi_users import FastAPIUsers, BaseUserManager, UUIDIDMixin
 from fastapi_users.authentication import AuthenticationBackend, BearerTransport
 from fastapi_users.authentication import JWTStrategy
+from fastapi_users.password import PasswordHelper
 
 from common import API_URL_PREFIX
 from common.sql_db_async import async_get_user_db
@@ -34,3 +35,6 @@ auth_backend = AuthenticationBackend(
 )
 
 fastapi_users = FastAPIUsers[User, uuid.UUID](get_user_manager, [auth_backend])
+current_active_user = fastapi_users.current_user(active=True)
+current_active_user_or_none = fastapi_users.current_user(active=True, optional=True)
+password_helper = PasswordHelper()

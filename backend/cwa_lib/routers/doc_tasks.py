@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from common.sql_db_async import AsyncSession, async_get_session
 from common.sql_models import User
-from cwa_lib.app import current_active_user
+from cwa_lib.users import current_active_user
 from cwa_lib.pages.query_documents import QueryDocumentsPage, QueryDocumentsOptions
 from cwa_lib.pydantic_schemas.doc_tasks import (
     DocTaskCreate, DocTaskQueryResult, DocTaskQueryShort, DocTaskDeleteResult, DocTaskOptionsResult

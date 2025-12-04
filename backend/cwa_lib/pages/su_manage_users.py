@@ -11,7 +11,7 @@ from cwa_lib.pydantic_schemas.su_manage_users import SuManageUsersRead, SuManage
 from cwa_lib.pages import GenericTableRead
 
 from cwa_lib.sql_tables.api_users import ApiUsersTable
-from cwa_lib.app import password_helper
+from cwa_lib.users import password_helper
 from cwa_lib.validators.user_name import check_unique__email, check_unique__user_name
 
 
@@ -50,6 +50,7 @@ su_manage_users__query_columns = {
         display='Super\nUser', type='boolean', default=False,
         cu_edit_msg="User is Super User?"
     ),
+    'last_seen': ColumnType(display='Last seen', type='datetime'),
     'created_at': ColumnType(display='Created at', type='datetime'),
 }
 su_manage_users__all_columns = list(su_manage_users__query_columns.keys())

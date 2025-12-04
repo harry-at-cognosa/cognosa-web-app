@@ -107,6 +107,12 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
     );
   }
   if (cellType === "datetime") {
+    if (!value)
+      return (
+        <Td key={key} isBusy={isBusy}>
+          -
+        </Td>
+      );
     const date = new Date(value as string);
     // Format date (e.g., "October 28, 2025")
     const dateString = date.toLocaleDateString(undefined, {

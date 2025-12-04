@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from common.sql_db_async import AsyncSession, async_get_session
 from common.sql_models.api_users import User
-from cwa_lib.app import current_active_user
+from cwa_lib.users import current_active_user
 from cwa_lib.pydantic_schemas.generic_table import TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 from cwa_lib.pydantic_schemas.ga_manage_users import GaManageUsersQueryResult, GaManageUsersCreate, GaManageUsersUpdate
 from cwa_lib.pages.ga_manage_users import GaManageUsersTableRead, GaManageUsersTable

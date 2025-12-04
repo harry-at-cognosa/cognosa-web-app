@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from common.sql_db_async import AsyncSession, async_get_session
 from common.sql_models.api_users import User
-from cwa_lib.app import current_active_user
+from cwa_lib.users import current_active_user
 from cwa_lib.pydantic_schemas.generic_table import TableQuery, TableCreateRowResult, TableUpdateRowResult, TableDeleteRowResult
 from cwa_lib.pydantic_schemas.manage_contexts import ManageContextsQueryResult, ManageContextsCreate, ManageContextsUpdate
 from cwa_lib.pages.manage_contexts import ManageContextsTableRead, ManageContextsTable
