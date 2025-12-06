@@ -1,6 +1,8 @@
 import getColor from "../../api/getColor";
 import BooleanCheck from "../CellRenders/BooleanCheck";
 import { BusyCell } from "../CellRenders/BusyCell";
+import GaDocTasksAnswer from "../CellRenders/GaDocTasksAnswer";
+import GaDocTasksQueryInfo from "../CellRenders/GaDocTasksQueryInfo";
 import TextCell from "../CellRenders/TextCell";
 import type { createTableStore, TableRow } from "../TableStoreFactory";
 
@@ -134,6 +136,29 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
       </Td>
     );
   }
+  if (cellType === "ga_manage_doc_tasks__query_info") {
+    return (
+      <Td key={key} isBusy={isBusy}>
+        <GaDocTasksQueryInfo row={row} />
+      </Td>
+    );
+  }
+  if (cellType === "ga_manage_doc_tasks__answer") {
+    return (
+      <Td key={key} isBusy={isBusy} className="p-0 align-top">
+        <GaDocTasksAnswer row={row} />
+      </Td>
+    );
+  }
+  if (cellType === "ga_manage_doc_tasks__text") {
+    if (!value) return <Td key={key} isBusy={isBusy}></Td>;
+    return (
+      <Td key={key} isBusy={isBusy}>
+        <TextCell value={value} rows={7}></TextCell>
+      </Td>
+    );
+  }
+
   return (
     <Td key={key} isBusy={isBusy}>
       {value_str}

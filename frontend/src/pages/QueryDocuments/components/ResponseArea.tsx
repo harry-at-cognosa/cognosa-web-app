@@ -26,7 +26,6 @@ function ResponseArea() {
             onMouseEnter={() => setIsHovered1(true)}
             onMouseLeave={() => setIsHovered1(false)}
             onClick={() => setShowFirst(true)}
-            style={{ backgroundColor: bgColor1 }}
           >
             Answer 1
           </Button>

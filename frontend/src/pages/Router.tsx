@@ -17,6 +17,7 @@ import GroupAdminRoute from "../components/GroupAdminRoute";
 import SuManageDocTasksPage from "./SuManageDocTasks/SuManageDocTasksPage";
 import SuManageLogCRUDPage from "./SuManageLogCRUD/SuManageLogCRUDPage";
 import HomePage from "./HomePage/HomePage";
+import GaManageDocTasksPage from "./GaManageDocTasks/GaManageDocTasksPage";
 
 export const Router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ export const Router = createBrowserRouter([
           {
             path: "manage_users",
             element: <GaManageUsersPage />,
+          },
+          {
+            path: "manage_queries",
+            element: <GaManageDocTasksPage />,
           },
         ],
       },

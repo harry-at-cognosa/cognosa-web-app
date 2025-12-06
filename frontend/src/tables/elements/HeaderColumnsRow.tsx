@@ -54,7 +54,11 @@ export default function HeaderColumnsRow({ useStore }: Props) {
             onHeaderClick(col);
           }}
         >
-          <ColumnDisplayName data={data} col={col}></ColumnDisplayName>
+          <ColumnDisplayName
+            nameType="table"
+            data={data}
+            col={col}
+          ></ColumnDisplayName>
 
           <HeaderColumnOrderArrow
             data={data}

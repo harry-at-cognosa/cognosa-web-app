@@ -4,7 +4,7 @@ from sqlalchemy import select, func, ColumnElement
 from sqlalchemy.orm import DeclarativeBase
 from common.sql_tools import create_order_clause
 from cwa_lib.pydantic_schemas.generic_table import (
-    ColumnType, TableOptions, TableQuery, RowModel, TableQueryResult
+    SelectOption, ColumnType, TableOptions, TableQuery, RowModel, TableQueryResult
 )
 from cwa_lib.sql_tables.api_users import ApiUsersTable, AsyncSession
 from cwa_lib.sql_tables.api_groups import ApiGroupsTable
@@ -80,11 +80,12 @@ class GenericTableRead(Generic[SA, RowModel]):
         # Add non-deleted {group id: name, ...} values.
         ###
         if user_opts := self.qc_to_user_group.get('user_id', ()):
-            # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-            select__api_users = await ApiUsersTable(self.session).get_all_not_deleted_as_select_options()
+            # update list of `api_users`.`user_id` and `api_users`.`user_name`
+            all_user_rows = await ApiUsersTable(self.session).get_all_not_deleted()
             if 'allow_all' not in user_opts:  # restrict to fetched if necessary
                 allowed_user_ids = {getattr(x, 'user_id', 0) for x in self._rows_orm}
-                select__api_users = [x for x in select__api_users if x.value in allowed_user_ids]
+                all_user_rows = [row for row in all_user_rows if row.user_id in allowed_user_ids]
+            select__api_users = [SelectOption(name=f"{row.user_id}: {row.user_name}", value=row.user_id) for row in all_user_rows]
             if 'select_default' in user_opts:
                 self._qc['user_id'].select = select__api_users
                 self._qc['user_id'].default = select__api_users[0].value if select__api_users else 1
@@ -92,10 +93,11 @@ class GenericTableRead(Generic[SA, RowModel]):
                 self._to.add_values['user_id_name'] = {api_user.value:api_user.name for api_user in select__api_users}
         if group_opts := self.qc_to_user_group.get('group_id', ()):
             # update list of `api_groups`.`group_id` and `api_groups`.`group_name`
-            select__api_groups = await ApiGroupsTable(self.session).get_all_not_deleted_as_select_options()
+            all_group_rows = await ApiGroupsTable(self.session).get_all_not_deleted()            
             if 'allow_all' not in group_opts:  # restrict to fetched if necessary
                 allowed_group_ids = {getattr(x, 'group_id', 0) for x in self._rows_orm}
-                select__api_groups = [x for x in select__api_groups if x.value in allowed_group_ids]
+                all_user_rows = [row for row in all_group_rows if row.group_id in allowed_group_ids]
+            select__api_groups = [SelectOption(name=f"{row.group_id}: {row.group_name}", value=row.group_id) for row in all_group_rows]            
             if 'select_default' in group_opts:
                 self._qc['group_id'].select = select__api_groups
                 self._qc['group_id'].default = select__api_groups[0].value if select__api_groups else 1
@@ -126,8 +128,8 @@ class GenericTableRead(Generic[SA, RowModel]):
         self._add_order_by()
         self._add_limit_offset()
         await self._get_rows_orm()
-        self._get_rows_pydantic()        
         await self._update_to_qc()
+        self._get_rows_pydantic()        
 
         return TableQueryResult[RowModel](
             name=self.name,

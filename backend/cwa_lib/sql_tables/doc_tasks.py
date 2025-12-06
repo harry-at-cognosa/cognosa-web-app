@@ -2,9 +2,9 @@ import json
 from traceback import format_exc
 from sqlalchemy import select, delete
 from common import log
-from common.helpers import shorten
 from common.sql_db_async import AsyncSession
 from common.sql_models import GroupVDBs, GroupLLMs, DocTasks
+from common.sql_models.doc_tasks import get_short_name
 from cwa_lib.pydantic_schemas.doc_tasks import DocTaskQueryShort, DocTaskQueryShortItem, DocTaskQueryResult
 from common.enums.doc_task_status import TaskStatus
 
@@ -61,11 +61,7 @@ class DocTasksTable:
             )
             .order_by(DocTasks.created_at.desc())
             .limit(100)
-        )
-        def get_short_name(d: DocTasks) -> str:
-            if d.short_name and d.short_name.strip():
-                return d.short_name
-            return shorten(d.input_text, 50)
+        )        
             
         rows = result.scalars().all()
         return DocTaskQueryShort(rows=[

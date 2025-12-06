@@ -2,6 +2,7 @@ import { Button, Modal } from "react-bootstrap";
 import type { createTableStore } from "../TableStoreFactory";
 import EditCellElement from "./EditCellElement";
 import ExportButton from "./ExportButton";
+import ColumnDisplayName from "./ColumnDisplayName";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -64,7 +65,7 @@ export default function EditDialog({ useStore }: Props) {
           >
             <div className="fw-bold mt-0 ms-2" key={"div_label__" + col}>
               <span>
-                {data.columns[col].display || col}
+                <ColumnDisplayName nameType="dialog" col={col} data={data} />
                 {data.columns[col].cu_required ? (
                   <span style={{ color: "red" }}>*</span>
                 ) : null}

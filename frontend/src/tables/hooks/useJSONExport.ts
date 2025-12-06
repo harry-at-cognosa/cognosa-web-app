@@ -2,6 +2,7 @@ export interface JsonExportOptions {
   fileName: string;
   indent: number; // JSON indentation (default: 2)
   sortKeys: boolean; // Whether to sort object keys alphabetically
+  onlyKeys: string[] | null;
 }
 
 export const useJsonExport = () => {
@@ -9,7 +10,7 @@ export const useJsonExport = () => {
     data: T,
     options: JsonExportOptions
   ) => {
-    const { fileName, indent, sortKeys } = options;
+    const { onlyKeys, fileName, indent, sortKeys } = options;
 
     // Function to sort object keys recursively
     const sortObjectKeys = (obj: any): any => {
@@ -18,7 +19,8 @@ export const useJsonExport = () => {
       }
 
       const sortedObj: any = {};
-      const keys = sortKeys ? Object.keys(obj).sort() : Object.keys(obj);
+      let keys = sortKeys ? Object.keys(obj).sort() : Object.keys(obj);
+      if (onlyKeys) keys = keys.filter((x) => onlyKeys.includes(x));
 
       keys.forEach((key) => {
         const value = obj[key];

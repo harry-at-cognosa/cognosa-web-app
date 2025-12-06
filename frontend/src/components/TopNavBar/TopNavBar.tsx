@@ -67,6 +67,9 @@ const TopNavBar = () => {
                   <LinkContainer to="/app/groupadmin/manage_users">
                     <Dropdown.Item>Users</Dropdown.Item>
                   </LinkContainer>
+                  <LinkContainer to="/app/groupadmin/manage_queries">
+                    <Dropdown.Item>Queries</Dropdown.Item>
+                  </LinkContainer>
                 </Dropdown.Menu>
               </Dropdown>
             )}

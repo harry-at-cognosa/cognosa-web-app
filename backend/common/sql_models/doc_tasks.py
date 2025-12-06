@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Integer, Text, VARCHAR, DateTime, text, func, ForeignKey, FLOAT
 from sqlalchemy.orm import Mapped, mapped_column
+from common.helpers import shorten
 from common.sql_models import Base
 
 
@@ -94,3 +95,9 @@ class DocTasks(Base):
     # llm sent/received tokens counters
     llm_tokens_sent: Mapped[int | None] = mapped_column(Integer, nullable=True)
     llm_tokens_received: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+
+def get_short_name(d: DocTasks) -> str:
+    if d.short_name and d.short_name.strip():
+        return d.short_name
+    return shorten(d.input_text, 50)

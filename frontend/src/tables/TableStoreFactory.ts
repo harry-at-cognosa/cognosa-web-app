@@ -32,6 +32,7 @@ export interface TableOptions {
   pk: string;
   read__visible_columns: string[];
   read__hide_on_false: string[];
+  view__visible_columns: string[] | null;
   create__ask_columns: string[];
   update__ask_columns: string[];
   delete__ask_columns: string[];
@@ -41,6 +42,8 @@ export interface TableOptions {
   max_limit: number;
   select_limit: number[];
   export: ExportType[];
+  export_columns: string[] | null;
+  export_columns_display: string[] | null;
 }
 
 export type TableCellValue = string | number | boolean | null | undefined;

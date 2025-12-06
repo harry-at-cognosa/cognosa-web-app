@@ -1,8 +1,7 @@
 import { Form } from "react-bootstrap";
 import type { createTableStore, TableCellValue } from "../TableStoreFactory";
-import getColor from "../../api/getColor";
 import { Check, XCircle } from "react-bootstrap-icons";
-import ApiSettingsGVDBsCfg from "../EditRenders/ApiSettingsGVDBsCfg";
+import ApiSettingsValue from "../EditRenders/ApiSettingsValue";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -147,52 +146,10 @@ export default function EditCellElement({ useStore, col }: Props) {
     );
   }
   if (cellType === "api_settings_value") {
-    const pk_value_str = tableStore.editRow["name"]?.toString() || "";
-    if (pk_value_str === "webapp_main_color") {
-      const all_values = tableStore.data.table_options.add_values[
-        "webapp_main_color_values"
-      ] as string[];
-      return (
-        <Form.Select
-          value={value_str}
-          onChange={(e) => onChange(e.target.value)}
-          autoComplete="off"
-          isInvalid={isInvalid}
-        >
-          {all_values.map((color) => (
-            <option
-              key={key + "__" + color}
-              value={color}
-              style={{ backgroundColor: getColor(color, 300) }}
-            >
-              {color}
-            </option>
-          ))}
-        </Form.Select>
-      );
-    }
-    if (pk_value_str === "gvdbs_cfg_json") {
-      return (
-        <ApiSettingsGVDBsCfg
-          valueStr={value_str}
-          onChange={(newValueStr) => onChange(newValueStr)}
-        />
-      );
-    }
-
     return (
-      <Form.Control
-        as="textarea"
-        value={value_str}
-        key={key}
-        onChange={(e) => onChange(e.target.value)}
-        rows={3}
-        autoComplete="off"
-        isInvalid={isInvalid}
-      ></Form.Control>
+      <ApiSettingsValue onChange={onChange} useStore={useStore} col={col} />
     );
   }
-
   if (cellType === "groupadmin_user_password") {
     return (
       <>

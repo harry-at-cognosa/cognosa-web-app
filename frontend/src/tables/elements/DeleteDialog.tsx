@@ -24,8 +24,12 @@ export default function DeleteDialog({ useStore }: Props) {
           <Table bordered key={col + "__col_table"}>
             <tbody>
               <tr key={col + "__col_name"}>
-                <th>
-                  <ColumnDisplayName data={data} col={col}></ColumnDisplayName>:
+                <th className="bg-tc-100">
+                  <ColumnDisplayName
+                    nameType="dialog"
+                    data={data}
+                    col={col}
+                  ></ColumnDisplayName>
                 </th>
               </tr>
               <tr key={col + "__col_value"}>

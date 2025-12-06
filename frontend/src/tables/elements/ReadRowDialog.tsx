@@ -13,7 +13,8 @@ export default function ReadRowDialog({ useStore }: Props) {
   const { data, readRow, setReadRow } = tableStore;
   if (!data) return null;
   if (!readRow) return null;
-  const { read__visible_columns } = data.table_options;
+  const { read__visible_columns, view__visible_columns } = data.table_options;
+  const visible_columns = view__visible_columns || read__visible_columns;
   const handleClose = () => setReadRow(null);
   return (
     <Modal show={Boolean(readRow)} onHide={handleClose} size="lg">
@@ -24,12 +25,16 @@ export default function ReadRowDialog({ useStore }: Props) {
         </div>
       </Modal.Header>
       <Modal.Body>
-        {read__visible_columns.map((col) => (
+        {visible_columns.map((col) => (
           <Table bordered key={col + "__col_table"}>
             <tbody>
               <tr key={col + "__col_name"}>
-                <th>
-                  <ColumnDisplayName data={data} col={col}></ColumnDisplayName>:
+                <th className="bg-tc-100">
+                  <ColumnDisplayName
+                    nameType="dialog"
+                    data={data}
+                    col={col}
+                  ></ColumnDisplayName>
                 </th>
               </tr>
               <tr key={col + "__col_value"}>

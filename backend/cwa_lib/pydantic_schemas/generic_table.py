@@ -22,6 +22,7 @@ class TableOptions(BaseModel):
     pk: str
     read__visible_columns: list[str] = []  # column sequence in table view
     read__hide_on_false: list[str] = []  # table view: hide value if false
+    view__visible_columns: list[str] | None = None  # column sequence in row view. Same if not specified.
     create__ask_columns: list[str] = []  # on button Add, ask this column names values
     update__ask_columns: list[str] = []  # on button Update, ask this column names values
     delete__ask_columns: list[str] = []  # on button Delete, ask this column names values
@@ -34,6 +35,8 @@ class TableOptions(BaseModel):
     select_limit: list[int] = [5, 10, 20]
     # allow export
     export: list[Literal['xlsx-current', 'json-current']] = []
+    export_columns: list[str] | None = None
+    export_columns_display: list[str] | None = None
 
 
 class TableQuery(BaseModel):

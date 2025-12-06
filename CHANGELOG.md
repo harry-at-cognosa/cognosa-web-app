@@ -1,4 +1,4 @@
-## [0.16b] (2025-12-04)
+## [0.16c] (2025-12-06)
 
 Need to upgrade db:
 `cd backend`
@@ -21,6 +21,9 @@ Need to upgrade db:
 4. Added `api_settings` -> `gvdbs_cfg_json` option.
    This will be default value for `Queries` page -> `Document Collection` options.
    If not specified, will be filled to defaults on server start.
+
+5. Added `GroupAdmin` -> `Queries` page.
+   Similar to `SuperUser` -> `Doc Tasks` page, but with some restrictions.
 
 ## [0.15f] (2025-11-30)
 

@@ -6,7 +6,6 @@ from common.helpers import utcnow
 from common.sql_db_async import async_get_session, async_get_user_db, AsyncSession
 from common.sql_models import User
 from common.sql_models.api_users import User
-from cwa_lib.pydantic_schemas.generic_table import SelectOption
 from cwa_lib.pydantic_schemas.user import UserCreate
 from cwa_lib.users import get_user_manager
 
@@ -28,13 +27,6 @@ class ApiUsersTable:
         result = await self.session.execute(select(User).where(User.deleted == 0).order_by(User.user_id))
         return result.scalars().all()
     
-    async def get_all_not_deleted_as_select_options(self) -> list[SelectOption]:
-        """Get e.g. list[SelectOption(name='1: User1', value=1), ...]"""
-        return [
-            SelectOption(name=f"{api_user.user_id}: {api_user.user_name}", value=api_user.user_id) 
-            for api_user in (await self.get_all_not_deleted())
-        ]
-
     @staticmethod
     async def create_user(
         user_id: int | None,

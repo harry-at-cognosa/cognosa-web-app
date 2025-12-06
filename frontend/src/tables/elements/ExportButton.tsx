@@ -39,18 +39,30 @@ export default function ExportButton({ useStore, row }: Props) {
     const data = tableStore.data;
     if (!data) return;
     const columns: ExcelExportColumnDefinition[] = [];
-    for (const col of data.table_options.read__visible_columns) {
-      columns.push({
-        key: col,
-        header: data.columns[col].display || col,
-      });
+    if (data.table_options.export_columns) {
+      for (const [col_index, col] of Object.entries(
+        data.table_options.export_columns
+      )) {
+        const ecd = data.table_options.export_columns_display;
+        const header = (ecd && ecd[Number(col_index)]) || col;
+        columns.push({ key: col, header });
+      }
+    } else {
+      for (const col of data.table_options.read__visible_columns) {
+        columns.push({
+          key: col,
+          header: data.columns[col]?.display || col,
+        });
+      }
     }
+
     exportToExcel(row ? [row] : data.rows, {
       fileName: getFilename(tableStore.title, "xlsx"),
       sheetName: tableStore.title,
       columns,
     });
   };
+
   const handleExportJSON = () => {
     const data = tableStore.data;
     if (!data) return;
@@ -58,6 +70,7 @@ export default function ExportButton({ useStore, row }: Props) {
       fileName: getFilename(tableStore.title, "json"),
       indent: 2,
       sortKeys: true,
+      onlyKeys: data.table_options.export_columns,
     });
   };
   return (

@@ -37,11 +37,22 @@ class GVDBsCfgJSON:
         self.search_type: SEARCH_TYPES = search_type
         self.search_kwargs = search_kwargs
     
-    def as_dict(self):
+    def as_dict(self) -> dict:
         return {
             'search_type': self.search_type,
             'search_kwargs': self.search_kwargs
         }
+    
+    def to_short_str(self) -> str:
+        k = str(self.search_kwargs.get('k'))
+        fetch_k = str(self.search_kwargs.get('fetch_k'))
+        lambda_mult = str(self.search_kwargs.get('lambda_mult'))
+        score_threshold = str(self.search_kwargs.get('score_threshold'))
+        if self.search_type == 'similarity':
+            return "SIM: " + k
+        if self.search_type == 'mmr':
+            return "MMR: " + k + "/" + fetch_k + "/" + lambda_mult
+        return "SST: " + k + "/" + score_threshold
 
     @staticmethod
     def from_dict(gvdbs_cfg_json: str | dict):
