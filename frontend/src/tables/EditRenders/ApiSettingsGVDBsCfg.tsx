@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import GVDBsCfg from "../../components/GVDBsCfg/GVDBsCfg";
 import {
   defaultGVDBsCfgState,
+  useDocTasksGVDBsCfgStore,
   useTempGVDBsCfgStore,
   type SearchKwargsType,
 } from "../../components/GVDBsCfg/stores";
@@ -14,6 +15,7 @@ interface Props {
 export default function ApiSettingsGVDBsCfg({ valueStr, onChange }: Props) {
   const [loaded, setLoaded] = useState(false);
   const tempStore = useTempGVDBsCfgStore();
+  const cfgStore = useDocTasksGVDBsCfgStore();
   const valueObj = JSON.parse(valueStr);
   useEffect(() => {
     if (loaded) return;
@@ -33,6 +35,7 @@ export default function ApiSettingsGVDBsCfg({ valueStr, onChange }: Props) {
       search_type: tempStore.search_type,
       search_kwargs: tempStore.search_kwargs,
     });
+    cfgStore.setDefaultValues();
     onChange(newValueStr);
   }, [loaded, tempStore.search_type, tempStore.search_kwargs]);
   if (!loaded) return null;

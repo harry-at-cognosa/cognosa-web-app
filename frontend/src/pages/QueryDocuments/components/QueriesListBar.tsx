@@ -7,13 +7,11 @@ import type { DocTasksShortQuery } from "../models/docTasksShortQuery";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import { Search } from "react-bootstrap-icons";
-import { useDocTasksGVDBsCfgStore } from "../../../components/GVDBsCfg/stores";
 
 function QueriesListBar() {
   const queryStore = useQueryDocumentsStore();
   const queriesStore = useDocTasksShortStore();
   const currentStore = useDocTasksCurrentStore();
-  const gvdbsCfgStore = useDocTasksGVDBsCfgStore();
 
   useEffect(() => {
     if (!queriesStore.needReload) return;
@@ -46,7 +44,6 @@ function QueriesListBar() {
           queryStore.setOpUUID("");
           queryStore.stopPolling();
           currentStore.setNewQuery();
-          gvdbsCfgStore.setDefaultValues();
         }}
       >
         <Search /> &nbsp; New Query

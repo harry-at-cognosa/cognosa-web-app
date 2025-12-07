@@ -1,11 +1,18 @@
 import { create } from "zustand";
 
+interface Loaded {
+  isLoaded: boolean;
+  setIsLoaded: (isLoaded: boolean) => void;
+}
+
 export type SearchKwargsType = {
   k: number;
   fetch_k: number;
   lambda_mult: number;
   score_threshold: number;
 };
+
+const allowedSearchTypes = ["similarity", "mmr", "similarity_score_threshold"];
 
 export type SearchType = "similarity" | "mmr" | "similarity_score_threshold";
 
@@ -45,31 +52,31 @@ export const defaultGVDBsCfgState: DocTasksGVDBsCfgState = {
 
 export type TempGVDBsCfgStore = TempGVDBsCfgState & Actions;
 
-export const useTempGVDBsCfgStore = create<TempGVDBsCfgState & Actions>(
-  (set) => ({
-    search_type: defaultGVDBsCfgState.search_type,
-    search_kwargs: { ...defaultGVDBsCfgState.search_kwargs },
-    search_type_name: [
-      ["similarity", "Similarity"],
-      ["mmr", "MMR"],
-      ["similarity_score_threshold", "Similarity Score Threshold"],
-    ],
-    setSearchType: (type) => set({ search_type: type }),
-    setSearchKwargs: (kwargs) => set({ search_kwargs: kwargs }),
-    setKwargsField: (field, value) =>
-      set((state) => ({
-        search_kwargs: { ...state.search_kwargs, [field]: value },
-      })),
-  })
-);
+export const useTempGVDBsCfgStore = create<TempGVDBsCfgStore>((set) => ({
+  search_type: defaultGVDBsCfgState.search_type,
+  search_kwargs: { ...defaultGVDBsCfgState.search_kwargs },
+  search_type_name: [
+    ["similarity", "Similarity"],
+    ["mmr", "MMR"],
+    ["similarity_score_threshold", "Similarity Score Threshold"],
+  ],
+  setSearchType: (type) => set({ search_type: type }),
+  setSearchKwargs: (kwargs) => set({ search_kwargs: kwargs }),
+  setKwargsField: (field, value) =>
+    set((state) => ({
+      search_kwargs: { ...state.search_kwargs, [field]: value },
+    })),
+}));
 
 export type DocTasksGVDBsCfgStore = DocTasksGVDBsCfgState &
   Actions &
   ActionsFromData;
 
 export const useDocTasksGVDBsCfgStore = create<
-  DocTasksGVDBsCfgState & Actions & ActionsFromData
->((set) => ({
+  Loaded & DocTasksGVDBsCfgState & Actions & ActionsFromData
+>((set, get) => ({
+  isLoaded: false,
+  setIsLoaded: (isLoaded: boolean) => set({ isLoaded }),
   search_type: defaultGVDBsCfgState.search_type,
   search_kwargs: { ...defaultGVDBsCfgState.search_kwargs },
   setSearchType: (type) => set({ search_type: type }),
@@ -82,21 +89,20 @@ export const useDocTasksGVDBsCfgStore = create<
     set({
       search_type: defaultGVDBsCfgState.search_type,
       search_kwargs: { ...defaultGVDBsCfgState.search_kwargs },
+      isLoaded: true,
     });
   },
   setFromData: (gvdbs_cfg_json: string) => {
-    let search_type: SearchType = defaultGVDBsCfgState.search_type;
-    let search_kwargs: SearchKwargsType = {
-      ...defaultGVDBsCfgState.search_kwargs,
-    };
+    let search_type: SearchType = get().search_type;
+    let search_kwargs: SearchKwargsType = { ...get().search_kwargs };
     try {
       const gvdbs_cfg_obj: DocTasksGVDBsCfgState = JSON.parse(gvdbs_cfg_json);
-      if (!gvdbs_cfg_obj.search_type) throw "Wrong search type";
+      if (!allowedSearchTypes.includes(gvdbs_cfg_obj.search_type))
+        throw "Wrong search type";
       search_type = gvdbs_cfg_obj.search_type;
-      search_kwargs = { ...gvdbs_cfg_obj.search_kwargs };
-    } catch {
-      search_type = defaultGVDBsCfgState.search_type;
-      search_kwargs = { ...defaultGVDBsCfgState.search_kwargs };
+      search_kwargs = { ...search_kwargs, ...gvdbs_cfg_obj.search_kwargs };
+    } catch (e) {
+      console.log(e);
     } finally {
       set({ search_type: search_type, search_kwargs: { ...search_kwargs } });
     }

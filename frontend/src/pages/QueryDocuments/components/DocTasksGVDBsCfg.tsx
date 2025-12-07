@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
-import { CheckCircleFill, GearFill } from "react-bootstrap-icons";
+import { ArrowRepeat, CheckCircleFill, GearFill } from "react-bootstrap-icons";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import {
   useDocTasksGVDBsCfgStore,
@@ -44,6 +44,19 @@ export default function DocTasksGVDBsCfg() {
       >
         <GearFill size={"20px"}></GearFill>&nbsp;
         {getGVDBsCfgShortName({ cfgStore })}
+      </Button>
+      <Button
+        variant="outline-secondary"
+        className="fw-bold btn-tc-300-400"
+        style={{
+          color: "black",
+        }}
+        onClick={() => {
+          cfgStore.setDefaultValues();
+        }}
+        disabled={current.gvdbs_id === -1}
+      >
+        <ArrowRepeat size="20px" style={{ marginBottom: "3px" }} /> Reset
       </Button>
 
       <Modal show={show} onHide={handleCancel}>

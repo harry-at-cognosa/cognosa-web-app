@@ -1,4 +1,4 @@
-## [0.16c] (2025-12-06)
+## [0.16d] (2025-12-07)
 
 Need to upgrade db:
 `cd backend`
@@ -24,6 +24,13 @@ Need to upgrade db:
 
 5. Added `GroupAdmin` -> `Queries` page.
    Similar to `SuperUser` -> `Doc Tasks` page, but with some restrictions.
+
+6. `Query Documents` -> `Queries` page:
+   Added `Search Option` -> `Reset` button. It will reset to defaults.
+   Changed `Search Option` behaviour:
+   On first load, it will set to defaults.
+   If user clicks `New Query`, it will stay the same as previous query.
+   If user clicks on history query, it will load values from history query.
 
 ## [0.15f] (2025-11-30)
 

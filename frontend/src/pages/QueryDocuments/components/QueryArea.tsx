@@ -135,15 +135,6 @@ function QueryArea() {
     return () => queryStore.stopPolling();
   }, []);
 
-  useEffect(() => {
-    if (!docTaskOptionsStore.needReload) return;
-    async function fetchDocTaskOptions() {
-      await docTaskOptionsStore.fetchData();
-    }
-    fetchDocTaskOptions();
-  }, [docTaskOptionsStore.needReload]);
-  useEffect(() => docTaskOptionsStore.setNeedReload(true), []);
-
   return (
     <div className="p-3 border-bottom bg-light">
       <QuerySelectVDB />
