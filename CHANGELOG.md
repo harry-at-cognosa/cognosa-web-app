@@ -1,3 +1,14 @@
+## [0.17a] (2025-12-10)
+
+1. Added additional spinner while first loading of React libraries.
+
+2. Using log rotation for docker compose containers:
+   PostgreSQL, nginx, qdrant.
+
+3. Added `release/.../update_ssl_cert.sh`
+   Run this script on EC2 instance to update Let's Encrypt SSL certificate manually.
+   SSL certificates are valid for 3 months.
+
 ## [0.16d] (2025-12-07)
 
 Need to upgrade db:

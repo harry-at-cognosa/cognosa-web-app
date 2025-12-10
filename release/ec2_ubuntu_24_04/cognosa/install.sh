@@ -45,6 +45,8 @@ sudo docker compose down
 cp nginx_default.conf ./nginx/conf.d/default.conf
 ###
 
+chmod +x update_ssl_cert.sh
+
 sudo docker compose up -d --build
 sudo docker compose run --rm app python init_sql_db.py
 
