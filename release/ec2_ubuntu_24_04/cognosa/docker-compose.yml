@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     volumes:
       - ./pg_db_data:/var/lib/postgresql/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # --- Qdrant Vector DB ---
   qdrant:
@@ -20,6 +25,11 @@ services:
       - "6333:6333"
     volumes:
       - ./qdrantdb:/qdrant/storage
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # --- FastAPI App ---
   app:
@@ -55,6 +65,11 @@ services:
       - nginx_certs:/etc/letsencrypt # persistent certs
       - nginx_vhost:/var/www/certbot # webroot for certbot challenges
       - ./nginx/log:/var/log/nginx
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # --- Certbot (used to obtain and renew certs) ---
   certbot:
