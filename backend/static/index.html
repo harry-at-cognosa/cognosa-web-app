@@ -8,6 +8,28 @@
     <meta name="theme-color" content="#ffffff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cognosa WebApp</title>
+    <style>
+      #preloaded-spinner-outer {
+        background-color: white;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #preloaded-spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid #f0f0f0;
+        border-top-color: #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
     <script type="module" crossorigin src="/app/assets/index-CBJyvrfL.js"></script>
     <link rel="modulepreload" crossorigin href="/app/assets/highlight.js-DMH40lvY.js">
     <link rel="modulepreload" crossorigin href="/app/assets/vendor-CI_Mldmz.js">
@@ -17,6 +39,10 @@
     <link rel="stylesheet" crossorigin href="/app/assets/index-BegMhMKH.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="preloaded-spinner-outer">
+        <div id="preloaded-spinner"></div>
+      </div>
+    </div>
   </body>
 </html>
