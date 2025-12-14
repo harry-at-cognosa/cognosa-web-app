@@ -20,14 +20,12 @@ from cwa_lib.routers.su_manage_vdbs import router__su_manage_vdbs
 from cwa_lib.routers.su_server_status import router__su_server_status
 from cwa_lib.routers.misc import router__misc
 from cwa_lib.routers.webapp_options import router__webapp_options
-from cwa_lib.routers.login_by_username import router__login_by_username
 
 api_router = APIRouter(prefix=API_URL_PREFIX)
 
 # Auth & user routes from fastapi-users
 api_router.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["Auth"])
 api_router.include_router(fastapi_users.get_register_router(UserRead, UserCreate), prefix="/auth", tags=["Auth"])
-api_router.include_router(router__login_by_username, tags=["Auth"])
 api_router.include_router(router__users, tags=["Users"])
 
 api_router.include_router(router__doc_tasks)

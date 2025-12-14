@@ -3,11 +3,11 @@ from typing import Sequence
 from fastapi_users.exceptions import UserAlreadyExists
 from sqlalchemy import select
 from common.helpers import utcnow
-from common.sql_db_async import async_get_session, async_get_user_db, AsyncSession
+from common.sql_db_async import async_get_session, AsyncSession
 from common.sql_models import User
 from common.sql_models.api_users import User
 from cwa_lib.pydantic_schemas.user import UserCreate
-from cwa_lib.users import get_user_manager
+from cwa_lib.users import get_user_manager, async_get_user_db
 
 
 get_async_session_context = contextlib.asynccontextmanager(async_get_session)

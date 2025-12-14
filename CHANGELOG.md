@@ -1,4 +1,4 @@
-## [0.17a] (2025-12-10)
+## [0.17b] (2025-12-14)
 
 1. Added additional spinner while first loading of React libraries.
 
@@ -8,6 +8,8 @@
 3. Added `release/.../update_ssl_cert.sh`
    Run this script on EC2 instance to update Let's Encrypt SSL certificate manually.
    SSL certificates are valid for 3 months.
+
+4. Fixed and refactored auth by username. Now it works in `/docs` too.
 
 ## [0.16d] (2025-12-07)
 

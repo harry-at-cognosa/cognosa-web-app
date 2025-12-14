@@ -128,9 +128,7 @@
         body.append("password", password);
 
         // Choose login path
-        const apiPath = username.includes("@")
-          ? "/auth/jwt/login"
-          : "/auth/jwt/login_by_username";
+        const apiPath = "/auth/jwt/login";
 
         try {
           const res = await fetch(`${API_URL}${apiPath}`, {

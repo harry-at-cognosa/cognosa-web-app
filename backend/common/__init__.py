@@ -20,8 +20,5 @@ LOG_SQLALCHEMY_RT = os.getenv("LOG_SQLALCHEMY_RT", 'NOTSET')
 RT_VDB_PROCESS_NUM = int(os.getenv("RT_VDB_PROCESS_NUM", 1))
 RT_VDB_EMB_MODELS_PRELOAD = split2list(os.getenv("RT_VDB_EMB_MODELS_PRELOAD", ''), ',', str)
 
-import httpx
-http_client__login_by_username = httpx.AsyncClient(base_url='http://127.0.0.1:8000')
-
 from .async_log import AsyncLogger
 log = AsyncLogger()
