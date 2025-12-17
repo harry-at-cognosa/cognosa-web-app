@@ -27,7 +27,7 @@ async def app_assets(filename: str):
 @app.get("/app/{fullpath:path}" , tags=["App"], include_in_schema=False)
 async def app_index(request: Request, user: User | None = Depends(current_active_user_or_none)):
     url_path = request.url.path.lstrip('/')
-    if url_path.startswith('assets/'):
+    if url_path.startswith('assets/') or url_path.endswith('manifest.webmanifest'):
         file_path = os.path.join("static", url_path.replace('app/', '').lstrip('/'))
         if os.path.isfile(file_path):
             return FileResponse(file_path)
