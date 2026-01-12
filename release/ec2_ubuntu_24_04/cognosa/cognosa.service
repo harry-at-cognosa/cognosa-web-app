@@ -6,7 +6,7 @@ Requires=docker.service
 [Service]
 Type=simple
 WorkingDirectory=/home/ubuntu/cognosa
-ExecStart=/usr/bin/docker compose -f /home/ubuntu/cognosa/docker-compose.yml up --build
+ExecStart=/usr/bin/docker compose -f /home/ubuntu/cognosa/docker-compose.yml up
 ExecStop=/usr/bin/docker compose -f /home/ubuntu/cognosa/docker-compose.yml down
 TimeoutStartSec=0
 Restart=always
