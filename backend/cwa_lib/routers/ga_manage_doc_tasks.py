@@ -18,7 +18,7 @@ async def ga_manage_doc_tasks__query(
     ):
     if not user.is_groupadmin:
         raise HTTPException(status_code=404, detail="Not found")
-    result = await GaManageDocTasksTableRead(session, payload, deleted=0).query()
+    result = await GaManageDocTasksTableRead(session, payload, cur_group_id=user.group_id, deleted=0).query()
     return result
 
 @router__ga_manage_doc_tasks.delete("/ga/manage_doc_tasks/{doc_task_id:int}", response_model=TableDeleteRowResult)

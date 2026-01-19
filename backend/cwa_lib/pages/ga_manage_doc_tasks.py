@@ -58,7 +58,7 @@ class GaManageDocTasksTableRead(GenericTableRead):
     qc_to_user_group = {'user_id': ('add_values',)}
 
     def _get_where_clause(self):
-        where_clause = DocTasks.doc_task_id > -1
+        where_clause = DocTasks.group_id == int(self.kwargs['cur_group_id'])
         if (deleted := self.kwargs.get('deleted', 0)) is not None:
             where_clause &= DocTasks.deleted == deleted
         return where_clause

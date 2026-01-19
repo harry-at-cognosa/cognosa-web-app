@@ -1,3 +1,10 @@
+## [0.18b] (2026-01-18)
+
+Bug fix:
+
+1. `GroupAdmin` -> `Queries` page:
+   Now it shows only queries for current user's group_id.
+
 ## [0.18a] (2026-01-18)
 
 Document Collection Retrieval Parameters changes:
