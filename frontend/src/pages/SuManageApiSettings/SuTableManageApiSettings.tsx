@@ -2,7 +2,7 @@ import UniversalTable from "../../tables/UniversalTable";
 import { createTableStore } from "../../tables/TableStoreFactory";
 import { useWebAppOptionsStore } from "../../stores/useWebAppOptionsStore";
 import { useDocTaskOptionsStore } from "../QueryDocuments/stores/useDocTaskOptionsStore";
-import { useDocTasksGVDBsCfgStore } from "../../components/GVDBsCfg/stores";
+import { useDefaultGVDBsRetrParamsStore } from "../../components/GVDBsRetrParams/useDefaultGVDBsRetrParamsStore";
 
 const useTableSuManageApiSettingsStore = createTableStore({
   title: "Manage Api Settings",
@@ -16,7 +16,7 @@ const useTableSuManageApiSettingsStore = createTableStore({
     }
     if (name === "gvdbs_cfg_json") {
       useDocTaskOptionsStore.getState().setNeedReload(true);
-      useDocTasksGVDBsCfgStore.getState().setDefaultValues();
+      useDefaultGVDBsRetrParamsStore.getState().setIsLoaded(false);
     }
   },
 });

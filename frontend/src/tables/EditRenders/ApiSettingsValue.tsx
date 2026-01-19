@@ -1,6 +1,6 @@
 import { Form } from "react-bootstrap";
 import type { createTableStore, TableCellValue } from "../TableStoreFactory";
-import ApiSettingsGVDBsCfg from "./ApiSettingsGVDBsCfg";
+import ApiSettingsGVDBDefRetrParams from "./ApiSettingsGVDBDefRetrParams";
 import getColor from "../../api/getColor";
 
 interface Props {
@@ -45,9 +45,9 @@ export default function ApiSettingsValue({ onChange, useStore, col }: Props) {
       </Form.Select>
     );
   }
-  if (pk_value_str === "gvdbs_cfg_json") {
+  if (pk_value_str === "gvdbs_def_retr_params") {
     return (
-      <ApiSettingsGVDBsCfg
+      <ApiSettingsGVDBDefRetrParams
         valueStr={value_str}
         onChange={(newValueStr) => onChange(newValueStr)}
       />

@@ -1,9 +1,6 @@
 import axiosClient from "../../../api/axiosClient";
 import { createResettableStore } from "../../../api/createResettableStore";
-import {
-  defaultGVDBsCfgState,
-  type DocTasksGVDBsCfgState,
-} from "../../../components/GVDBsCfg/stores";
+import type { GVDBsDefRetrParams } from "../../../components/GVDBsRetrParams/types";
 
 export type GroupContexts = {
   gc_id: number;
@@ -33,7 +30,7 @@ export interface DocTaskOptionsResponse {
   group_contexts: GroupContexts[];
   group_llms: GroupLLMs[];
   group_vdbs: GroupVDBs[];
-  gvdbs_cfg_defaults: DocTasksGVDBsCfgState;
+  gvdbs_def_retr_params: GVDBsDefRetrParams | null;
 }
 
 interface DocTaskOptionsState {
@@ -51,15 +48,14 @@ export const useDocTaskOptionsStore =
       group_contexts: [],
       group_llms: [],
       group_vdbs: [],
-      gvdbs_cfg_defaults: defaultGVDBsCfgState,
+      gvdbs_def_retr_params: null,
     },
     gvdbs_id__row: {},
     gllms_id__row: {},
     fetchData: async () => {
       try {
-        const response = await axiosClient.get<DocTaskOptionsResponse>(
-          "/doc_tasks/options"
-        );
+        const response =
+          await axiosClient.get<DocTaskOptionsResponse>("/doc_tasks/options");
         const data = response.data;
         // sort group_vdbs by (is success?, gvdbs_seqn)
         data.group_vdbs.sort((a, b) => {
@@ -82,7 +78,7 @@ export const useDocTaskOptionsStore =
             acc[obj.gvdbs_id] = obj;
             return acc;
           },
-          {}
+          {},
         );
         // sort group_llms by (is success?, gllms_seqn)
         data.group_llms.sort((a, b) => {
@@ -98,14 +94,8 @@ export const useDocTaskOptionsStore =
             acc[obj.gllms_id] = obj;
             return acc;
           },
-          {}
+          {},
         );
-        const gvdbs_cfg_defaults = data.gvdbs_cfg_defaults;
-        defaultGVDBsCfgState.search_type = gvdbs_cfg_defaults.search_type;
-        defaultGVDBsCfgState.search_kwargs = {
-          ...defaultGVDBsCfgState.search_kwargs,
-          ...gvdbs_cfg_defaults.search_kwargs,
-        };
         set({ data, gvdbs_id__row, gllms_id__row, needReload: false });
       } catch {
         alert("Error during fetching /doc_tasks/options");

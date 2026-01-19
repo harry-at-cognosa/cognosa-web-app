@@ -7,18 +7,20 @@ import type { DocTasksShortQuery } from "../models/docTasksShortQuery";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import { Search } from "react-bootstrap-icons";
+import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 
 function QueriesListBar() {
   const queryStore = useQueryDocumentsStore();
   const queriesStore = useDocTasksShortStore();
   const currentStore = useDocTasksCurrentStore();
+  const gvdbsRetrParamsStore = useDocTasksGVDBsRetrParamsStore();
 
   useEffect(() => {
     if (!queriesStore.needReload) return;
     async function fetchQueries() {
       try {
         const response = await axiosClient.post<DocTasksShortQuery>(
-          "/doc_tasks/query_short"
+          "/doc_tasks/query_short",
         );
         const rows = response.data.rows;
         queriesStore.setRows(rows);
@@ -43,6 +45,7 @@ function QueriesListBar() {
         onClick={() => {
           queryStore.setOpUUID("");
           queryStore.stopPolling();
+          gvdbsRetrParamsStore.copyFromDefault();
           currentStore.setNewQuery();
         }}
       >

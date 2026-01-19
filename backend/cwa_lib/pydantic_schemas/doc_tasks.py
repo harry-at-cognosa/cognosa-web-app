@@ -1,7 +1,9 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import Sequence
-from common.enums.gvdbs_cfg_json import SEARCH_TYPES
+from common.features.gvdbs_retr_params import (
+    TYPE__SEARCH_TYPE, TYPE__SEARCH_KWARGS__SIM, TYPE__SEARCH_KWARGS__MMR, TYPE__SEARCH_KWARGS__SST
+)
 
 class DocTaskCreate(BaseModel):
     doc_task_id: int | None
@@ -95,12 +97,14 @@ class DocTasksOptionsGroupVDBsRow(BaseModel):
         from_attributes = True
 
 
-class GVDBsCfgDefaults(BaseModel):
-    search_type: SEARCH_TYPES
-    search_kwargs: dict
+class DocTasksOptionsGVDBsDefRetrParams(BaseModel):
+    search_type: TYPE__SEARCH_TYPE
+    search_kwargs__similarity: TYPE__SEARCH_KWARGS__SIM
+    search_kwargs__mmr: TYPE__SEARCH_KWARGS__MMR
+    search_kwargs__similarity_score_threshold: TYPE__SEARCH_KWARGS__SST
 
 class DocTaskOptionsResult(BaseModel):
     group_contexts: Sequence[DocTasksOptionsGroupContextsRow]
     group_llms: Sequence[DocTasksOptionsGroupLLMsRow]
     group_vdbs: Sequence[DocTasksOptionsGroupVDBsRow]
-    gvdbs_cfg_defaults: GVDBsCfgDefaults
+    gvdbs_def_retr_params: DocTasksOptionsGVDBsDefRetrParams

@@ -5,14 +5,16 @@ import { useTopNavBarTitle } from "../../hooks/useTopNavBarTitle";
 import styles from "./QueryDocumentsPage.module.css";
 import clsx from "clsx";
 import { useEffect } from "react";
-import { useDocTasksGVDBsCfgStore } from "../../components/GVDBsCfg/stores";
 import { useDocTaskOptionsStore } from "./stores/useDocTaskOptionsStore";
 import CenteredSpinner from "../../components/CenteredSpinner";
+import { useDefaultGVDBsRetrParamsStore } from "../../components/GVDBsRetrParams/useDefaultGVDBsRetrParamsStore";
+import { useDocTasksGVDBsRetrParamsStore } from "../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 
 export default function QueryDocumentsPage() {
   useTopNavBarTitle("Query Documents");
-  const gvdbsCfgStore = useDocTasksGVDBsCfgStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
+  const defGVDBsRetrParamsStore = useDefaultGVDBsRetrParamsStore();
+  const curGVDBsRetrParamsStore = useDocTasksGVDBsRetrParamsStore();
 
   useEffect(() => {
     if (!docTaskOptionsStore.needReload) return;
@@ -25,10 +27,13 @@ export default function QueryDocumentsPage() {
 
   useEffect(() => {
     if (docTaskOptionsStore.needReload) return;
-    if (!gvdbsCfgStore.isLoaded) gvdbsCfgStore.setDefaultValues();
-  }, [docTaskOptionsStore.needReload, gvdbsCfgStore.isLoaded]);
+    const newData = docTaskOptionsStore.data.gvdbs_def_retr_params;
+    if (!defGVDBsRetrParamsStore.isLoaded && newData)
+      defGVDBsRetrParamsStore.setData(newData);
+    else curGVDBsRetrParamsStore.copyFromDefault();
+  }, [docTaskOptionsStore.needReload, defGVDBsRetrParamsStore.isLoaded]);
 
-  if (!gvdbsCfgStore.isLoaded) return <CenteredSpinner />;
+  if (!defGVDBsRetrParamsStore.isLoaded) return <CenteredSpinner />;
 
   return (
     <div className={styles.wrapper}>

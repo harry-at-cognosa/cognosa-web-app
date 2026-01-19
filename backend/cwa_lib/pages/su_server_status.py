@@ -1,5 +1,4 @@
 import json
-from time import time
 from traceback import format_exc
 from common import log
 from common.watchdogs import get_outdated_status

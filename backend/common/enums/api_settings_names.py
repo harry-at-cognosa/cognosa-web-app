@@ -6,7 +6,7 @@ class ApiSettingsNamesEnum(Enum):
     db_version = 'db_version'
     webapp_main_color = 'webapp_main_color'
     index_page = 'index_page'
-    gvdbs_cfg_json = 'gvdbs_cfg_json'
+    gvdbs_def_retr_params = 'gvdbs_def_retr_params'
 
 
 API_SETTINGS_NAMES_LIST: Final = [x.value for x in ApiSettingsNamesEnum]

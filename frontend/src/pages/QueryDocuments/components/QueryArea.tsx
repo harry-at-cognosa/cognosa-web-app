@@ -15,11 +15,11 @@ import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import ContextJSON from "./ContextJSON";
 import AskButton from "./AskButton";
 import CloneQueryButton from "./CloneQueryButton";
-import { useDocTasksGVDBsCfgStore } from "../../../components/GVDBsCfg/stores";
+import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 
 function QueryArea() {
   const queryStore = useQueryDocumentsStore();
-  const gvdbsCfgStore = useDocTasksGVDBsCfgStore();
+  const gvdbsRetrParamsStore = useDocTasksGVDBsRetrParamsStore();
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const docTasksShortStore = useDocTasksShortStore();
@@ -42,7 +42,7 @@ function QueryArea() {
     const gvdbs_row = docTaskOptionsStore.gvdbs_id__row[current.gvdbs_id];
     if (gvdbs_row.gvdbs_status === "danger") {
       alert(
-        `Document Collection "${gvdbs_row.gvdbs_name}" is not ready to use`
+        `Document Collection "${gvdbs_row.gvdbs_name}" is not ready to use`,
       );
       return;
     }
@@ -55,15 +55,17 @@ function QueryArea() {
       alert(`LLM "${gllms_row.gllms_name}" is not ready to use`);
       return;
     }
+    const gvdbs_cfg_json = gvdbsRetrParamsStore.getGVDBsRetrParamsDict();
+    if (!gvdbs_cfg_json) {
+      alert("No Document Search Options specified");
+      return;
+    }
     const query: DocTasksQuery = {
       doc_task_id: current.doc_task_id,
       short_name: current.short_name || "",
       input_text,
       gvdbs_id: current.gvdbs_id,
-      gvdbs_cfg_json: {
-        search_type: gvdbsCfgStore.search_type,
-        search_kwargs: gvdbsCfgStore.search_kwargs,
-      },
+      gvdbs_cfg_json,
       gllms_id: current.gllms_id,
       gc_id: current.gc_id,
       optional_text: current.optional_text || "",
@@ -78,12 +80,13 @@ function QueryArea() {
       queryStore.setOpUUID(opUUID);
       const response = await axiosClient.post<DocTasksResponse>(
         "/doc_tasks",
-        query
+        query,
       );
       if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
       const data = response.data;
       current.setFromServerResponse(data);
-      gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
+      gvdbsRetrParamsStore.copyFromDefault();
+      gvdbsRetrParamsStore.setFromDocTaskData(data.gvdbs_cfg_json);
       startPolling(opUUID);
       docTasksShortStore.setNeedReload(true);
     } catch {
@@ -102,12 +105,13 @@ function QueryArea() {
         const opUUID = generateUUID();
         queryStore.setOpUUID(opUUID);
         const response = await axiosClient.get<DocTasksResponse>(
-          `doc_tasks/${doc_task_id}`
+          `doc_tasks/${doc_task_id}`,
         );
         if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
         const data = response.data;
         current.setFromServerResponse(data);
-        gvdbsCfgStore.setFromData(data.gvdbs_cfg_json);
+        gvdbsRetrParamsStore.copyFromDefault();
+        gvdbsRetrParamsStore.setFromDocTaskData(data.gvdbs_cfg_json);
         // Continue polling until status becomes 6
         if (data.is_processing) {
           queryStore.setPollingTimeout(opUUID, startPolling);

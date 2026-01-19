@@ -1,3 +1,19 @@
+## [0.18a] (2026-01-18)
+
+Document Collection Retrieval Parameters changes:
+
+1.  It was in `api_settings` -> `gvdbs_cfg_json`,
+    now in `api_settings` -> `gvdbs_def_retr_params`.
+    (defaults are copied from previous value)
+
+2.  `SuperUsers` page - > `Api Settings` -> `gvdbs_def_retr_params`:
+    SIM / MMR / SST default parameters are saved separately.
+
+3.  `Query Documents` -> `Queries` page:
+    If user clicks on history query,
+    it will set one of SIM / MMR / SST parameters from history query, leaving others from default.
+    If user clicks on `New Query`, parameters will change to default.
+
 ## [0.17b] (2025-12-14)
 
 1. Added additional spinner while first loading of React libraries.

@@ -1,10 +1,9 @@
-import json
 from multiprocessing import Process, Queue, cpu_count
 from queue import Empty
 from time import time
 from traceback import format_exc
 from common import log, LOG_SQLALCHEMY_RT, RT_VDB_PROCESS_NUM
-from common.enums.gvdbs_cfg_json import GVDBsCfgJSON
+from common.features.gvdbs_retr_params import GVDBsRetrParams
 from common.helpers import utcnow
 from tasks_lib.entities.task_queue_msg import VDBDocTaskQueueMsg, VDBTaskExitMsg
 from common.sql_db_sync import Session, get_engine_sessionmaker
@@ -93,7 +92,7 @@ class VDBWorker(Process):
                             emb_obj=emb_models.get_by_name(msg.gvdbs_emb_model),
                             collection_name=msg.gvdbs_collection,
                             query_text=task.input_text,
-                            gvdbs_cfg_json=GVDBsCfgJSON.from_dict(task.gvdbs_cfg_json).as_dict()
+                            gvdbs_cfg_json=GVDBsRetrParams.from_dict(task.gvdbs_cfg_json).as_dict()
                         )
                         self.save_results_to_sql(
                             session=session,

@@ -3,7 +3,7 @@ from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models.doc_tasks import DocTasks
 from common.enums.doc_task_status import TaskStatus
-from common.enums.gvdbs_cfg_json import GVDBsCfgJSON
+from common.features.gvdbs_retr_params import GVDBsRetrParams
 from sqlalchemy import delete
 from cwa_lib.pydantic_schemas.generic_table import (
     ColumnType, TableOptions, TableDeleteRowResult
@@ -96,7 +96,7 @@ class GaManageDocTasksTableRead(GenericTableRead):
             try:
                 if row.gvdbs_id == -1:
                     return ''
-                return GVDBsCfgJSON.from_dict(row.gvdbs_cfg_json).to_short_str()
+                return GVDBsRetrParams.from_dict(row.gvdbs_cfg_json).to_short_str()
             except Exception:
                 return 'N/A'
         

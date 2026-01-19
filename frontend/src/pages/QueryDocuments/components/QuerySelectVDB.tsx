@@ -1,5 +1,5 @@
 import { Button, Form, InputGroup, Spinner } from "react-bootstrap";
-import DocTasksGVDBsCfg from "./DocTasksGVDBsCfg";
+import DocTasksGVDBsRetrParams from "./DocTasksGVDBsRetrParams";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import { useEffect } from "react";
@@ -85,7 +85,7 @@ export default function QuerySelectVDB() {
         </Form.Select>
       )}
 
-      <DocTasksGVDBsCfg></DocTasksGVDBsCfg>
+      <DocTasksGVDBsRetrParams></DocTasksGVDBsRetrParams>
     </InputGroup>
   );
 }
