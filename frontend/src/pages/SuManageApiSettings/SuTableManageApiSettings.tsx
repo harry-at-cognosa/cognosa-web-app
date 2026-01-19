@@ -14,7 +14,7 @@ const useTableSuManageApiSettingsStore = createTableStore({
     if (name === "webapp_main_color") {
       useWebAppOptionsStore.getState().setNeedReload(true);
     }
-    if (name === "gvdbs_cfg_json") {
+    if (name === "gvdbs_def_retr_params") {
       useDocTaskOptionsStore.getState().setNeedReload(true);
       useDefaultGVDBsRetrParamsStore.getState().setIsLoaded(false);
     }
