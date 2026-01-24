@@ -9,6 +9,7 @@ from cwa_lib.pydantic_schemas.generic_table import (
 )
 from cwa_lib.pages import GenericTableRead
 from cwa_lib.pydantic_schemas.su_manage_vdbs import SuManageVDBsRead, SuManageVDBsCreate, SuManageVDBsUpdate
+from cwa_lib.sql_tables.api_groups import ApiGroupsTable
 
 select__gvdbs_type = [SelectOption(name=value, value=value) for value in GVDBS_TYPE_VALUES]
 
@@ -21,15 +22,17 @@ su_manage_vdbs__query_columns = {
     'gvdbs_name': ColumnType(display='Name', type='string', default="New VDB"),
     'gvdbs_url': ColumnType(display='URL', type='string', default="qdrant_local"),
     'gvdbs_collection': ColumnType(display='Collection', type='string', default="New Collection"),
+    'gvdbs_retr_params': ColumnType(display='Retrieval Parameters', type='gvdbs_retr_params', default="{}"),
     'gvdbs_status': ColumnType(display='Status', type='gvdbs_status'),
 }
 gvdbs_edit_columns = [x for x in su_manage_vdbs__query_columns.keys() if (x not in ('gvdbs_id', 'gvdbs_status'))]
+gvdbs_create_columns = [x for x in gvdbs_edit_columns if (x not in ('gvdbs_retr_params'))]
 
 su_manage_vdbs__table_options = TableOptions(
     title='Group VDBs',
     pk='gvdbs_id',
     read__visible_columns=['gvdbs_id', ] + gvdbs_edit_columns + ['gvdbs_status'],
-    create__ask_columns=gvdbs_edit_columns,
+    create__ask_columns=gvdbs_create_columns,
     update__ask_columns=gvdbs_edit_columns,
     delete__ask_columns=['gvdbs_id', ] + gvdbs_edit_columns,
     order_by__allow=['gvdbs_id', ] + gvdbs_edit_columns
@@ -65,6 +68,10 @@ class SuManageVDBsTable:
         defaults = {col: su_manage_vdbs__query_columns[col].default 
                     for col in ('gvdbs_seqn', 'gvdbs_name')}
         
+        api_group = await ApiGroupsTable(self.session).get_group_by_group_id(data.group_id)
+        if not api_group:
+            return TableCreateRowResult(result='error', total_created=0, error_msg='No group found')
+        
         new_row = GroupVDBs(
             group_id=data.group_id,
             gvdbs_seqn=data.gvdbs_seqn if (data.gvdbs_seqn is not None) else defaults['gvdbs_seqn'],
@@ -73,6 +80,7 @@ class SuManageVDBsTable:
             gvdbs_url=data.gvdbs_url,
             gvdbs_collection=data.gvdbs_collection,
             gvdbs_emb_model="sentence-transformers/all-MiniLM-L6-v2",
+            gvdbs_retr_params=api_group.gvdbs_retr_params,
             gvdbs_status='danger',
             gvdbs_status_text='Not checked yet' if data.enabled else 'Disabled',
         )

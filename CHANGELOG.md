@@ -7,8 +7,12 @@
    Filled with copy of `api_groups`.`gvdbs_retr_params`, accordingly to `group_id`.
 
 2. `SuperUser` -> `Groups` page:
-   added editable: Retrieval Parameters for each api_group row.
+   added editable: Retrieval Parameters for each `api_group` row.
    Default for new groups: `api_settings` -> `gvdbs_def_retr_params` value.
+
+3. `SuperUser` -> `VDBs` page:
+   added editable: Retrieval Parameters for each `group_vdbs` row.
+   Default for new vdbs: `api_group`.`gvdbs_retr_params` value.
 
 ## [0.18b] (2026-01-18)
 
