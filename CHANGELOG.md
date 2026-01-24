@@ -1,3 +1,11 @@
+## [0.19a] (2026-01-24)
+
+1. Added new columns:
+   1.1. `api_groups`.`gvdbs_retr_params`
+   Filled with copy of `api_settings` -> `gvdbs_def_retr_params` value.
+   1.2. `group_vdbs`.`gvdbs_retr_params`
+   Filled with copy of `api_groups`.`gvdbs_retr_params`, accordingly to `group_id`.
+
 ## [0.18b] (2026-01-18)
 
 Bug fix:

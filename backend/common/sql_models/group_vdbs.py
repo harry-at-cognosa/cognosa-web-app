@@ -22,6 +22,7 @@ class GroupVDBs(Base):
     gvdbs_name: Mapped[str] = mapped_column(VARCHAR, nullable=False, server_default=text("'No database name'"))
     gvdbs_url: Mapped[str] = mapped_column(VARCHAR, nullable=False)
     gvdbs_collection: Mapped[str] = mapped_column(VARCHAR, nullable=False)
+    gvdbs_retr_params: Mapped[str] = mapped_column(VARCHAR, nullable=False)
     gvdbs_emb_model: Mapped[str] = mapped_column(VARCHAR, nullable=False)
     gvdbs_created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     # gvdbs_status = success / warning / danger

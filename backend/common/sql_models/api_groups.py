@@ -10,9 +10,10 @@ class ApiGroups(Base):
     
     # deleted INT DEFAULT 0
     deleted: Mapped[int] = mapped_column(Integer, index=True, nullable=False, server_default=text("0"))
-
     group_name: Mapped[str] = mapped_column(VARCHAR, nullable=False, server_default=text("'Undefined group'"))
+    gvdbs_retr_params: Mapped[str] = mapped_column(VARCHAR, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    
     api_users_id_list: Mapped[list["User"]] = relationship("User", back_populates="api_groups_id") # pyright: ignore[reportUndefinedVariable]
     group_contexts_id_list: Mapped[list["GroupContexts"]] = relationship(   # pyright: ignore[reportUndefinedVariable]
         "GroupContexts", back_populates="api_groups_id")
