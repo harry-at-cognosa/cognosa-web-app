@@ -7,7 +7,7 @@ interface Props {
   onChange: (valueStr: string) => void;
 }
 
-export default function ApiSettingsGVDBDefRetrParams({
+export default function EditCellGVDBDefRetrParams({
   valueStr,
   onChange,
 }: Props) {

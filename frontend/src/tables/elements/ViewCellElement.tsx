@@ -1,4 +1,5 @@
 import getColor from "../../api/getColor";
+import { getRetrParamsShortNameFromFullStr } from "../../components/GVDBsRetrParams/functions";
 import BooleanCheck from "../CellRenders/BooleanCheck";
 import { BusyCell } from "../CellRenders/BusyCell";
 import GaDocTasksAnswer from "../CellRenders/GaDocTasksAnswer";
@@ -155,6 +156,13 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
     return (
       <Td key={key} isBusy={isBusy}>
         <TextCell value={value} rows={7}></TextCell>
+      </Td>
+    );
+  }
+  if (cellType === "gvdbs_retr_params") {
+    return (
+      <Td key={key} isBusy={isBusy}>
+        <b>{getRetrParamsShortNameFromFullStr(value_str)}</b>
       </Td>
     );
   }

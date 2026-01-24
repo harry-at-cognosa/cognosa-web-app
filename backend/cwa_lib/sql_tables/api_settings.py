@@ -19,6 +19,11 @@ class ApiSettingsTable:
         result = await self.session.execute(query)
         rows = result.scalars().all()
         return {**empty_values, **{row.name: row.value for row in rows}}
+    
+    async def select_one(self, name: str) -> str:
+        query = select(ApiSettings).where(ApiSettings.name == name)
+        result = await self.session.execute(query)
+        return result.scalar_one().value
 
     @classmethod
     def prepare_default_values_at_start(cls):

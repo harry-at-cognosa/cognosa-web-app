@@ -1,7 +1,8 @@
-import { Form } from "react-bootstrap";
+import { Container, Form } from "react-bootstrap";
 import type { createTableStore, TableCellValue } from "../TableStoreFactory";
 import { Check, XCircle } from "react-bootstrap-icons";
 import ApiSettingsValue from "../EditRenders/ApiSettingsValue";
+import EditCellGVDBDefRetrParams from "../EditRenders/EditCellGVDBDefRetrParams";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -26,7 +27,7 @@ export default function EditCellElement({ useStore, col }: Props) {
   }
   const key = "edit_cell_element__" + col;
   const dummy_username = ["email", "user_name", "username", "user"].includes(
-    col
+    col,
   ) ? (
     <input
       type="text"
@@ -169,6 +170,15 @@ export default function EditCellElement({ useStore, col }: Props) {
       </>
     );
   }
-
+  if (cellType === "gvdbs_retr_params") {
+    return (
+      <Container style={{ padding: "20px" }}>
+        <EditCellGVDBDefRetrParams
+          valueStr={value_str}
+          onChange={(newValueStr) => onChange(newValueStr)}
+        />
+      </Container>
+    );
+  }
   return value?.toString();
 }

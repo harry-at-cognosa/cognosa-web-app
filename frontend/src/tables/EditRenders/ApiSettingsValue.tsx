@@ -1,6 +1,6 @@
 import { Form } from "react-bootstrap";
 import type { createTableStore, TableCellValue } from "../TableStoreFactory";
-import ApiSettingsGVDBDefRetrParams from "./ApiSettingsGVDBDefRetrParams";
+import EditCellGVDBDefRetrParams from "./EditCellGVDBDefRetrParams";
 import getColor from "../../api/getColor";
 
 interface Props {
@@ -47,7 +47,7 @@ export default function ApiSettingsValue({ onChange, useStore, col }: Props) {
   }
   if (pk_value_str === "gvdbs_def_retr_params") {
     return (
-      <ApiSettingsGVDBDefRetrParams
+      <EditCellGVDBDefRetrParams
         valueStr={value_str}
         onChange={(newValueStr) => onChange(newValueStr)}
       />

@@ -8,20 +8,22 @@ from cwa_lib.pydantic_schemas.generic_table import (
 )
 from cwa_lib.pydantic_schemas.su_manage_groups import SuManageGroupsRead, SuManageGroupsCreate, SuManageGroupsUpdate
 from cwa_lib.pages import GenericTableRead
+from cwa_lib.sql_tables.api_settings import ApiSettingsTable
 
 
 su_manage_groups__query_columns = {
     'group_id': ColumnType(display='ID', type='number'),
     'group_name': ColumnType(display='Name', type='string', default="New group"),
+    'gvdbs_retr_params': ColumnType(display='Retrieval Parameters', type='gvdbs_retr_params', default="{}"),
 }
 
 su_manage_groups__table_options = TableOptions(
     title='Manage Groups',
     pk='group_id',
-    read__visible_columns=['group_id', 'group_name'],
-    create__ask_columns=['group_name',],
-    update__ask_columns=['group_name',],
-    delete__ask_columns=['group_id', 'group_name'],
+    read__visible_columns=['group_id', 'group_name', 'gvdbs_retr_params'],
+    create__ask_columns=['group_name', 'gvdbs_retr_params'],
+    update__ask_columns=['group_name', 'gvdbs_retr_params'],
+    delete__ask_columns=['group_id', 'group_name', 'gvdbs_retr_params'],
     order_by__allow=['group_id', 'group_name'],
 )
 
@@ -38,6 +40,11 @@ class SuManageGroupsTableRead(GenericTableRead):
         if (deleted := self.kwargs.get('deleted', 0)) is not None:
             where_clause &= ApiGroups.deleted == deleted
         return where_clause
+    
+    async def _update_to_qc(self):
+        await super()._update_to_qc()
+        # for new rows, default `gvdbs_retr_params` will be used from `api_settings` -> 'gvdbs_def_retr_params' value
+        self._qc['gvdbs_retr_params'].default = await ApiSettingsTable(self.session).select_one('gvdbs_def_retr_params')
 
 
 class SuManageGroupsTable:
@@ -52,6 +59,7 @@ class SuManageGroupsTable:
         group_name__default = su_manage_groups__query_columns['group_name'].default
         new_row = ApiGroups(
             group_name=data.group_name if data.group_name else group_name__default,
+            gvdbs_retr_params=data.gvdbs_retr_params
         )
         self.session.add(new_row)
         await self.session.commit()        
@@ -64,6 +72,8 @@ class SuManageGroupsTable:
         update_values = dict()
         if data.group_name:
             update_values['group_name'] = data.group_name.strip()
+        if data.gvdbs_retr_params:
+            update_values['gvdbs_retr_params'] = data.gvdbs_retr_params.strip()
         
         if not update_values:
             # Nothing to update
