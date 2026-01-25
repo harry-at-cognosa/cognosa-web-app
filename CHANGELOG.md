@@ -1,4 +1,4 @@
-## [0.19a] (2026-01-24)
+## [0.19a] (2026-01-25)
 
 1. Added new columns:
    1.1. `api_groups`.`gvdbs_retr_params`
@@ -17,6 +17,14 @@
 4. added `GroupAdmin` -> `Retrieval Parameters` page:
    edit `api_groups`.`gvdbs_retr_params` value for current group.
    Only for groupadmin users.
+
+5. added `GroupAdmin` -> `VDBs` page:
+   same as `SuperUser` -> `VDBs` page, but only for current group.
+   Only for groupadmin users.
+   ### Danger:
+   ### Currently groupadmin user can create vdb collection with the same url/type/collection name as other groups,
+   ### so it will use collections from other groups.
+   ### Needs to fix.
 
 ## [0.18b] (2026-01-18)
 

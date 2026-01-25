@@ -19,6 +19,7 @@ import SuManageLogCRUDPage from "./SuManageLogCRUD/SuManageLogCRUDPage";
 import HomePage from "./HomePage/HomePage";
 import GaManageDocTasksPage from "./GaManageDocTasks/GaManageDocTasksPage";
 import GaGVDBsRetrParamsPage from "./GaGVDBsRetrParams/GaGVDBsRetrParamsPage";
+import GaManageVDBsPage from "./GaManageVDBs/GaManageVDBsPage";
 
 export const Router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ export const Router = createBrowserRouter([
           {
             path: "retrieval_parameters",
             element: <GaGVDBsRetrParamsPage />,
+          },
+          {
+            path: "manage_vdbs",
+            element: <GaManageVDBsPage />,
           },
         ],
       },

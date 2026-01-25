@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, field_validator
 from .generic_table import TableQueryResult
 from cwa_lib.validators.strings import StringValidator
 from cwa_lib.validators.user_name import validate_user_name

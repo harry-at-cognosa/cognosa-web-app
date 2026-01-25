@@ -39,7 +39,7 @@ su_manage_llms__table_options = TableOptions(
 class SuManageLLMsTableRead(GenericTableRead):
     sa_model = GroupLLMs
     read_model = SuManageLLMsRead
-    name = 'manage_llms'
+    name = 'su_manage_llms'
     query_columns = su_manage_llms__query_columns
     table_options = su_manage_llms__table_options
     default_order_by = table_options.pk
