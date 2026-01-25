@@ -35,7 +35,7 @@ su_manage_vdbs__table_options = TableOptions(
     create__ask_columns=gvdbs_create_columns,
     update__ask_columns=gvdbs_edit_columns,
     delete__ask_columns=['gvdbs_id', ] + gvdbs_edit_columns,
-    order_by__allow=['gvdbs_id', ] + gvdbs_edit_columns
+    order_by__allow=['gvdbs_id', ] + gvdbs_create_columns
 )
 
 class SuManageVDBsTableRead(GenericTableRead):

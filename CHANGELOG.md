@@ -19,12 +19,9 @@
    Only for groupadmin users.
 
 5. added `GroupAdmin` -> `VDBs` page:
-   same as `SuperUser` -> `VDBs` page, but only for current group.
+   Table shows `group_vdbs` rows for current groupadmin user `group_id`.
+   Allows to change: `enabled`, `gvdbs_name`, `gvdbs_seqn`, `gvdbs_retr_params` for existing rows.
    Only for groupadmin users.
-   ### Danger:
-   ### Currently groupadmin user can create vdb collection with the same url/type/collection name as other groups,
-   ### so it will use collections from other groups.
-   ### Needs to fix.
 
 ## [0.18b] (2026-01-18)
 
