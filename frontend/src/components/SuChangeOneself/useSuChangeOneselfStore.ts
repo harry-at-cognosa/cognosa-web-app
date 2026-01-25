@@ -1,5 +1,5 @@
-import axiosClient from "../../../api/axiosClient";
-import { createResettableStore } from "../../../api/createResettableStore";
+import axiosClient from "../../api/axiosClient";
+import { createResettableStore } from "../../api/createResettableStore";
 
 export type SuChangeOneselfGroup = {
   group_id: number;
@@ -59,9 +59,8 @@ export const useSuChangeOneselfStore =
     error_msg: null,
     fetchData: async () => {
       try {
-        const response = await axiosClient.get<SuChangeOneselfGetResult>(
-          endpoint
-        );
+        const response =
+          await axiosClient.get<SuChangeOneselfGetResult>(endpoint);
         const data = response.data;
         set({ ...data, needReload: false, firstLoad: false });
       } catch {
@@ -82,7 +81,7 @@ export const useSuChangeOneselfStore =
       try {
         const response = await axiosClient.put<SuChangeOneselfUpdateResult>(
           endpoint,
-          params
+          params,
         );
         const data = response.data;
         set({ ...data, needReload: false, firstLoad: false });
