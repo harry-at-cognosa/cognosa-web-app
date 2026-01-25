@@ -18,7 +18,7 @@ ga_manage_vdbs__query_columns = {
 gvdbs_edit_columns = [x for x in ga_manage_vdbs__query_columns.keys() if (x not in ('gvdbs_id', 'gvdbs_status'))]
 
 ga_manage_vdbs__table_options = TableOptions(
-    title='Group VDBs',
+    title='Document Collections',
     pk='gvdbs_id',
     read__visible_columns=['gvdbs_id', ] + gvdbs_edit_columns + ['gvdbs_status'],
     update__ask_columns=gvdbs_edit_columns,

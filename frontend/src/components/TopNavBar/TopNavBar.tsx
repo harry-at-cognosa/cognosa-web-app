@@ -74,7 +74,7 @@ const TopNavBar = () => {
                     <Dropdown.Item>Retrieval Parameters</Dropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/app/groupadmin/manage_vdbs">
-                    <Dropdown.Item>VDBs</Dropdown.Item>
+                    <Dropdown.Item>Doc Collections</Dropdown.Item>
                   </LinkContainer>
                 </Dropdown.Menu>
               </Dropdown>
