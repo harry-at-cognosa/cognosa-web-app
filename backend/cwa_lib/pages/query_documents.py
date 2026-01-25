@@ -81,7 +81,7 @@ class QueryDocumentsOptions:
         return result.scalars().all()
     
     async def _get_gvdbs_def_retr_params(self) -> DocTasksOptionsGVDBsDefRetrParams:
-        gvdbs_def_retr_params = (await ApiSettingsTable(self.session).select_by_names(['gvdbs_def_retr_params']))['gvdbs_def_retr_params']
+        gvdbs_def_retr_params = (await ApiSettingsTable(self.session).select_one('gvdbs_def_retr_params'))
         gvdbs_def_retr_params_obj = GVDBsDefRetrParams.from_dict(gvdbs_def_retr_params)
         # TODO: value should be taken from `group_vdbs` or `api_groups` or `api_settings`
         return DocTasksOptionsGVDBsDefRetrParams(**gvdbs_def_retr_params_obj.__dict__)

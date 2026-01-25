@@ -50,8 +50,7 @@ async def index(session: AsyncSession = Depends(async_get_session)):
     """
     Index page
     """
-    result = await ApiSettingsTable(session).select_by_names(['index_page'])
-    index_html = result['index_page'] or 'Empty index page'
+    index_html = await ApiSettingsTable(session).select_one('index_page', default='Empty index page')
     return HTMLResponse(index_html)
 
 
