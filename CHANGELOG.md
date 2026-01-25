@@ -14,6 +14,10 @@
    added editable: Retrieval Parameters for each `group_vdbs` row.
    Default for new vdbs: `api_group`.`gvdbs_retr_params` value.
 
+4. added `GroupAdmin` -> `Retrieval Parameters` page:
+   edit `api_groups`.`gvdbs_retr_params` value for current group.
+   Only for groupadmin users.
+
 ## [0.18b] (2026-01-18)
 
 Bug fix:
