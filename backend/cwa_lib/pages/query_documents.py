@@ -1,6 +1,6 @@
 from typing import Sequence
 from sqlalchemy import select
-from common.features.gvdbs_retr_params import GVDBsRetrParams
+from common.features.gvdbs_retr_params import GVDBsRetrParams, GVDBsDefRetrParams
 from common.sql_db_async import AsyncSession
 from common.sql_models import User, GroupContexts, GroupLLMs, GroupVDBs
 from cwa_lib.pydantic_schemas.doc_tasks import (
@@ -12,6 +12,7 @@ from cwa_lib.pydantic_schemas.doc_tasks import (
     DocTasksOptionsGroupVDBsRow,
 )
 from cwa_lib.sql_tables.doc_tasks import DocTasksTable
+from cwa_lib.sql_tables.api_groups import ApiGroupsTable
 
 
 class QueryDocumentsPage:
@@ -21,10 +22,21 @@ class QueryDocumentsPage:
 
     async def create_task(self, payload: DocTaskCreate) -> DocTaskQueryResult | str:
         # check if VDBs and LLMs are ready (status != 'danger')
+        gvdbs = None
         if payload.gvdbs_id != -1:  # ignore "No Document search"
             gvdbs = await DocTasksTable(self.session).query_gvdbs(self.user.group_id, payload.gvdbs_id)
             if not (gvdbs and (gvdbs.gvdbs_status != 'danger')):
                 return "Document collection is not ready"
+        # for non-regular user, use Retrieval Parameters from query
+        if self.user.is_superuser or self.user.is_groupadmin or self.user.is_contentmanager:
+            gvdbs_cfg_json=GVDBsRetrParams.from_dict(payload.gvdbs_cfg_json).as_dict()
+        # for regular user, use default Retrieval Parameters either from `group_vdbs` or `api_groups`
+        else:
+            if gvdbs:  # for Document search - use defaults from `group_vdbs`
+                gvdbs_cfg_json = GVDBsDefRetrParams.from_dict(gvdbs.gvdbs_retr_params).as_short_dict()
+            else:  # for No Document search - use defaults from `api_groups`
+                group = await ApiGroupsTable(self.session).get_group_by_group_id(self.user.group_id)
+                gvdbs_cfg_json = GVDBsDefRetrParams.from_dict(group.gvdbs_retr_params).as_short_dict()
         
         gllms = await DocTasksTable(self.session).query_gllms(self.user.group_id, payload.gllms_id)
         if not (gllms and (gllms.gllms_status != 'danger')):
@@ -35,7 +47,7 @@ class QueryDocumentsPage:
                 group_id=self.user.group_id, 
                 user_id=self.user.user_id, 
                 gvdbs_id=payload.gvdbs_id,
-                gvdbs_cfg_json=GVDBsRetrParams.from_dict(payload.gvdbs_cfg_json).as_dict(),
+                gvdbs_cfg_json=gvdbs_cfg_json,
                 gllms_id=payload.gllms_id,
                 gc_id=payload.gc_id,
                 short_name=payload.short_name, 
@@ -47,7 +59,7 @@ class QueryDocumentsPage:
                 doc_task_id=payload.doc_task_id,
                 user_group_id=self.user.group_id,
                 gvdbs_id=payload.gvdbs_id,
-                gvdbs_cfg_json=GVDBsRetrParams.from_dict(payload.gvdbs_cfg_json).as_dict(),
+                gvdbs_cfg_json=gvdbs_cfg_json,
                 gllms_id=payload.gllms_id,
                 gc_id=payload.gc_id,
                 short_name=payload.short_name, 

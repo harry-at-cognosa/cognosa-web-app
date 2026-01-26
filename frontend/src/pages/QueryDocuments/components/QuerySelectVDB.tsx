@@ -7,8 +7,10 @@ import { ArrowRepeat } from "react-bootstrap-icons";
 import { useDefaultGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDefaultGVDBsRetrParamsStore";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 import type { GVDBsDefRetrParams } from "../../../components/GVDBsRetrParams/types";
+import { useLoggedUserStore } from "../../../stores/useLoggedUserStore";
 
 export default function QuerySelectVDB() {
+  const user = useLoggedUserStore();
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const defGVDBsRetrParamsStore = useDefaultGVDBsRetrParamsStore();
@@ -106,8 +108,9 @@ export default function QuerySelectVDB() {
           ))}
         </Form.Select>
       )}
-
-      <DocTasksGVDBsRetrParams></DocTasksGVDBsRetrParams>
+      {user.is_superuser || user.is_groupadmin || user.is_contentmanager ? (
+        <DocTasksGVDBsRetrParams></DocTasksGVDBsRetrParams>
+      ) : null}
     </InputGroup>
   );
 }

@@ -26,6 +26,10 @@
 6. `Query Documents` -> `Queries` page:
    `Search Options` renamed to `Retrieval Parameters`.
    Now it uses RP from `group_vdbs` row selected.
+   If user is regular (neither superuser / groupadmin / contentmanager),
+   `Retrieval Parameters` are not shown and used from:
+   `group_vdbs`.`gvdbs_retr_params` - for Document Search (collection selected)
+   or `api_groups`.`gvdbs_retr_params` - for No Document Search
 
 ## [0.18b] (2026-01-18)
 

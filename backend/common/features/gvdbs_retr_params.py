@@ -165,6 +165,17 @@ class GVDBsDefRetrParams:
             'search_kwargs__mmr': self.search_kwargs__mmr,
             'search_kwargs__similarity_score_threshold': self.search_kwargs__similarity_score_threshold
         }
+    
+    def as_short_dict(self) -> dict:
+        search_kwargs = {
+            'similarity': self.search_kwargs__similarity,
+            'mmr': self.search_kwargs__mmr,
+            'similarity_score_threshold': self.search_kwargs__similarity_score_threshold
+        }[self.search_type]
+        return {
+            'search_type': self.search_type,
+            'search_kwargs': search_kwargs            
+        }
 
     @classmethod
     def from_obsolete_gvdbs_cfg(cls, gvdbs_cfg: str | dict) -> 'GVDBsDefRetrParams':
