@@ -1,6 +1,6 @@
 from typing import Sequence
 from sqlalchemy import select
-from common.features.gvdbs_retr_params import GVDBsRetrParams, GVDBsDefRetrParams
+from common.features.gvdbs_retr_params import GVDBsRetrParams
 from common.sql_db_async import AsyncSession
 from common.sql_models import User, GroupContexts, GroupLLMs, GroupVDBs
 from cwa_lib.pydantic_schemas.doc_tasks import (
@@ -10,10 +10,8 @@ from cwa_lib.pydantic_schemas.doc_tasks import (
     DocTasksOptionsGroupContextsRow, 
     DocTasksOptionsGroupLLMsRow, 
     DocTasksOptionsGroupVDBsRow,
-    DocTasksOptionsGVDBsDefRetrParams
 )
 from cwa_lib.sql_tables.doc_tasks import DocTasksTable
-from cwa_lib.sql_tables.api_settings import ApiSettingsTable
 
 
 class QueryDocumentsPage:
@@ -80,24 +78,15 @@ class QueryDocumentsOptions:
         result = await self.session.execute(select(GroupVDBs).where(where_clause).order_by(GroupVDBs.gvdbs_id))
         return result.scalars().all()
     
-    async def _get_gvdbs_def_retr_params(self) -> DocTasksOptionsGVDBsDefRetrParams:
-        gvdbs_def_retr_params = (await ApiSettingsTable(self.session).select_one('gvdbs_def_retr_params'))
-        gvdbs_def_retr_params_obj = GVDBsDefRetrParams.from_dict(gvdbs_def_retr_params)
-        # TODO: value should be taken from `group_vdbs` or `api_groups` or `api_settings`
-        return DocTasksOptionsGVDBsDefRetrParams(**gvdbs_def_retr_params_obj.__dict__)
-
     async def get_options(self) -> DocTaskOptionsResult:
         """
         Get options for Query Documents from tables:
             1) `group_contexts`
             2) `group_llms`
             3) `group_vdbs`
-        Also:
-        `gvdbs_def_retr_params`: default values for `doc_tasks.gvdbs_def_retr_params`.
         """
         return DocTaskOptionsResult(
             group_contexts=await self._from__group_contexts(),
             group_llms=await self._from__group_llms(),
             group_vdbs=await self._from__group_vdbs(),
-            gvdbs_def_retr_params=await self._get_gvdbs_def_retr_params(),
         )

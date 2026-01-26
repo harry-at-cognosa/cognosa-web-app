@@ -7,14 +7,10 @@ import clsx from "clsx";
 import { useEffect } from "react";
 import { useDocTaskOptionsStore } from "./stores/useDocTaskOptionsStore";
 import CenteredSpinner from "../../components/CenteredSpinner";
-import { useDefaultGVDBsRetrParamsStore } from "../../components/GVDBsRetrParams/useDefaultGVDBsRetrParamsStore";
-import { useDocTasksGVDBsRetrParamsStore } from "../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 
 export default function QueryDocumentsPage() {
   useTopNavBarTitle("Query Documents");
   const docTaskOptionsStore = useDocTaskOptionsStore();
-  const defGVDBsRetrParamsStore = useDefaultGVDBsRetrParamsStore();
-  const curGVDBsRetrParamsStore = useDocTasksGVDBsRetrParamsStore();
 
   useEffect(() => {
     if (!docTaskOptionsStore.needReload) return;
@@ -25,15 +21,7 @@ export default function QueryDocumentsPage() {
   }, [docTaskOptionsStore.needReload]);
   useEffect(() => docTaskOptionsStore.setNeedReload(true), []);
 
-  useEffect(() => {
-    if (docTaskOptionsStore.needReload) return;
-    const newData = docTaskOptionsStore.data.gvdbs_def_retr_params;
-    if (!defGVDBsRetrParamsStore.isLoaded && newData)
-      defGVDBsRetrParamsStore.setData(newData);
-    else curGVDBsRetrParamsStore.copyFromDefault();
-  }, [docTaskOptionsStore.needReload, defGVDBsRetrParamsStore.isLoaded]);
-
-  if (!defGVDBsRetrParamsStore.isLoaded) return <CenteredSpinner />;
+  if (!docTaskOptionsStore.initiallyLoaded) return <CenteredSpinner />;
 
   return (
     <div className={styles.wrapper}>

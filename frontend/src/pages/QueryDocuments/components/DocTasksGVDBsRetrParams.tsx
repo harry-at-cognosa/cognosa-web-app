@@ -96,8 +96,10 @@ export default function DocTasksGVDBsRetrParams() {
         onClick={handleShow}
         disabled={modalDisabled}
       >
-        <GearFill size={"20px"}></GearFill>&nbsp;
-        {"Search Options: " + curStore.getShortName()}
+        <GearFill size={"20px"} style={{ marginBottom: "2px" }}></GearFill>
+        &nbsp;
+        {"Retrieval Parameters: " +
+          (modalDisabled ? "N/A" : curStore.getShortName())}
       </Button>
       <Button
         variant="outline-secondary"

@@ -92,19 +92,12 @@ class DocTasksOptionsGroupVDBsRow(BaseModel):
     group_id: int
     gvdbs_seqn: int
     gvdbs_name: str
+    gvdbs_retr_params: str
     gvdbs_status: str
     class Config:
         from_attributes = True
-
-
-class DocTasksOptionsGVDBsDefRetrParams(BaseModel):
-    search_type: TYPE__SEARCH_TYPE
-    search_kwargs__similarity: TYPE__SEARCH_KWARGS__SIM
-    search_kwargs__mmr: TYPE__SEARCH_KWARGS__MMR
-    search_kwargs__similarity_score_threshold: TYPE__SEARCH_KWARGS__SST
 
 class DocTaskOptionsResult(BaseModel):
     group_contexts: Sequence[DocTasksOptionsGroupContextsRow]
     group_llms: Sequence[DocTasksOptionsGroupLLMsRow]
     group_vdbs: Sequence[DocTasksOptionsGroupVDBsRow]
-    gvdbs_def_retr_params: DocTasksOptionsGVDBsDefRetrParams

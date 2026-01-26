@@ -23,6 +23,10 @@
    Allows to change: `enabled`, `gvdbs_name`, `gvdbs_seqn`, `gvdbs_retr_params` for existing rows.
    Only for groupadmin users.
 
+6. `Query Documents` -> `Queries` page:
+   `Search Options` renamed to `Retrieval Parameters`.
+   Now it uses RP from `group_vdbs` row selected.
+
 ## [0.18b] (2026-01-18)
 
 Bug fix:

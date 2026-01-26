@@ -4,10 +4,16 @@ import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import { useEffect } from "react";
 import { ArrowRepeat } from "react-bootstrap-icons";
+import { useDefaultGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDefaultGVDBsRetrParamsStore";
+import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
+import type { GVDBsDefRetrParams } from "../../../components/GVDBsRetrParams/types";
 
 export default function QuerySelectVDB() {
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
+  const defGVDBsRetrParamsStore = useDefaultGVDBsRetrParamsStore();
+  const curGVDBsRetrParamsStore = useDocTasksGVDBsRetrParamsStore();
+
   const waitingState = docTaskOptionsStore.needReload;
   const group_vdbs = docTaskOptionsStore.data.group_vdbs;
   const lastUsedGVDBsID = current.previousQuery?.gvdbs_id || -999;
@@ -21,6 +27,22 @@ export default function QuerySelectVDB() {
       current.setGVDBsID(defaultGVDBsID);
     }
   }, [waitingState, current.gvdbs_id]);
+
+  // update gvdbs_retr_params from group_vdbs row if necessary
+  useEffect(() => {
+    if (docTaskOptionsStore.needReload) return;
+    if (!current.gvdbs_id || current.gvdbs_id === -1) return;
+    const gvdbs_row = docTaskOptionsStore.gvdbs_id__row[current.gvdbs_id];
+    const gvdbs_retr_params_str = gvdbs_row?.gvdbs_retr_params;
+    if (!gvdbs_retr_params_str) return;
+    const newData = JSON.parse(gvdbs_retr_params_str) as GVDBsDefRetrParams;
+    defGVDBsRetrParamsStore.setData(newData);
+    curGVDBsRetrParamsStore.copyFromDefault();
+  }, [
+    docTaskOptionsStore.needReload,
+    defGVDBsRetrParamsStore.isLoaded,
+    current.gvdbs_id,
+  ]);
 
   function getSelectBgColor(gvdbs_id: number | null): string {
     if (waitingState || !gvdbs_id) return "";
@@ -71,7 +93,7 @@ export default function QuerySelectVDB() {
         <Form.Select
           value={current.gvdbs_id?.toString() || ""}
           onChange={(e) => current.setGVDBsID(Number(e.target.value))}
-          style={{ backgroundColor: getSelectBgColor(current.gvdbs_id) }}
+          //style={{ backgroundColor: getSelectBgColor(current.gvdbs_id) }}
         >
           {group_vdbs.map((gvdbs_obj) => (
             <option

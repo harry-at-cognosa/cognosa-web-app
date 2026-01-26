@@ -1,6 +1,5 @@
 import axiosClient from "../../../api/axiosClient";
 import { createResettableStore } from "../../../api/createResettableStore";
-import type { GVDBsDefRetrParams } from "../../../components/GVDBsRetrParams/types";
 
 export type GroupContexts = {
   gc_id: number;
@@ -23,6 +22,7 @@ export type GroupVDBs = {
   group_id: number;
   gvdbs_seqn: number;
   gvdbs_name: string;
+  gvdbs_retr_params: string | null;
   gvdbs_status: "success" | "warning" | "danger";
 };
 
@@ -30,7 +30,6 @@ export interface DocTaskOptionsResponse {
   group_contexts: GroupContexts[];
   group_llms: GroupLLMs[];
   group_vdbs: GroupVDBs[];
-  gvdbs_def_retr_params: GVDBsDefRetrParams | null;
 }
 
 interface DocTaskOptionsState {
@@ -38,6 +37,7 @@ interface DocTaskOptionsState {
   gvdbs_id__row: Record<number, GroupVDBs>;
   gllms_id__row: Record<number, GroupLLMs>;
   fetchData: () => Promise<void>;
+  initiallyLoaded: boolean;
   needReload: boolean;
   setNeedReload: (needReload: boolean) => void;
 }
@@ -48,10 +48,10 @@ export const useDocTaskOptionsStore =
       group_contexts: [],
       group_llms: [],
       group_vdbs: [],
-      gvdbs_def_retr_params: null,
     },
     gvdbs_id__row: {},
     gllms_id__row: {},
+    initiallyLoaded: false,
     fetchData: async () => {
       try {
         const response =
@@ -71,6 +71,7 @@ export const useDocTaskOptionsStore =
           group_id: -1,
           gvdbs_seqn: 1000,
           gvdbs_name: "No Document search, use only LLM",
+          gvdbs_retr_params: null,
           gvdbs_status: "success",
         });
         const gvdbs_id__row = data.group_vdbs.reduce(
@@ -96,7 +97,13 @@ export const useDocTaskOptionsStore =
           },
           {},
         );
-        set({ data, gvdbs_id__row, gllms_id__row, needReload: false });
+        set({
+          data,
+          gvdbs_id__row,
+          gllms_id__row,
+          needReload: false,
+          initiallyLoaded: true,
+        });
       } catch {
         alert("Error during fetching /doc_tasks/options");
       } finally {
