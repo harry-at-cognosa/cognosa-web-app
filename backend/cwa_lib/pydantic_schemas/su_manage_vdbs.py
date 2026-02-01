@@ -1,5 +1,7 @@
-from pydantic import BaseModel, field_validator
+import json
+from pydantic import BaseModel, field_validator, ValidationError
 from .generic_table import TableQueryResult
+from common.features.gvdbs_retr_filters import FormSchemaGVDBsRF
 from common.features.gvdbs_retr_params import GVDBsDefRetrParams
 
 
@@ -34,10 +36,16 @@ class SuManageVDBsCreate(BaseModel):
     gvdbs_retr_filters: str
     @field_validator('gvdbs_retr_filters')
     @staticmethod
-    def validate__gvdbs_retr_filters(v: str) -> str | None:
-        # TODO: add validator
+    def validate__gvdbs_retr_filters(v: str) -> str:
+        try:
+            data = json.loads(v)
+        except Exception:
+            raise ValueError('JSON string expected') from None
+        try:
+            FormSchemaGVDBsRF.model_validate(data)            
+        except ValidationError as exc:
+            raise ValueError(str(exc)) from None
         return v
-
 
 class SuManageVDBsUpdate(BaseModel):
     gvdbs_id: int
@@ -60,6 +68,12 @@ class SuManageVDBsUpdate(BaseModel):
     @staticmethod
     def validate__gvdbs_retr_filters(v: str | None) -> str | None:
         if v is not None:
-            # TODO: add validator
-            pass
+            try:
+                data = json.loads(v)
+            except Exception:
+                raise ValueError('JSON string expected') from None
+            try:
+                FormSchemaGVDBsRF.model_validate(data)            
+            except ValidationError as exc:
+                raise ValueError(str(exc)) from None
         return v

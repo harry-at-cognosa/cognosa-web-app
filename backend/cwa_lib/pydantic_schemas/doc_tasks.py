@@ -1,9 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import Sequence
-from common.features.gvdbs_retr_params import (
-    TYPE__SEARCH_TYPE, TYPE__SEARCH_KWARGS__SIM, TYPE__SEARCH_KWARGS__MMR, TYPE__SEARCH_KWARGS__SST
-)
 
 class DocTaskCreate(BaseModel):
     doc_task_id: int | None
