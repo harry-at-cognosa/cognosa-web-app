@@ -13,6 +13,7 @@ class SuManageVDBsRead(BaseModel):
     gvdbs_url: str
     gvdbs_collection: str
     gvdbs_retr_params: str
+    gvdbs_retr_filters: str
     gvdbs_status: str
     gvdbs_status_text: str
     class Config:
@@ -29,7 +30,13 @@ class SuManageVDBsCreate(BaseModel):
     gvdbs_type: str
     gvdbs_name: str
     gvdbs_url: str
-    gvdbs_collection: str    
+    gvdbs_collection: str
+    gvdbs_retr_filters: str
+    @field_validator('gvdbs_retr_filters')
+    @staticmethod
+    def validate__gvdbs_retr_filters(v: str) -> str | None:
+        # TODO: add validator
+        return v
 
 
 class SuManageVDBsUpdate(BaseModel):
@@ -42,9 +49,17 @@ class SuManageVDBsUpdate(BaseModel):
     gvdbs_url: str | None = None
     gvdbs_collection: str | None = None
     gvdbs_retr_params: str | None = None
+    gvdbs_retr_filters: str | None = None
     @field_validator('gvdbs_retr_params')
     @staticmethod
     def validate__gvdbs_retr_params(v: str | None) -> str | None:
         if v is not None:
             GVDBsDefRetrParams.from_dict(v)
+        return v
+    @field_validator('gvdbs_retr_filters')
+    @staticmethod
+    def validate__gvdbs_retr_filters(v: str | None) -> str | None:
+        if v is not None:
+            # TODO: add validator
+            pass
         return v

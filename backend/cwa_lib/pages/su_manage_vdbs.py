@@ -23,10 +23,12 @@ su_manage_vdbs__query_columns = {
     'gvdbs_url': ColumnType(display='URL', type='string', default="qdrant_local"),
     'gvdbs_collection': ColumnType(display='Collection', type='string', default="New Collection"),
     'gvdbs_retr_params': ColumnType(display='Retrieval Parameters', type='gvdbs_retr_params', default="{}"),
+    'gvdbs_retr_filters': ColumnType(display='Retrieval Filters', type='text', default="{}"),
     'gvdbs_status': ColumnType(display='Status', type='gvdbs_status'),
 }
 gvdbs_edit_columns = [x for x in su_manage_vdbs__query_columns.keys() if (x not in ('gvdbs_id', 'gvdbs_status'))]
 gvdbs_create_columns = [x for x in gvdbs_edit_columns if (x not in ('gvdbs_retr_params'))]
+gvdbs_order_columns = ['gvdbs_id', 'group_id', 'enabled', 'gvdbs_seqn', 'gvdbs_type', 'gvdbs_name', 'gvdbs_url', 'gvdbs_collection']
 
 su_manage_vdbs__table_options = TableOptions(
     title='Group VDBs',
@@ -35,7 +37,7 @@ su_manage_vdbs__table_options = TableOptions(
     create__ask_columns=gvdbs_create_columns,
     update__ask_columns=gvdbs_edit_columns,
     delete__ask_columns=['gvdbs_id', ] + gvdbs_edit_columns,
-    order_by__allow=['gvdbs_id', ] + gvdbs_create_columns
+    order_by__allow=gvdbs_order_columns
 )
 
 class SuManageVDBsTableRead(GenericTableRead):

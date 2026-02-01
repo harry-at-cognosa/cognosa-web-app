@@ -1,3 +1,9 @@
+## [0.20a] (2026-02-01)
+
+1. Added `group_vdbs`.`gvdbs_retr_filters`.
+   Can be edited on `SuperUser` - > `VDBs` page.
+   This JSON string will store `Retrieval Filters` for certain `group_vdbs` row.
+
 ## [0.19a] (2026-01-25)
 
 1. Added new columns:

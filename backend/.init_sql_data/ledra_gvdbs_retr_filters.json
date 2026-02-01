@@ -1,0 +1,78 @@
+{
+  "enable_global_not": true,
+  "fields": [
+    {
+      "title": "Base/Alt",
+      "path": "metadata.alt_product_id",
+      "type": "select",
+      "values": ["", "base", "alt"],
+      "default": "",
+      "max_select": 1,
+      "sub_type": "ledra_base_alt"
+    },
+    {
+      "title": "Product ID",
+      "path": "metadata.base_product_id",
+      "type": "string",
+      "max_length": 100,
+      "sub_type": "ledra_product_id"
+    },
+    {
+      "title": "Product Name",
+      "path": "metadata.product_name",
+      "type": "string",
+      "max_length": 100
+    },
+    {
+      "title": "SKU",
+      "path": "metadata.sku",
+      "type": "string",
+      "max_length": 100
+    },
+    {
+      "title": "Type",
+      "path": "metadata.chunk_type",
+      "type": "select",
+      "values": [
+        "",
+        "base_key_data",
+        "base_descriptive",
+        "base_option",
+        "alt_key_data",
+        "alt_option"
+      ],
+      "default": "",
+      "max_select": -1
+    },
+    {
+      "title": "Product Series",
+      "path": "metadata.prodseries",
+      "type": "string",
+      "max_length": 100
+    },
+    {
+      "title": "Select Category",
+      "path": "metadata.category",
+      "type": "string",
+      "max_length": 100
+    },
+    {
+      "title": "Select SubCat",
+      "path": "metadata.subcategory",
+      "type": "string",
+      "max_length": 100
+    },
+    {
+      "title": "Brand",
+      "path": "metadata.brand",
+      "type": "string",
+      "max_length": 100
+    },
+    {
+      "title": "Alias",
+      "path": "metadata.product_alias",
+      "type": "string",
+      "max_length": 100
+    }
+  ]
+}
