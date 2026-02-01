@@ -42,7 +42,7 @@ class SuManageVDBsCreate(BaseModel):
         except Exception:
             raise ValueError('JSON string expected') from None
         try:
-            FormSchemaGVDBsRF.model_validate(data)            
+            FormSchemaGVDBsRF.model_validate(data)
         except ValidationError as exc:
             raise ValueError(str(exc)) from None
         return v
@@ -73,7 +73,7 @@ class SuManageVDBsUpdate(BaseModel):
             except Exception:
                 raise ValueError('JSON string expected') from None
             try:
-                FormSchemaGVDBsRF.model_validate(data)            
+                FormSchemaGVDBsRF.model_validate(data)
             except ValidationError as exc:
                 raise ValueError(str(exc)) from None
         return v

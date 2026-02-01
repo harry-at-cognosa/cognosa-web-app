@@ -90,6 +90,7 @@ class DocTasksOptionsGroupVDBsRow(BaseModel):
     gvdbs_seqn: int
     gvdbs_name: str
     gvdbs_retr_params: str
+    gvdbs_retr_filters: str
     gvdbs_status: str
     class Config:
         from_attributes = True

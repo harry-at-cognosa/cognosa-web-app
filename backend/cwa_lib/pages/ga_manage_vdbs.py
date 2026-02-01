@@ -17,6 +17,11 @@ ga_manage_vdbs__query_columns = {
 }
 gvdbs_edit_columns = [x for x in ga_manage_vdbs__query_columns.keys() if (x not in ('gvdbs_id', 'gvdbs_status'))]
 
+def must_recheck_status_after_update(col: str, value) -> bool:
+    if (col == 'enabled') and value:
+        return True
+    return False
+
 ga_manage_vdbs__table_options = TableOptions(
     title='Document Collections',
     pk='gvdbs_id',
@@ -69,6 +74,7 @@ class GaManageVDBsTable:
             return TableUpdateRowResult(result='error', total_updated=0)
         prev_gvdbs_seqn = vdbs_row.gvdbs_seqn        
         total_updated = 0
+        need_recheck = False
         for col in gvdbs_edit_columns:
             value = getattr(data, col, None)
             if value is not None:
@@ -76,7 +82,13 @@ class GaManageVDBsTable:
                     value = value.strip()
                 setattr(vdbs_row, col, value)
                 total_updated = 1
+                need_recheck |= must_recheck_status_after_update(col, value)
         
+        if need_recheck:
+            vdbs_row.gvdbs_status='danger'
+            vdbs_row.gvdbs_status_text='Not checked yet' if vdbs_row.enabled else 'Disabled'
+            vdbs_row.gvdbs_status_updated_at = None
+
         await self.session.commit()
         if data.gvdbs_seqn != prev_gvdbs_seqn:
             await self.resequence_group_vdbs(cur_group_id, prioritize_gvdbs_id=data.gvdbs_id)

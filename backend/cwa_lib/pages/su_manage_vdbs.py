@@ -30,6 +30,14 @@ gvdbs_edit_columns = [x for x in su_manage_vdbs__query_columns.keys() if (x not 
 gvdbs_create_columns = [x for x in gvdbs_edit_columns if (x not in ('gvdbs_retr_params'))]
 gvdbs_order_columns = ['gvdbs_id', 'group_id', 'enabled', 'gvdbs_seqn', 'gvdbs_type', 'gvdbs_name', 'gvdbs_url', 'gvdbs_collection']
 
+def must_recheck_status_after_update(col: str, value) -> bool:
+    if (col == 'enabled') and value:
+        return True
+    if col in ['gvdbs_type', 'gvdbs_url', 'gvdbs_collection']:
+        return True
+    return False
+
+
 su_manage_vdbs__table_options = TableOptions(
     title='Group VDBs',
     pk='gvdbs_id',
@@ -103,15 +111,18 @@ class SuManageVDBsTable:
             return TableUpdateRowResult(result='error', total_updated=0)
         prev_gvdbs_seqn = vdbs_row.gvdbs_seqn        
         total_updated = 0
+        need_recheck = False
         for col in gvdbs_edit_columns:
             value = getattr(data, col, None)
             if value is not None:
                 if isinstance(value, str):
                     value = value.strip()
-                setattr(vdbs_row, col, value)
-                total_updated = 1
-        
-        if total_updated:
+                if value != getattr(vdbs_row, col):
+                    setattr(vdbs_row, col, value)
+                    total_updated = 1
+                    need_recheck |= must_recheck_status_after_update(col, value)
+
+        if need_recheck:
             vdbs_row.gvdbs_status='danger'
             vdbs_row.gvdbs_status_text='Not checked yet' if vdbs_row.enabled else 'Disabled'
             vdbs_row.gvdbs_status_updated_at = None

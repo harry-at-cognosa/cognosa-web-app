@@ -1,7 +1,8 @@
 {
-  "enable_global_not": true,
+  "global_not_enabled": true,
   "fields": [
     {
+      "rf_field_id": "base_alt",
       "title": "Base/Alt",
       "path": "metadata.alt_product_id",
       "type": "select",
@@ -11,6 +12,7 @@
       "sub_type": "ledra_base_alt"
     },
     {
+      "rf_field_id": "product_id",
       "title": "Product ID",
       "path": "metadata.base_product_id",
       "type": "string",
@@ -18,18 +20,21 @@
       "sub_type": "ledra_product_id"
     },
     {
+      "rf_field_id": "product_name",
       "title": "Product Name",
       "path": "metadata.product_name",
       "type": "string",
       "max_length": 100
     },
     {
+      "rf_field_id": "sku",
       "title": "SKU",
       "path": "metadata.sku",
       "type": "string",
       "max_length": 100
     },
     {
+      "rf_field_id": "chunk_type",
       "title": "Type",
       "path": "metadata.chunk_type",
       "type": "select",
@@ -45,30 +50,35 @@
       "max_select": -1
     },
     {
+      "rf_field_id": "prodseries",
       "title": "Product Series",
       "path": "metadata.prodseries",
       "type": "string",
       "max_length": 100
     },
     {
+      "rf_field_id": "category",
       "title": "Select Category",
       "path": "metadata.category",
       "type": "string",
       "max_length": 100
     },
     {
+      "rf_field_id": "subcategory",
       "title": "Select SubCat",
       "path": "metadata.subcategory",
       "type": "string",
       "max_length": 100
     },
     {
+      "rf_field_id": "brand",
       "title": "Brand",
       "path": "metadata.brand",
       "type": "string",
       "max_length": 100
     },
     {
+      "rf_field_id": "product_alias",
       "title": "Alias",
       "path": "metadata.product_alias",
       "type": "string",
