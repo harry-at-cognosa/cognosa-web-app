@@ -6,8 +6,7 @@
       "title": "Base/Alt",
       "path": "metadata.alt_product_id",
       "type": "select",
-      "values": ["", "base", "alt"],
-      "default": "",
+      "values": ["base", "alt"],
       "max_select": 1,
       "sub_type": "ledra_base_alt"
     },
@@ -39,14 +38,12 @@
       "path": "metadata.chunk_type",
       "type": "select",
       "values": [
-        "",
         "base_key_data",
         "base_descriptive",
         "base_option",
         "alt_key_data",
         "alt_option"
       ],
-      "default": "",
       "max_select": -1
     },
     {

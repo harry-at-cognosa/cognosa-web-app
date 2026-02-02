@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { ArrowRepeat } from "react-bootstrap-icons";
 import { useDefaultGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDefaultGVDBsRetrParamsStore";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
-import type { GVDBsDefRetrParams } from "../../../components/GVDBsRetrParams/types";
 import { useLoggedUserStore } from "../../../stores/useLoggedUserStore";
+import { useDefaultGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDefaultGVDBsRetrFiltersStore";
 
 export default function QuerySelectVDB() {
   const user = useLoggedUserStore();
@@ -15,6 +15,7 @@ export default function QuerySelectVDB() {
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const defGVDBsRetrParamsStore = useDefaultGVDBsRetrParamsStore();
   const curGVDBsRetrParamsStore = useDocTasksGVDBsRetrParamsStore();
+  const defGVDBsRetrFiltersStore = useDefaultGVDBsRetrFiltersStore();
 
   const waitingState = docTaskOptionsStore.needReload;
   const group_vdbs = docTaskOptionsStore.data.group_vdbs;
@@ -36,10 +37,14 @@ export default function QuerySelectVDB() {
     if (!current.gvdbs_id || current.gvdbs_id === -1) return;
     const gvdbs_row = docTaskOptionsStore.gvdbs_id__row[current.gvdbs_id];
     const gvdbs_retr_params_str = gvdbs_row?.gvdbs_retr_params;
-    if (!gvdbs_retr_params_str) return;
-    const newData = JSON.parse(gvdbs_retr_params_str) as GVDBsDefRetrParams;
-    defGVDBsRetrParamsStore.setData(newData);
-    curGVDBsRetrParamsStore.copyFromDefault();
+    if (gvdbs_retr_params_str) {
+      defGVDBsRetrParamsStore.setData(gvdbs_retr_params_str);
+      curGVDBsRetrParamsStore.copyFromDefault();
+    }
+    const gvdbs_retr_filters_str = gvdbs_row?.gvdbs_retr_filters;
+    if (gvdbs_retr_filters_str) {
+      defGVDBsRetrFiltersStore.setDataFromString(gvdbs_retr_filters_str);
+    }
   }, [
     docTaskOptionsStore.needReload,
     defGVDBsRetrParamsStore.isLoaded,

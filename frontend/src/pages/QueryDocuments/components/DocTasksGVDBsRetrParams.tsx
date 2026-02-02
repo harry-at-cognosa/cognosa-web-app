@@ -117,7 +117,7 @@ export default function DocTasksGVDBsRetrParams() {
 
       <Modal show={show} onHide={handleCancel}>
         <Modal.Header closeButton>
-          <Modal.Title>VDB Search Options</Modal.Title>
+          <Modal.Title>VDB Retrieval Parameters</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <GVDBsRetrParams />

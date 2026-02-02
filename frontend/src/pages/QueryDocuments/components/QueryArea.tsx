@@ -16,6 +16,7 @@ import ContextJSON from "./ContextJSON";
 import AskButton from "./AskButton";
 import CloneQueryButton from "./CloneQueryButton";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
+import DocTasksGVDBsRetrFilters from "./DocTasksGVDBsRetrFilters";
 
 function QueryArea() {
   const queryStore = useQueryDocumentsStore();
@@ -149,6 +150,7 @@ function QueryArea() {
         value={current.short_name || ""}
         onChange={(e) => current.setShortName(e.target.value)}
       />
+      <DocTasksGVDBsRetrFilters />
       <Form.Control
         as="textarea"
         className="mb-2"

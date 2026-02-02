@@ -26,7 +26,6 @@ class StringFieldGVDBsRF(FieldBaseGVDBsRF):
 class SelectFieldGVDBsRF(FieldBaseGVDBsRF):
     type: Literal["select"]
     values: list[str]
-    default: str
     max_select: int
 
     @field_validator("max_select")
@@ -35,15 +34,6 @@ class SelectFieldGVDBsRF(FieldBaseGVDBsRF):
         # -1 means unlimited, otherwise must be >= 1
         if v != -1 and v < 1:
             raise ValueError("max_select must be -1 or >= 1")
-        return v
-
-    @field_validator("default")
-    @classmethod
-    def validate__default(cls, v, info):
-        # default must be in values
-        values = info.data.get("values", [])
-        if v not in values:
-            raise ValueError("default must be one of values")
         return v
 
 FieldGVDBsRF: TypeAlias = Annotated[StringFieldGVDBsRF | SelectFieldGVDBsRF, Field(discriminator="type")]
