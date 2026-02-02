@@ -29,7 +29,7 @@ export const useDefaultGVDBsRetrFiltersStore = create<
         }
       }
       set({
-        global_not_enabled: parsed.global_not_enabled || null,
+        global_not_enabled: parsed.global_not_enabled || false,
         fields: parsed.fields || null,
         rf_field_id__field: rf_field_id__field,
         isLoaded: true,

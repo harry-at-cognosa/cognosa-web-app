@@ -8,6 +8,7 @@ import { useDefaultGVDBsRetrParamsStore } from "../../../components/GVDBsRetrPar
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 import { useLoggedUserStore } from "../../../stores/useLoggedUserStore";
 import { useDefaultGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDefaultGVDBsRetrFiltersStore";
+import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
 
 export default function QuerySelectVDB() {
   const user = useLoggedUserStore();
@@ -16,6 +17,7 @@ export default function QuerySelectVDB() {
   const defGVDBsRetrParamsStore = useDefaultGVDBsRetrParamsStore();
   const curGVDBsRetrParamsStore = useDocTasksGVDBsRetrParamsStore();
   const defGVDBsRetrFiltersStore = useDefaultGVDBsRetrFiltersStore();
+  const curGVDBsRetrFiltersStore = useDocTasksGVDBsRetrFiltersStore();
 
   const waitingState = docTaskOptionsStore.needReload;
   const group_vdbs = docTaskOptionsStore.data.group_vdbs;
@@ -44,10 +46,12 @@ export default function QuerySelectVDB() {
     const gvdbs_retr_filters_str = gvdbs_row?.gvdbs_retr_filters;
     if (gvdbs_retr_filters_str) {
       defGVDBsRetrFiltersStore.setDataFromString(gvdbs_retr_filters_str);
+      curGVDBsRetrFiltersStore.reset();
     }
   }, [
     docTaskOptionsStore.needReload,
     defGVDBsRetrParamsStore.isLoaded,
+    defGVDBsRetrFiltersStore.isLoaded,
     current.gvdbs_id,
   ]);
 
