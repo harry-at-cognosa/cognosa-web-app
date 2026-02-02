@@ -180,5 +180,17 @@ export default function EditCellElement({ useStore, col }: Props) {
       </Container>
     );
   }
+  if (cellType === "gvdbs_retr_filters")
+    return (
+      <Form.Control
+        as="textarea"
+        value={value as string}
+        key={key}
+        onChange={(e) => onChange(e.target.value)}
+        rows={5}
+        autoComplete="off"
+        isInvalid={isInvalid}
+      ></Form.Control>
+    );
   return value?.toString();
 }

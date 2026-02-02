@@ -23,7 +23,7 @@ su_manage_vdbs__query_columns = {
     'gvdbs_url': ColumnType(display='URL', type='string', default="qdrant_local"),
     'gvdbs_collection': ColumnType(display='Collection', type='string', default="New Collection"),
     'gvdbs_retr_params': ColumnType(display='Retrieval Parameters', type='gvdbs_retr_params', default="{}"),
-    'gvdbs_retr_filters': ColumnType(display='Retrieval Filters', type='text', default="{}"),
+    'gvdbs_retr_filters': ColumnType(display='Retrieval Filters', type='gvdbs_retr_filters', default="{}"),
     'gvdbs_status': ColumnType(display='Status', type='gvdbs_status'),
 }
 gvdbs_edit_columns = [x for x in su_manage_vdbs__query_columns.keys() if (x not in ('gvdbs_id', 'gvdbs_status'))]

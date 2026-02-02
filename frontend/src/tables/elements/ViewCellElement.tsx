@@ -4,6 +4,7 @@ import BooleanCheck from "../CellRenders/BooleanCheck";
 import { BusyCell } from "../CellRenders/BusyCell";
 import GaDocTasksAnswer from "../CellRenders/GaDocTasksAnswer";
 import GaDocTasksQueryInfo from "../CellRenders/GaDocTasksQueryInfo";
+import GVDBsRetrFiltersCell from "../CellRenders/GVDBsRetrFiltersCell";
 import TextCell from "../CellRenders/TextCell";
 import type { createTableStore, TableRow } from "../TableStoreFactory";
 
@@ -163,6 +164,13 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
     return (
       <Td key={key} isBusy={isBusy}>
         <b>{getRetrParamsShortNameFromFullStr(value_str)}</b>
+      </Td>
+    );
+  }
+  if (cellType === "gvdbs_retr_filters") {
+    return (
+      <Td key={key} isBusy={isBusy}>
+        <GVDBsRetrFiltersCell value={value} />
       </Td>
     );
   }
