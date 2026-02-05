@@ -4,6 +4,10 @@ import type {
   GVDBsRetrFiltersSchema,
   GVDBsRetrFiltersValuesEntry,
 } from "./types";
+import {
+  GVDBsRetrFiltersHistory,
+  type GVDBsRetrFiltersHistoryEntry,
+} from "./history";
 
 interface State {
   isLoaded: boolean;
@@ -17,6 +21,11 @@ interface State {
     rf_field_id__values: Record<string, string[]>,
   ) => void;
   reset: () => void;
+  loadFromRFHistory: (
+    doc_task_id: number,
+    gvdbs_id: number,
+    defState: GVDBsRetrFiltersSchema,
+  ) => void;
 }
 
 export const useDocTasksGVDBsRetrFiltersStore = create<State>((set, get) => ({
@@ -69,4 +78,30 @@ export const useDocTasksGVDBsRetrFiltersStore = create<State>((set, get) => ({
   },
   reset: () =>
     set({ isLoaded: false, global_not_value: null, rf_field_id__values: {} }),
+  loadFromRFHistory: (
+    doc_task_id: number,
+    gvdbs_id: number,
+    defState: GVDBsRetrFiltersSchema,
+  ) => {
+    set({ defState: JSON.parse(JSON.stringify(defState)) });
+    set({ isLoaded: true });
+    const history = GVDBsRetrFiltersHistory.get(doc_task_id, gvdbs_id);
+    if (!history) {
+      set({ global_not_value: null, rf_field_id__values: {} });
+      return;
+    }
+    const f: GVDBsRetrFiltersHistoryEntry = JSON.parse(JSON.stringify(history));
+    if (defState.global_not_enabled)
+      set({ global_not_value: f.global_not_value || false });
+    else set({ global_not_value: null });
+    // make copy of value-lists for keys existing in defState
+    const newValues: Record<string, string[]> = {};
+    for (const { rf_field_id } of defState.fields) {
+      const newValueList = f.rf_field_id__values[rf_field_id]
+        ? [...f.rf_field_id__values[rf_field_id]]
+        : [];
+      newValues[rf_field_id] = newValueList.filter((value) => value.trim());
+    }
+    set({ rf_field_id__values: newValues });
+  },
 }));

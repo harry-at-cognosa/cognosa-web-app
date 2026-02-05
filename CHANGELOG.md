@@ -1,3 +1,9 @@
+## [0.21a] (2026-02-08)
+
+1. `Query Documents` -> `Queries` page ->
+   `Retrieval Filters`: now are sent to backend + loaded from history.
+   For the same query, if user changes `Document Collection`, values are preserved for each `Document Collection`.
+
 ## [0.20a] (2026-02-01)
 
 1. Added `group_vdbs`.`gvdbs_retr_filters`.

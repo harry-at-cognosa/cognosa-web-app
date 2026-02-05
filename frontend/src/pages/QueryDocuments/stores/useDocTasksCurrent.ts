@@ -2,11 +2,13 @@ import type { DocTasksResponse } from "../models/docTasksResponse";
 import type { DocTasksQuery } from "../models/docTasksQuery";
 import type { DocTasksShortItem } from "../models/docTasksShortItem";
 import { createResettableStore } from "../../../api/createResettableStore";
+import type { DocTasksGVDBsCfgState } from "../../../components/GVDBsRetrParams/types";
 
 interface DocTasksCurrentState {
   doc_task_id: number | null;
   gvdbs_id: number | null;
   setGVDBsID: (gvdbs_id: number | null) => void;
+  gvdbs_cfg_json: DocTasksGVDBsCfgState | null;
   gllms_id: number | null;
   setGLLMsID: (gllms_id: number | null) => void;
   gc_id: number | null;
@@ -45,6 +47,7 @@ interface DocTasksCurrentState {
 const defaultState = {
   doc_task_id: null,
   gvdbs_id: null,
+  gvdbs_cfg_json: null,
   gllms_id: null,
   gc_id: null,
   context_json: null,
@@ -83,7 +86,7 @@ function responseToQuery(response: DocTasksResponse): DocTasksQuery {
 
 function compareWithPreviousQuery(
   query1: DocTasksQuery,
-  query2: DocTasksQuery | null
+  query2: DocTasksQuery | null,
 ): boolean {
   function trimStr(str: string) {
     // convert multiple whitespaces to single space + trim
@@ -100,6 +103,7 @@ function compareWithPreviousQuery(
   const cfg1 = query1.gvdbs_cfg_json;
   const cfg2 = query2.gvdbs_cfg_json;
   if (!(cfg1 && cfg2)) return false;
+  // Compare Retrieval Parameters
   const sk1 = cfg1.search_kwargs;
   const sk2 = cfg2.search_kwargs;
   if (!(sk1 && sk2)) return false;
@@ -113,6 +117,9 @@ function compareWithPreviousQuery(
     if (Number(sk1.score_threshold) !== Number(sk2.score_threshold))
       return false;
   }
+  // Compare Retrieval Filters
+  if (JSON.stringify(cfg1.filters) !== JSON.stringify(cfg2.filters))
+    return false;
   return true;
 }
 
@@ -130,7 +137,12 @@ export const useDocTasksCurrentStore =
     },
     setFromServerResponse: (response: DocTasksResponse) => {
       const previousQuery = get().previousQuery || responseToQuery(response);
-      set({ ...response, previousQuery, needReloadFromHistory: false });
+      set({
+        ...response,
+        gvdbs_cfg_json: JSON.parse(response.gvdbs_cfg_json),
+        previousQuery,
+        needReloadFromHistory: false,
+      });
     },
     setNeedReload: (needReload: boolean) => set({ needReload }),
     setFromHistory: (item: DocTasksShortItem) =>

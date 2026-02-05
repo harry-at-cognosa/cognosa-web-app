@@ -8,9 +8,10 @@ import { useModalGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilt
 import GVDBsRetrFilters from "../../../components/GVDBsRetrFilters/GVDBsRetrFilters";
 import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
 import GVDBsRetrFiltersTable from "../../../components/GVDBsRetrFilters/GVDBsRetrFiltersTable";
+import { GVDBsRetrFiltersHistory } from "../../../components/GVDBsRetrFilters/history";
 
 export default function DocTasksGVDBsRetrFilters() {
-  const { gvdbs_id } = useDocTasksCurrentStore();
+  const { doc_task_id, gvdbs_id } = useDocTasksCurrentStore();
   const DocTaskOptionsStore = useDocTaskOptionsStore();
   const [show, setShow] = useState(false);
   const defStore = useDefaultGVDBsRetrFiltersStore();
@@ -27,11 +28,16 @@ export default function DocTasksGVDBsRetrFilters() {
   };
   const handleApply = () => {
     setShow(false);
+    const global_not_enabled = defStore.global_not_enabled || false;
+    const fields = defStore.fields || [];
+    GVDBsRetrFiltersHistory.update(
+      doc_task_id,
+      gvdbs_id,
+      modalStore.global_not_value,
+      modalStore.rf_field_id__values,
+    );
     curStore.initData(
-      {
-        global_not_enabled: defStore.global_not_enabled || false,
-        fields: defStore.fields || [],
-      },
+      { global_not_enabled, fields },
       modalStore.global_not_value,
       modalStore.rf_field_id__values,
     );

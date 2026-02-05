@@ -18,11 +18,14 @@ import CloneQueryButton from "./CloneQueryButton";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 import DocTasksGVDBsRetrFilters from "./DocTasksGVDBsRetrFilters";
 import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
+import { useDefaultGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDefaultGVDBsRetrFiltersStore";
+import { GVDBsRetrFiltersHistory } from "../../../components/GVDBsRetrFilters/history";
 
 function QueryArea() {
   const queryStore = useQueryDocumentsStore();
   const gvdbsRetrParamsStore = useDocTasksGVDBsRetrParamsStore();
   const gvdbsRetrFiltersStore = useDocTasksGVDBsRetrFiltersStore();
+  const defRetrFiltersStore = useDefaultGVDBsRetrFiltersStore();
 
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
@@ -92,6 +95,12 @@ function QueryArea() {
       if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
       const data = response.data;
       current.setFromServerResponse(data);
+      GVDBsRetrFiltersHistory.updateFromGVDBsCfgJSON(
+        data.doc_task_id,
+        data.gvdbs_id,
+        JSON.parse(data.gvdbs_cfg_json),
+      );
+      defRetrFiltersStore.setIsLoaded(false);
       gvdbsRetrParamsStore.copyFromDefault();
       gvdbsRetrParamsStore.setFromDocTaskData(data.gvdbs_cfg_json);
       startPolling(opUUID);
@@ -117,6 +126,12 @@ function QueryArea() {
         if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
         const data = response.data;
         current.setFromServerResponse(data);
+        GVDBsRetrFiltersHistory.updateFromGVDBsCfgJSON(
+          data.doc_task_id,
+          data.gvdbs_id,
+          JSON.parse(data.gvdbs_cfg_json),
+        );
+        defRetrFiltersStore.setIsLoaded(false);
         gvdbsRetrParamsStore.copyFromDefault();
         gvdbsRetrParamsStore.setFromDocTaskData(data.gvdbs_cfg_json);
         // Continue polling until status becomes 6
