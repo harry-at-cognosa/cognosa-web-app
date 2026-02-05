@@ -92,7 +92,7 @@ class VDBWorker(Process):
                             emb_obj=emb_models.get_by_name(msg.gvdbs_emb_model),
                             collection_name=msg.gvdbs_collection,
                             query_text=task.input_text,
-                            gvdbs_cfg_json=GVDBsRetrParams.from_dict(task.gvdbs_cfg_json).as_dict()
+                            gvdbs_cfg_json=GVDBsRetrParams.from_str(task.gvdbs_cfg_json).as_dict()
                         )
                         self.save_results_to_sql(
                             session=session,

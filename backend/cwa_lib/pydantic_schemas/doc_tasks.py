@@ -1,6 +1,8 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import Sequence
+from common.features.gvdbs_cfg_json import GVDBsCfgJSON
+
 
 class DocTaskCreate(BaseModel):
     doc_task_id: int | None
@@ -8,7 +10,7 @@ class DocTaskCreate(BaseModel):
     input_text: str
     optional_text: str
     gvdbs_id: int
-    gvdbs_cfg_json: dict[str, str | dict[str, float | int]]
+    gvdbs_cfg_json: GVDBsCfgJSON
     gllms_id: int
     gc_id: int
 

@@ -96,7 +96,7 @@ class GaManageDocTasksTableRead(GenericTableRead):
             try:
                 if row.gvdbs_id == -1:
                     return ''
-                return GVDBsRetrParams.from_dict(row.gvdbs_cfg_json).to_short_str()
+                return GVDBsRetrParams.from_str(row.gvdbs_cfg_json).to_short_str()
             except Exception:
                 return 'N/A'
         

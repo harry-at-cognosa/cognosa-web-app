@@ -1,5 +1,7 @@
+import json
 from typing import Sequence
 from sqlalchemy import select
+from common.features.gvdbs_retr_filters import GVDBsRetrFiltersFunctions
 from common.features.gvdbs_retr_params import GVDBsRetrParams, GVDBsDefRetrParams
 from common.sql_db_async import AsyncSession
 from common.sql_models import User, GroupContexts, GroupLLMs, GroupVDBs
@@ -20,6 +22,16 @@ class QueryDocumentsPage:
         self.session = session
         self.user = user
 
+    def _get_gvdbs_cfg_json_rf(self, gvdbs: GroupVDBs | None, payload: DocTaskCreate) -> dict | None:
+        if not gvdbs:
+            return None
+        if not (user_filters := payload.gvdbs_cfg_json.filters):
+            return None        
+        try:
+            return GVDBsRetrFiltersFunctions.check_user_request(user_filters, gvdbs.gvdbs_retr_filters)
+        except Exception:
+            return None
+
     async def create_task(self, payload: DocTaskCreate) -> DocTaskQueryResult | str:
         # check if VDBs and LLMs are ready (status != 'danger')
         gvdbs = None
@@ -29,14 +41,23 @@ class QueryDocumentsPage:
                 return "Document collection is not ready"
         # for non-regular user, use Retrieval Parameters from query
         if self.user.is_superuser or self.user.is_groupadmin or self.user.is_contentmanager:
-            gvdbs_cfg_json=GVDBsRetrParams.from_dict(payload.gvdbs_cfg_json).as_dict()
+            gvdbs_retr_params=GVDBsRetrParams(
+                search_type=payload.gvdbs_cfg_json.search_type, 
+                search_kwargs=payload.gvdbs_cfg_json.search_kwargs
+            ).as_dict()
         # for regular user, use default Retrieval Parameters either from `group_vdbs` or `api_groups`
         else:
             if gvdbs:  # for Document search - use defaults from `group_vdbs`
-                gvdbs_cfg_json = GVDBsDefRetrParams.from_dict(gvdbs.gvdbs_retr_params).as_short_dict()
+                gvdbs_retr_params = GVDBsDefRetrParams.from_dict(gvdbs.gvdbs_retr_params).as_short_dict()
             else:  # for No Document search - use defaults from `api_groups`
                 group = await ApiGroupsTable(self.session).get_group_by_group_id(self.user.group_id)
-                gvdbs_cfg_json = GVDBsDefRetrParams.from_dict(group.gvdbs_retr_params).as_short_dict()
+                gvdbs_retr_params = GVDBsDefRetrParams.from_dict(group.gvdbs_retr_params).as_short_dict()
+        
+        gvdbs_cfg = {**gvdbs_retr_params}
+        if gvdbs_cfg_rf := self._get_gvdbs_cfg_json_rf(gvdbs, payload):
+            gvdbs_cfg['filters'] = gvdbs_cfg_rf
+
+        gvdbs_cfg_json = json.dumps(gvdbs_cfg, indent=1, default=str)
         
         gllms = await DocTasksTable(self.session).query_gllms(self.user.group_id, payload.gllms_id)
         if not (gllms and (gllms.gllms_status != 'danger')):

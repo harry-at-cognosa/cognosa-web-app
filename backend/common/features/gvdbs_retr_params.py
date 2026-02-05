@@ -1,11 +1,17 @@
 import json
 from typing import Literal, TypeGuard
+from pydantic import BaseModel
 
 TYPE__SEARCH_TYPE = Literal['similarity', 'mmr', 'similarity_score_threshold']
 TYPE__SEARCH_KWARGS = dict[Literal['k', 'fetch_k', 'lambda_mult', 'score_threshold'], int | float]
 TYPE__SEARCH_KWARGS__SIM = dict[Literal['k'], int]
 TYPE__SEARCH_KWARGS__MMR = dict[Literal['k', 'fetch_k', 'lambda_mult'], int | float]
 TYPE__SEARCH_KWARGS__SST = dict[Literal['k', 'score_threshold'], int | float]
+
+class TYPE__GVDBS_CFG_JSON_RP(BaseModel):
+    search_type: TYPE__SEARCH_TYPE
+    search_kwargs: TYPE__SEARCH_KWARGS
+
 
 ALLOWED_SEARCH_TYPES = ['similarity', 'mmr', 'similarity_score_threshold']
 def is_valid_search_type(value: str) -> TypeGuard[TYPE__SEARCH_TYPE]:
@@ -86,9 +92,9 @@ class GVDBsRetrParams:
         return "SST: " + k + "/" + score_threshold
 
     @classmethod
-    def from_dict(cls, gvdbs_retr_params: str | dict) -> 'GVDBsRetrParams':
+    def from_str(cls, gvdbs_retr_params: str) -> 'GVDBsRetrParams':
         try:
-            cfg_dict = gvdbs_retr_params if isinstance(gvdbs_retr_params, dict) else json.loads(gvdbs_retr_params)
+            cfg_dict = json.loads(gvdbs_retr_params)
             # search_type
             search_type: TYPE__SEARCH_TYPE = cfg_dict.get('search_type', DEFAULT_SEARCH_TYPE)
             if not(is_valid_search_type(search_type)):

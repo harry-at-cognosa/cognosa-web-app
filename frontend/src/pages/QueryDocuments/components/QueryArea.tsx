@@ -17,10 +17,13 @@ import AskButton from "./AskButton";
 import CloneQueryButton from "./CloneQueryButton";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 import DocTasksGVDBsRetrFilters from "./DocTasksGVDBsRetrFilters";
+import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
 
 function QueryArea() {
   const queryStore = useQueryDocumentsStore();
   const gvdbsRetrParamsStore = useDocTasksGVDBsRetrParamsStore();
+  const gvdbsRetrFiltersStore = useDocTasksGVDBsRetrFiltersStore();
+
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const docTasksShortStore = useDocTasksShortStore();
@@ -58,9 +61,12 @@ function QueryArea() {
     }
     const gvdbs_cfg_json = gvdbsRetrParamsStore.getGVDBsRetrParamsDict();
     if (!gvdbs_cfg_json) {
-      alert("No Document Search Options specified");
+      alert("No Document Retrieval Parameters specified");
       return;
     }
+    const gvdbs_retr_filters = gvdbsRetrFiltersStore.getDict();
+    if (gvdbs_retr_filters) gvdbs_cfg_json.filters = gvdbs_retr_filters;
+
     const query: DocTasksQuery = {
       doc_task_id: current.doc_task_id,
       short_name: current.short_name || "",

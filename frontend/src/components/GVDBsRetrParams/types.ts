@@ -1,3 +1,5 @@
+import type { DocTasksGVDBsRetrFiltersRequest } from "../GVDBsRetrFilters/types";
+
 export const allowedSearchTypes = [
   "similarity",
   "mmr",
@@ -16,6 +18,7 @@ export interface SearchKwargs {
 export interface DocTasksGVDBsCfgState {
   search_type: SearchType;
   search_kwargs: SearchKwargs;
+  filters?: DocTasksGVDBsRetrFiltersRequest;
 }
 
 export interface SearchKwargsSIM {

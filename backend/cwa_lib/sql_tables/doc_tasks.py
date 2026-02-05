@@ -99,7 +99,7 @@ class DocTasksTable:
             group_id: int, 
             user_id: int,
             gvdbs_id: int,
-            gvdbs_cfg_json: dict,
+            gvdbs_cfg_json: str,
             gllms_id: int,
             gc_id: int, 
             short_name: str, 
@@ -112,7 +112,7 @@ class DocTasksTable:
             group_id=group_id, 
             user_id=user_id, 
             gvdbs_id=gvdbs_id,
-            gvdbs_cfg_json=json.dumps(gvdbs_cfg_json, indent=1, default=str),
+            gvdbs_cfg_json=gvdbs_cfg_json,
             gvdbs_json=gvdbs_json,
             gllms_id=gllms_id,
             gllms_json=gllms_json,
@@ -144,7 +144,7 @@ class DocTasksTable:
             doc_task_id: int,
             user_group_id: int, 
             gvdbs_id: int,
-            gvdbs_cfg_json: dict,
+            gvdbs_cfg_json: str,
             gllms_id: int,
             gc_id: int, 
             short_name: str, 
@@ -161,7 +161,7 @@ class DocTasksTable:
             raise Exception("Task already has follow-up question")
         
         task.gvdbs_id = gvdbs_id
-        task.gvdbs_cfg_json=json.dumps(gvdbs_cfg_json, indent=1, default=str)
+        task.gvdbs_cfg_json=gvdbs_cfg_json
         task.gvdbs_json=gvdbs_json
         task.gllms_id=gllms_id
         task.gllms_json=gllms_json
