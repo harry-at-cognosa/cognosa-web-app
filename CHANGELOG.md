@@ -1,4 +1,4 @@
-## [0.21a] (2026-02-08)
+## [0.21a] (2026-02-06)
 
 1. `Query Documents` -> `Queries` page ->
    `Retrieval Filters`: now are sent to backend + loaded from history.
