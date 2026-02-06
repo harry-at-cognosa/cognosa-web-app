@@ -22,7 +22,7 @@ interface State {
   ) => void;
   reset: () => void;
   loadFromRFHistory: (
-    doc_task_id: number,
+    doc_task_id: number | null,
     gvdbs_id: number,
     defState: GVDBsRetrFiltersSchema,
   ) => void;
@@ -79,7 +79,7 @@ export const useDocTasksGVDBsRetrFiltersStore = create<State>((set, get) => ({
   reset: () =>
     set({ isLoaded: false, global_not_value: null, rf_field_id__values: {} }),
   loadFromRFHistory: (
-    doc_task_id: number,
+    doc_task_id: number | null,
     gvdbs_id: number,
     defState: GVDBsRetrFiltersSchema,
   ) => {

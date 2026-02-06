@@ -36,7 +36,6 @@ export default function QuerySelectVDB() {
   // update gvdbs_retr_params from group_vdbs row if necessary
   useEffect(() => {
     if (docTaskOptionsStore.needReload) return;
-    if (!current.doc_task_id) return;
     if (!current.gvdbs_id || current.gvdbs_id === -1) return;
     const gvdbs_row = docTaskOptionsStore.gvdbs_id__row[current.gvdbs_id];
     const gvdbs_retr_params_str = gvdbs_row?.gvdbs_retr_params;

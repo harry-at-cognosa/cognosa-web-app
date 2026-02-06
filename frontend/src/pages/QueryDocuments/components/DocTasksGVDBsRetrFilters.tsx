@@ -85,6 +85,7 @@ export default function DocTasksGVDBsRetrFilters() {
           color: "black",
         }}
         onClick={() => {
+          GVDBsRetrFiltersHistory.delete(doc_task_id, gvdbs_id);
           curStore.reset();
         }}
       >

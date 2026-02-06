@@ -35,11 +35,10 @@ export class GVDBsRetrFiltersHistory {
     global_not_value: boolean | null,
     rf_field_id__values: Record<string, string[]>,
   ) {
-    if (!doc_task_id) return;
     if (!gvdbs_id || gvdbs_id === -1) return;
-    if (!GVDBsRetrFiltersHistory.data[doc_task_id])
-      GVDBsRetrFiltersHistory.data[doc_task_id] = {};
-    GVDBsRetrFiltersHistory.data[doc_task_id][gvdbs_id] = JSON.parse(
+    if (!GVDBsRetrFiltersHistory.data[doc_task_id || 0])
+      GVDBsRetrFiltersHistory.data[doc_task_id || 0] = {};
+    GVDBsRetrFiltersHistory.data[doc_task_id || 0][gvdbs_id] = JSON.parse(
       JSON.stringify({ global_not_value, rf_field_id__values }),
     );
   }
@@ -47,8 +46,13 @@ export class GVDBsRetrFiltersHistory {
     doc_task_id: number | null,
     gvdbs_id: number | null,
   ): GVDBsRetrFiltersHistoryEntry | null {
-    if (!doc_task_id) return null;
     if (!gvdbs_id || gvdbs_id === -1) return null;
-    return GVDBsRetrFiltersHistory.data[doc_task_id]?.[gvdbs_id] || null;
+    return GVDBsRetrFiltersHistory.data[doc_task_id || 0]?.[gvdbs_id] || null;
+  }
+  static delete(doc_task_id: number | null, gvdbs_id: number | null): void {
+    if (!gvdbs_id || gvdbs_id === -1) return;
+    if (!GVDBsRetrFiltersHistory.data[doc_task_id || 0])
+      GVDBsRetrFiltersHistory.data[doc_task_id || 0] = {};
+    delete GVDBsRetrFiltersHistory.data[doc_task_id || 0][gvdbs_id];
   }
 }
