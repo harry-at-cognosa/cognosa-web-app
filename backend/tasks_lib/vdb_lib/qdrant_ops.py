@@ -5,6 +5,7 @@ from qdrant_client.models import Distance, VectorParams
 from common import log
 from common.features.gvdbs_retr_filters import RunTasksGVDBsRetrFilters
 from common.parsed_url import ParsedUrl
+from .qdrant_filters import QdrantFilters
 
 
 class QdrantOps:
@@ -71,7 +72,7 @@ class QdrantOps:
         except Exception as e:
             log.error(f"Error storing documents in Qdrant: {str(e)}")
             return "Error storing documents in Qdrant"
-
+        
     def get_docs(self, 
             emb_obj: HuggingFaceEmbeddings, 
             collection_name: str, 
@@ -84,6 +85,17 @@ class QdrantOps:
                 collection_name=collection_name,
                 embedding=emb_obj,
             )
+        
+        # Convert filters if provided
+        qdrant_filter = None
+        if retr_filters:
+            qdrant_filter = QdrantFilters(retr_filters).convert_from_retr_filters()
+        
+        # Create retriever with filters if available
+        if qdrant_filter:
+            # Add filter to search_kwargs
+            retr_params['search_kwargs']['filter'] = qdrant_filter            
+
         # Create retriever
         retriever = vectorstore.as_retriever(**retr_params)
         

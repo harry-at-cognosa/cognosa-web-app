@@ -4,6 +4,26 @@
    `Retrieval Filters`: now are sent to backend + loaded from history.
    For the same query, if user changes `Document Collection`, values are preserved for each `Document Collection`.
 
+2. Apply `Retrieval Filters` to Qdrant db.
+   Python Module: `/backend/tasks_lib/vdb_lib/qdrant_filters.py`.
+   Common filters (text search as substring, case-sensitive):
+   `Product Name`
+   `SKU`
+   `Type`
+   `Product Series`
+   `Select Category`
+   `Select SubCat`
+   `Brand`
+   `Alias`
+   Ledra specific filters:
+   `Base/Alt`:
+   if `base` it will use documents with key not exists/filled: metadata.alt_product_id
+   if `alt` it will use documents with key filled: metadata.alt_product_id
+   `Product ID`:
+   if `Base/Alt` is `base`, then use path "metadata.base_product_id"
+   if `Base/Alt` is `alt`, then use path "metadata.alt_product_id"
+   in other cases, use both "metadata.base_product_id" "metadata.alt_product_id" as OR clause.
+
 ## [0.20a] (2026-02-01)
 
 1. Added `group_vdbs`.`gvdbs_retr_filters`.
