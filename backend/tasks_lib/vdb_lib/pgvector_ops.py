@@ -76,10 +76,10 @@ class PGVectorOps:
             log.error(f"Error storing documents in PGVector: {str(exc)}")
             return "Error storing documents in PGVector"
 
-    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str, gvdbs_cfg_json: dict) -> list[dict]:
+    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str, retr_params: dict) -> list[dict]:
         vectorstore = self.get_vector_store(emb_obj, collection_name)
         # Create retriever
-        retriever = vectorstore.as_retriever(**gvdbs_cfg_json)
+        retriever = vectorstore.as_retriever(**retr_params)
         # Retrieve documents first
         docs = retriever.invoke(query_text)        
         # return as list of dictionaries

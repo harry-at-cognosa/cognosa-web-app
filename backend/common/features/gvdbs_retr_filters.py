@@ -1,6 +1,7 @@
+import json
+import re
 from typing import Literal, Annotated, TypeAlias
 from pydantic import BaseModel, Field, field_validator, model_validator
-import re
 
 ###
 # Pydantic model
@@ -60,17 +61,40 @@ class FormSchemaGVDBsRF(BaseModel):
 
 class RequestGVDBsRetrFiltersValuesEntry(BaseModel):
   rf_field_id: str
-  values_list: list[str]
+  values_list: list[str]  # several string values to compare using OR.
 
 
 class RequestGVDBsRetrFilters(BaseModel):
+    global_not_value: bool | None = None  # If True, all values MUST NOT be as specified in values entries.
+    values: list[RequestGVDBsRetrFiltersValuesEntry]
+
+class RunTasksGVDBsRetrFilters(BaseModel):
     global_not_value: bool | None = None
     values: list[RequestGVDBsRetrFiltersValuesEntry]
+    rf_field_id__field: dict[str, FieldGVDBsRF]
 
 
 class GVDBsRetrFiltersFunctions:
+    @classmethod
+    def get_for_run_tasks(cls, gvdbs_cfg_json: str, gvdbs_retr_filters_str: str) -> RunTasksGVDBsRetrFilters | None:
+        try:
+            user_filters = RequestGVDBsRetrFilters.model_validate(json.loads(gvdbs_cfg_json)['filters'])
+            gvdbs_retr_filters = FormSchemaGVDBsRF.model_validate_json(gvdbs_retr_filters_str)
+            if not (user_filters := cls.check_user_request(user_filters, gvdbs_retr_filters)):
+                return None
+            return RunTasksGVDBsRetrFilters.model_validate({
+                'global_not_value': user_filters.get('global_not_value'),
+                'values': user_filters['values'],
+                'rf_field_id__field': {x.rf_field_id: dict(x) for x in gvdbs_retr_filters.fields}
+            })
+        except Exception:
+            return None
+
     @staticmethod
-    def check_user_request(user_filters: RequestGVDBsRetrFilters, gvdbs_retr_filters_str: str) -> dict | None:
+    def check_user_request(
+        user_filters: RequestGVDBsRetrFilters | str, 
+        gvdbs_retr_filters: FormSchemaGVDBsRF | str
+        ) -> dict | None:
         """
         Check user request filters to be valid for group_vdbs.gvdbs_retr_filters:
         1) must have rf_field_id specified in gvdbs_retr_filters
@@ -78,7 +102,10 @@ class GVDBsRetrFiltersFunctions:
         3) strings must be not empty
         4) select values must be in gvdbs_retr_filters
         """
-        gvdbs_retr_filters = FormSchemaGVDBsRF.model_validate_json(gvdbs_retr_filters_str)
+        if isinstance(user_filters, str):
+            user_filters = RequestGVDBsRetrFilters.model_validate_json(user_filters)
+        if isinstance(gvdbs_retr_filters, str):
+            gvdbs_retr_filters = FormSchemaGVDBsRF.model_validate_json(gvdbs_retr_filters)
         global_not_enabled = gvdbs_retr_filters.global_not_enabled
         global_not_value = bool(user_filters.global_not_value) if global_not_enabled else None
         rf_field_id__field = {x.rf_field_id: x for x in gvdbs_retr_filters.fields}

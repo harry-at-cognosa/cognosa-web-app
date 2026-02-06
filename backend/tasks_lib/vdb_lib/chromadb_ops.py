@@ -29,7 +29,7 @@ class ChromaDBOps:
             return None
         return collection_name in all_collection_names
 
-    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str, gvdbs_cfg_json: dict) -> list[dict]:
+    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str, retr_params: dict) -> list[dict]:
         client = chromadb.HttpClient(host=self.host, port=self.port)
         vectorstore = Chroma(
             client=client, 
@@ -37,7 +37,7 @@ class ChromaDBOps:
             embedding_function=emb_obj
         )
         # Create retriever
-        retriever = vectorstore.as_retriever(**gvdbs_cfg_json)        
+        retriever = vectorstore.as_retriever(**retr_params)        
         
         # Retrieve documents first
         docs = retriever.invoke(query_text)

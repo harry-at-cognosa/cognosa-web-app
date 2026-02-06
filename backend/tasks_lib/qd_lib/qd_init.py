@@ -21,6 +21,7 @@ class QueryDocumentInit:
         self.gvdbs_port = 8000
         self.gvdbs_collection = ''
         self.gvdbs_model = ''
+        self.gvdbs_retr_filters = ''
 
     def write_status_init_error(self, error_msg: str):
         self.task.status = TaskStatus.QD_INIT_ERROR
@@ -61,6 +62,7 @@ class QueryDocumentInit:
             self.gvdbs_emb_model = gvdbs.gvdbs_emb_model.strip()
             if not self.gvdbs_emb_model:
                 raise Exception
+            self.gvdbs_retr_filters = gvdbs.gvdbs_retr_filters.strip()
         except Exception:
             self.write_status_init_error(error_msg)
             raise QueryDocumentInitException
@@ -76,6 +78,7 @@ class QueryDocumentInit:
                 gvdbs_url=self.gvdbs_url,
                 gvdbs_collection=self.gvdbs_collection,
                 gvdbs_emb_model=self.gvdbs_emb_model,
+                gvdbs_retr_filters=self.gvdbs_retr_filters
                 )
             )
         

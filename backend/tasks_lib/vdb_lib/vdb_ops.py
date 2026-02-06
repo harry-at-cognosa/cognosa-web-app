@@ -1,5 +1,6 @@
 from time import sleep
 from langchain_huggingface import HuggingFaceEmbeddings
+from common.features.gvdbs_retr_filters import RunTasksGVDBsRetrFilters
 from common.parsed_url import ParsedUrl
 from tasks_lib.vdb_lib.chromadb_ops import ChromaDBOps
 from tasks_lib.vdb_lib.qdrant_ops import QdrantOps
@@ -41,15 +42,21 @@ class VectorDBOps:
                 return PGVectorOps(self.parsed_url).collection_exists(collection_name)
         raise NotImplementedError
     
-    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str, gvdbs_cfg_json: dict) -> list[dict]:
+    def get_docs(self, 
+            emb_obj: HuggingFaceEmbeddings, 
+            collection_name: str, 
+            query_text: str, 
+            retr_params: dict,
+            retr_filters: RunTasksGVDBsRetrFilters | None
+        ) -> list[dict]:
         if IS_DUMMY_VDB:
             sleep(2)
             return [{'page_content': 'Fake page content', 'metadata': 'Fake metadata'}]
         match self.vdb_type:
             case 'chroma':
-                return ChromaDBOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text, gvdbs_cfg_json)
+                return ChromaDBOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text, retr_params)
             case 'qdrant':
-                return QdrantOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text, gvdbs_cfg_json)
+                return QdrantOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text, retr_params, retr_filters)
             case 'pgvector':
-                return PGVectorOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text, gvdbs_cfg_json)
+                return PGVectorOps(self.parsed_url).get_docs(emb_obj, collection_name, query_text, retr_params)
         raise NotImplementedError

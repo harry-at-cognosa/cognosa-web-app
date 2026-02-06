@@ -3,6 +3,7 @@ from queue import Empty
 from time import time
 from traceback import format_exc
 from common import log, LOG_SQLALCHEMY_RT, RT_VDB_PROCESS_NUM
+from common.features.gvdbs_retr_filters import GVDBsRetrFiltersFunctions
 from common.features.gvdbs_retr_params import GVDBsRetrParams
 from common.helpers import utcnow
 from tasks_lib.entities.task_queue_msg import VDBDocTaskQueueMsg, VDBTaskExitMsg
@@ -92,7 +93,8 @@ class VDBWorker(Process):
                             emb_obj=emb_models.get_by_name(msg.gvdbs_emb_model),
                             collection_name=msg.gvdbs_collection,
                             query_text=task.input_text,
-                            gvdbs_cfg_json=GVDBsRetrParams.from_str(task.gvdbs_cfg_json).as_dict()
+                            retr_params=GVDBsRetrParams.from_str(task.gvdbs_cfg_json).as_dict(),
+                            retr_filters=GVDBsRetrFiltersFunctions.get_for_run_tasks(task.gvdbs_cfg_json, msg.gvdbs_retr_filters),
                         )
                         self.save_results_to_sql(
                             session=session,

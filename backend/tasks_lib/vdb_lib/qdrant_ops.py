@@ -3,6 +3,7 @@ from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
 from common import log
+from common.features.gvdbs_retr_filters import RunTasksGVDBsRetrFilters
 from common.parsed_url import ParsedUrl
 
 
@@ -71,14 +72,20 @@ class QdrantOps:
             log.error(f"Error storing documents in Qdrant: {str(e)}")
             return "Error storing documents in Qdrant"
 
-    def get_docs(self, emb_obj: HuggingFaceEmbeddings, collection_name: str, query_text: str, gvdbs_cfg_json: dict) -> list[dict]:
+    def get_docs(self, 
+            emb_obj: HuggingFaceEmbeddings, 
+            collection_name: str, 
+            query_text: str, 
+            retr_params: dict,
+            retr_filters: RunTasksGVDBsRetrFilters | None = None
+        ) -> list[dict]:
         vectorstore = QdrantVectorStore(
                 client=self.client,
                 collection_name=collection_name,
                 embedding=emb_obj,
             )
         # Create retriever
-        retriever = vectorstore.as_retriever(**gvdbs_cfg_json)
+        retriever = vectorstore.as_retriever(**retr_params)
         
         # Retrieve documents first
         docs = retriever.invoke(query_text)

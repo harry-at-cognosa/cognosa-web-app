@@ -92,7 +92,7 @@ def check_chroma(check_query: str, group_id: int):
                 emb_obj=emb_models.get_by_name(qd_init.gvdbs_emb_model),
                 collection_name=qd_init.gvdbs_collection,
                 query_text=qd_init.input_text,
-                gvdbs_cfg_json={'k': 10}
+                retr_params={'k': 10}
             )
         except Exception as exc:
             log.error(str(exc))

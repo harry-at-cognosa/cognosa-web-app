@@ -9,6 +9,7 @@ class VDBDocTaskQueueMsg:
     gvdbs_url: str    
     gvdbs_collection: str
     gvdbs_emb_model: str
+    gvdbs_retr_filters: str
 
 
 @dataclass
