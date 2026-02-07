@@ -4,18 +4,49 @@ import UpdateRowButton from "./UpdateRowButton";
 import ReadRowButton from "./ReadRowButton";
 import type { createTableStore } from "../TableStoreFactory";
 import { BusyCell } from "../CellRenders/BusyCell";
+import { useLayoutEffect, useRef } from "react";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
 }
 
+function fixTextareaHeights(tbody: HTMLElement) {
+  const rows = tbody.querySelectorAll("tr");
+
+  rows.forEach((row) => {
+    if (!row.querySelector(".need-fix-height")) return;
+
+    const textareas = row.querySelectorAll<HTMLTextAreaElement>("textarea");
+    if (!textareas.length) return;
+
+    // reset first
+    textareas.forEach((t) => {
+      t.style.height = "auto";
+    });
+
+    let maxHeight = 0;
+    row.querySelectorAll("td").forEach((td) => {
+      maxHeight = Math.max(maxHeight, td.offsetHeight);
+    });
+
+    textareas.forEach((t) => {
+      t.style.height = `${maxHeight}px`;
+    });
+  });
+}
+
 export default function TableBody({ useStore }: Props) {
   const tableStore = useStore();
   const { data } = tableStore;
+  const tbodyRef = useRef<HTMLTableSectionElement | null>(null);
   if (!data) return null;
   const isBusy = tableStore.busy === "read";
+  useLayoutEffect(() => {
+    if (!tbodyRef.current) return;
+    fixTextareaHeights(tbodyRef.current);
+  }, [data.rows, data.table_options.read__visible_columns, tableStore.busy]);
   return (
-    <tbody>
+    <tbody ref={tbodyRef}>
       {data.rows.map((row) => (
         <tr
           key={row[data.table_options.pk]?.toString()}

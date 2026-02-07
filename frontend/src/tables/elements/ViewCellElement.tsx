@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import getColor from "../../api/getColor";
 import { getRetrParamsShortNameFromFullStr } from "../../components/GVDBsRetrParams/functions";
 import BooleanCheck from "../CellRenders/BooleanCheck";
@@ -147,7 +148,11 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
   }
   if (cellType === "ga_manage_doc_tasks__answer") {
     return (
-      <Td key={key} isBusy={isBusy} className="p-0 align-top">
+      <Td
+        key={key}
+        isBusy={isBusy}
+        className={clsx("align-top", row["output_text_2"] ? "p-0" : null)}
+      >
         <GaDocTasksAnswer row={row} />
       </Td>
     );
