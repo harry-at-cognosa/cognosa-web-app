@@ -39,6 +39,7 @@ export interface GVDBsRetrFiltersLoaded {
 export interface GVDBsRetrFiltersValuesEntry {
   rf_field_id: string;
   values_list: string[];
+  short_title?: string;
 }
 
 export interface DocTasksGVDBsRetrFiltersRequest {

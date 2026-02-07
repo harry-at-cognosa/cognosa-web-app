@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 ###
 class FieldBaseGVDBsRF(BaseModel):
     title: str
+    short_title: str | None = None
     path: str
     sub_type: str | None = None
     rf_field_id: str
@@ -19,6 +20,11 @@ class FieldBaseGVDBsRF(BaseModel):
             if not re.match(r'^[a-zA-Z0-9_-]{2,}$', v):
                 raise ValueError("rf_field_id must contain only letters, numbers, underscores, and hyphens, and be at least 2 characters long")
         return v
+    @model_validator(mode="after")
+    def fill_short_title(self):
+        if not self.short_title:
+            self.short_title = self.title
+        return self
 
 class StringFieldGVDBsRF(FieldBaseGVDBsRF):
     type: Literal["string"]
@@ -122,7 +128,11 @@ class GVDBsRetrFiltersFunctions:
                 elif source_field.type == 'select':
                     user_values_list = [x for x in user_field.values_list if (x in source_field.values)]
                 if user_values_list:
-                    new_fields.append({'rf_field_id': rf_field_id, 'values_list': user_values_list})
+                    new_fields.append({
+                        'rf_field_id': rf_field_id, 
+                        'values_list': user_values_list, 
+                        'short_title': source_field.short_title
+                    })
                     used_rf_field_ids.add(rf_field_id)
         if not new_fields:
             return None

@@ -24,6 +24,9 @@
    if `Base/Alt` is `alt`, then use path "metadata.alt_product_id"
    in other cases, use both "metadata.base_product_id" "metadata.alt_product_id" as OR clause.
 
+3. `GroupAdmin` -> `Queries` page:
+   Show `Retrieval Filters` if specified in `Info` column for each query row.
+
 ## [0.20a] (2026-02-01)
 
 1. Added `group_vdbs`.`gvdbs_retr_filters`.

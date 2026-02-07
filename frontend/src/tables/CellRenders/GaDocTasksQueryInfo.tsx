@@ -1,3 +1,6 @@
+import { Table } from "react-bootstrap";
+import { getRetrFiltersShortTableFromJSONStr } from "../../components/GVDBsRetrFilters/functions";
+import { getRetrParamsShortNameFromShortStr } from "../../components/GVDBsRetrParams/functions";
 import type { TableCellValue, TableRow } from "../TableStoreFactory";
 
 function getPlacedAtStr(row: TableRow): string {
@@ -29,6 +32,9 @@ interface Props {
 }
 
 export default function GaDocTasksQueryInfo({ row }: Props) {
+  const gvdbs_rf_rows = getRetrFiltersShortTableFromJSONStr(
+    row["gvdbs_cfg"] as string,
+  );
   return (
     <table>
       <tbody>
@@ -48,8 +54,42 @@ export default function GaDocTasksQueryInfo({ row }: Props) {
         </tr>
         {row["gvdbs_cfg"] ? (
           <tr>
-            <th className="text-end pe-2">Search Options:</th>
-            <td className="text-start">{row["gvdbs_cfg"]}</td>
+            <th className="text-end pe-2">Retrieval Params:</th>
+            <td className="text-start">
+              {getRetrParamsShortNameFromShortStr(row["gvdbs_cfg"].toString())}
+            </td>
+          </tr>
+        ) : null}
+        {gvdbs_rf_rows ? (
+          <tr>
+            <th className="text-end pe-2">Retrieval Filters:</th>
+            <td className="text-start">
+              <Table bordered className="mb-0">
+                <tbody>
+                  {gvdbs_rf_rows.map((row, i) => (
+                    <tr key={i}>
+                      <td
+                        className={"text-nowrap py-0"}
+                        style={{ width: "1%", backgroundColor: "#fff0" }}
+                      >
+                        {row.short_title}
+                      </td>
+                      <td className="py-0" style={{ backgroundColor: "#fff0" }}>
+                        {row.global_not ? (
+                          <span
+                            className="me-2 pb-1"
+                            style={{ color: "#e00000" }}
+                          >
+                            NOT:
+                          </span>
+                        ) : null}
+                        {row.value}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </td>
           </tr>
         ) : null}
         <tr>

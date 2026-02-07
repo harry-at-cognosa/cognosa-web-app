@@ -110,7 +110,7 @@ class GaManageDocTasksTableRead(GenericTableRead):
                 input_text=row.input_text,
                 optional_text=row.optional_text,
                 gvdbs_name=get_gvdbs_name(row),
-                gvdbs_cfg=get_gvdbs_cfg(row),
+                gvdbs_cfg=row.gvdbs_cfg_json,
                 gllms_name=get_gllms_name(row),
                 context_json=row.context_json,
                 sent_to_llm=row.sent_to_llm,

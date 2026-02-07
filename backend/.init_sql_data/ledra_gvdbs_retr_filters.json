@@ -13,6 +13,7 @@
     {
       "rf_field_id": "product_id",
       "title": "Product ID",
+      "short_title": "ProdID",
       "path": "metadata.base_product_id",
       "type": "string",
       "max_length": 100,
@@ -21,6 +22,7 @@
     {
       "rf_field_id": "product_name",
       "title": "Product Name",
+      "short_title": "ProdName",
       "path": "metadata.product_name",
       "type": "string",
       "max_length": 100
@@ -49,6 +51,7 @@
     {
       "rf_field_id": "prodseries",
       "title": "Product Series",
+      "short_title": "ProdSeries",
       "path": "metadata.prodseries",
       "type": "string",
       "max_length": 100
@@ -56,6 +59,7 @@
     {
       "rf_field_id": "category",
       "title": "Select Category",
+      "short_title": "Cat",
       "path": "metadata.category",
       "type": "string",
       "max_length": 100
@@ -63,6 +67,7 @@
     {
       "rf_field_id": "subcategory",
       "title": "Select SubCat",
+      "short_title": "SubCat",
       "path": "metadata.subcategory",
       "type": "string",
       "max_length": 100
