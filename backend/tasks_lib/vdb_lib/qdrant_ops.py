@@ -4,6 +4,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
 from common import log
 from common.features.gvdbs_retr_filters import RunTasksGVDBsRetrFilters
+from common.helpers import split2list, get_by_path
 from common.parsed_url import ParsedUrl
 from .qdrant_filters import QdrantFilters
 
@@ -39,6 +40,43 @@ class QdrantOps:
             )
         )
         log.info(f"Created collection '{collection_name}' with vector size {vector_size}")
+
+    def list_metadata_select_values(self, 
+            collection_name: str, 
+            path_list: list[str], 
+            max_documents: int = 10_000_000
+        ) -> dict[str, set]:
+        """
+        List all possible values for certain metadata fields.
+        """
+        # divide each path to key list, e.g. 'metadata.some_key' -> ['metadata', 'some_key']
+        path__keys = {x: split2list(x, '.') for x in path_list}
+        path__values_set: dict[str, set] = {x: set() for x in path_list}
+        offset = None
+        left_documents = max_documents  # maximum documents to search
+        while True:
+            record_list, offset = self.client.scroll(
+                collection_name=collection_name,
+                limit=1000,
+                offset=offset,
+                with_payload=True,
+                with_vectors=False
+            )
+            for record in record_list:
+                for path, keys in path__keys.items():
+                    # get value from path
+                    try:
+                        if record.payload:
+                            path__values_set[path].add(get_by_path(record.payload, keys))
+                    except Exception:
+                        pass
+
+            left_documents -= len(record_list)
+            if left_documents <= 0:
+                break
+            if offset is None:
+                break
+        return path__values_set
 
     def save_to_qdrant(
             self, 

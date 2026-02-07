@@ -7,6 +7,8 @@ from .api_groups import ApiGroups
 from .api_users import User
 from .group_contexts import GroupContexts
 from .group_vdbs import GroupVDBs
+from .group_vdbs_tasks import GroupVDBsTasks
+from .group_vdbs_select_values import GroupVDBsSelectValues
 from .group_llms import GroupLLMs
 from .doc_tasks import DocTasks
 from .api_processes import ApiProcesses

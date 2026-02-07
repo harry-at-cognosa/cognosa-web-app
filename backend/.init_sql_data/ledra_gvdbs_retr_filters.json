@@ -61,16 +61,20 @@
       "title": "Select Category",
       "short_title": "Cat",
       "path": "metadata.category",
-      "type": "string",
-      "max_length": 100
+      "type": "select",
+      "values": [],
+      "auto_fill": true,
+      "max_select": -1
     },
     {
       "rf_field_id": "subcategory",
       "title": "Select SubCat",
       "short_title": "SubCat",
       "path": "metadata.subcategory",
-      "type": "string",
-      "max_length": 100
+      "type": "select",
+      "values": [],
+      "auto_fill": true,
+      "max_select": -1
     },
     {
       "rf_field_id": "brand",

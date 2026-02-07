@@ -42,6 +42,23 @@ class VectorDBOps:
                 return PGVectorOps(self.parsed_url).collection_exists(collection_name)
         raise NotImplementedError
     
+    def list_metadata_select_values(self, 
+            collection_name: str, 
+            path_list: list[str], 
+            max_documents: int = 10_000_000
+        ) -> dict[str, set]:
+        """
+        List all possible values for certain metadata fields.
+        """
+        match self.vdb_type:
+            case 'chroma':
+                return dict()
+            case 'qdrant':
+                return QdrantOps(self.parsed_url).list_metadata_select_values(collection_name, path_list, max_documents)
+            case 'pgvector':
+                return dict()
+        raise NotImplementedError
+    
     def get_docs(self, 
             emb_obj: HuggingFaceEmbeddings, 
             collection_name: str, 

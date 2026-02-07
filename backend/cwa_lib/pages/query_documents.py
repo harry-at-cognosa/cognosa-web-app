@@ -1,7 +1,7 @@
 import json
 from typing import Sequence
 from sqlalchemy import select
-from common.features.gvdbs_retr_filters import GVDBsRetrFiltersFunctions
+from common.features.gvdbs_retr_filters import FormSchemaGVDBsRF, GVDBsRetrFiltersFunctions
 from common.features.gvdbs_retr_params import GVDBsRetrParams, GVDBsDefRetrParams
 from common.sql_db_async import AsyncSession
 from common.sql_models import User, GroupContexts, GroupLLMs, GroupVDBs
@@ -15,6 +15,7 @@ from cwa_lib.pydantic_schemas.doc_tasks import (
 )
 from cwa_lib.sql_tables.doc_tasks import DocTasksTable
 from cwa_lib.sql_tables.api_groups import ApiGroupsTable
+from cwa_lib.sql_tables.group_vdbs_select_values import GroupVDBsSelectValuesTable
 
 
 class QueryDocumentsPage:
@@ -109,7 +110,18 @@ class QueryDocumentsOptions:
     async def _from__group_vdbs(self) -> Sequence[DocTasksOptionsGroupVDBsRow]:
         where_clause = (GroupVDBs.group_id == self.user.group_id) & (GroupVDBs.deleted == 0) & (GroupVDBs.enabled == True)
         result = await self.session.execute(select(GroupVDBs).where(where_clause).order_by(GroupVDBs.gvdbs_id))
-        return result.scalars().all()
+        rows = result.scalars().all()
+        for row in rows:
+            try:
+                gvdbs_retr_filters = FormSchemaGVDBsRF.model_validate_json(row.gvdbs_retr_filters)
+                d = await GroupVDBsSelectValuesTable(self.session).get_path__values(gvdbs_id=row.gvdbs_id)
+                for field in gvdbs_retr_filters.fields:
+                    if field.type == 'select' and field.auto_fill:
+                        field.values = d.get(field.path, [])
+                row.gvdbs_retr_filters = gvdbs_retr_filters.model_dump_json()
+            except Exception:
+                pass
+        return rows
     
     async def get_options(self) -> DocTaskOptionsResult:
         """

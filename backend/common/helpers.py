@@ -76,3 +76,14 @@ def shorten(text: str | None, char_limit: int) -> str:
     if len(text) <= char_limit:
         return text
     return text[:(char_limit - 3)] + '...'
+
+
+def get_by_path(d: dict, key_list: list[str]):
+    """
+    Get value from dictionary keys path.
+    E.g. for key_list = ['key1', 'sub_key1', 'sub_sub_key1']
+    it will return d['key1']['sub_key1']['sub_sub_key1']
+    """
+    for k in key_list:
+        d = d[k]
+    return d

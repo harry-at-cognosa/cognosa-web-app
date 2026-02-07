@@ -1,4 +1,4 @@
-## [0.21a] (2026-02-06)
+## [0.21b] (2026-02-07)
 
 1. `Query Documents` -> `Queries` page ->
    `Retrieval Filters`: now are sent to backend + loaded from history.
@@ -26,6 +26,14 @@
 
 3. `GroupAdmin` -> `Queries` page:
    Show `Retrieval Filters` if specified in `Info` column for each query row.
+
+4. Added auto-filling functionality for `Retrieval Filters` select fields:
+   `Category`, `Subcategory`.
+   `SuperUser` - > `VDBs` page -> table row edit -> `Refresh Metadata Indexes`:
+   this switch will send refreshing task to `group_vdbs_tasks` table.
+   This task will be fetched by `run_tasks.py`,
+   then all `auto-fill` select paths values will be obtained from Qdrant collection
+   and be written to `group_vdbs_select_values` table.
 
 ## [0.20a] (2026-02-01)
 

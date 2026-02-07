@@ -15,6 +15,7 @@ class SuManageVDBsRead(BaseModel):
     gvdbs_url: str
     gvdbs_collection: str
     gvdbs_retr_params: str
+    rf_refresh_metadata: bool = False
     gvdbs_retr_filters: str
     gvdbs_status: str
     gvdbs_status_text: str
@@ -37,6 +38,8 @@ class SuManageVDBsCreate(BaseModel):
     @field_validator('gvdbs_retr_filters')
     @staticmethod
     def validate__gvdbs_retr_filters(v: str) -> str:
+        if v == '{}':
+            return v
         try:
             data = json.loads(v)
         except Exception:
@@ -57,6 +60,7 @@ class SuManageVDBsUpdate(BaseModel):
     gvdbs_url: str | None = None
     gvdbs_collection: str | None = None
     gvdbs_retr_params: str | None = None
+    rf_refresh_metadata: bool | None = None
     gvdbs_retr_filters: str | None = None
     @field_validator('gvdbs_retr_params')
     @staticmethod
@@ -68,6 +72,8 @@ class SuManageVDBsUpdate(BaseModel):
     @staticmethod
     def validate__gvdbs_retr_filters(v: str | None) -> str | None:
         if v is not None:
+            if v == '{}':
+                return v
             try:
                 data = json.loads(v)
             except Exception:

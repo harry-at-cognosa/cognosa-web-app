@@ -1,5 +1,5 @@
 from typing import Literal
-from qdrant_client.models import Filter, FieldCondition, MatchText, Condition
+from qdrant_client.models import Filter, FieldCondition, MatchText, MatchValue, Condition
 from common.features.gvdbs_retr_filters import RequestGVDBsRetrFiltersValuesEntry, RunTasksGVDBsRetrFilters
 
 
@@ -41,12 +41,20 @@ class QdrantFilters:
             # Multiple values - create OR logic using should
             or_conditions: list[Condition] = []
             for value in values_list:
-                or_conditions.append(
-                    FieldCondition(
-                        key=field.path, 
-                        match=MatchText(text=value)
+                if field.type == 'string':
+                    or_conditions.append(
+                        FieldCondition(
+                            key=field.path, 
+                            match=MatchText(text=value)
+                        )
                     )
-                )
+                elif field.type == 'select':
+                    or_conditions.append(
+                        FieldCondition(
+                            key=field.path, 
+                            match=MatchValue(value=value)
+                        )
+                    )
             # Combine with OR logic
             if or_conditions:
                 conditions.append(Filter(should=or_conditions))
@@ -61,7 +69,7 @@ class QdrantFilters:
             return None
         conditions: list[Condition] = self._get_common_conditions()
         conditions.extend(self._get_specific_conditions__ledra())
-                
+
         if not conditions:
             return None
         

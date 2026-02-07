@@ -2,13 +2,16 @@ from multiprocessing import Process, Queue, cpu_count
 from queue import Empty
 from time import time
 from traceback import format_exc
+from sqlalchemy import text, delete, insert
 from common import log, LOG_SQLALCHEMY_RT, RT_VDB_PROCESS_NUM
-from common.features.gvdbs_retr_filters import GVDBsRetrFiltersFunctions
+from common.enums.group_vdbs_tasks import GroupVDBsTasksStatus, GroupVDBsTasksTypes
+from common.features.gvdbs_retr_filters import FormSchemaGVDBsRF, GVDBsRetrFiltersFunctions
 from common.features.gvdbs_retr_params import GVDBsRetrParams
 from common.helpers import utcnow
+from tasks_lib.entities.group_vdbs_task_msg import GroupVDBsTasksMsg
 from tasks_lib.entities.task_queue_msg import VDBDocTaskQueueMsg, VDBTaskExitMsg
-from common.sql_db_sync import Session, get_engine_sessionmaker
-from common.sql_models import DocTasks
+from common.sql_db_sync import sessionmaker, Session, get_engine_sessionmaker
+from common.sql_models import DocTasks, GroupVDBs, GroupVDBsTasks, GroupVDBsSelectValues
 from common.enums.doc_task_status import TaskStatus
 from tasks_lib.vdb_lib.vdb_ops import VectorDBOps
 from tasks_lib.vdb_lib.emb_models import EmbModels
@@ -25,7 +28,7 @@ class VDBWorker(Process):
         self.ap_subname = f'vdb_p_{self.process_index}'
         self.task_queue = task_queue
 
-    def save_error_to_sql(self, session: Session, task: DocTasks, error_msg: str, exc_msg: str | None = None):
+    def _save_error_to_sql(self, session: Session, task: DocTasks, error_msg: str, exc_msg: str | None = None):
         log.info(f"Task id {task.doc_task_id} error")
         exc_msg = exc_msg if exc_msg else error_msg
         task.exc_text = exc_msg[:20000]
@@ -33,7 +36,7 @@ class VDBWorker(Process):
         task.status = TaskStatus.QD_VDB_ERROR
         session.commit()        
 
-    def save_results_to_sql(self, session: Session, task: DocTasks, result_list: list[dict], vdb_query_seconds: float):
+    def _save_results_to_sql(self, session: Session, task: DocTasks, result_list: list[dict], vdb_query_seconds: float):
         doc_number = len(result_list)
         task.context_at = utcnow()
         FoundDocuments(task).append(result_list)  # save / append context_json
@@ -43,7 +46,7 @@ class VDBWorker(Process):
         session.commit()
         log.info(f"Task id {task.doc_task_id} completed")
 
-    def update_ap_status(self, session: Session, ap_status: str):
+    def _update_ap_status(self, session: Session, ap_status: str):
         ApiProcessesTable(session).upsert_api_process(
             ap_type='run_tasks',
             ap_name=AP_NAME,
@@ -52,68 +55,113 @@ class VDBWorker(Process):
         )
         session.commit()
 
+    def _run_single_doc_task(self, msg: VDBDocTaskQueueMsg, sessionmaker: sessionmaker[Session], emb_models: EmbModels):
+        log.info(f"Received {msg.doc_task_id=}")
+        with sessionmaker() as session:
+            task = session.get(DocTasks, msg.doc_task_id)
+            if not task:
+                log.error(f"Task row not found")
+                return
+            log.debug(f"{task.input_text=}")
+            try:
+                vdb_ops = VectorDBOps(msg.gvdbs_type, msg.gvdbs_url)
+                if error_msg := vdb_ops.check_url():
+                    raise Exception(f'VDB URL error: {error_msg}')
+                start_time = time()
+                result_list = vdb_ops.get_docs(
+                    emb_obj=emb_models.get_by_name(msg.gvdbs_emb_model),
+                    collection_name=msg.gvdbs_collection,
+                    query_text=task.input_text,
+                    retr_params=GVDBsRetrParams.from_str(task.gvdbs_cfg_json).as_dict(),
+                    retr_filters=GVDBsRetrFiltersFunctions.get_for_run_tasks(task.gvdbs_cfg_json, msg.gvdbs_retr_filters),
+                )
+                self._save_results_to_sql(
+                    session=session,
+                    task=task,
+                    result_list=result_list,
+                    vdb_query_seconds=round(time()-start_time, 3)
+                )
+            except Exception:
+                self._save_error_to_sql(
+                    session=session, 
+                    task=task, 
+                    error_msg=f'Error during VectorDB search documents (doc_task_id={msg.doc_task_id})',
+                    exc_msg=format_exc()
+                )
+
+    def _run_single_group_vdbs_task(self, msg: GroupVDBsTasksMsg, sessionmaker: sessionmaker[Session]):
+        log.info(f"Received {msg.gvt_id=}")
+        with sessionmaker() as session:
+            if not (gvt_row := session.get(GroupVDBsTasks, msg.gvt_id)):
+                log.error(f"group_vdbs_tasks row not found for {msg.gvt_id=}")
+                return
+            try:
+                # Task type: Refresh select values for Retrieval Filters "auto-fill" select columns.
+                if gvt_row.gvt_type == GroupVDBsTasksTypes.REFRESH_METADATA_SELECT_VALUES:
+                    if not (gvdbs_row := session.get(GroupVDBs, gvt_row.gvdbs_id)):
+                        log.error(f"group_vdbs row not found for {msg.gvt_id=}, {gvt_row.gvdbs_id=}")
+                        raise Exception
+                    gvdbs_retr_filters = FormSchemaGVDBsRF.model_validate_json(gvdbs_row.gvdbs_retr_filters)
+                    path_list = [x.path for x in gvdbs_retr_filters.fields if ((x.type == 'select') and x.auto_fill)]
+                    if not path_list:
+                        raise Exception
+                    vdb_ops = VectorDBOps(gvdbs_row.gvdbs_type, gvdbs_row.gvdbs_url)
+                    if error_msg := vdb_ops.check_url():
+                        log.error(f'VDB URL error: {error_msg}')
+                        raise Exception
+                    d = vdb_ops.list_metadata_select_values(gvdbs_row.gvdbs_collection, path_list, max_documents=10_000_000)
+                    rows: list[dict] = []
+                    for path, value_set in d.items():
+                        value_list = sorted([str(x) for x in value_set if str(x).strip()])
+                        rows.extend([{
+                            'gvdbs_id': gvdbs_row.gvdbs_id, 
+                            'gvsv_path': path, 
+                            'gvsv_value': value
+                        } for value in value_list])
+                    if not rows:
+                        raise Exception
+                    session.execute(text(f"LOCK TABLE {GroupVDBsSelectValues.__tablename__} IN EXCLUSIVE MODE"))
+                    session.execute(delete(GroupVDBsSelectValues).where(GroupVDBsSelectValues.gvdbs_id==gvdbs_row.gvdbs_id))
+                    session.execute(insert(GroupVDBsSelectValues).values(rows))
+            except Exception:
+                pass
+            gvt_row.gvt_status = GroupVDBsTasksStatus.GVT_FINISHED
+            session.commit()            
+            
     def run(self):
         log.init(prefix=f'rt-p{self.process_index}', log_sqlalchemy=LOG_SQLALCHEMY_RT)        
         engine, sessionmaker = get_engine_sessionmaker()
         with sessionmaker() as session:
-            self.update_ap_status(session, 'starting')
+            self._update_ap_status(session, 'starting')
         emb_models = EmbModels(preload_emb_models=True)
         log.info(f"VDB Worker {self.process_index} ready.")        
         with sessionmaker() as session:
-            self.update_ap_status(session, 'running')
+            self._update_ap_status(session, 'running')
         while True:
             try:
                 try:
-                    msg: VDBDocTaskQueueMsg | VDBTaskExitMsg = self.task_queue.get(timeout=AP_SLEEP_TIME)
+                    msg: VDBDocTaskQueueMsg | GroupVDBsTasksMsg | VDBTaskExitMsg = self.task_queue.get(timeout=AP_SLEEP_TIME)
                 except Empty:
                     with sessionmaker() as session:
-                        self.update_ap_status(session, 'running')
+                        self._update_ap_status(session, 'running')
                     continue
                 if isinstance(msg, VDBTaskExitMsg):
                     log.debug('Process exit')
                     self.task_queue.put(msg)
                     with sessionmaker() as session:
-                        self.update_ap_status(session, 'exit')
+                        self._update_ap_status(session, 'exit')
                     engine.dispose()
                     return
-                log.info(f"Catched {msg.doc_task_id=}")
-                log.debug(f"Catched {msg=}")            
-                with sessionmaker() as session:
-                    task = session.get(DocTasks, msg.doc_task_id)
-                    if not task:
-                        log.error(f"Task row not found")
-                        continue
-                    log.debug(f"{task.input_text=}")
-                    try:
-                        vdb_ops = VectorDBOps(msg.gvdbs_type, msg.gvdbs_url)
-                        if error_msg := vdb_ops.check_url():
-                            raise Exception(f'VDB URL error: {error_msg}')
-                        start_time = time()
-                        result_list = vdb_ops.get_docs(
-                            emb_obj=emb_models.get_by_name(msg.gvdbs_emb_model),
-                            collection_name=msg.gvdbs_collection,
-                            query_text=task.input_text,
-                            retr_params=GVDBsRetrParams.from_str(task.gvdbs_cfg_json).as_dict(),
-                            retr_filters=GVDBsRetrFiltersFunctions.get_for_run_tasks(task.gvdbs_cfg_json, msg.gvdbs_retr_filters),
-                        )
-                        self.save_results_to_sql(
-                            session=session,
-                            task=task,
-                            result_list=result_list,
-                            vdb_query_seconds=round(time()-start_time, 3)
-                        )
-                    except Exception:
-                        self.save_error_to_sql(
-                            session=session, 
-                            task=task, 
-                            error_msg=f'Error during VectorDB search documents (doc_task_id={msg.doc_task_id})',
-                            exc_msg=format_exc()
-                        )
+                log.debug(f"Received {msg=}")
+                if isinstance(msg, GroupVDBsTasksMsg):
+                    self._run_single_group_vdbs_task(msg, sessionmaker)
+                if isinstance(msg, VDBDocTaskQueueMsg):
+                    self._run_single_doc_task(msg, sessionmaker, emb_models)                
             except (KeyboardInterrupt, SystemExit):
                 log.debug('Process exit')
                 try:
                     with sessionmaker() as session:
-                        self.update_ap_status(session, 'exit')
+                        self._update_ap_status(session, 'exit')
                     engine.dispose()
                 except Exception:
                     pass

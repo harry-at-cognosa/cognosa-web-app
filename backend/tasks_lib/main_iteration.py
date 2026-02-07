@@ -1,12 +1,14 @@
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from common import log
-from common.sql_db_sync import Engine, Session, get_sessionmaker
-from common.sql_models import DocTasks
 from common.enums.doc_task_status import TaskStatus
+from common.enums.group_vdbs_tasks import GroupVDBsTasksStatus
+from common.sql_db_sync import Engine, Session, get_sessionmaker
+from common.sql_models import DocTasks, GroupVDBsTasks
 from tasks_lib.qd_lib.qd_init import QueryDocumentInit, QueryDocumentInitException
 from tasks_lib.qd_lib.qd_vdb_fetched import QueryDocumentVectorDBFetched
 from tasks_lib.vdb_lib.workers import AllVDBWorkers
+from tasks_lib.entities.group_vdbs_task_msg import GroupVDBsTasksMsg
 
 
 class MainIteration:
@@ -20,6 +22,27 @@ class MainIteration:
         self.engine = engine
         self.all_vdb_workers = all_vdb_workers
         self.vdb_task_queue = self.all_vdb_workers.task_queue
+
+    def run_group_vdbs_tasks(self):
+        """
+        Run tasks from `group_vdbs_tasks` table:
+        1) `gvt_type` = 1: refresh all values for auto-fill select values from `group_vdbs`.`gvdbs_retr_filters`
+        """
+        try:
+            with get_sessionmaker(self.engine)() as session:
+                stmt = (
+                    select(GroupVDBsTasks)
+                    .where(GroupVDBsTasks.gvt_status == GroupVDBsTasksStatus.GVT_INIT)
+                    .limit(1)
+                )
+                result = session.execute(stmt).scalar_one_or_none()
+                if not result:
+                    return
+                result.gvt_status = GroupVDBsTasksStatus.GVT_PENDING
+                session.commit()
+                self.vdb_task_queue.put(GroupVDBsTasksMsg(gvt_id=result.gvt_id))
+        except Exception as e:
+            log.error(f"Unexpected error: {e}")
     
     def find_next_task(self, session: Session) -> DocTasks | None:
         """ 

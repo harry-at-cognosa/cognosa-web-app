@@ -64,6 +64,7 @@ class RunTasks():
         try:
             while True:
                 self.update_polling_loop_status('running')
+                main_iteration.run_group_vdbs_tasks()
                 status = main_iteration.process_next_task()
                 match status:
                     case main_iteration.STATUS__NOT_FOUND:

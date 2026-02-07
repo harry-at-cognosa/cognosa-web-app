@@ -1,4 +1,5 @@
 from common import log
+from common.enums.group_vdbs_tasks import GroupVDBsTasksStatus, GroupVDBsTasksTypes
 from common.sql_db_async import AsyncSession
 from common.sql_models.group_vdbs import GroupVDBs, GVDBsTypes, GVDBS_TYPE_VALUES
 from common.sql_tools import async_reseqn_by_group_id, fix_autoincrement
@@ -10,6 +11,7 @@ from cwa_lib.pydantic_schemas.generic_table import (
 from cwa_lib.pages import GenericTableRead
 from cwa_lib.pydantic_schemas.su_manage_vdbs import SuManageVDBsRead, SuManageVDBsCreate, SuManageVDBsUpdate
 from cwa_lib.sql_tables.api_groups import ApiGroupsTable
+from cwa_lib.sql_tables.group_vdbs_tasks import GroupVDBsTasksTable
 
 select__gvdbs_type = [SelectOption(name=value, value=value) for value in GVDBS_TYPE_VALUES]
 
@@ -23,11 +25,14 @@ su_manage_vdbs__query_columns = {
     'gvdbs_url': ColumnType(display='URL', type='string', default="qdrant_local"),
     'gvdbs_collection': ColumnType(display='Collection', type='string', default="New Collection"),
     'gvdbs_retr_params': ColumnType(display='Retrieval Parameters', type='gvdbs_retr_params', default="{}"),
+    'rf_refresh_metadata': ColumnType(display='Refresh Metadata Indexes', type='boolean', default=False, 
+                                      cu_edit_msg="will update select values for specified fields in Retrieval Filters"),
     'gvdbs_retr_filters': ColumnType(display='Retrieval Filters', type='gvdbs_retr_filters', default="{}"),
     'gvdbs_status': ColumnType(display='Status', type='gvdbs_status'),
 }
+gvdbs_read_columns = [x for x in su_manage_vdbs__query_columns.keys() if (x not in ('rf_refresh_metadata', ))]
 gvdbs_edit_columns = [x for x in su_manage_vdbs__query_columns.keys() if (x not in ('gvdbs_id', 'gvdbs_status'))]
-gvdbs_create_columns = [x for x in gvdbs_edit_columns if (x not in ('gvdbs_retr_params'))]
+gvdbs_create_columns = [x for x in gvdbs_edit_columns if (x not in ('gvdbs_retr_params', 'rf_refresh_metadata'))]
 gvdbs_order_columns = ['gvdbs_id', 'group_id', 'enabled', 'gvdbs_seqn', 'gvdbs_type', 'gvdbs_name', 'gvdbs_url', 'gvdbs_collection']
 
 def must_recheck_status_after_update(col: str, value) -> bool:
@@ -41,7 +46,7 @@ def must_recheck_status_after_update(col: str, value) -> bool:
 su_manage_vdbs__table_options = TableOptions(
     title='Group VDBs',
     pk='gvdbs_id',
-    read__visible_columns=['gvdbs_id', ] + gvdbs_edit_columns + ['gvdbs_status'],
+    read__visible_columns=gvdbs_read_columns,
     create__ask_columns=gvdbs_create_columns,
     update__ask_columns=gvdbs_edit_columns,
     delete__ask_columns=['gvdbs_id', ] + gvdbs_edit_columns,
@@ -98,6 +103,12 @@ class SuManageVDBsTable:
         await self.session.commit()
         await self.session.refresh(new_row)
         await self.resequence_group_vdbs(data.group_id, prioritize_gvdbs_id=new_row.gvdbs_id)
+        if (new_row.gvdbs_retr_filters) and (new_row.gvdbs_retr_filters != '{}'):
+            await GroupVDBsTasksTable(self.session).replace(
+                    gvdbs_id=new_row.gvdbs_id,
+                    gvt_type=GroupVDBsTasksTypes.REFRESH_METADATA_SELECT_VALUES,
+                    gvt_status=GroupVDBsTasksStatus.GVT_INIT
+                )
         return TableCreateRowResult(result='success', total_created=1)
     
     async def update_one(self, data: SuManageVDBsUpdate) -> TableUpdateRowResult:
@@ -113,6 +124,8 @@ class SuManageVDBsTable:
         total_updated = 0
         need_recheck = False
         for col in gvdbs_edit_columns:
+            if col in ('rf_refresh_metadata',):
+                continue
             value = getattr(data, col, None)
             if value is not None:
                 if isinstance(value, str):
@@ -131,6 +144,12 @@ class SuManageVDBsTable:
         await self.session.refresh(vdbs_row)  # to get real group_id
         if data.gvdbs_seqn != prev_gvdbs_seqn:
             await self.resequence_group_vdbs(vdbs_row.group_id, prioritize_gvdbs_id=data.gvdbs_id)
+        if data.rf_refresh_metadata:
+            await GroupVDBsTasksTable(self.session).replace(
+                gvdbs_id=vdbs_row.gvdbs_id,
+                gvt_type=GroupVDBsTasksTypes.REFRESH_METADATA_SELECT_VALUES,
+                gvt_status=GroupVDBsTasksStatus.GVT_INIT
+            )
         return TableUpdateRowResult(result='success', total_updated=total_updated)
     
     async def mark_deleted_by_gvdbs_id(self, gvdbs_id: int) -> TableDeleteRowResult:

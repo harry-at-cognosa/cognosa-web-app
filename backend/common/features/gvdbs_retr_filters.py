@@ -33,6 +33,7 @@ class StringFieldGVDBsRF(FieldBaseGVDBsRF):
 class SelectFieldGVDBsRF(FieldBaseGVDBsRF):
     type: Literal["select"]
     values: list[str]
+    auto_fill: bool = False
     max_select: int
 
     @field_validator("max_select")
@@ -126,7 +127,10 @@ class GVDBsRetrFiltersFunctions:
                 if source_field.type == 'string':
                     user_values_list = [x.strip() for x in user_field.values_list if x.strip()]
                 elif source_field.type == 'select':
-                    user_values_list = [x for x in user_field.values_list if (x in source_field.values)]
+                    if source_field.auto_fill:
+                        user_values_list = [x for x in user_field.values_list[:100] if len(str(x)) < 1000]
+                    else:
+                        user_values_list = [x for x in user_field.values_list if (x in source_field.values)]
                 if user_values_list:
                     new_fields.append({
                         'rf_field_id': rf_field_id, 
