@@ -1,0 +1,40 @@
+Since your RAG platform already supports OpenAI, integrating Qwen will be minimal effort because DashScope's /compatible-mode/v1 endpoint is OpenAI API-compatible.
+
+from openai import OpenAI
+client = OpenAI(
+    api_key="sk-your-key-here",  # or os.getenv("DASHSCOPE_API_KEY")
+    base_url="https://dashscope-us.aliyuncs.com/compatible-mode/v1"
+)
+
+response = client.chat.completions.create(
+    model="qwen-plus",  # or qwen-max, qwen-turbo, qwen-vl-max for vision
+    messages=[{"role": "user", "content": "Your RAG query here"}],
+    temperature=0.7,
+    # streaming, tools, etc. also supported
+)
+
+print(response.choices[0].message.content)
+
+✅ Reuse your existing OpenAI client logic — just swap base_url and model.
+✅ Streaming, function calling, and JSON mode all work the same way.
+
+Provider Config Snippet (YAML/JSON style)
+providers:
+  qwen:
+    type: openai_compatible
+    base_url: https://dashscope-us.aliyuncs.com/compatible-mode/v1
+    api_key_env: DASHSCOPE_API_KEY
+    models:
+      - qwen-turbo   # fast, cheap
+      - qwen-plus    # balanced (recommended for RAG)
+      - qwen-max     # most capable
+      - qwen-vl-max  # vision + text
+
+
+Model Tips for RAG
+Model	Best For	Context
+`qwen-turbo`	Simple Q&A, low latency	32K
+`qwen-plus` ⭐	**RAG retrieval + reasoning**	128K
+`qwen-max`	Complex multi-step tasks	128K
+`qwen-vl-max`	If your RAG handles images/PDFs	128K
+

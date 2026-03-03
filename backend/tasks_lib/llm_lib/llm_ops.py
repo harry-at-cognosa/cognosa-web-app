@@ -30,8 +30,8 @@ class LLMOps:
         # Dummy LLM
         if IS_DUMMY_LLM or (llm_type == GLLMsTypes.DUMMY):
             self.llm_obj = LLMTypeDummy(query_text=query_text)
-        # Ollama / OpenAI LLM
-        elif llm_type in (GLLMsTypes.OLLAMA_LOCAL, GLLMsTypes.OLLAMA_REMOTE, GLLMsTypes.CHATGPT):
+        # Ollama / OpenAI / Qwen LLM
+        elif llm_type in (GLLMsTypes.OLLAMA_LOCAL, GLLMsTypes.OLLAMA_REMOTE, GLLMsTypes.CHATGPT, GLLMsTypes.QWEN):
             self.llm_obj = LLMTypeOpenAI(
                 query_text=query_text,
                 template=template,

@@ -43,5 +43,14 @@
     "gllms_api_base": "ollama_local",
     "gllms_model": "gemma3",
     "gllms_api_key": "ollama"
+  },
+  {
+    "group_id": 1,
+    "gllms_seqn": 4,
+    "gllms_type": "qwen",
+    "gllms_name": "Qwen Plus",
+    "gllms_api_base": "https://dashscope-us.aliyuncs.com/compatible-mode/v1",
+    "gllms_model": "qwen-plus",
+    "gllms_api_key": "sk-your-dashscope-key"
   }
 ]

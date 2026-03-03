@@ -5,10 +5,12 @@ class GLLMsTypes:
     CHATGPT = 'chatgpt'
     GEMINI = 'gemini'
     CLAUDE = 'claude'
+    QWEN = 'qwen'
 
 
 public_api_gllms_types = [
     GLLMsTypes.CHATGPT,
     GLLMsTypes.GEMINI,
-    GLLMsTypes.CLAUDE
+    GLLMsTypes.CLAUDE,
+    GLLMsTypes.QWEN
 ]
