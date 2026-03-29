@@ -1,3 +1,20 @@
+## Overview
+Cognosa is a well-tested, multi-tenant Retrieval-Augmented Generation (RAG) platform. It enables organizations (tenants) to vectorize their proprietary documents, store them in tenant-isolated vector database collections, and give their users access to multiple open-source and proprietary LLMs for question answering against that data.
+
+It is more fully described at [files.cognosa.net/cognosa-info](http://files.cognosa.net/cognosa-info/).
+
+The platform has three runtime components:
+
+1.	FastAPI web server (webapp.py) — serves the React SPA and all REST API endpoints
+2.	Background task processor (run_tasks.py) — multiprocessing VDB workers + threaded LLM workers that execute the RAG pipeline
+3.	React + TypeScript frontend — Bootstrap-based UI with real-time query polling and streaming LLM response display
+
+__Version:__ 0.19a (2026-01-25) — see CHANGELOG.md for full history (development began August 2025).
+__Database:__ PostgreSQL (cwa_db), with any of optional Qdrant, ChromaDB, or pgvector for vector storage.
+__LLMs:__ Models from Anthropic, Google, Alibaba, Meta and others via API key, as well as local and remote Ollama hosted open source models.
+
+
+
 ### Steps to run
 
 #### install procedures:
