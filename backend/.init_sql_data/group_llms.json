@@ -21,19 +21,19 @@
     "group_id": 1,
     "gllms_seqn": 3,
     "gllms_type": "claude",
-    "gllms_name": "Claude Sonnet 4.5",
+    "gllms_name": "Claude Sonnet 5",
     "gllms_api_base": "https://api.anthropic.com/v1",
-    "gllms_model": "claude-sonnet-4-5",
-    "gllms_api_key": "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"
+    "gllms_model": "claude-sonnet-5",
+    "gllms_api_key": "sk-ant-your-anthropic-key"
   },
   {
     "group_id": 3,
     "gllms_seqn": 1,
     "gllms_type": "claude",
-    "gllms_name": "Claude Sonnet 4.5",
+    "gllms_name": "Claude Sonnet 5",
     "gllms_api_base": "https://api.anthropic.com/v1",
-    "gllms_model": "claude-sonnet-4-5",
-    "gllms_api_key": "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"
+    "gllms_model": "claude-sonnet-5",
+    "gllms_api_key": "sk-ant-your-anthropic-key"
   },
   {
     "group_id": 3,
@@ -48,9 +48,9 @@
     "group_id": 1,
     "gllms_seqn": 4,
     "gllms_type": "qwen",
-    "gllms_name": "Qwen Plus",
+    "gllms_name": "Qwen 3.8 Max",
     "gllms_api_base": "https://dashscope-us.aliyuncs.com/compatible-mode/v1",
-    "gllms_model": "qwen-plus",
+    "gllms_model": "qwen3.8-max",
     "gllms_api_key": "sk-your-dashscope-key"
   }
 ]

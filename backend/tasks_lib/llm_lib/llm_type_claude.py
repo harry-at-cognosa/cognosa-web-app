@@ -27,7 +27,9 @@ class LLMTypeClaude:
         self.llm_type = llm_type
         self.llm_model = llm_model
         self.llm_api_key = SecretStr(llm_api_key)
-        self.temperature = 0.0
+        # NOTE: `temperature` is intentionally not set. Claude Opus 5 / Sonnet 5 /
+        # Opus 4.7+ reject sampling params with HTTP 400 ("`temperature` is
+        # deprecated for this model"); older models fall back to their default.
         self.llm_max_tokens = 10000
         self.sent_to_llm: str = ''
         self.answer: str = ''
@@ -71,7 +73,6 @@ class LLMTypeClaude:
             timeout=60, 
             stop=None, 
             anthropic_proxy=LLM_PROXY, 
-            temperature=self.temperature,
             max_tokens_to_sample=self.llm_max_tokens,
             streaming=True
         )
