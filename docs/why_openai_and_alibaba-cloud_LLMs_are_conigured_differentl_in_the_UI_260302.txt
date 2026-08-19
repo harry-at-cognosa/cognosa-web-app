@@ -1,0 +1,46 @@
+❯ in the application software, when a chatgpt model is configured, no base      
+  URL is required. is it hardwired in the code or in data somewhere?            
+                                                                                
+⏺ It's hardwired in two places in backend/tasks_lib/llm_lib/llm_type_openai.py: 
+                                                                                
+  1. stream_to_llm() line 72 — when type is chatgpt, base_url is passed as None,
+   so LangChain's ChatOpenAI falls back to its built-in default
+  (https://api.openai.com/v1):                                                  
+  base_url=None if (self.llm_type == GLLMsTypes.CHATGPT) else self.llm_api_base,
+  2. check_working() line 43 — the OpenAI URL is hardcoded explicitly:
+  full_url = f"https://api.openai.com/v1/models/{quote(self.llm_model)}"
+
+  So the superuser can leave the API Base field empty/anything for ChatGPT
+  entries — it gets ignored. For Qwen, the base URL
+  (https://dashscope-us.aliyuncs.com/compatible-mode/v1) is required and gets
+  passed through to both ChatOpenAI and check_working().
+
+=== hal ---
+
+ passed through to both ChatOpenAI and check_working().
+
+❯ in the current system, for "Model" value with openAI, the chatgpt llm's       
+  are configured with "chatgpt" for "name" and "gpt-5-mini" for Model. what   
+   should the model value(s) be for qwen models?      
+
+
+   Based on the DashScope docs in your                                           
+  QWEN_LLM_Integration_similar_to_openai.txt, the model values are:             
+                                                                                
+  ┌─────────────┬─────────────────────────────────────────┬─────────┐
+  │    Model    │                Best For                 │ Context │           
+  ├─────────────┼─────────────────────────────────────────┼─────────┤       
+  │ qwen-turbo  │ Simple Q&A, low latency                 │ 32K     │
+  ├─────────────┼─────────────────────────────────────────┼─────────┤
+  │ qwen-plus   │ RAG retrieval + reasoning (recommended) │ 128K    │
+  ├─────────────┼─────────────────────────────────────────┼─────────┤
+  │ qwen-max    │ Complex multi-step tasks                │ 128K    │
+  ├─────────────┼─────────────────────────────────────────┼─────────┤
+  │ qwen-vl-max │ Vision + text (images/PDFs)             │ 128K    │
+  └─────────────┴─────────────────────────────────────────┴─────────┘
+
+  So when configuring in SU Manage LLMs, you'd enter one of those strings as the
+   Model value — e.g. qwen-plus. These are the exact model identifiers that
+  DashScope's OpenAI-compatible endpoint expects in the model parameter of the
+  API call.
+

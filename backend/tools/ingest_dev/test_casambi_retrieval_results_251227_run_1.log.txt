@@ -1,0 +1,765 @@
+(venv) 25-12-04 20:57:21 cognosa_web_app/backend > python3 inspect_qdrant_251204.py
+Collection: ledra_brands_products_xlsx
+Vector count: 25144
+Vector size: 384
+Distance: Cosine
+
+============================================================
+
+--- ID: 00062bcb-2c1d-4937-bd57-59603a98767d ---
+  page_content: Product: NUE 3" ADJUSTABLE RA & QA (ID: 101121)
+Option: Dimming
+abbr: ELV1 | nametxt: leading & trailing edge (Triac/ELV) dimming to 1% | note: Triac/ELV dimming and LTE available in 120V only.
+abbr: ...
+  metadata: {'chunk_type': 'base_option', 'option_name': 'Dimming', 'option_sequence': 8, 'base_product_id': '101121', 'product_name': 'NUE 3" ADJUSTABLE RA & QA', 'brand': 'Alphabet', 'category': 'downlights'}
+
+--- ID: 0008f30a-0f0f-47f5-88f0-479dcfdc1589 ---
+  page_content: Product: Beta4 (ID: 100379)
+Option: Finish
+abbr: BK | nametxt: black
+abbr: MC | nametxt: matte chrome
+abbr: WH | nametxt: white
+  metadata: {'chunk_type': 'base_option', 'option_name': 'Finish', 'option_sequence': 6, 'base_product_id': '100379', 'product_name': 'Beta4', 'brand': 'Alphabet', 'category': 'cylinders'}
+
+--- ID: 000bd978-ebe4-488b-bc2a-dcc892354e30 ---
+  page_content: Product: NU4QA-SUN (ID: 100849)
+Option: Type
+abbr: QA | nametxt: square adjustable
+abbr: QAT | nametxt: square adjustable trimless
+abbr: QATMW | nametxt: square adjustable trimless millwork
+  metadata: {'chunk_type': 'base_option', 'option_name': 'Type', 'option_sequence': 16, 'base_product_id': '100849', 'product_name': 'NU4QA-SUN', 'brand': 'Alphabet', 'category': 'downlights'}
+
+--- ID: 0016f822-5a28-41d6-8471-f3474aa91f80 ---
+  page_content: Alt Product: None (ID: 100108)
+Base Product: SMARTrack E10 Spot (ID: 100355)
+Option: DELIVERED LUMENS
+abbr: 07LM
+abbr: 10LM
+  metadata: {'chunk_type': 'alt_option', 'option_name': 'DELIVERED LUMENS', 'option_sequence': 3, 'base_product_id': '100355', 'product_name': 'SMARTrack E10 Spot', 'alt_product_id': '100108', 'alt_product_name':...
+
+--- ID: 001a07d8-0fbf-4db6-a86e-6770e11f29ed ---
+  page_content: Product: Eclipse 2
+Base Product ID: 100304
+SKU: eclipse2
+Brand: Bruck
+Product Alias: Indirect Wall
+Product Series: Eclipse 2
+Category: wall sconce
+Subcategory: Line Voltage
+Type: EC2
+  metadata: {'chunk_type': 'base_key_data', 'base_product_id': '100304', 'product_name': 'Eclipse 2', 'sku': 'eclipse2', 'brand': 'Bruck', 'category': 'wall sconce', 'subcategory': 'Line Voltage', 'prodseries': '...
+
+--- ID: 001eadfd-b588-4161-b25e-ac4c79f9f59b ---
+  page_content: Product: NU1QW-SW (ID: 101195)
+Mounting:
+<p>An advanced mounting system allows for quick and secure installation with LED and driver serviceability from below the ceiling. The LED assembly uses die-ca...
+  metadata: {'chunk_type': 'base_descriptive', 'descriptive_field': 'mounting', 'base_product_id': '101195', 'product_name': 'NU1QW-SW', 'brand': 'Alphabet', 'category': 'downlights'}
+
+--- ID: 001fcd76-076b-4d20-9b47-73e680d20735 ---
+  page_content: Alt Product: None (ID: 100009)
+Base Product: NU4RD-XICATO (ID: 100010)
+Option: CRI
+abbr: 83 | nametxt: 83 CRI
+abbr: 98 | nametxt: 98 CRI
+  metadata: {'chunk_type': 'alt_option', 'option_name': 'CRI', 'option_sequence': 5, 'base_product_id': '100010', 'product_name': 'NU4RD-XICATO', 'alt_product_id': '100009', 'alt_product_name': 'None'}
+
+--- ID: 0020e5d5-a872-4197-9f8c-346978604469 ---
+  page_content: Product: Beta3.5 Cube Downlight (ID: 100372)
+LED Information:
+<ul><li>LUXEON 1203: Duv +/- 0.0015, Lumen Maintenance: L<sub>70</sub> &gt; 50,000 hrs</li></ul>
+  metadata: {'chunk_type': 'base_descriptive', 'descriptive_field': 'led_info', 'base_product_id': '100372', 'product_name': 'Beta3.5 Cube Downlight', 'brand': 'Alphabet', 'category': 'cylinders'}
+
+--- ID: 0023baa5-00ff-4288-8473-08d95c80eee0 ---
+  page_content: Product: NU6QD RGBW - Preliminary (ID: 100196)
+Mounting:
+<p>An advanced mounting system allows for quick and secure installation with LED and driver serviceability from below the ceiling. The LED asse...
+  metadata: {'chunk_type': 'base_descriptive', 'descriptive_field': 'mounting', 'base_product_id': '100196', 'product_name': 'NU6QD RGBW - Preliminary', 'brand': 'Alphabet', 'category': 'downlights'}
+
+--- ID: 002921a3-89ea-4372-bda0-1ef21765d31a ---
+  page_content: Product: NU4QW-TW (ID: 100068)
+Option: DELIVERED LUMENS
+abbr: 10LM
+abbr: 20LM
+abbr: note 7 | nametxt: Standard Configuration:&nbsp
+abbr: note 2 | nametxt: Calculated Delivered Lumens = [Delivered Lume...
+  metadata: {'chunk_type': 'base_option', 'option_name': 'DELIVERED LUMENS', 'option_sequence': 6, 'base_product_id': '100068', 'product_name': 'NU4QW-TW', 'brand': 'Alphabet', 'category': 'downlights'}
+
+--- ID: 002fb582-b4fd-4752-9fcf-125acf23162b ---
+  page_content: Product: NU6RD-TW (ID: 100176)
+Mounting:
+<p>An advanced mounting system allows for quick and secure installation with LED and driver serviceability from below the ceiling. The LED assembly uses die-ca...
+  metadata: {'chunk_type': 'base_descriptive', 'descriptive_field': 'mounting', 'base_product_id': '100176', 'product_name': 'NU6RD-TW', 'brand': 'Alphabet', 'category': 'downlights'}
+
+--- ID: 0034852d-d4f7-405d-b4bb-66ab16bad2d4 ---
+  page_content: Product: Magnum 1 LED Track Spot (ID: 100502)
+Option: CRI
+abbr: 83 | nametxt: 83 CRI
+abbr: 98 | nametxt: 98 CRI
+  metadata: {'chunk_type': 'base_option', 'option_name': 'CRI', 'option_sequence': 2, 'base_product_id': '100502', 'product_name': 'Magnum 1 LED Track Spot', 'brand': 'Alphabet', 'category': 'downlights'}
+
+--- ID: 00390b4a-a318-457b-99f7-671293da77e6 ---
+  page_content: Product: Z15 Canopy Spot (ID: 100515)
+Listings and Certifications:
+<ul><li>ETLus Listed to UL1598 (suitable for dry and damp locations)</li><li>cETL Listed to CSA C22.2 #250.0</li><li>Made in the USA ...
+  metadata: {'chunk_type': 'base_descriptive', 'descriptive_field': 'listings', 'base_product_id': '100515', 'product_name': 'Z15 Canopy Spot', 'brand': 'Bruck', 'category': 'track and spots'}
+
+--- ID: 003f86ce-5ea6-473b-9acf-40239254fc8c ---
+  page_content: Product: NU2RW - WD (ID: 101185)
+Option: Series
+abbr: NU2 | nametxt: NU2
+  metadata: {'chunk_type': 'base_option', 'option_name': 'Series', 'option_sequence': 12, 'base_product_id': '101185', 'product_name': 'NU2RW - WD', 'brand': 'Alphabet', 'category': 'downlights'}
+
+--- ID: 00401dde-c6d2-40e3-bf4f-3a0cd40f9f88 ---
+  page_content: Product: Beta4R Surface Mount WD (ID: 100983)
+Mounting:
+<ul><li>Surface mount to recessed junction box.</li><li>Surface mount to exposed junction box with JCOV mount. </li></ul>
+  metadata: {'chunk_type': 'base_descriptive', 'descriptive_field': 'mounting', 'base_product_id': '100983', 'product_name': 'Beta4R Surface Mount WD', 'brand': 'Alphabet', 'category': 'cylinders'}
+
+--- ID: 004193f7-fdf7-4154-8c1d-b6b52393f30a ---
+  page_content: Product: Microline 14x14 Corner Rigid (ID: 101099)
+Option: Size
+abbr: 24
+abbr: 18
+abbr: 12
+abbr: 9
+abbr: 6
+abbr: 4
+abbr: 28
+abbr: 30
+abbr: 36
+abbr: 46
+abbr: note4
+abbr: 2
+  metadata: {'chunk_type': 'base_option', 'option_name': 'Size', 'option_sequence': 8, 'base_product_id': '101099', 'product_name': 'Microline 14x14 Corner Rigid', 'brand': 'Bruck', 'category': 'linear'}
+
+--- ID: 0043b0c0-92a1-4951-92bc-a3b60505b730 ---
+  page_content: Alt Product: None (ID: 100507)
+Base Product: SLAT CEILING (ID: 101228)
+Option: CCT
+abbr: 27K | nametxt: 2700K
+abbr: 30K | nametxt: 3000K
+abbr: 35K | nametxt: 3500K
+abbr: 40K | nametxt: 4000K
+  metadata: {'chunk_type': 'alt_option', 'option_name': 'CCT', 'option_sequence': 3, 'base_product_id': '101228', 'product_name': 'SLAT CEILING', 'alt_product_id': '100507', 'alt_product_name': 'None'}
+
+--- ID: 00445774-a808-4579-86f9-c8d744d312bd ---
+  page_content: Product: DELTA H SW (ID: 101117)
+Option: Accessories
+abbr: OCS | nametxt: occupancy sensor
+  metadata: {'chunk_type': 'base_option', 'option_name': 'Accessories', 'option_sequence': 1, 'base_product_id': '101117', 'product_name': 'DELTA H SW', 'brand': 'Alphabet', 'category': 'cylinders'}
+
+--- ID: 00459d38-9b4d-4d5e-81ec-e210efdd89e6 ---
+  page_content: Product: A25 Cylinder Surface Mount SW (ID: 100745)
+Option: Dimming
+abbr: DIM10 | nametxt: 0-10V dimming to 1%
+abbr: ELV1 | nametxt: leading & trailing edge (Triac/ELV) dimming to 1% | note: Triac/ELV...
+  metadata: {'chunk_type': 'base_option', 'option_name': 'Dimming', 'option_sequence': 6, 'base_product_id': '100745', 'product_name': 'A25 Cylinder Surface Mount SW', 'brand': 'Bruck', 'category': 'cylinders'}
+
+--- ID: 0045da1c-fdba-4097-a1ac-2fcb4d12c6c0 ---
+  page_content: Product: ECOJ Track (ID: 100913)
+Option: Voltage
+abbr: 120 | nametxt: 120V
+  metadata: {'chunk_type': 'base_option', 'option_name': 'Voltage', 'option_sequence': 4, 'base_product_id': '100913', 'product_name': 'ECOJ Track', 'brand': 'Bruck', 'category': 'track and spots'}
+
+(venv) 25-12-04 20:57:46 cognosa_web_app/backend > ls -lrt                         
+total 160
+-rw-r--r--   1 harry  staff   4807 Nov 21 22:36 alembic.ini
+-rw-r--r--   1 harry  staff    904 Nov 21 22:36 check_pgvector.py
+-rw-r--r--   1 harry  staff    848 Nov 21 22:36 check_qdrant_server.py
+-rw-r--r--   1 harry  staff   2481 Nov 21 22:36 create_user.py
+-rw-r--r--   1 harry  staff   8222 Nov 21 22:36 document_loader_pgvector.py
+-rw-r--r--@  1 harry  staff   8128 Nov 21 22:36 document_loader_qdrant.py
+-rw-r--r--   1 harry  staff  10227 Nov 21 22:36 init_sql_db.py
+-rw-r--r--   1 harry  staff   4647 Nov 21 22:36 run_tasks.py
+drwxr-xr-x   4 harry  staff    128 Nov 21 22:36 tools
+drwxr-xr-x  13 harry  staff    416 Nov 21 23:06 common
+drwxr-xr-x  11 harry  staff    352 Nov 21 23:07 logs
+drwxr-xr-x   7 harry  staff    224 Nov 24 10:22 alembic
+-rw-r--r--   1 harry  staff   3844 Nov 24 12:29 requirements_251124_1228.txt
+drwxr-xr-x   5 harry  staff    160 Dec  2 13:22 storage
+drwxr-xr-x   3 harry  staff     96 Dec  2 13:22 snapshots
+drwxr-xr-x  12 harry  staff    384 Dec  4 08:40 cwa_lib
+drwxr-xr-x  13 harry  staff    416 Dec  4 08:40 static
+drwxr-xr-x  11 harry  staff    352 Dec  4 08:40 tasks_lib
+-rw-r--r--   1 harry  staff   2614 Dec  4 08:40 webapp.py
+drwxr-xr-x   3 harry  staff     96 Dec  4 08:45 __pycache__
+-rw-r--r--   1 harry  staff    787 Dec  4 20:55 inspect_qdrant_251204.py
+-rw-r--r--   1 harry  staff   3096 Dec  4 21:44 filtered_search_test.py
+-rw-------   1 harry  staff   1321 Dec  4 21:45 20000
+(venv) 25-12-04 21:45:04 cognosa_web_app/backend > mv filtered_search_test.py  filtered_search_test_251204.py
+(venv) 25-12-04 21:45:32 cognosa_web_app/backend > python3 filtered_search_test_251204.py
+/Users/harry/cognosa_web_app/backend/filtered_search_test_251204.py:14: DeprecationWarning: `search` method is deprecated and will be removed in the future. Use `query_points` instead.
+  results = client.search(
+
+============================================================
+QUERY 1: Pure semantic - 'ELV dimming options' (no filter)
+============================================================
+
+[1] Score: 0.6952
+    Product: Zeta750 26W ELV Dimming Driver (ID: 100633)
+    Chunk type: base_option
+    Option: Special
+    Content: Product: Zeta750 26W ELV Dimming Driver (ID: 100633)
+Option: Special
+note: CURRENT | abbr: 500 | nametxt: 500mA...
+
+[2] Score: 0.6639
+    Product: LED ELV Dimming Driver_Crossover Alphabet & Bruck (ID: 100224)
+    Chunk type: base_option
+    Option: Electrical Options
+    Content: Product: LED ELV Dimming Driver_Crossover Alphabet & Bruck (ID: 100224)
+Option: Electrical Options
+abbr: 350 | nametxt: 18W, 350mA
+abbr: 500 | nametxt...
+
+[3] Score: 0.6439
+    Product: LX Series Track Pendant  SW (ID: 100723)
+    Chunk type: base_option
+    Option: Dimming
+    Content: Product: LX Series Track Pendant  SW (ID: 100723)
+Option: Dimming
+abbr: ELV1 | nametxt: leading & trailing edge (Triac/ELV) dimming to 1% | note: Tria...
+
+[4] Score: 0.6422
+    Product: Beta3R Pendant SW (ID: 100718)
+    Chunk type: base_option
+    Option: Dimming
+    Content: Product: Beta3R Pendant SW (ID: 100718)
+Option: Dimming
+abbr: DIM10 | nametxt: 0-10V dimming to 1%
+abbr: ELV1 | nametxt: leading & trailing edge (Tria...
+
+[5] Score: 0.6404
+    Product: A15 Cylinder (ID: 100234)
+    Chunk type: alt_option
+    Option: Dimming
+    Content: Alt Product: None (ID: 100145)
+Base Product: A15 Cylinder (ID: 100234)
+Option: Dimming
+abbr: 10V | nametxt: 0-10V dimming to 10%
+abbr: DIM10 | nametxt...
+
+============================================================
+QUERY 2: Category=downlights, search 'adjustable trim'
+============================================================
+
+[1] Score: 0.5852
+    Product: EcoNU3QA (ID: 100168)
+    Chunk type: base_descriptive
+    Content: Product: EcoNU3QA (ID: 100168)
+Description:
+<p>The EcoNU3QA is an economical and highly efficient spec grade 3" recessed adjustable with thoughtful co...
+
+[2] Score: 0.5839
+    Product: NU3QA_CALIFORNIA_JA8_CEC (ID: 100400)
+    Chunk type: base_descriptive
+    Content: Product: NU3QA_CALIFORNIA_JA8_CEC (ID: 100400)
+Description:
+<p>The NU3QA 3" recessed adjustable by ALPHABET offers premium performance, thoughtful con...
+
+[3] Score: 0.5797
+    Product: NU4QA (ID: 100846)
+    Chunk type: base_descriptive
+    Content: Product: NU4QA (ID: 100846)
+Description:
+<p>The EcoNU4QA is an economical and highly efficient spec grade 4" recessed adjustable with thoughtful const...
+
+[4] Score: 0.5746
+    Product: NU3QA (ID: 100889)
+    Chunk type: base_descriptive
+    Content: Product: NU3QA (ID: 100889)
+Description:
+<p>The EcoNU3QA is an economical and highly efficient spec grade 3" recessed adjustable with thoughtful const...
+
+[5] Score: 0.5729
+    Product: EcoNU4QA (ID: 100433)
+    Chunk type: base_descriptive
+    Content: Product: EcoNU4QA (ID: 100433)
+Description:
+<p>The EcoNU4QA is an economical and highly efficient spec grade 4" recessed adjustable with thoughtful co...
+
+============================================================
+QUERY 3: All chunks for product ID 100372
+============================================================
+
+[1] Score: 0.1685
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Finish
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Finish
+abbr: BK | nametxt: black
+abbr: WH | nametxt: white...
+
+[2] Score: 0.1637
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Series
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Series
+abbr: 607...
+
+[3] Score: 0.1587
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: CCT
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: CCT
+abbr: 30K | nametxt: 3000K...
+
+[4] Score: 0.1587
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_key_data
+    Content: Product: Beta3.5 Cube Downlight
+Base Product ID: 100372
+SKU: 
+Brand: Alphabet
+Product Alias: Cube Downlight
+Product Series: Beta3.5"
+Category: cylinde...
+
+[5] Score: 0.1420
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: DELIVERED LUMENS
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: DELIVERED LUMENS
+abbr: 11LM
+abbr: 15LM...
+
+[6] Score: 0.1353
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+LED Information:
+<ul><li>LUXEON 1203: Duv +/- 0.0015, Lumen Maintenance: L<sub>70</sub> &gt; 50,000 hrs</...
+
+[7] Score: 0.1347
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Voltage
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Voltage
+abbr: UNV | nametxt: 120V-277V...
+
+[8] Score: 0.1338
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Housing:
+<p>Machined aluminum housing with black or white finish. Standard clear lens provided.</p>...
+
+[9] Score: 0.1214
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Mounting Options
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Mounting Options
+abbr: S | nametxt: surface mount
+abbr: RP | nametxt: rigid pendant
+abbr: RPF | n...
+
+[10] Score: 0.1159
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: CRI
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: CRI
+abbr: 90 | nametxt: 90 CRI...
+
+[11] Score: 0.1124
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Aperture
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Aperture
+abbr: 3.5 | nametxt: 3.5" | asize: 3.5 | aunit: inches | asymbol: "...
+
+[12] Score: 0.0910
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Stem Length
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Stem Length
+abbr: 2 | nametxt: 2 feet
+abbr: 3 | nametxt: 3 feet
+abbr: 4 | nametxt: 4 feet
+abbr: 6...
+
+[13] Score: 0.0810
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Reflector
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Reflector
+abbr: SA14 | nametxt: 14° specular
+abbr: SA24 | nametxt: 24° specular
+abbr: SA34 | name...
+
+[14] Score: 0.0781
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Description:
+<p>The Beta3.5 Cube Downlight has a 3-1/2" aperture.14º, 24º and 34° reflector options. It i...
+
+[15] Score: 0.0735
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Dimming
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Dimming
+abbr: DIM10 | nametxt: 0-10V dimming to 1%...
+
+[16] Score: 0.0665
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Mounting:
+<ul><li>Easy mounting system over a 3-1/2" to 4" recessed octagonal junction box for S, RP, and...
+
+[17] Score: 0.0620
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Listings and Certifications:
+<ul><li>ETLus Listed to UL1598 (suitable for dry and damp locations)</li><li...
+
+============================================================
+QUERY 4: Product 100372, Finish options only
+============================================================
+
+[1] Score: 0.1685
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Finish
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Finish
+abbr: BK | nametxt: black
+abbr: WH | nametxt: white...
+
+============================================================
+QUERY 5: Descriptive chunks, search 'surface mount junction box'
+============================================================
+
+[1] Score: 0.7434
+    Product: Beta3Q Surface Mount SW (ID: 100896)
+    Chunk type: base_descriptive
+    Content: Product: Beta3Q Surface Mount SW (ID: 100896)
+Mounting:
+<ul><li>Surface mount to recessed standard 4" junction box.</li></ul>...
+
+[2] Score: 0.7254
+    Product: Beta3Q Surface Mount TW (ID: 100949)
+    Chunk type: base_descriptive
+    Content: Product: Beta3Q Surface Mount TW (ID: 100949)
+Mounting:
+<ul><li>Surface mount to recessed standard 4" junction box.</li></ul><p><br></p>...
+
+[3] Score: 0.7241
+    Product: Beta3Q Surface Mount WD (ID: 100947)
+    Chunk type: base_descriptive
+    Content: Product: Beta3Q Surface Mount WD (ID: 100947)
+Mounting:
+<ul><li>Surface mount to recessed standard 4" junction box.</li></ul>...
+
+[4] Score: 0.7224
+    Product: Beta6Q Surface Mount SW (ID: 100901)
+    Chunk type: base_descriptive
+    Content: Product: Beta6Q Surface Mount SW (ID: 100901)
+Mounting:
+<ul><li>Surface mount to recessed junction box.</li><li>Surface mount to exposed junction box ...
+
+[5] Score: 0.7196
+    Product: Beta4Q Surface Mount SW (ID: 100898)
+    Chunk type: base_descriptive
+    Content: Product: Beta4Q Surface Mount SW (ID: 100898)
+Mounting:
+<ul><li>Surface mount to recessed standard 4" junction box.</li></ul><p><br></p>...
+
+============================================================
+QUERY 6: Brand=Bruck, search 'track lighting'
+============================================================
+
+[1] Score: 0.5902
+    Product: MEVO Pendant Surface Track (ID: 101136)
+    Chunk type: base_descriptive
+    Content: Product: MEVO Pendant Surface Track (ID: 101136)
+Description:
+<p><span style="background-color: rgba(255, 255, 255, 0.85);">MEVO is a </span><span sty...
+
+[2] Score: 0.5653
+    Product: MEVO Recessed Trimmed Track (ID: 101203)
+    Chunk type: base_descriptive
+    Content: Product: MEVO Recessed Trimmed Track (ID: 101203)
+Description:
+<p><span style="background-color: rgba(255, 255, 255, 0.85);">MEVO is a </span><span st...
+
+[3] Score: 0.5646
+    Product: E10 LED Track Spot (ID: 100365)
+    Chunk type: base_descriptive
+    Content: Product: E10 LED Track Spot (ID: 100365)
+Description:
+<p>The E10 LED Track Spot is an economical solution with a clean cylinder design. A 2" aperture ...
+
+[4] Score: 0.5619
+    Product: ECOJ Track (ID: 100913)
+    Chunk type: base_descriptive
+    Content: Product: ECOJ Track (ID: 100913)
+Description:
+<p><span style="background-color: rgba(255, 255, 255, 0.85);">ECOJ is a single and two circuit lighting ...
+
+[5] Score: 0.5545
+    Product: E15 LED Track Spot (ID: 100628)
+    Chunk type: base_option
+    Option: DELIVERED LUMENS
+    Content: Product: E15 LED Track Spot (ID: 100628)
+Option: DELIVERED LUMENS
+abbr: 13LM
+abbr: 20LM
+abbr: 11LM
+abbr: 16LM...
+(venv) 25-12-04 21:45:54 cognosa_web_app/backend > pwd
+/Users/harry/cognosa_web_app/backend
+(venv) 25-12-05 08:48:09 cognosa_web_app/backend >             
+  [Restored Dec 17, 2025 at 11:01:03 AM]
+Last login: Wed Dec 17 11:01:02 on ttys011
+25-12-27 21:23:29 cognosa_web_app/backend > pwd
+/Users/harry/cognosa_web_app/backend
+25-12-27 21:23:34 cognosa_web_app/backend > pip list | grep qdrant
+DEPRECATION: Python 2.7 reached the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 is no longer maintained. pip 21.0 will drop support for Python 2.7 in January 2021. More details about Python 2 support in pip can be found at https://pip.pypa.io/en/latest/development/release-process/#python-2-support pip 21.0 will remove support for this functionality.
+25-12-27 21:23:57 cognosa_web_app/backend > . c9.sh
+Remember: git remote show origin
+Do you want to cd to ~/cognosa_web_app? [y/N] n
+venv should be set.
+(venv) 25-12-27 21:24:42 cognosa_web_app/backend > pwd
+/Users/harry/cognosa_web_app/backend
+(venv) 25-12-27 21:24:43 cognosa_web_app/backend > pip list | grep qdrant
+langchain-qdrant                         1.1.0
+qdrant-client                            1.15.1
+(venv) 25-12-27 21:24:53 cognosa_web_app/backend > python test_casambi_retrieval.py
+Testing Casambi Collection: casambi_collection
+============================================================
+
+🔍 TESTING WITH CONFIG: {'search_type': 'similarity', 'search_kwargs': {'k': 5}}
+
+============================================================
+
+Query 1: 'How to create a scene in Casambi app?'
+--------------------------------------------------
+Found 5 results
+
+   Result 1:
+     📄 Source: Casambi_app_user_manual_v3.17.0_fw46_rp.docx
+     📁 Folder: manual
+     🏷️  Type: manual (confidence: 0.95, method: folder)
+     🔧 Strategy: hierarchical
+     📍 Chunk: 39/243
+     📝 Preview: Types of scenes  There are three types of “scenes” that can be created in the Casambi app. Which to use will depend on what you are trying to achieve....
+
+   Result 2:
+     📄 Source: casambi-specification May 2016.docx
+     📁 Folder: general_topics
+     🏷️  Type: specification (confidence: 0.70, method: filename)
+     🔧 Strategy: unknown
+     📍 Chunk: 26/73
+     📝 Preview: Use the basic gestures, tap, pan and hold the lamp control circles to control the luminaires in the picture.        Scenes    A scene is a lighting sit...
+
+   Result 3:
+     📄 Source: Casambi_app_user_manual_v3.17.0_fw46_rp.docx
+     📁 Folder: manual
+     🏷️  Type: manual (confidence: 0.95, method: folder)
+     🔧 Strategy: hierarchical
+     📍 Chunk: 31/243
+     📝 Preview: Gallery tab  The Gallery in the Casambi app is an intuitive way of controlling your luminaires. Place luminaire control icons (circles from which you ...
+
+
+Query 2: 'What are the benefits of Casambi for hotels?'
+--------------------------------------------------
+Found 5 results
+
+   Result 1:
+     📄 Source: Casambi System Overview_EN_V6.0_April_2025.docx
+     📁 Folder: general_topics
+     🏷️  Type: system_overview (confidence: 0.70, method: filename)
+     🔧 Strategy: hierarchical
+     📍 Chunk: 2/137
+     📝 Preview: Casambi System Overview  ...
+
+   Result 2:
+     📄 Source: Casambi_Hospitals and Healthcare Facilities_July25.docx
+     📁 Folder: use_cases
+     🏷️  Type: general_technical (confidence: 0.50, method: default)
+     🔧 Strategy: unknown
+     📍 Chunk: 50/51
+     📝 Preview: casambi.com                    © 2025 Casambi Technologies Oy / Inc.    10  10  Whitepaper: Hospitals and Healthcare Facilities  Whitepaper: Hospitals...
+
+   Result 3:
+     📄 Source: Casambi_System Security_July25.docx
+     📁 Folder: general_topics
+     🏷️  Type: security_technical (confidence: 0.75, method: filename)
+     🔧 Strategy: technical_topic
+     📍 Chunk: 10/25
+     📝 Preview: Security is about working in layers – it’s about adding additional barriers to entry. Casambi’s system architecture has been built to maximize resilie...
+
+
+Query 3: 'Quick setup guide for retail lighting'
+--------------------------------------------------
+Found 5 results
+
+   Result 1:
+     📄 Source: Casambi_Retail_Jan25.docx
+     📁 Folder: use_cases
+     🏷️  Type: use_case (confidence: 0.75, method: filename)
+     🔧 Strategy: semantic_section
+     📍 Chunk: 34/43
+     📝 Preview: Or in the shop window, at late hours (00:00-09:00), lights are switched on when a presence is detected in front of the window. No occupancy for 10 min...
+
+   Result 2:
+     📄 Source: Casambi_Retail_Jan25.docx
+     📁 Folder: use_cases
+     🏷️  Type: use_case (confidence: 0.75, method: filename)
+     🔧 Strategy: semantic_section
+     📍 Chunk: 3/43
+     📝 Preview: Today’s in-store retail experience is changing and adapting to online shopping trends. As a result, retail lighting is no longer limited to just displ...
+
+   Result 3:
+     📄 Source: Casambi_app_user_manual_v3.17.0_fw46_rp.docx
+     📁 Folder: manual
+     🏷️  Type: manual (confidence: 0.95, method: folder)
+     🔧 Strategy: hierarchical
+     📍 Chunk: 16/243
+     📝 Preview: LIGHTING CONTROL FOR THE MODERN WORLD  ...
+
+
+Query 4: 'Casambi security and encryption features'
+--------------------------------------------------
+Found 5 results
+
+   Result 1:
+     📄 Source: Casambi_Outdoor_Jan25.docx
+     📁 Folder: use_cases
+     🏷️  Type: use_case (confidence: 0.75, method: filename)
+     🔧 Strategy: semantic_section
+     📍 Chunk: 18/29
+     📝 Preview: Secure and robust    Casambi has been used in many highly sensitive environments such as in airport control towers and hospitals, where reliability an...
+
+   Result 2:
+     📄 Source: Casambi System Overview_EN_V6.0_April_2025.docx
+     📁 Folder: general_topics
+     🏷️  Type: system_overview (confidence: 0.70, method: filename)
+     🔧 Strategy: hierarchical
+     📍 Chunk: 57/137
+     📝 Preview: Each Casambi network contains 3 main communication channels:  Communication from unit to unit in the mesh network   Communication between mobile and u...
+
+   Result 3:
+     📄 Source: Casambi_System Security_July25.docx
+     📁 Folder: general_topics
+     🏷️  Type: security_technical (confidence: 0.75, method: filename)
+     🔧 Strategy: technical_topic
+     📍 Chunk: 13/25
+     📝 Preview: Full encryption    All communications channels are encrypted, which means that the information is converted into secret code that hides the informatio...
+
+
+Query 5: 'How to configure iBeacon'
+--------------------------------------------------
+Found 5 results
+
+   Result 1:
+     📄 Source: Casambi_iBeacon_July25.docx
+     📁 Folder: general_topics
+     🏷️  Type: procedural_guide (confidence: 0.75, method: filename)
+     🔧 Strategy: procedural
+     📍 Chunk: 5/16
+     📝 Preview: The iBeacon feature is not readily accessible within the app by default. To utilized it, you must enable the iBeacon interface by following these step...
+
+   Result 2:
+     📄 Source: Casambi_iBeacon_July25.docx
+     📁 Folder: general_topics
+     🏷️  Type: procedural_guide (confidence: 0.75, method: filename)
+     🔧 Strategy: procedural
+     📍 Chunk: 6/16
+     📝 Preview: If you want to configure iBeacon for an individual Casambi module, go to the “Luminaires” tab and double tap the desired unit. Scroll down and tap on ...
+
+   Result 3:
+     📄 Source: casambi-specification May 2016.docx
+     📁 Folder: general_topics
+     🏷️  Type: specification (confidence: 0.70, method: filename)
+     🔧 Strategy: unknown
+     📍 Chunk: 42/73
+     📝 Preview: iBeacons  Introduced in iOS 7, iBeacon is a technology enabling location awareness possibilities for apps. Leveraging Bluetooth Low Energy (BLE), a de...
+
+
+Query 6: 'LEED certification and energy efficiency'
+--------------------------------------------------
+Found 5 results
+
+   Result 1:
+     📄 Source: Casambi_Retrofit-and-Refurbishment_Jan25.docx
+     📁 Folder: use_cases
+     🏷️  Type: use_case (confidence: 0.75, method: filename)
+     🔧 Strategy: semantic_section
+     📍 Chunk: 13/47
+     📝 Preview: Better Buildings Initiative: Led by the DOE, this initiative aims to make commercial, public, industrial, and residential buildings 20% more energy-ef...
+
+   Result 2:
+     📄 Source: Casambi_Retrofit-and-Refurbishment_Jan25.docx
+     📁 Folder: use_cases
+     🏷️  Type: use_case (confidence: 0.75, method: filename)
+     🔧 Strategy: semantic_section
+     📍 Chunk: 5/47
+     📝 Preview: Green Building Certifications: Certifications such as LEED (Leadership in Energy and Environmental Design) or BREEAM (Building Research Establishment ...
+
+   Result 3:
+     📄 Source: Casambi_Sustainability-and-Well-being_LEED_Jan25.docx
+     📁 Folder: general_topics
+     🏷️  Type: sustainability (confidence: 0.75, method: filename)
+     🔧 Strategy: semantic_section
+     📍 Chunk: 14/39
+     📝 Preview: Building certification systems such as BREEAM and LEED also have specific credits related to the well-being of building occupants. The credit in BREEA...
+
+
+
+============================================================
+📊 RETRIEVAL STATISTICS
+============================================================
+
+1. Document Types Retrieved:
+   use_case: 5 chunks
+   manual: 3 chunks
+   specification: 2 chunks
+   system_overview: 2 chunks
+   security_technical: 2 chunks
+   procedural_guide: 2 chunks
+   general_technical: 1 chunks
+   sustainability: 1 chunks
+
+2. Chunking Strategies Used:
+   semantic_section: 6 chunks
+   hierarchical: 5 chunks
+   unknown: 3 chunks
+   technical_topic: 2 chunks
+   procedural: 2 chunks
+
+3. Top Source Files:
+   Casambi_app_user_manual_v3.17.0_fw46_rp.docx: 3 retrievals
+   casambi-specification May 2016.docx: 2 retrievals
+   Casambi System Overview_EN_V6.0_April_2025.docx: 2 retrievals
+   Casambi_System Security_July25.docx: 2 retrievals
+   Casambi_Retail_Jan25.docx: 2 retrievals
+
+✅ Test complete!
+
+============================================================
+🧪 OPTIONAL: Test different retrieval strategies
+============================================================
+
+ Testing similarity:
+   Retrieved 5 documents
+
+ Testing mmr:
+   Retrieved 5 documents
+
+ Testing similarity_score_threshold:
+   Retrieved 5 documents
+(venv) 25-12-27 21:48:09 cognosa_web_app/backend > 

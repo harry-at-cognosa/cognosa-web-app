@@ -1,0 +1,333 @@
+(venv) 25-12-04 21:45:32 cognosa_web_app/backend > python3 filtered_search_test_251204.py
+/Users/harry/cognosa_web_app/backend/filtered_search_test_251204.py:14: DeprecationWarning: `search` method is deprecated and will be removed in the future. Use `query_points` instead.
+  results = client.search(
+
+============================================================
+QUERY 1: Pure semantic - 'ELV dimming options' (no filter)
+============================================================
+
+[1] Score: 0.6952
+    Product: Zeta750 26W ELV Dimming Driver (ID: 100633)
+    Chunk type: base_option
+    Option: Special
+    Content: Product: Zeta750 26W ELV Dimming Driver (ID: 100633)
+Option: Special
+note: CURRENT | abbr: 500 | nametxt: 500mA...
+
+[2] Score: 0.6639
+    Product: LED ELV Dimming Driver_Crossover Alphabet & Bruck (ID: 100224)
+    Chunk type: base_option
+    Option: Electrical Options
+    Content: Product: LED ELV Dimming Driver_Crossover Alphabet & Bruck (ID: 100224)
+Option: Electrical Options
+abbr: 350 | nametxt: 18W, 350mA
+abbr: 500 | nametxt...
+
+[3] Score: 0.6439
+    Product: LX Series Track Pendant  SW (ID: 100723)
+    Chunk type: base_option
+    Option: Dimming
+    Content: Product: LX Series Track Pendant  SW (ID: 100723)
+Option: Dimming
+abbr: ELV1 | nametxt: leading & trailing edge (Triac/ELV) dimming to 1% | note: Tria...
+
+[4] Score: 0.6422
+    Product: Beta3R Pendant SW (ID: 100718)
+    Chunk type: base_option
+    Option: Dimming
+    Content: Product: Beta3R Pendant SW (ID: 100718)
+Option: Dimming
+abbr: DIM10 | nametxt: 0-10V dimming to 1%
+abbr: ELV1 | nametxt: leading & trailing edge (Tria...
+
+[5] Score: 0.6404
+    Product: A15 Cylinder (ID: 100234)
+    Chunk type: alt_option
+    Option: Dimming
+    Content: Alt Product: None (ID: 100145)
+Base Product: A15 Cylinder (ID: 100234)
+Option: Dimming
+abbr: 10V | nametxt: 0-10V dimming to 10%
+abbr: DIM10 | nametxt...
+
+============================================================
+QUERY 2: Category=downlights, search 'adjustable trim'
+============================================================
+
+[1] Score: 0.5852
+    Product: EcoNU3QA (ID: 100168)
+    Chunk type: base_descriptive
+    Content: Product: EcoNU3QA (ID: 100168)
+Description:
+<p>The EcoNU3QA is an economical and highly efficient spec grade 3" recessed adjustable with thoughtful co...
+
+[2] Score: 0.5839
+    Product: NU3QA_CALIFORNIA_JA8_CEC (ID: 100400)
+    Chunk type: base_descriptive
+    Content: Product: NU3QA_CALIFORNIA_JA8_CEC (ID: 100400)
+Description:
+<p>The NU3QA 3" recessed adjustable by ALPHABET offers premium performance, thoughtful con...
+
+[3] Score: 0.5797
+    Product: NU4QA (ID: 100846)
+    Chunk type: base_descriptive
+    Content: Product: NU4QA (ID: 100846)
+Description:
+<p>The EcoNU4QA is an economical and highly efficient spec grade 4" recessed adjustable with thoughtful const...
+
+[4] Score: 0.5746
+    Product: NU3QA (ID: 100889)
+    Chunk type: base_descriptive
+    Content: Product: NU3QA (ID: 100889)
+Description:
+<p>The EcoNU3QA is an economical and highly efficient spec grade 3" recessed adjustable with thoughtful const...
+
+[5] Score: 0.5729
+    Product: EcoNU4QA (ID: 100433)
+    Chunk type: base_descriptive
+    Content: Product: EcoNU4QA (ID: 100433)
+Description:
+<p>The EcoNU4QA is an economical and highly efficient spec grade 4" recessed adjustable with thoughtful co...
+
+============================================================
+QUERY 3: All chunks for product ID 100372
+============================================================
+
+[1] Score: 0.1685
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Finish
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Finish
+abbr: BK | nametxt: black
+abbr: WH | nametxt: white...
+
+[2] Score: 0.1637
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Series
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Series
+abbr: 607...
+
+[3] Score: 0.1587
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: CCT
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: CCT
+abbr: 30K | nametxt: 3000K...
+
+[4] Score: 0.1587
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_key_data
+    Content: Product: Beta3.5 Cube Downlight
+Base Product ID: 100372
+SKU: 
+Brand: Alphabet
+Product Alias: Cube Downlight
+Product Series: Beta3.5"
+Category: cylinde...
+
+[5] Score: 0.1420
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: DELIVERED LUMENS
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: DELIVERED LUMENS
+abbr: 11LM
+abbr: 15LM...
+
+[6] Score: 0.1353
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+LED Information:
+<ul><li>LUXEON 1203: Duv +/- 0.0015, Lumen Maintenance: L<sub>70</sub> &gt; 50,000 hrs</...
+
+[7] Score: 0.1347
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Voltage
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Voltage
+abbr: UNV | nametxt: 120V-277V...
+
+[8] Score: 0.1338
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Housing:
+<p>Machined aluminum housing with black or white finish. Standard clear lens provided.</p>...
+
+[9] Score: 0.1214
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Mounting Options
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Mounting Options
+abbr: S | nametxt: surface mount
+abbr: RP | nametxt: rigid pendant
+abbr: RPF | n...
+
+[10] Score: 0.1159
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: CRI
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: CRI
+abbr: 90 | nametxt: 90 CRI...
+
+[11] Score: 0.1124
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Aperture
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Aperture
+abbr: 3.5 | nametxt: 3.5" | asize: 3.5 | aunit: inches | asymbol: "...
+
+[12] Score: 0.0910
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Stem Length
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Stem Length
+abbr: 2 | nametxt: 2 feet
+abbr: 3 | nametxt: 3 feet
+abbr: 4 | nametxt: 4 feet
+abbr: 6...
+
+[13] Score: 0.0810
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Reflector
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Reflector
+abbr: SA14 | nametxt: 14° specular
+abbr: SA24 | nametxt: 24° specular
+abbr: SA34 | name...
+
+[14] Score: 0.0781
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Description:
+<p>The Beta3.5 Cube Downlight has a 3-1/2" aperture.14º, 24º and 34° reflector options. It i...
+
+[15] Score: 0.0735
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Dimming
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Dimming
+abbr: DIM10 | nametxt: 0-10V dimming to 1%...
+
+[16] Score: 0.0665
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Mounting:
+<ul><li>Easy mounting system over a 3-1/2" to 4" recessed octagonal junction box for S, RP, and...
+
+[17] Score: 0.0620
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_descriptive
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Listings and Certifications:
+<ul><li>ETLus Listed to UL1598 (suitable for dry and damp locations)</li><li...
+
+============================================================
+QUERY 4: Product 100372, Finish options only
+============================================================
+
+[1] Score: 0.1685
+    Product: Beta3.5 Cube Downlight (ID: 100372)
+    Chunk type: base_option
+    Option: Finish
+    Content: Product: Beta3.5 Cube Downlight (ID: 100372)
+Option: Finish
+abbr: BK | nametxt: black
+abbr: WH | nametxt: white...
+
+============================================================
+QUERY 5: Descriptive chunks, search 'surface mount junction box'
+============================================================
+
+[1] Score: 0.7434
+    Product: Beta3Q Surface Mount SW (ID: 100896)
+    Chunk type: base_descriptive
+    Content: Product: Beta3Q Surface Mount SW (ID: 100896)
+Mounting:
+<ul><li>Surface mount to recessed standard 4" junction box.</li></ul>...
+
+[2] Score: 0.7254
+    Product: Beta3Q Surface Mount TW (ID: 100949)
+    Chunk type: base_descriptive
+    Content: Product: Beta3Q Surface Mount TW (ID: 100949)
+Mounting:
+<ul><li>Surface mount to recessed standard 4" junction box.</li></ul><p><br></p>...
+
+[3] Score: 0.7241
+    Product: Beta3Q Surface Mount WD (ID: 100947)
+    Chunk type: base_descriptive
+    Content: Product: Beta3Q Surface Mount WD (ID: 100947)
+Mounting:
+<ul><li>Surface mount to recessed standard 4" junction box.</li></ul>...
+
+[4] Score: 0.7224
+    Product: Beta6Q Surface Mount SW (ID: 100901)
+    Chunk type: base_descriptive
+    Content: Product: Beta6Q Surface Mount SW (ID: 100901)
+Mounting:
+<ul><li>Surface mount to recessed junction box.</li><li>Surface mount to exposed junction box ...
+
+[5] Score: 0.7196
+    Product: Beta4Q Surface Mount SW (ID: 100898)
+    Chunk type: base_descriptive
+    Content: Product: Beta4Q Surface Mount SW (ID: 100898)
+Mounting:
+<ul><li>Surface mount to recessed standard 4" junction box.</li></ul><p><br></p>...
+
+============================================================
+QUERY 6: Brand=Bruck, search 'track lighting'
+============================================================
+
+[1] Score: 0.5902
+    Product: MEVO Pendant Surface Track (ID: 101136)
+    Chunk type: base_descriptive
+    Content: Product: MEVO Pendant Surface Track (ID: 101136)
+Description:
+<p><span style="background-color: rgba(255, 255, 255, 0.85);">MEVO is a </span><span sty...
+
+[2] Score: 0.5653
+    Product: MEVO Recessed Trimmed Track (ID: 101203)
+    Chunk type: base_descriptive
+    Content: Product: MEVO Recessed Trimmed Track (ID: 101203)
+Description:
+<p><span style="background-color: rgba(255, 255, 255, 0.85);">MEVO is a </span><span st...
+
+[3] Score: 0.5646
+    Product: E10 LED Track Spot (ID: 100365)
+    Chunk type: base_descriptive
+    Content: Product: E10 LED Track Spot (ID: 100365)
+Description:
+<p>The E10 LED Track Spot is an economical solution with a clean cylinder design. A 2" aperture ...
+
+[4] Score: 0.5619
+    Product: ECOJ Track (ID: 100913)
+    Chunk type: base_descriptive
+    Content: Product: ECOJ Track (ID: 100913)
+Description:
+<p><span style="background-color: rgba(255, 255, 255, 0.85);">ECOJ is a single and two circuit lighting ...
+
+[5] Score: 0.5545
+    Product: E15 LED Track Spot (ID: 100628)
+    Chunk type: base_option
+    Option: DELIVERED LUMENS
+    Content: Product: E15 LED Track Spot (ID: 100628)
+Option: DELIVERED LUMENS
+abbr: 13LM
+abbr: 20LM
+abbr: 11LM
+abbr: 16LM...
+(venv) 25-12-04 21:45:54 cognosa_web_app/backend > 
