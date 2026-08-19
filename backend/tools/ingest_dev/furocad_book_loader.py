@@ -9,7 +9,7 @@ Design: docs/furocad/pass1_book_ingest_design.md
 Usage (from backend/, with the project venv):
 
     ../venv/bin/python -m tools.ingest_dev.furocad_book_loader extract
-    ../venv/bin/python -m tools.ingest_dev.furocad_book_loader load   [--recreate]
+    ../venv/bin/python -m tools.ingest_dev.furocad_book_loader load   [--recreate] [--kind body|footnote]
     ../venv/bin/python -m tools.ingest_dev.furocad_book_loader check  "query text"
 
 `extract` writes <OUT_DIR>/furocad_book_pass1.jsonl (one record per chunk, body and
@@ -58,7 +58,10 @@ FIRST_PAGE, LAST_PAGE = 1, 316   # pass-1 scope (printed pages)
 KNOWN_BLANK_PAGES = {8, 78, 198, 252}
 
 QDRANT_URL = os.environ.get("FUROCAD_QDRANT", "qdrant_local")   # ParsedUrl alias or host:port
-COLLECTION = os.environ.get("FUROCAD_COLLECTION", "furocad")
+COLLECTION = os.environ.get("FUROCAD_COLLECTION", "furocad")                        # body chunks
+FOOTNOTE_COLLECTION = os.environ.get("FUROCAD_FN_COLLECTION", "furocad_footnotes")   # linked footnote points
+# Footnotes live in a sibling collection: the platform has no fixed default filter, and
+# short citation-dense notes otherwise crowd body chunks out of top-k.
 EMB_MODEL = os.environ.get("FUROCAD_EMB_MODEL", "BAAI/bge-base-en-v1.5")
 
 TARGET_TOKENS = 350
@@ -653,45 +656,51 @@ def record_to_document(r: dict):
     return Document(page_content=r["text"], metadata=md)
 
 
-def cmd_load(args):
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-    from common.parsed_url import ParsedUrl
-    from tasks_lib.vdb_lib.qdrant_ops import QdrantOps
-    from langchain_huggingface import HuggingFaceEmbeddings
+def _load_into(ops, emb, collection: str, records: list[dict], recreate: bool):
     from langchain_qdrant import QdrantVectorStore
     from qdrant_client.models import Filter, FieldCondition, MatchValue
-
-    jsonl = os.path.join(OUT_DIR, "furocad_book_pass1.jsonl")
-    records = [json.loads(l) for l in open(jsonl, encoding="utf8")]
-    if args.kind != "all":
-        records = [r for r in records if r["kind"] == args.kind]
-    print(f"{len(records)} records to load into '{COLLECTION}' with {EMB_MODEL}")
-
-    emb = HuggingFaceEmbeddings(model_name=EMB_MODEL, encode_kwargs={"normalize_embeddings": True})
-    ops = QdrantOps(ParsedUrl.from_url(QDRANT_URL))
-    exists = ops.collection_exists(COLLECTION)
+    exists = ops.collection_exists(collection)
     if exists is None:
         sys.exit("Qdrant not reachable")
-    if exists and args.recreate:
-        ops.client.delete_collection(COLLECTION)
+    if exists and recreate:
+        ops.client.delete_collection(collection)
         exists = False
     if not exists:
-        ops.create_collection(emb, COLLECTION)
+        ops.create_collection(emb, collection)
     else:
         # idempotent re-load: drop this source's points first
         ops.client.delete(
-            collection_name=COLLECTION,
+            collection_name=collection,
             points_selector=Filter(must=[FieldCondition(key="metadata.source", match=MatchValue(value=SOURCE_ID))]),
         )
-    store = QdrantVectorStore(client=ops.client, collection_name=COLLECTION, embedding=emb)
+    store = QdrantVectorStore(client=ops.client, collection_name=collection, embedding=emb)
     docs = [record_to_document(r) for r in records]
     ids = [point_id(r["kind"], f"{r['note_no']}.{r.get('note_part', 1)}" if r["kind"] == "footnote" else str(r["chunk_idx"])) for r in records]
     B = 64
     for i in range(0, len(docs), B):
         store.add_documents(docs[i:i + B], ids=ids[i:i + B])
-        print(f"  {min(i + B, len(docs))}/{len(docs)}", end="\r", flush=True)
-    info = ops.client.get_collection(COLLECTION)
-    print(f"\ndone. collection '{COLLECTION}': {info.points_count} points, dim {info.config.params.vectors.size}")
+        print(f"  {collection}: {min(i + B, len(docs))}/{len(docs)}", end="\r", flush=True)
+    info = ops.client.get_collection(collection)
+    print(f"\n  collection '{collection}': {info.points_count} points, dim {info.config.params.vectors.size}")
+
+
+def cmd_load(args):
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+    from common.parsed_url import ParsedUrl
+    from tasks_lib.vdb_lib.qdrant_ops import QdrantOps
+    from langchain_huggingface import HuggingFaceEmbeddings
+
+    jsonl = os.path.join(OUT_DIR, "furocad_book_pass1.jsonl")
+    records = [json.loads(l) for l in open(jsonl, encoding="utf8")]
+    body = [r for r in records if r["kind"] == "body"]
+    fns = [r for r in records if r["kind"] == "footnote"]
+    print(f"{len(body)} body -> '{COLLECTION}', {len(fns)} footnote -> '{FOOTNOTE_COLLECTION}' with {EMB_MODEL}")
+    emb = HuggingFaceEmbeddings(model_name=EMB_MODEL, encode_kwargs={"normalize_embeddings": True})
+    ops = QdrantOps(ParsedUrl.from_url(QDRANT_URL))
+    if args.kind in ("all", "body"):
+        _load_into(ops, emb, COLLECTION, body, args.recreate)
+    if args.kind in ("all", "footnote"):
+        _load_into(ops, emb, FOOTNOTE_COLLECTION, fns, args.recreate)
 
 
 def cmd_check(args):
@@ -702,8 +711,8 @@ def cmd_check(args):
     from qdrant_client.models import Filter, FieldCondition, MatchValue
     emb = HuggingFaceEmbeddings(model_name=EMB_MODEL, encode_kwargs={"normalize_embeddings": True})
     ops = QdrantOps(ParsedUrl.from_url(QDRANT_URL))
-    flt = None if args.kind == "all" else Filter(must=[FieldCondition(key="metadata.kind", match=MatchValue(value=args.kind))])
-    res = ops.client.query_points(COLLECTION, query=emb.embed_query(args.query), limit=args.k, with_payload=True, query_filter=flt)
+    coll = FOOTNOTE_COLLECTION if args.kind == "footnote" else COLLECTION
+    res = ops.client.query_points(coll, query=emb.embed_query(args.query), limit=args.k, with_payload=True)
     for p in res.points:
         md = p.payload["metadata"]
         print(f"\n--- score {p.score:.3f} | {md['kind']} | {md['breadcrumb']} | pp {md['page_start']}-{md['page_end']}")
@@ -715,7 +724,7 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("extract")
     p = sub.add_parser("load"); p.add_argument("--recreate", action="store_true"); p.add_argument("--kind", default="all", choices=["all", "body", "footnote"])
-    p = sub.add_parser("check"); p.add_argument("query"); p.add_argument("-k", type=int, default=5); p.add_argument("--kind", default="body", choices=["all", "body", "footnote"])
+    p = sub.add_parser("check"); p.add_argument("query"); p.add_argument("-k", type=int, default=5); p.add_argument("--kind", default="body", choices=["body", "footnote"])
     args = ap.parse_args()
     {"extract": cmd_extract, "load": cmd_load, "check": cmd_check}[args.cmd](args)
 

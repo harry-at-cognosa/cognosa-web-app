@@ -4,7 +4,7 @@
 **Source:** Papetti, *The Forensic Unreliability of Shaken Baby Syndrome* (paperback, July 2024),
 `/Users/harry/+_claude_projects_from_260807/p67_furocad_notes/SBS_Paperback_July_2024.pdf`
 (TOC: `sbs_book_toc.txt`, same folder).
-**Status:** design proposal, 2026-08-19. Code not yet written.
+**Status:** implemented and loaded 2026-08-19 (`backend/tools/ingest_dev/furocad_book_loader.py`; report in `furocad_out/`). See §5 for what changed in implementation.
 
 ---
 
@@ -208,3 +208,35 @@ is curated and iterative. Two-stage, re-runnable:
 Extraction + report: half a day including the quality gates. Loader + Qdrant + `group_vdbs`
 row + first retrieval smoke tests through the Cognosa UI: another half day. Pass 1 is a
 one-day item once the five decisions above are made.
+
+---
+
+## 5. Implementation notes (2026-08-19)
+
+All five open decisions were taken as recommended (bge-base-en-v1.5; group 4 NAAG; single
+theme collection; footnotes ingested; 350/450 tokens). Result of the first extraction:
+
+| metric | value |
+|---|---|
+| section units | 82 (= every chapter/section heading in the TOC; all on the TOC's page) |
+| body chunks | 216, median 337 tokens incl. prefix, max 482, 13 short complete sections < 120 |
+| footnotes | 884 (= 884 body markers, no gaps), 937 records after splitting 53 long notes ≤ 494 tokens |
+| text conservation | 99.6 % of extracted body characters land in chunks |
+| page coverage | all 312 text pages; 8, 78, 198, 252, 316 have no body text |
+
+**One deviation from §2.4/§2.7:** footnotes are loaded into a sibling collection
+`furocad_footnotes` rather than the same collection with a `kind` payload. Reason: the
+platform's retrieval filters are user-selected per query and there is no way to configure a
+fixed default filter on a `group_vdbs` row, and in a mixed collection the short,
+citation-dense footnotes took 4 of the top-5 slots on every test query. Two `group_vdbs` rows
+for NAAG (ids 8 and 9) expose them as "FUROCAD — … (text)" and "… (footnotes / citations)"
+in the collection dropdown. The footnote points keep `anchors_chunk_idx` / `note_no`, so a
+future "expand with citations" retrieval mode, or a platform-level `default_filter` on
+`group_vdbs` (the better long-term fix — add to phase 2), needs no re-ingestion.
+
+Hyphenation: line-end hyphens (soft U+00AD and hard) are joined without a space; the only
+known casualty is the rare suspended hyphen ("second- or third-…"), accepted.
+
+Retrieval smoke tests through `QdrantOps.get_docs` (k=4) hit the right section on every
+probe and show the breadcrumb working across chapters (e.g. "lucid interval" → 2.7.8 *as
+believed in 2001* and 3.3 *proof of lucid intervals*).
