@@ -1,3 +1,22 @@
+## [Unreleased]
+
+1. LLM models moved to current vendor generation (data migration
+   `backend/tools/sql/update_llm_models_260819.sql`, apply per environment):
+   `claude-sonnet-4-5` -> `claude-sonnet-5`, `claude-opus-4-5` -> `claude-opus-5`,
+   `gemini-2.5-flash` -> `gemini-3.7-flash`,
+   `gpt-5-mini` -> `gpt-5.6-terra` (rows named "GPT 5") / `gpt-5.6-luna` (rows named "GPT 5 mini"),
+   `qwen-plus` -> `qwen3.8-max`. Same defaults in `backend/.init_sql_data/group_llms.json`.
+
+2. `backend/tasks_lib/llm_lib/llm_type_claude.py`: no longer sends `temperature`.
+   Claude Opus 5 / Sonnet 5 / Opus 4.7+ reject sampling parameters with HTTP 400.
+   Gemini 3.x, GPT 5.6 and Qwen 3.x work through the existing provider code unchanged.
+
+3. `backend/tools/sql/`: new home for idempotent data-only migrations, with
+   `apply_sql.py` (runs a script via the app's `DATABASE_URL`, `--dry-run` supported).
+
+4. `backend/tools/ingest_dev/`: previously untracked Casambi loader / retrieval-test
+   scripts are now versioned; `python-docx` added to `requirements.txt`.
+
 ## [0.21b] (2026-02-07)
 
 1. `Query Documents` -> `Queries` page ->
