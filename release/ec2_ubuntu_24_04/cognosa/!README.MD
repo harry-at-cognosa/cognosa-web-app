@@ -20,8 +20,8 @@ cached in the `hf_cache` volume and survive rebuilds.
 
 ```
 cd /home/ubuntu/cognosa
-sudo ./deploy.sh              # origin/main
-sudo ./deploy.sh v0.46        # or any tag / sha / branch
+./deploy.sh                   # origin/main  (ubuntu is in the docker group)
+./deploy.sh v0.46             # or any tag / sha / branch
 ```
 
 deploy.sh: fetch + detached checkout, refresh docker-compose.yml, build app+rt,

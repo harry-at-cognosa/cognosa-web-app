@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Deploy a git ref of the Cognosa repo to this EC2 host.
 #
-#   cd /home/ubuntu/cognosa && sudo ./deploy.sh [git-ref]     (default: origin/main)
+#   cd /home/ubuntu/cognosa && ./deploy.sh [git-ref]     (default: origin/main)
+#
+# Run as the clone's owner (ubuntu, member of the docker group). Under sudo,
+# git commands are delegated back to $SUDO_USER so the clone stays user-owned.
 #
 # Steps: fetch + checkout the ref in /home/ubuntu/cognosa-src, refresh
 # docker-compose.yml from the clone, build app + rt images, stop them, run
@@ -17,13 +20,15 @@ SRC="${COGNOSA_SRC:-$OPS/../cognosa-src}"
 REF="${1:-origin/main}"
 REL="release/ec2_ubuntu_24_04/cognosa"
 
+g() { if [ "$(id -u)" = 0 ] && [ -n "${SUDO_USER:-}" ]; then sudo -u "$SUDO_USER" git "$@"; else git "$@"; fi; }
+
 [ -d "$SRC/.git" ] || { echo "no git clone at $SRC (see !README.MD, first-time setup)"; exit 1; }
 [ -f "$OPS/.env" ] && grep -q '^COGNOSA_DOMAIN=' "$OPS/.env" || { echo "missing COGNOSA_DOMAIN in $OPS/.env"; exit 1; }
 
 echo "== fetching $REF"
-git -C "$SRC" fetch --quiet --tags origin
-git -C "$SRC" checkout --quiet --detach "$REF"
-echo "== at: $(git -C "$SRC" log -1 --format='%h %ad %s' --date=short)"
+g -C "$SRC" fetch --quiet --tags origin
+g -C "$SRC" checkout --quiet --detach "$REF"
+echo "== at: $(g -C "$SRC" log -1 --format='%h %ad %s' --date=short)"
 
 cp "$SRC/$REL/docker-compose.yml" "$OPS/docker-compose.yml"
 cd "$OPS"
@@ -41,4 +46,4 @@ docker compose up -d
 docker image prune -f >/dev/null
 
 docker compose ps
-echo "== deployed $(git -C "$SRC" rev-parse --short HEAD) at $(date -u +%FT%TZ)" | tee -a "$OPS/deploy.log"
+echo "== deployed $(g -C "$SRC" rev-parse --short HEAD) at $(date -u +%FT%TZ)" | tee -a "$OPS/deploy.log"
