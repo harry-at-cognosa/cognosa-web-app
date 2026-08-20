@@ -50,16 +50,22 @@ Needs EC2 Ubuntu 24.04, >= 4 CPU, 8 GB RAM, 32 GB disk, DNS A record for the dom
 
 ### Refresh data from another environment
 
-PostgreSQL (wholesale replace; `cwa_user` is the container superuser):
+PostgreSQL (wholesale replace; `cwa_user` is the container superuser). The
+stock `postgres:17` image has no pgvector, so the legacy `vector` extension and
+the `langchain_pg_*` tables (and their indexes) must be filtered out of the
+restore TOC; `--exit-on-error` aborts mid-way otherwise and leaves constraints
+and sequence values missing.
 
 ```
-# source:  pg_dump -Fc -O -x -d cwa_db -f cwa_db_<date>.dump ; scp it to ~/cognosa/
+# source:  pg_dump -h localhost -U postgres -Fc -O -x -d cwa_db -f cwa_db_<date>.dump ; scp it to ~/cognosa/
 cd /home/ubuntu/cognosa
-sudo docker compose stop app rt
-sudo docker compose exec -T db sh -c 'pg_dump -Fc -U "$POSTGRES_USER" "$POSTGRES_DB"' > pg_backup_$(date +%y%m%d).dump
-sudo docker compose exec -T db sh -c 'psql -U "$POSTGRES_USER" -d postgres -c "DROP DATABASE cwa_db" -c "CREATE DATABASE cwa_db"'
-sudo docker compose exec -T db sh -c 'pg_restore -U "$POSTGRES_USER" -d cwa_db -O -x' < cwa_db_<date>.dump
-sudo docker compose up -d
+docker compose stop app rt
+docker compose exec -T db sh -c 'pg_dump -Fc -U "$POSTGRES_USER" "$POSTGRES_DB"' > pg_backup_$(date +%y%m%d).dump
+docker compose exec -T db sh -c 'cat > /tmp/d.dump && pg_restore -l /tmp/d.dump \
+  | grep -vE "EXTENSION.*vector|langchain_pg_|ix_cmetadata_gin" > /tmp/toc.txt' < cwa_db_<date>.dump
+docker compose exec -T db sh -c 'psql -U "$POSTGRES_USER" -d postgres -c "DROP DATABASE cwa_db" -c "CREATE DATABASE cwa_db" \
+  && pg_restore -U "$POSTGRES_USER" -d cwa_db -O -x --exit-on-error -L /tmp/toc.txt /tmp/d.dump && rm /tmp/d.dump /tmp/toc.txt'
+sudo systemctl restart cognosa      # full down/up (also refreshes nginx upstream)
 ```
 
 Qdrant collections (per collection, version-tolerant):
