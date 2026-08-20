@@ -1,0 +1,15 @@
+# Build context for the EC2 images is the repo root (see release/ec2_ubuntu_24_04/cognosa/).
+# Only req_*.txt and backend/ are copied; keep everything else out of the context.
+.git
+venv
+.venv
+frontend
+docs
+release
+backend/logs
+backend/.env
+backend/__pycache__
+**/__pycache__
+**/*.pyc
+**/.DS_Store
+20000

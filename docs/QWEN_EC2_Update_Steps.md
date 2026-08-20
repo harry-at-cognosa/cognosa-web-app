@@ -1,5 +1,8 @@
 # Updating EC2 Cognosa Instance to Support Qwen LLM
 
+> **Superseded 2026-08-20.** EC2 hosts are now git-pull deployed; see `release/ec2_ubuntu_24_04/cognosa/!README.MD` and `deploy.sh`. Kept for the Qwen UI-configuration steps (Step 8).
+
+
 ## Overview
 
 The EC2 deployment is **copy-based** (not a git repo). Updates are applied by copying changed files to the server, rebuilding Docker images, and running the database migration.

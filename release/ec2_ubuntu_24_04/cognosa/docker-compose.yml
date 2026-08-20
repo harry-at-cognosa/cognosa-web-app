@@ -1,4 +1,11 @@
-﻿# /home/ubuntu/cognosa/docker-compose.yml
+# /home/ubuntu/cognosa/docker-compose.yml  (copied here by deploy.sh from the git clone)
+#
+# Layout on the host:
+#   /home/ubuntu/cognosa/       ops dir: this file, .env, env_*.env, nginx/, pg_db_data/, qdrantdb/, logs
+#   /home/ubuntu/cognosa-src/   git clone of the application repo (build context)
+#
+# Per-host values live in /home/ubuntu/cognosa/.env (read by compose for ${...}):
+#   COGNOSA_DOMAIN=dev.cognosa.net
 
 services:
   # --- PostgreSQL ---
@@ -34,22 +41,26 @@ services:
   # --- FastAPI App ---
   app:
     build:
-      dockerfile: webapp.Dockerfile
+      context: ../cognosa-src
+      dockerfile: release/ec2_ubuntu_24_04/cognosa/webapp.Dockerfile
     restart: always
     ports:
       - "8000"
     depends_on:
       - db
+      - qdrant
     env_file:
       - env_app.env
     environment:
-      - "CORS_ORIGINS=http://localhost:8000,http://127.0.0.1:8000,http://app:8000,https://dev.cognosa.net"
+      - "CORS_ORIGINS=http://localhost:8000,http://127.0.0.1:8000,http://app:8000,https://${COGNOSA_DOMAIN}"
       - "URL_QDRANT_LOCAL=qdrant:6333"
       - "URL_OLLAMA_LOCAL=http://127.0.0.1:11434/v1"
       - "URL_CHROMA_LOCAL=127.0.0.1:8010"
-
+      - "LOG_SQLALCHEMY_CWA=ERROR"
+      - "HF_HOME=/hf_cache"
     volumes:
       - ./app_logs:/app/logs
+      - hf_cache:/hf_cache
 
   # --- Nginx reverse-proxy ---
   nginx:
@@ -82,20 +93,27 @@ services:
   # --- run_tasks ---
   rt:
     build:
-      dockerfile: run_tasks.Dockerfile
+      context: ../cognosa-src
+      dockerfile: release/ec2_ubuntu_24_04/cognosa/run_tasks.Dockerfile
     restart: always
     depends_on:
       - db
+      - qdrant
     env_file:
       - env_run_tasks.env
     environment:
       - "URL_QDRANT_LOCAL=qdrant:6333"
       - "URL_OLLAMA_LOCAL=http://127.0.0.1:11434/v1"
       - "URL_CHROMA_LOCAL=127.0.0.1:8010"
-
+      - "LOG_SQLALCHEMY_RT=ERROR"
+      - "RT_VDB_PROCESS_NUM=2"
+      - "RT_VDB_EMB_MODELS_PRELOAD=sentence-transformers/all-MiniLM-L6-v2,BAAI/bge-base-en-v1.5"
+      - "HF_HOME=/hf_cache"
     volumes:
       - ./rt_logs:/app/logs
+      - hf_cache:/hf_cache
 
 volumes:
   nginx_certs:
   nginx_vhost:
+  hf_cache:   # Hugging Face model cache shared by app + rt; survives image rebuilds

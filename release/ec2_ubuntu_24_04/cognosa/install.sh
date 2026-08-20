@@ -1,4 +1,4 @@
-﻿# Update system
+# Update system
 sudo apt update && sudo apt upgrade -y
 
 # Install prerequisites
@@ -28,6 +28,17 @@ sudo chown $USER:$USER /home/ubuntu/cognosa
 cd /home/ubuntu/cognosa
 
 ###
+# application source = git clone (docker build context); see !README.MD "First-time setup"
+###
+git clone https://github.com/harry-at-cognosa/cognosa-web-app.git /home/ubuntu/cognosa-src
+REL=/home/ubuntu/cognosa-src/release/ec2_ubuntu_24_04/cognosa
+cp $REL/docker-compose.yml .
+ln -sf ../cognosa-src/release/ec2_ubuntu_24_04/cognosa/deploy.sh deploy.sh
+cp $REL/nginx_default.conf $REL/nginx_default_dummy.conf $REL/initial_ssl_cert.sh $REL/update_ssl_cert.sh $REL/cognosa.service .
+mkdir -p nginx/conf.d nginx/log
+# create .env, env_app.env, env_run_tasks.env, env_db.env from $REL/*-default, then continue
+
+###
 # nginx + let's encrypt preinstall
 ###
 # dummy configuration - just to get certificate
@@ -48,6 +59,7 @@ cp nginx_default.conf ./nginx/conf.d/default.conf
 chmod +x update_ssl_cert.sh initial_ssl_cert.sh
 
 sudo docker compose up -d --build
+# fresh DB only; to restore a dump instead see !README.MD "Refresh data"
 sudo docker compose run --rm app python init_sql_db.py
 
 sudo cp cognosa.service /etc/systemd/system/
