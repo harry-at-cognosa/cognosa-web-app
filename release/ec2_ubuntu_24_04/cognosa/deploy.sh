@@ -43,6 +43,8 @@ docker compose run --rm --no-deps app alembic upgrade head
 
 echo "== starting"
 docker compose up -d
+# nginx resolves `app` once at config load; recreated app container = new IP
+docker compose exec -T nginx nginx -s reload
 docker image prune -f >/dev/null
 
 docker compose ps

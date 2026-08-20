@@ -85,7 +85,8 @@ services:
   # --- Certbot (used to obtain and renew certs) ---
   certbot:
     image: certbot/certbot
-    # command will be overridden for initial cert acquisition
+    # Not started by `up -d` (profile); used via `docker compose run --rm certbot ...`
+    profiles: ["tools"]
     volumes:
       - nginx_certs:/etc/letsencrypt
       - nginx_vhost:/var/www/certbot
