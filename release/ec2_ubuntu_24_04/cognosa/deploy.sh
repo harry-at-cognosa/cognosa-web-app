@@ -43,8 +43,18 @@ docker compose run --rm --no-deps app alembic upgrade head
 
 echo "== starting"
 docker compose up -d
-# nginx resolves `app` once at config load; recreated app container = new IP
+
+# Wait for the recreated app container to answer, then reload nginx: it
+# resolves `app` once at config load, and the recreated container has a new IP.
+APP="http://$(docker compose port app 8000)/"
+for i in $(seq 1 45); do
+  curl -fsS -o /dev/null "$APP" 2>/dev/null && break
+  sleep 2
+done
+curl -fsS -o /dev/null "$APP" || { echo "app did not come up at $APP"; docker compose logs --tail 30 app; exit 1; }
 docker compose exec -T nginx nginx -s reload
+sleep 1
+curl -fsSk -o /dev/null https://localhost/ && echo "== nginx -> app OK" || { echo "nginx -> app FAILED"; exit 1; }
 docker image prune -f >/dev/null
 
 docker compose ps
