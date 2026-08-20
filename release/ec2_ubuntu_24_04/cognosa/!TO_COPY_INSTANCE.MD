@@ -60,6 +60,7 @@ req_run_tasks.txt
 req_webapp.txt
 run_tasks.Dockerfile
 update_ssl_cert.sh
+initial_ssl_cert.sh
 webapp.Dockerfile
 ```
 
@@ -69,7 +70,7 @@ docker-compose.yml
 install.sh
 nginx_default.conf - note that it has several occurrences to change
 nginx_default_dummy.conf
-update_ssl_cert.sh
+initial_ssl_cert.sh
 ```
 
 10) Copy release folder to the new EC2 instance, so there will be:
@@ -80,6 +81,7 @@ update_ssl_cert.sh
 11) Connect SSH to the new AWS EC2 instance (demo.cognosa.net).
 Run all commands from /release/install.sh file.
 It's better to run them one-by-one.
+Then install the certbot renewal cron (see !README.MD, "Let's Encrypt SSL certificate").
 
 12) After last command and instance reboot, unpack database backups:
 ```

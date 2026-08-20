@@ -1,4 +1,4 @@
-﻿### Deployment procedures:
+### Deployment procedures:
 
 Needs EC2 Ubuntu 24.04 instance with at least 4 CPU, 8GB RAM, 32GB storage.
 
@@ -41,13 +41,32 @@ install_no_nginx.sh - commands for local installation, without Nginx + Let's Enc
 
 Other files are for installation procedures.
 
-### To update Let's Encrypt SSL certificate:
+### Let's Encrypt SSL certificate
 
-Either run whole `update_ssl_cert.sh` script, or line-by-line.
+Certs last 90 days. Let's Encrypt no longer sends expiry emails (since June 2025),
+so renewal is automated: each host has a root crontab entry (Mon/Thu 03:17 UTC)
+that runs `certbot renew` and reloads nginx, logging to `certbot_cron.log`.
+`renew` is a no-op until fewer than 30 days remain.
+
+```
+sudo crontab -l
+# 17 3 * * 1,4  cd /home/ubuntu/cognosa && docker compose run --rm certbot renew --quiet && docker compose exec -T nginx nginx -s reload >> /home/ubuntu/cognosa/certbot_cron.log 2>&1
+```
+
+Manual renewal (zero downtime, nothing is stopped):
 
 ```
 cd /home/ubuntu/cognosa
-./update_ssl_cert.sh
+sudo ./update_ssl_cert.sh            # add --force-renewal to renew early
+```
+
+First-time issuance on a new host (nginx cannot start without a cert):
+edit DOMAIN/EMAIL in `initial_ssl_cert.sh`, then `sudo ./initial_ssl_cert.sh`.
+
+Check expiry from anywhere:
+
+```
+echo | openssl s_client -servername dev.cognosa.net -connect dev.cognosa.net:443 2>/dev/null | openssl x509 -noout -dates
 ```
 
 ### To reclaim more space on EC2 instance:
