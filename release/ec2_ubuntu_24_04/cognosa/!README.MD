@@ -68,13 +68,21 @@ docker compose exec -T db sh -c 'psql -U "$POSTGRES_USER" -d postgres -c "DROP D
 sudo systemctl restart cognosa      # full down/up (also refreshes nginx upstream)
 ```
 
-Qdrant collections (per collection, version-tolerant):
+Qdrant collections (per collection; `snapshots/upload` returns a bare 404 for a
+collection that does not exist yet on 1.15.5, so use `recover` from a file
+inside the container — it creates the collection). Snapshots are ~400 MB of
+mostly pre-allocated zeros; gzip them for transfer (→ 3–8 MB).
 
 ```
-# source:  curl -X POST localhost:6333/collections/<c>/snapshots  -> download from
-#          localhost:6333/collections/<c>/snapshots/<file> ; scp to ~/cognosa/
-curl -X PUT "localhost:6333/collections/<c>/snapshots/upload?priority=snapshot" \
-     -F "snapshot=@<file>.snapshot"
+# source:  curl -X POST localhost:6333/collections/<c>/snapshots   -> name
+#          curl -o <c>.snapshot localhost:6333/collections/<c>/snapshots/<name> ; gzip -1 <c>.snapshot ; scp
+cd /home/ubuntu/cognosa && gunzip <c>.snapshot.gz
+Q=$(docker compose ps -q qdrant); docker exec $Q mkdir -p /qdrant/snapshots
+docker cp <c>.snapshot $Q:/qdrant/snapshots/<c>.snapshot
+curl -X PUT localhost:6333/collections/<c>/snapshots/recover -H 'content-type: application/json' \
+     -d '{"location":"file:///qdrant/snapshots/<c>.snapshot","priority":"snapshot"}'
+docker exec $Q rm /qdrant/snapshots/<c>.snapshot; rm <c>.snapshot
+curl -s localhost:6333/collections/<c> | python3 -c 'import sys,json; r=json.load(sys.stdin)["result"]; print(r["status"], r["points_count"])'
 ```
 
 ### Notes:
