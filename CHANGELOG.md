@@ -17,6 +17,18 @@
 4. `backend/tools/ingest_dev/`: previously untracked Casambi loader / retrieval-test
    scripts are now versioned; `python-docx` added to `requirements.txt`.
 
+5. `Queries` page: `Retrieval Parameters` button showed the collection defaults
+   (e.g. `SIM: 30`) instead of the values actually used by the query (e.g. `SIM: 43`)
+   once the answer arrived, and for every query selected from history.
+   Regression from 0.21b: the `QuerySelectVDB` effect that copies default parameters
+   also depended on `doc_task_id` and on the Retrieval Filters `isLoaded` flag, which
+   the poller flips on every response, so it re-ran after each poll and overwrote the
+   values loaded from `gvdbs_cfg_json`. The effect is now split (parameters vs filters);
+   the parameters half re-applies the loaded query's `gvdbs_cfg_json` after copying
+   defaults. The button shows `…` while a history row is loading.
+   Files: `frontend/src/pages/QueryDocuments/components/QuerySelectVDB.tsx`,
+   `.../DocTasksGVDBsRetrParams.tsx`.
+
 ## [0.21b] (2026-02-07)
 
 1. `Query Documents` -> `Queries` page ->

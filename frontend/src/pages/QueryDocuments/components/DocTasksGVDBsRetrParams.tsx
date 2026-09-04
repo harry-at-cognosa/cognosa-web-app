@@ -9,7 +9,7 @@ import { useModalGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParam
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 
 export default function DocTasksGVDBsRetrParams() {
-  const { gvdbs_id } = useDocTasksCurrentStore();
+  const { gvdbs_id, needReloadFromHistory } = useDocTasksCurrentStore();
   const DocTaskOptionsStore = useDocTaskOptionsStore();
   const [show, setShow] = useState(false);
   const modalStore = useModalGVDBsRetrParamsStore();
@@ -99,7 +99,11 @@ export default function DocTasksGVDBsRetrParams() {
         <GearFill size={"20px"} style={{ marginBottom: "2px" }}></GearFill>
         &nbsp;
         {"Retrieval Parameters: " +
-          (modalDisabled ? "N/A" : curStore.getShortName())}
+          (modalDisabled
+            ? "N/A"
+            : needReloadFromHistory
+              ? "…"
+              : curStore.getShortName())}
       </Button>
       <Button
         variant="outline-secondary"

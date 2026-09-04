@@ -33,16 +33,38 @@ export default function QuerySelectVDB() {
     }
   }, [waitingState, current.gvdbs_id]);
 
-  // update gvdbs_retr_params from group_vdbs row if necessary
+  // update gvdbs_retr_params from group_vdbs row if necessary.
+  // After copying the collection defaults, re-apply the parameters of the
+  // query that is currently loaded (previousQuery = last submitted query or
+  // the task loaded from history) so a saved query shows its own values,
+  // not the defaults. Runs independently of the Retrieval Filters effect
+  // below, which flips its isLoaded flag on every poll.
   useEffect(() => {
     if (docTaskOptionsStore.needReload) return;
     if (!current.gvdbs_id || current.gvdbs_id === -1) return;
     const gvdbs_row = docTaskOptionsStore.gvdbs_id__row[current.gvdbs_id];
     const gvdbs_retr_params_str = gvdbs_row?.gvdbs_retr_params;
-    if (gvdbs_retr_params_str) {
-      defGVDBsRetrParamsStore.setData(gvdbs_retr_params_str);
-      curGVDBsRetrParamsStore.copyFromDefault();
+    if (!gvdbs_retr_params_str) return;
+    defGVDBsRetrParamsStore.setData(gvdbs_retr_params_str);
+    curGVDBsRetrParamsStore.copyFromDefault();
+    const pq = current.previousQuery;
+    if (pq && pq.gvdbs_id === current.gvdbs_id && pq.gvdbs_cfg_json) {
+      curGVDBsRetrParamsStore.setFromDocTaskData(
+        JSON.stringify(pq.gvdbs_cfg_json),
+      );
     }
+  }, [
+    docTaskOptionsStore.needReload,
+    defGVDBsRetrParamsStore.isLoaded,
+    current.gvdbs_id,
+    current.previousQuery,
+  ]);
+
+  // update gvdbs_retr_filters from group_vdbs row + filters history
+  useEffect(() => {
+    if (docTaskOptionsStore.needReload) return;
+    if (!current.gvdbs_id || current.gvdbs_id === -1) return;
+    const gvdbs_row = docTaskOptionsStore.gvdbs_id__row[current.gvdbs_id];
     const gvdbs_retr_filters_str = gvdbs_row?.gvdbs_retr_filters;
     if (gvdbs_retr_filters_str) {
       defGVDBsRetrFiltersStore.setDataFromString(gvdbs_retr_filters_str);
@@ -55,7 +77,6 @@ export default function QuerySelectVDB() {
     }
   }, [
     docTaskOptionsStore.needReload,
-    defGVDBsRetrParamsStore.isLoaded,
     defGVDBsRetrFiltersStore.isLoaded,
     current.doc_task_id,
     current.gvdbs_id,
