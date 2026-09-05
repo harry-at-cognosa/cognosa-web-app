@@ -11,14 +11,38 @@
   overflow: hidden;
 }
 
+.splitContainer {
+  --left-pct: 33.333%;
+}
+
 .leftPanel {
-  flex: 0 0 33.333%;
-  border-right: 1px solid #ddd;
+  flex: 0 0 var(--left-pct);
+  min-width: 0;
   overflow-y: auto;
   scrollbar-gutter: stable; /* prevent content shift */
 }
 .rightPanel {
-  flex: 0 0 66.666%;
+  flex: 1 1 0;
+  min-width: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;
+}
+
+/* Feature 198: draggable separator between the panels */
+.splitter {
+  flex: 0 0 6px;
+  cursor: col-resize;
+  background: #ddd;
+  touch-action: none;
+  transition: background 0.15s;
+}
+.splitter:hover,
+.resizing .splitter {
+  background: var(--theme-color-300);
+}
+/* while dragging: no text selection, keep the resize cursor everywhere */
+.resizing,
+.resizing * {
+  user-select: none !important;
+  cursor: col-resize !important;
 }

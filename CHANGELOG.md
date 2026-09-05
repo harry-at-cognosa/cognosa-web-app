@@ -29,6 +29,14 @@
    Files: `frontend/src/pages/QueryDocuments/components/QuerySelectVDB.tsx`,
    `.../DocTasksGVDBsRetrParams.tsx`.
 
+6. Feature 198: `Queries` page: the vertical line between the queries list and the
+   query/response area is now a draggable separator. Left panel width is clamped to
+   18%..45% of the page (default 33.3%), remembered per browser in localStorage
+   (`query_page_left_panel_pct`); double-click the separator to reset.
+   Files: `frontend/src/pages/QueryDocuments/components/PanelSplitter.tsx` (new),
+   `.../hooks/useLeftPanelPct.ts` (new), `QueryDocumentsPage.tsx`,
+   `QueryDocumentsPage.module.css`.
+
 ## [0.21b] (2026-02-07)
 
 1. `Query Documents` -> `Queries` page ->
