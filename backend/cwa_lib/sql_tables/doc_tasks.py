@@ -4,7 +4,7 @@ from sqlalchemy import select, delete
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import GroupVDBs, GroupLLMs, DocTasks
-from common.sql_models.doc_tasks import get_short_name
+from common.sql_models.doc_tasks import get_short_name, default_short_name
 from cwa_lib.pydantic_schemas.doc_tasks import DocTaskQueryShort, DocTaskQueryShortItem, DocTaskQueryResult
 from common.enums.doc_task_status import TaskStatus
 
@@ -117,7 +117,7 @@ class DocTasksTable:
             gllms_id=gllms_id,
             gllms_json=gllms_json,
             gc_id=gc_id,
-            short_name=short_name, 
+            short_name=default_short_name(short_name, input_text),
             input_text=input_text, 
             optional_text=optional_text,
             status=TaskStatus.QD_INIT,
@@ -166,7 +166,7 @@ class DocTasksTable:
         task.gllms_id=gllms_id
         task.gllms_json=gllms_json
         task.gc_id=gc_id
-        task.short_name=short_name
+        task.short_name=default_short_name(short_name, input_text)
         task.input_text=input_text
         task.optional_text=optional_text
         task.status=TaskStatus.QD_INIT

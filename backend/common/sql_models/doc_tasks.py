@@ -97,6 +97,16 @@ class DocTasks(Base):
     llm_tokens_received: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
+# Feature 200: a query always gets a short name. If the user left it blank,
+# use the first SHORT_NAME_DEFAULT_LEN characters of the query text.
+SHORT_NAME_DEFAULT_LEN = 35
+
+def default_short_name(short_name: str | None, input_text: str) -> str:
+    if short_name and short_name.strip():
+        return short_name
+    return (input_text or "").strip()[:SHORT_NAME_DEFAULT_LEN].rstrip()
+
+
 def get_short_name(d: DocTasks) -> str:
     if d.short_name and d.short_name.strip():
         return d.short_name

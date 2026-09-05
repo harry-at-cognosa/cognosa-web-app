@@ -70,9 +70,12 @@ function QueryArea() {
     const gvdbs_retr_filters = gvdbsRetrFiltersStore.getDict();
     if (gvdbs_retr_filters) gvdbs_cfg_json.filters = gvdbs_retr_filters;
 
+    // Feature 200: blank short name -> first 35 characters of the query
+    const short_name =
+      current.short_name?.trim() || input_text.slice(0, 35).trimEnd();
     const query: DocTasksQuery = {
       doc_task_id: current.doc_task_id,
-      short_name: current.short_name || "",
+      short_name,
       input_text,
       gvdbs_id: current.gvdbs_id,
       gvdbs_cfg_json,

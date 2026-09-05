@@ -56,6 +56,15 @@
    `frontend/src/pages/QueryDocuments/components/QuerySelectVDB.tsx`,
    `frontend/src/pages/SuManageApiSettings/SuTableManageApiSettings.tsx`.
 
+8. Feature 200: `Queries` page: when `Query Short Name` is left blank, `Ask` fills it
+   with the first 35 characters of the query (all of it if shorter) and the name is
+   saved with the task. Backend applies the same rule on insert/follow-up
+   (`default_short_name` in `backend/common/sql_models/doc_tasks.py`) as a safety net
+   for API clients. Existing blank rows are untouched; the read-time 50-character
+   fallback in `get_short_name` still covers them.
+   Files: `frontend/src/pages/QueryDocuments/components/QueryArea.tsx`,
+   `backend/common/sql_models/doc_tasks.py`, `backend/cwa_lib/sql_tables/doc_tasks.py`.
+
 ## [0.21b] (2026-02-07)
 
 1. `Query Documents` -> `Queries` page ->
