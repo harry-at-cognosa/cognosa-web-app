@@ -22,6 +22,7 @@ export type GroupVDBs = {
   group_id: number;
   gvdbs_seqn: number;
   gvdbs_name: string;
+  gvdbs_collection: string;
   gvdbs_retr_params: string | null;
   gvdbs_retr_filters: string | null;
   gvdbs_status: "success" | "warning" | "danger";
@@ -72,6 +73,7 @@ export const useDocTaskOptionsStore =
           group_id: -1,
           gvdbs_seqn: 1000,
           gvdbs_name: "No Document search, use only LLM",
+          gvdbs_collection: "llm_only",
           gvdbs_retr_params: null,
           gvdbs_retr_filters: null,
           gvdbs_status: "success",

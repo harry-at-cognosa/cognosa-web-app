@@ -53,3 +53,8 @@
   background-color: var(--theme-color-500) !important;
   border-color: var(--theme-color-500) !important;
 }
+
+/* Feature 201: Save Result alone in the filters row */
+.no-left-margin-children > .ms-2 {
+  margin-left: 0 !important;
+}

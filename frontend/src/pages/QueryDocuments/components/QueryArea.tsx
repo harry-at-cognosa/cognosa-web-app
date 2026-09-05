@@ -15,6 +15,7 @@ import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import ContextJSON from "./ContextJSON";
 import AskButton from "./AskButton";
 import CloneQueryButton from "./CloneQueryButton";
+import SaveResultButton from "./SaveResultButton";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 import DocTasksGVDBsRetrFilters from "./DocTasksGVDBsRetrFilters";
 import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
@@ -174,7 +175,9 @@ function QueryArea() {
         value={current.short_name || ""}
         onChange={(e) => current.setShortName(e.target.value)}
       />
-      <DocTasksGVDBsRetrFilters />
+      <DocTasksGVDBsRetrFilters>
+        <SaveResultButton />
+      </DocTasksGVDBsRetrFilters>
       <Form.Control
         as="textarea"
         className="mb-2"

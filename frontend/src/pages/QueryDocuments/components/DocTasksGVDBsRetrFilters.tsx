@@ -10,7 +10,11 @@ import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrF
 import GVDBsRetrFiltersTable from "../../../components/GVDBsRetrFilters/GVDBsRetrFiltersTable";
 import { GVDBsRetrFiltersHistory } from "../../../components/GVDBsRetrFilters/history";
 
-export default function DocTasksGVDBsRetrFilters() {
+export default function DocTasksGVDBsRetrFilters({
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
   const { doc_task_id, gvdbs_id } = useDocTasksCurrentStore();
   const DocTaskOptionsStore = useDocTaskOptionsStore();
   const [show, setShow] = useState(false);
@@ -18,9 +22,12 @@ export default function DocTasksGVDBsRetrFilters() {
   const modalStore = useModalGVDBsRetrFiltersStore();
   const curStore = useDocTasksGVDBsRetrFiltersStore();
 
-  if (DocTaskOptionsStore.needReload) return null;
-  if (!(defStore.isLoaded && defStore.fields)) return null;
-  if (gvdbs_id === -1) return null;
+  // Filters exist only for collections that define them. The row itself is
+  // always rendered so that `children` (e.g. Save Result) stay visible.
+  const filtersAvailable =
+    !DocTaskOptionsStore.needReload &&
+    Boolean(defStore.isLoaded && defStore.fields) &&
+    gvdbs_id !== -1;
 
   const handleCancel = () => {
     setShow(false);
@@ -64,6 +71,14 @@ export default function DocTasksGVDBsRetrFilters() {
     setShow(true);
   };
 
+  if (!filtersAvailable) {
+    return (
+      <Container fluid className="mb-2 p-0 no-left-margin-children">
+        {children}
+      </Container>
+    );
+  }
+
   return (
     <Container fluid className="mb-2 p-0">
       <Button
@@ -91,6 +106,7 @@ export default function DocTasksGVDBsRetrFilters() {
       >
         <ArrowRepeat size="20px" style={{ marginBottom: "3px" }} /> Reset
       </Button>
+      {children}
 
       <Modal show={show} onHide={handleCancel}>
         <Modal.Header closeButton>

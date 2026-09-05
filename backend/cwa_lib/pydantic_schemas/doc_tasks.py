@@ -91,6 +91,7 @@ class DocTasksOptionsGroupVDBsRow(BaseModel):
     group_id: int
     gvdbs_seqn: int
     gvdbs_name: str
+    gvdbs_collection: str = ''   # Feature 201: used in the Save Result file name
     gvdbs_retr_params: str
     gvdbs_retr_filters: str
     gvdbs_status: str

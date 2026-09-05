@@ -65,6 +65,18 @@
    Files: `frontend/src/pages/QueryDocuments/components/QueryArea.tsx`,
    `backend/common/sql_models/doc_tasks.py`, `backend/cwa_lib/sql_tables/doc_tasks.py`.
 
+9. Feature 201 (phase 1): `Queries` page: new `Save Result` button right of the
+   `Retrieval Filters` / `Reset` row. Enabled when an answer is on screen; exports a
+   Markdown file with query # and short name, collection, retrieval parameters (+ filters
+   if any), query text, context name, LLM name, optional instruction, task status +
+   found-documents count, performance line, and the full answer(s). Chrome/Edge open a
+   real Save As dialog (File System Access API); Safari/Firefox download to the default
+   folder. File name: `Q<id>_<short-name, 25 chars>_<collection>_YYMMDD_HHMMSS.md`.
+   `/doc_tasks/options` now includes `gvdbs_collection`.
+   Files: `frontend/src/pages/QueryDocuments/components/SaveResultButton.tsx` (new),
+   `.../DocTasksGVDBsRetrFilters.tsx`, `.../QueryArea.tsx`,
+   `.../stores/useDocTaskOptionsStore.ts`, `backend/cwa_lib/pydantic_schemas/doc_tasks.py`.
+
 ## [0.21b] (2026-02-07)
 
 1. `Query Documents` -> `Queries` page ->
