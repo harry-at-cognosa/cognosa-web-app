@@ -25,7 +25,8 @@ su_manage_api_settings__table_options = TableOptions(
             "slate", "gray", "zinc", "neutral", "stone", "red", "orange", 
             "amber", "yellow", "lime", "green", "emerald", "teal", "cyan",
             "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"
-        ]
+        ],
+        'suppress_retrieval_parameters_values': ["FALSE", "TRUE"],
     }
 )
 

@@ -45,6 +45,25 @@ export default function ApiSettingsValue({ onChange, useStore, col }: Props) {
       </Form.Select>
     );
   }
+  if (pk_value_str === "suppress_retrieval_parameters") {
+    const all_values = (data.table_options.add_values[
+      "suppress_retrieval_parameters_values"
+    ] as string[]) || ["FALSE", "TRUE"];
+    return (
+      <Form.Select
+        value={value_str.trim().toUpperCase() === "TRUE" ? "TRUE" : "FALSE"}
+        onChange={(e) => onChange(e.target.value)}
+        autoComplete="off"
+        isInvalid={isInvalid}
+      >
+        {all_values.map((v) => (
+          <option key={key + "__" + v} value={v}>
+            {v}
+          </option>
+        ))}
+      </Form.Select>
+    );
+  }
   if (pk_value_str === "gvdbs_def_retr_params") {
     return (
       <EditCellGVDBDefRetrParams

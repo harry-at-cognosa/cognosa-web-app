@@ -37,6 +37,25 @@
    `.../hooks/useLeftPanelPct.ts` (new), `QueryDocumentsPage.tsx`,
    `QueryDocumentsPage.module.css`.
 
+7. Feature 199: new `api_settings` row `suppress_retrieval_parameters` (`TRUE` / `FALSE`,
+   missing = `FALSE`). When `TRUE`, the `Retrieval Parameters` + `Reset` control on the
+   `Queries` page is hidden for every user, superusers included; the role rule
+   (superuser / groupadmin / contentmanager) still applies otherwise. Queries run with
+   the collection defaults while hidden. Editing the row in `Manage Api Settings`
+   takes effect without a page reload. Seeded as `FALSE` in
+   `backend/.init_sql_data/api_settings.json`.
+   Allowed `api_settings` names live in `backend/common/enums/api_settings_names.py`
+   (`ApiSettingsNamesEnum`); `suppress_retrieval_parameters` and a free-form `future`
+   (any length, `value` is unbounded VARCHAR) were added there. The settings editor
+   shows a FALSE/TRUE dropdown for `suppress_retrieval_parameters`.
+   Files: `backend/common/enums/api_settings_names.py`,
+   `backend/cwa_lib/routers/webapp_options.py`,
+   `backend/cwa_lib/pages/su_manage_api_settings.py`,
+   `frontend/src/stores/useWebAppOptionsStore.ts`,
+   `frontend/src/tables/EditRenders/ApiSettingsValue.tsx`,
+   `frontend/src/pages/QueryDocuments/components/QuerySelectVDB.tsx`,
+   `frontend/src/pages/SuManageApiSettings/SuTableManageApiSettings.tsx`.
+
 ## [0.21b] (2026-02-07)
 
 1. `Query Documents` -> `Queries` page ->

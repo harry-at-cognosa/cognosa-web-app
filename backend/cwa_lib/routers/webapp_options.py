@@ -15,6 +15,9 @@ class WAOptsApiSettings(BaseModel):
         "amber", "yellow", "lime", "green", "emerald", "teal", "cyan",
         "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"
     ] = ''
+    # Feature 199: "TRUE" hides the Retrieval Parameters control on the
+    # Queries page for every user (incl. superusers). Missing/other -> FALSE.
+    suppress_retrieval_parameters: str = ''
 
 class WebAppOptions(BaseModel):
     api_settings: WAOptsApiSettings
@@ -30,5 +33,8 @@ async def server_status(
     if not user.is_active:
         raise HTTPException(404)
     return {
-        'api_settings': await ApiSettingsTable(session).select_by_names(['webapp_main_color',])
+        'api_settings': await ApiSettingsTable(session).select_by_names([
+            'webapp_main_color',
+            'suppress_retrieval_parameters',
+        ])
     }

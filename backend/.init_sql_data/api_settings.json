@@ -2,6 +2,7 @@
   { "name": "app_version", "value": "0.12" },
   { "name": "db_version", "value": "0.12" },
   { "name": "webapp_main_color", "value": "gray" },
+  { "name": "suppress_retrieval_parameters", "value": "FALSE" },
   { "name": "index_page", "value": "Empty index page" },
   {
     "name": "gvdbs_def_retr_params",

@@ -11,7 +11,10 @@ const useTableSuManageApiSettingsStore = createTableStore({
   afterEdit: async (get) => {
     const editRow = get().editRow;
     const name = editRow?.name?.toString();
-    if (name === "webapp_main_color") {
+    if (
+      name === "webapp_main_color" ||
+      name === "suppress_retrieval_parameters"
+    ) {
       useWebAppOptionsStore.getState().setNeedReload(true);
     }
     if (name === "gvdbs_def_retr_params") {

@@ -4,6 +4,12 @@ import getColor from "../api/getColor";
 
 interface WebAppOptionsApiSettings {
   webapp_main_color: string;
+  // Feature 199: "TRUE" hides the Retrieval Parameters control for everyone
+  suppress_retrieval_parameters?: string;
+}
+
+function isTrueValue(value: string | undefined | null): boolean {
+  return (value || "").trim().toUpperCase() === "TRUE";
 }
 
 interface WebAppOptionsColorsState {
@@ -24,10 +30,11 @@ interface WebAppOptionsState {
   needReload: boolean;
   setNeedReload: (needReload: boolean) => void;
   fetchData: () => Promise<void>;
+  isRetrievalParamsSuppressed: () => boolean;
 }
 
 export const useWebAppOptionsStore = createResettableStore<WebAppOptionsState>(
-  (set) => ({
+  (set, get) => ({
     api_settings: null,
     color: {
       c100: getColor("gray", 100),
@@ -42,6 +49,8 @@ export const useWebAppOptionsStore = createResettableStore<WebAppOptionsState>(
     },
     needReload: true,
     setNeedReload: (needReload: boolean) => set({ needReload }),
+    isRetrievalParamsSuppressed: () =>
+      isTrueValue(get().api_settings?.suppress_retrieval_parameters),
     fetchData: async () => {
       if (!localStorage.getItem("token")) return;
       try {

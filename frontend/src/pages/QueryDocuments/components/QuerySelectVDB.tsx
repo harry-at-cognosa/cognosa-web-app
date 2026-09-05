@@ -7,11 +7,13 @@ import { ArrowRepeat } from "react-bootstrap-icons";
 import { useDefaultGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDefaultGVDBsRetrParamsStore";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 import { useLoggedUserStore } from "../../../stores/useLoggedUserStore";
+import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import { useDefaultGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDefaultGVDBsRetrFiltersStore";
 import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
 
 export default function QuerySelectVDB() {
   const user = useLoggedUserStore();
+  const webAppOptions = useWebAppOptionsStore();
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const defGVDBsRetrParamsStore = useDefaultGVDBsRetrParamsStore();
@@ -144,7 +146,8 @@ export default function QuerySelectVDB() {
           ))}
         </Form.Select>
       )}
-      {user.is_superuser || user.is_groupadmin || user.is_contentmanager ? (
+      {(user.is_superuser || user.is_groupadmin || user.is_contentmanager) &&
+      !webAppOptions.isRetrievalParamsSuppressed() ? (
         <DocTasksGVDBsRetrParams></DocTasksGVDBsRetrParams>
       ) : null}
     </InputGroup>
