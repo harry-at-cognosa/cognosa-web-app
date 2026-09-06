@@ -77,6 +77,17 @@
    `.../DocTasksGVDBsRetrFilters.tsx`, `.../QueryArea.tsx`,
    `.../stores/useDocTaskOptionsStore.ts`, `backend/cwa_lib/pydantic_schemas/doc_tasks.py`.
 
+10. Feature 202: column filters on the superuser tables. `SU Manage Users`: Group ID,
+    Active, Content Manager, Group Admin, Super User. `Manage LLMs` and `Manage VDBs`:
+    Group ID, Enabled. A row of dropdowns (All / values) sits under the column headers;
+    changing one resets to page 1. Generic: `TableOptions.filter__allow` +
+    `TableQuery.filters` (equality, server-side, restricted to allowed columns); pages
+    opt in with one line. Zero-row results now still return select lists / `add_values`.
+    Files: `backend/cwa_lib/pydantic_schemas/generic_table.py`, `backend/cwa_lib/pages/__init__.py`,
+    `backend/cwa_lib/pages/su_manage_{users,llms,vdbs}.py`,
+    `frontend/src/tables/TableStoreFactory.ts`, `frontend/src/tables/elements/HeaderFilterRow.tsx` (new),
+    `frontend/src/tables/elements/TableHeader.tsx`.
+
 ## [0.21b] (2026-02-07)
 
 1. `Query Documents` -> `Queries` page ->

@@ -37,6 +37,7 @@ export interface TableOptions {
   update__ask_columns: string[];
   delete__ask_columns: string[];
   order_by__allow: string[];
+  filter__allow?: string[];
   add_values: Record<string, any>;
   default_limit: number;
   max_limit: number;
@@ -104,6 +105,7 @@ export interface TableStore {
   queryTable: () => Promise<void>;
   setLimit: (newLimit: number) => void;
   setOffset: (newOffset: number) => void;
+  setFilter: (col: string, value: string | number | boolean | null) => void;
 
   readRow: TableRow | null;
   setReadRow: (askRead: TableRow | null) => void;
@@ -192,6 +194,16 @@ export function createTableStore({
           nextRequest: { ...get().nextRequest, offset: newOffset },
           needReload: true,
         });
+    },
+    // Feature 202: equality filter on a column; null/"" removes it. Resets to page 1.
+    setFilter: (col, value) => {
+      const filters = { ...(get().nextRequest.filters || {}) };
+      if (value === null || value === "") delete filters[col];
+      else filters[col] = value;
+      set({
+        nextRequest: { ...get().nextRequest, filters, offset: 0 },
+        needReload: true,
+      });
     },
     showCreateOrUpdateDialog: "",
     editRow: null,

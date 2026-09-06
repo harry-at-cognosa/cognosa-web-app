@@ -33,7 +33,8 @@ su_manage_llms__table_options = TableOptions(
     create__ask_columns=gllms_edit_columns,
     update__ask_columns=gllms_edit_columns,
     delete__ask_columns=['gllms_id', ] + gllms_edit_columns,
-    order_by__allow=['gllms_id', ] + gllms_edit_columns
+    order_by__allow=['gllms_id', ] + gllms_edit_columns,
+    filter__allow=['group_id', 'enabled'],
 )
 
 class SuManageLLMsTableRead(GenericTableRead):

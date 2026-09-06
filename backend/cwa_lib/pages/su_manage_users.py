@@ -65,6 +65,7 @@ su_manage_users__table_options = TableOptions(
     update__ask_columns=su_manage_users_edit_columns,
     delete__ask_columns=['user_name', 'full_name', 'email'],
     order_by__allow=su_manage_users__all_columns,
+    filter__allow=['group_id', 'is_active', 'is_contentmanager', 'is_groupadmin', 'is_superuser'],
 )
 
 class SuManageUsersTableRead(GenericTableRead):

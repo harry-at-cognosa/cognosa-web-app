@@ -1,6 +1,6 @@
 from copy import deepcopy
 from typing import Generic, Literal, TypeVar
-from sqlalchemy import select, func, ColumnElement
+from sqlalchemy import select, func, and_, ColumnElement
 from sqlalchemy.orm import DeclarativeBase
 from common.sql_tools import create_order_clause
 from cwa_lib.pydantic_schemas.generic_table import (
@@ -45,9 +45,32 @@ class GenericTableRead(Generic[SA, RowModel]):
     def _get_where_clause(self) -> ColumnElement | None:
         return None
     
+    def _get_filter_clause(self) -> ColumnElement | None:
+        """Feature 202: equality filters from payload.filters, restricted to table_options.filter__allow."""
+        filters = self.payload.filters or {}
+        allow = self.table_options.filter__allow
+        clauses = []
+        for col, value in filters.items():
+            if col not in allow or value is None or value == '':
+                continue
+            column = getattr(self.sa_model, col, None)
+            if column is None:
+                continue
+            ctype = self.query_columns.get(col)
+            if ctype and ctype.type == 'boolean':
+                if isinstance(value, str):
+                    value = value.strip().lower() in ('true', '1', 'yes')
+                clauses.append(column == bool(value))
+            else:
+                clauses.append(column == value)
+        if not clauses:
+            return None
+        return and_(*clauses)
+
     def _add_where_clause(self) -> None:
-        where_clause = self._get_where_clause()
-        if where_clause is not None:
+        clauses = [c for c in (self._get_where_clause(), self._get_filter_clause()) if c is not None]
+        if clauses:
+            where_clause = and_(*clauses) if len(clauses) > 1 else clauses[0]
             self._stmt = self._stmt.where(where_clause)
             self._stmt_total = self._stmt_total.where(where_clause)
     
@@ -116,11 +139,14 @@ class GenericTableRead(Generic[SA, RowModel]):
         self._get_order_clause_by_dir()
         await self._get_total()
         if not self._total:
+            # still build select lists / add_values so filter dropdowns keep their options
+            self._rows_orm = []
+            await self._update_to_qc()
             return TableQueryResult[RowModel](
             name=self.name,
             rows=[],
-            columns=self.query_columns,
-            table_options=self.table_options,
+            columns=self._qc,
+            table_options=self._to,
             order_by=self._order_by,
             order_dir=self._order_dir,
             total=0

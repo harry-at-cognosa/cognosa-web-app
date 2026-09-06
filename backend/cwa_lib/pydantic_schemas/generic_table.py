@@ -27,6 +27,8 @@ class TableOptions(BaseModel):
     update__ask_columns: list[str] = []  # on button Update, ask this column names values
     delete__ask_columns: list[str] = []  # on button Delete, ask this column names values
     order_by__allow: list[str] = []
+    # Feature 202: columns the client may filter on (equality). Empty = no filter row.
+    filter__allow: list[str] = []
     # additional values e.g. {'group_id_name': {<group_id>: <group_name>, ...}, ...}
     add_values: dict[str, Any] = dict()
     # default/max LIMIT
@@ -45,6 +47,8 @@ class TableQuery(BaseModel):
     order_dir: Literal['asc', 'desc'] | None = None
     limit: int | None = None
     offset: int | None = None
+    # Feature 202: {column: value} equality filters; only `filter__allow` columns are applied
+    filters: dict[str, bool | int | str] | None = None
 
 
 RowModel = TypeVar("RowModel", bound=BaseModel)
