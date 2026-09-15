@@ -1,6 +1,6 @@
 # Cognosa web app — roadmap and backlog
 
-Status (2026-09-15): **paused** at release 0.22a. Active use is limited to demos
+Status (2026-09-15): **paused** at release 0.48.0. Active use is limited to demos
 on dev.cognosa.net / demo.cognosa.net (EC2, stopped between uses). Development
 resumes when NAAG (group 4) supplies additional source documents and sample
 queries for their existing Qdrant collections, or when another customer drives
@@ -16,7 +16,7 @@ not yet done. Remove an item here when its changelog entry lands.
    `~/cognosa-src`'s remote to SSH. Procedure and constraints in
    `docs/github_going_private.md`.
 
-2. **Feature 201, phase 2 — scope undefined.** Phase 1 (0.22a) exports a single
+2. **Feature 201, phase 2 — scope undefined.** Phase 1 (0.48.0) exports a single
    query result as Markdown via the `Save Result` button. No phase 2 scope was
    ever written down. Candidates to decide on before starting: batch export of
    several history rows; additional formats (PDF, DOCX); including retrieved
@@ -48,10 +48,10 @@ not yet done. Remove an item here when its changelog entry lands.
   `release/ec2_ubuntu_24_04/cognosa/!README.MD`). Archive or delete.
 - `api_settings.app_version` / `db_version` in the live databases hold free-form
   dump-tracking notes rather than the release number. The seed
-  (`backend/.init_sql_data/api_settings.json`) now says `0.22a`; decide whether
+  (`backend/.init_sql_data/api_settings.json`) now says `0.48.0`; decide whether
   the live rows should be normalised to match, since the value is shown on the
   index page and the superuser Server Status page.
-- Release procedure used for 0.22a, for repetition: rebuild the frontend
+- Release procedure used for 0.48.0, for repetition: rebuild the frontend
   (`cd frontend && npm run build`) and confirm `backend/static` has no git
   drift; cut the `[Unreleased]` section in `CHANGELOG.md` into a dated version
   header; update the version line in `README.md` and the seed `app_version`;

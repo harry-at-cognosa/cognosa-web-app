@@ -2,7 +2,7 @@
 
 _Nothing yet. Project paused 2026-09-15; see ROADMAP.md._
 
-## [0.22a] (2026-09-15)
+## [0.48.0] (2026-09-15)
 
 1. LLM models moved to current vendor generation (data migration
    `backend/tools/sql/update_llm_models_260819.sql`, apply per environment):

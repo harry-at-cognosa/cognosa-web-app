@@ -9,7 +9,7 @@ The platform has three runtime components:
 2.	Background task processor (run_tasks.py) — multiprocessing VDB workers + threaded LLM workers that execute the RAG pipeline
 3.	React + TypeScript frontend — Bootstrap-based UI with real-time query polling and streaming LLM response display
 
-__Version:__ 0.22a (2026-09-15) — see CHANGELOG.md for full history (development began August 2025).
+__Version:__ 0.48.0 (2026-09-15) — see CHANGELOG.md for full history (development began August 2025).
 __Database:__ PostgreSQL (cwa_db), with any of optional Qdrant, ChromaDB, or pgvector for vector storage.
 __LLMs:__ Models from Anthropic, Google, Alibaba, Meta and others via API key, as well as local and remote Ollama hosted open source models.
 
