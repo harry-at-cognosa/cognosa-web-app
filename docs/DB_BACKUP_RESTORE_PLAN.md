@@ -1,10 +1,18 @@
 # cwa_db backup / restore scripts — plan
 
-Date: 2026-10-02. Status: `cwa_db_common.sh` and `cwa_db_backup.sh` built and run
-against `m1`, `dev` and `demo` (build step 1 of section 7). `-qdrant` on backup is built
-and run against `dev` and `demo`; on `m1` it was only exercised as far as the preflight
-abort, because Qdrant was not running there. Restore (including its `-qdrant` half) and
-the `README.md` are not written yet.
+Date: 2026-10-02. Status:
+
+- `cwa_db_backup.sh` (with `-qdrant`): built; run against `m1`, `dev` and `demo`. On
+  `m1`, `-qdrant` was only exercised as far as the preflight abort, because Qdrant was
+  not running there.
+- `cwa_db_restore.sh`: written. Argument handling and preflight were run against all
+  three targets. Two restores have been executed, both onto `m1`: an `m1` dump (identical
+  per-table row counts, sequences, extensions, constraint and index counts before and
+  after), and a `demo` dump (EC2 origin: owner `cwa_user`, no pgvector objects), which
+  loaded cleanly and passed the Qdrant collection check. **No restore has been run onto
+  `dev` or `demo`** (build steps 3-4 of section 7); the remote path - stop `app`/`rt`,
+  upload, TOC filter, restart - and the `MIGRATED` message are untested.
+- Not written: `-qdrant` on restore, `README.md`.
 
 ## 1. Scope
 
@@ -100,7 +108,8 @@ handled at restore time, so any dump can be restored to any target.
 3. **Safety dump.** The target's current `cwa_db` is dumped via the backup routine to
    `~/0_hold_cwa_db/cwa_db_<target>_<stamp>_prerestore.dump` (for remote targets this
    lands on M1 directly). Restore does not proceed unless this succeeds.
-4. **Remote only — stop writers:** `docker compose stop app rt`.
+4. **Remote only — stop writers:** `docker compose stop app rt`. If any other session is
+   still connected to `cwa_db` after that, list it, start `app` + `rt` again and abort.
 5. **Remote only — upload:** `scp` the dump to `/home/ubuntu/cognosa/db_restore/`,
    verify SHA-256 against the local file, then pipe it into the `db` container
    (`/tmp/d.dump`).
@@ -199,6 +208,7 @@ Postgres major version and pgvector presence on each.
   `~/ctc01instance.pem`; both run PostgreSQL 17.9 in the `db` container with the same
   compose layout; M1's `pg_restore` 17.6 reads their dumps; all three databases are at
   alembic revision `22cb85c671f5`.
-- Not yet verified: `ubuntu` has passwordless `sudo` for `systemctl restart cognosa`.
+- Verified 2026-10-02 by the restore preflight: `ubuntu` has passwordless `sudo` on both
+  hosts and the `cognosa` unit exists (the restore script re-checks this every run).
 - The EC2 instances are sometimes stopped; preflight reports an unreachable host and
   exits, and does not start instances.

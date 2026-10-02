@@ -228,3 +228,32 @@ qdrant_backup_collection() {
     fi
     mv "$partial" "$out"
 }
+
+# ---------------------------------------------------------------- restore helpers
+
+# Other sessions connected to cwa_db: pid|user|application|client|state, one per line.
+db_other_sessions() {
+    printf "select pid, usename, application_name, coalesce(client_addr::text, 'local'), state from pg_stat_activity where datname = '%s' and pid <> pg_backend_pid() order by pid" "$DB_NAME" \
+        | db_sql postgres
+}
+
+# True when the target's Postgres can provide pgvector.
+db_has_pgvector() {
+    [ "$(printf "select 1 from pg_available_extensions where name = 'vector'" | db_sql postgres 2>/dev/null)" = "1" ]
+}
+
+# Major version of pg_restore on the target, and of the pg_dump that wrote a file.
+target_pg_major() {
+    local v
+    if [ "$T_MODE" = "local" ]; then v="$(pg_restore --version)"; else v="$(rdb 'pg_restore --version' </dev/null)"; fi
+    printf '%s' "$v" | sed 's/[^0-9]*\([0-9][0-9]*\).*/\1/'
+}
+dump_pg_major() {
+    pg_restore -l "$1" | sed -n 's/^; *Dumped by pg_dump version: *\([0-9][0-9]*\).*/\1/p' | head -1
+}
+
+# rcp <local file> <remote path> : copy a file to the EC2 target.
+rcp() {
+    scp -q -i "$SSH_KEY" -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=10 \
+        "$1" "$T_USER@$T_HOST:$2"
+}
