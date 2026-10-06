@@ -1,0 +1,269 @@
+<title>Cognosa Deployment Topology</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: one wide figure on a quiet ground, host facts beneath; isometric faces take family hue, top light, right dark */
+:root{
+  --bg:#f6f5f2; --fg:#1f2328; --muted:#5d6672; --line:#2c3440; --panel:#ffffff;
+  --host-t:#e9e6df; --host-l:#d7d3c9; --host-r:#c6c1b5;
+  --cmp-t:#ffd9a8; --cmp-l:#f0b86a; --cmp-r:#d9994a;
+  --dat-t:#bfe0f5; --dat-l:#8fc3e6; --dat-r:#6ea6cf;
+  --net-t:#dcd3f2; --net-l:#bdaee6; --net-r:#9f8dd0;
+  --vol-t:#dfe6ea; --vol-l:#c4ced5; --vol-r:#aab6be;
+  --ext:#ffffff; --ghost:#9aa3ad;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#d7dbe0; --panel:#1d2126;
+  --host-t:#2b3036; --host-l:#22262b; --host-r:#1b1e22;
+  --cmp-t:#b4712c; --cmp-l:#8f5720; --cmp-r:#6f4217;
+  --dat-t:#2f6c94; --dat-l:#255573; --dat-r:#1c4159;
+  --net-t:#5a4a8f; --net-l:#473a72; --net-r:#362c57;
+  --vol-t:#3a434b; --vol-l:#2f363d; --vol-r:#252b31;
+  --ext:#1d2126; --ghost:#6b7480; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#d7dbe0; --panel:#1d2126;
+  --host-t:#2b3036; --host-l:#22262b; --host-r:#1b1e22;
+  --cmp-t:#b4712c; --cmp-l:#8f5720; --cmp-r:#6f4217;
+  --dat-t:#2f6c94; --dat-l:#255573; --dat-r:#1c4159;
+  --net-t:#5a4a8f; --net-l:#473a72; --net-r:#362c57;
+  --vol-t:#3a434b; --vol-l:#2f363d; --vol-r:#252b31;
+  --ext:#1d2126; --ghost:#6b7480; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;margin:0;padding-block:28px 48px;padding-inline:16px}
+main{max-width:1240px;margin:0 auto}
+.subtitle{font-size:16px;color:var(--muted);margin:0 0 12px}
+svg .tag{font-size:10.5px;font-weight:600;fill:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:26px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:17px;font-weight:600;margin:32px 0 10px}
+p{max-width:70ch;margin:0 0 10px}
+.lede{color:var(--muted)}
+figure{margin:20px 0 0;overflow-x:auto}
+figure svg{min-width:900px;width:100%;max-width:1400px;height:auto;display:block;color:var(--fg)}
+figcaption{font-size:13px;color:var(--muted);margin-top:8px;max-width:80ch}
+/* svg classes */
+svg text{font-family:var(--sans);fill:var(--fg)}
+svg .lbl{font-size:12.5px;font-weight:600}
+svg .sub{font-size:10px;fill:var(--muted);font-family:var(--mono)}
+svg .hostlbl{font-size:12px;font-weight:600}
+svg .hostsub{font-size:10px;fill:var(--muted);font-family:var(--mono)}
+svg .ghostlbl{font-size:11.5px;font-weight:600;fill:var(--ghost)}
+svg .ghostsub{font-size:9.5px;fill:var(--ghost);font-family:var(--mono)}
+svg .elbl{font-size:10.5px;fill:var(--muted);font-family:var(--mono);paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+svg polygon{stroke:var(--line);stroke-width:1;stroke-linejoin:round}
+svg .host.t{fill:var(--host-t)} svg .host.l{fill:var(--host-l)} svg .host.r{fill:var(--host-r)}
+svg .cmp.t{fill:var(--cmp-t)} svg .cmp.l{fill:var(--cmp-l)} svg .cmp.r{fill:var(--cmp-r)}
+svg .dat.t{fill:var(--dat-t)} svg .dat.l{fill:var(--dat-l)} svg .dat.r{fill:var(--dat-r)}
+svg .net.t{fill:var(--net-t)} svg .net.l{fill:var(--net-l)} svg .net.r{fill:var(--net-r)}
+svg .vol.t{fill:var(--vol-t)} svg .vol.l{fill:var(--vol-l)} svg .vol.r{fill:var(--vol-r)}
+svg .ghost{fill:var(--bg);stroke:var(--ghost);stroke-dasharray:6 4;stroke-width:1.2}
+svg .ghost.t{fill:var(--host-t);fill-opacity:.35}
+svg .ghost.prod{stroke-dasharray:2 4}
+svg rect.ext{fill:var(--ext);stroke:var(--line);stroke-width:1}
+svg rect.stack{fill:var(--panel)}
+svg .edge{fill:none;stroke:currentColor;stroke-width:1.3}
+svg .person{fill:var(--host-r);stroke:var(--line);stroke-width:1}
+/* key + table */
+.key{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:13px;color:var(--muted);margin-top:10px}
+.key span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:14px;height:14px;border:1px solid var(--line);border-radius:3px;display:inline-block}
+.sw.ghost{border:1.5px dashed var(--ghost);background:transparent}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid color-mix(in srgb,var(--line) 25%,transparent);vertical-align:top}
+th{font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td code,p code{font-family:var(--mono);font-size:12.5px}
+.wrap{overflow-x:auto}
+@media (max-width:640px){ h1{font-size:22px} }
+</style>
+<main>
+<h1>Cognosa Deployment Topology</h1>
+<p class="subtitle">EC2 hosts, Docker Compose containers, and external services</p>
+<p class="lede">Where each runtime piece of the Cognosa web app lives: the per-environment EC2 application host and its six Docker Compose containers, the GPU host for Ollama, the four cloud LLM APIs, and the AWS and external services around them. Qdrant is the vector store shown; ChromaDB and pgvector are tested drop-in alternatives behind the same <code>group_vdbs</code> config.</p>
+<figure>
+<svg viewBox="0 0 1400 880" role="img" aria-label="Cognosa deployment: one EC2 app host per environment running six compose containers, a GPU Ollama host, four cloud LLM APIs, and the supporting AWS and external services" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker><marker id="arrowS" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M10,0 L0,5 L10,10 z" fill="currentColor"/></marker></defs>
+<polygon class="ghost prod l" points="423.5,345.0 839.2,585.0 839.2,595.0 423.5,355.0" />
+<polygon class="ghost prod r" points="1133.6,415.0 839.2,585.0 839.2,595.0 1133.6,425.0" />
+<polygon class="ghost prod t" points="717.9,175.0 1133.6,415.0 839.2,585.0 423.5,345.0" />
+<text class="ghostlbl" x="731.9" y="161.0">prod.cognosa.net (planned)</text>
+<text class="ghostsub" x="731.9" y="173.0">same compose stack · host TBD</text>
+<polygon class="ghost l" points="384.5,402.5 800.2,642.5 800.2,652.5 384.5,412.5" />
+<polygon class="ghost r" points="1094.7,472.5 800.2,642.5 800.2,652.5 1094.7,482.5" />
+<polygon class="ghost t" points="679.0,232.5 1094.7,472.5 800.2,642.5 384.5,402.5" />
+<text class="ghostlbl" x="693.0" y="218.5">demo.cognosa.net · 52.13.212.94</text>
+<text class="ghostsub" x="693.0" y="230.5">i-0cb656285d48d9bfc · c6a.xlarge · up 10:00–18:00 PT</text>
+<polygon class="host l" points="345.6,460.0 761.2,700.0 761.2,710.0 345.6,470.0" />
+<polygon class="host r" points="1055.7,530.0 761.2,700.0 761.2,710.0 1055.7,540.0" />
+<polygon class="host t" points="640.0,290.0 1055.7,530.0 761.2,700.0 345.6,460.0" />
+<text class="tag" x="1045.3" y="524.0" text-anchor="end">Docker Compose · 6 containers</text>
+<text class="hostlbl" x="761.2" y="732.0" text-anchor="middle">dev.cognosa.net · 44.230.124.164</text>
+<text class="hostsub" x="761.2" y="746.0" text-anchor="middle">EC2 i-01cf57d1433d161fc · c6a.xlarge · Ubuntu 24.04 · us-west-2</text>
+<text class="hostsub" x="761.2" y="760.0" text-anchor="middle">docker compose · systemd cognosa.service · ops dir ~/cognosa · clone ~/cognosa-src</text>
+<polygon class="net l" points="579.4,351.0 674.6,406.0 674.6,420.0 579.4,365.0" />
+<polygon class="net r" points="730.1,374.0 674.6,406.0 674.6,420.0 730.1,388.0" />
+<polygon class="net t" points="634.8,319.0 730.1,374.0 674.6,406.0 579.4,351.0" />
+<text class="lbl" x="654.7" y="352.5" text-anchor="middle">nginx</text>
+<text class="sub" x="654.7" y="366.5" text-anchor="middle">nginx:stable · 80/443</text>
+<polygon class="cmp l" points="717.9,431.0 813.2,486.0 813.2,500.0 717.9,445.0" />
+<polygon class="cmp r" points="868.6,454.0 813.2,486.0 813.2,500.0 868.6,468.0" />
+<polygon class="cmp t" points="773.4,399.0 868.6,454.0 813.2,486.0 717.9,431.0" />
+<text class="lbl" x="793.3" y="432.5" text-anchor="middle">app</text>
+<text class="sub" x="793.3" y="446.5" text-anchor="middle">FastAPI + uvicorn :8000</text>
+<polygon class="cmp l" points="856.5,511.0 951.8,566.0 951.8,580.0 856.5,525.0" />
+<polygon class="cmp r" points="1007.2,534.0 951.8,566.0 951.8,580.0 1007.2,548.0" />
+<polygon class="cmp t" points="911.9,479.0 1007.2,534.0 951.8,566.0 856.5,511.0" />
+<text class="lbl" x="931.9" y="512.5" text-anchor="middle">rt</text>
+<text class="sub" x="931.9" y="526.5" text-anchor="middle">run_tasks.py · LangChain</text>
+<polygon class="net l" points="454.7,423.0 549.9,478.0 549.9,492.0 454.7,437.0"  stroke-dasharray="5 4"/>
+<polygon class="net r" points="605.4,446.0 549.9,478.0 549.9,492.0 605.4,460.0"  stroke-dasharray="5 4"/>
+<polygon class="net t" points="510.1,391.0 605.4,446.0 549.9,478.0 454.7,423.0"  stroke-dasharray="5 4"/>
+<text class="lbl" x="530.0" y="424.5" text-anchor="middle">certbot</text>
+<text class="sub" x="530.0" y="438.5" text-anchor="middle">profile tools · on demand</text>
+<polygon class="dat l" points="593.2,503.0 688.5,558.0 688.5,572.0 593.2,517.0" />
+<polygon class="dat r" points="743.9,526.0 688.5,558.0 688.5,572.0 743.9,540.0" />
+<polygon class="dat t" points="648.7,471.0 743.9,526.0 688.5,558.0 593.2,503.0" />
+<text class="lbl" x="668.6" y="504.5" text-anchor="middle">db</text>
+<text class="sub" x="668.6" y="518.5" text-anchor="middle">postgres:17 · :5432</text>
+<polygon class="dat l" points="731.8,583.0 827.1,638.0 827.1,652.0 731.8,597.0" />
+<polygon class="dat r" points="882.5,606.0 827.1,638.0 827.1,652.0 882.5,620.0" />
+<polygon class="dat t" points="787.2,551.0 882.5,606.0 827.1,638.0 731.8,583.0" />
+<text class="lbl" x="807.1" y="584.5" text-anchor="middle">qdrant</text>
+<text class="sub" x="807.1" y="598.5" text-anchor="middle">qdrant v1.15.5 · :6333</text>
+<polygon class="vol l" points="390.6,466.0 485.8,521.0 485.8,529.0 390.6,474.0" />
+<polygon class="vol r" points="520.5,501.0 485.8,521.0 485.8,529.0 520.5,509.0" />
+<polygon class="vol t" points="425.2,446.0 520.5,501.0 485.8,521.0 390.6,466.0" />
+<text class="lbl" x="455.5" y="480.5" text-anchor="middle">hf_cache (app + rt)</text>
+<polygon class="vol l" points="529.1,546.0 624.4,601.0 624.4,609.0 529.1,554.0" />
+<polygon class="vol r" points="659.1,581.0 624.4,601.0 624.4,609.0 659.1,589.0" />
+<polygon class="vol t" points="563.8,526.0 659.1,581.0 624.4,601.0 529.1,546.0" />
+<text class="lbl" x="594.1" y="560.5" text-anchor="middle">./pg_db_data</text>
+<polygon class="vol l" points="667.7,626.0 763.0,681.0 763.0,689.0 667.7,634.0" />
+<polygon class="vol r" points="797.6,661.0 763.0,681.0 763.0,689.0 797.6,669.0" />
+<polygon class="vol t" points="702.4,606.0 797.6,661.0 763.0,681.0 667.7,626.0" />
+<text class="lbl" x="732.7" y="640.5" text-anchor="middle">./qdrantdb</text>
+<polyline class="edge" points="698.0,387.5 750.0,417.5" marker-end="url(#arrow)"/>
+<text class="elbl" x="724.0" y="394.5" text-anchor="middle">proxy_pass app:8000</text>
+<polyline class="edge" points="755.2,464.5 706.7,492.5" marker-end="url(#arrow)"/>
+<text class="elbl" x="730.9" y="492.5" text-anchor="middle">SQLAlchemy</text>
+<text class="elbl" x="730.9" y="504.5" text-anchor="middle">asyncpg</text>
+<polyline class="edge" points="879.9,520.9 720.6,516.1" marker-end="url(#arrow)"/>
+<text class="elbl" x="762.0" y="501.3" text-anchor="middle">polls doc_tasks, writes</text>
+<text class="elbl" x="762.0" y="513.3" text-anchor="middle">status 0 → 6 + answer</text>
+<polyline class="edge" points="893.7,544.5 845.2,572.5" marker-end="url(#arrow)"/>
+<text class="elbl" x="869.5" y="574.5" text-anchor="middle">embed + search</text>
+<text class="elbl" x="869.5" y="586.5" text-anchor="middle">langchain-qdrant</text>
+<polygon class="ghost l" points="1097.1,625.0 1270.3,725.0 1270.3,733.0 1097.1,633.0" />
+<polygon class="ghost r" points="1400.2,650.0 1270.3,725.0 1270.3,733.0 1400.2,658.0" />
+<polygon class="ghost t" points="1227.0,550.0 1400.2,650.0 1270.3,725.0 1097.1,625.0" />
+<text class="ghostlbl" x="1239.0" y="538.0">ollama_local / other remote</text>
+<text class="ghostsub" x="1239.0" y="550.0">e.g. Mac Studio :11434</text>
+<polygon class="host l" points="1075.1,659.0 1248.3,759.0 1248.3,767.0 1075.1,667.0" />
+<polygon class="host r" points="1378.2,684.0 1248.3,759.0 1248.3,767.0 1378.2,692.0" />
+<polygon class="host t" points="1205.0,584.0 1378.2,684.0 1248.3,759.0 1075.1,659.0" />
+<polygon class="cmp l" points="1131.4,650.5 1252.6,720.5 1252.6,734.5 1131.4,664.5" />
+<polygon class="cmp r" points="1313.3,685.5 1252.6,720.5 1252.6,734.5 1313.3,699.5" />
+<polygon class="cmp t" points="1192.0,615.5 1313.3,685.5 1252.6,720.5 1131.4,650.5" />
+<text class="lbl" x="1222.3" y="658.0" text-anchor="middle">ollama serve</text>
+<text class="sub" x="1222.3" y="672.0" text-anchor="middle">systemd service · :11434 · not a container</text>
+<text class="hostlbl" x="1248.3" y="787.0" text-anchor="middle">LLM host · EC2 g6e.2xlarge</text>
+<text class="hostsub" x="1248.3" y="801.0" text-anchor="middle">NVIDIA L40S 48 GB · 300 GB gp3 · ollama_remote</text>
+<g class="person" transform="translate(80,62)"><circle cx="22" cy="14" r="12"/><path d="M0,58 a22,22 0 0 1 44,0 z"/></g>
+<text class="lbl" x="136" y="78">Users</text>
+<text class="sub" x="136" y="93">browser · React SPA</text>
+<text class="sub" x="136" y="106">user · group admin · superuser</text>
+<rect class="ext" x="350" y="150" width="250" height="64" rx="8"/>
+<text class="lbl" x="362" y="172.0" text-anchor="start">Route 53 · cognosa.net zone</text>
+<text class="sub" x="362" y="186.0" text-anchor="start">dev → 44.230.124.164</text>
+<text class="sub" x="362" y="200.0" text-anchor="start">demo → 52.13.212.94  (elastic IPs)</text>
+<rect class="ext" x="600" y="60" width="230" height="64" rx="8"/>
+<text class="lbl" x="612" y="82.0" text-anchor="start">Let’s Encrypt</text>
+<text class="sub" x="612" y="96.0" text-anchor="start">ACME http‑01 via nginx webroot</text>
+<text class="sub" x="612" y="110.0" text-anchor="start">certbot renew cron Mon/Thu 03:17 UTC</text>
+<rect class="ext stack" x="1080" y="330" width="216" height="56" rx="8"/>
+<text class="lbl" x="1092" y="362">Qwen / Alibaba</text>
+<text class="sub" x="1092" y="377">DashScope · OpenAI‑compatible</text>
+<rect class="ext stack" x="1106" y="296" width="216" height="56" rx="8"/>
+<text class="lbl" x="1118" y="328">ChatGPT / OpenAI</text>
+<text class="sub" x="1118" y="343">langchain-openai</text>
+<rect class="ext stack" x="1132" y="262" width="216" height="56" rx="8"/>
+<text class="lbl" x="1144" y="294">Gemini / Google</text>
+<text class="sub" x="1144" y="309">langchain-google-genai</text>
+<rect class="ext stack" x="1158" y="228" width="216" height="56" rx="8"/>
+<text class="lbl" x="1170" y="260">Claude / Anthropic</text>
+<text class="sub" x="1170" y="275">langchain-anthropic</text>
+<text class="sub" x="1080" y="404">cloud LLM APIs · one group_llms row each</text>
+<rect class="ext" x="80" y="290" width="210" height="66" rx="8"/>
+<text class="lbl" x="92" y="313.0" text-anchor="start">EventBridge Scheduler</text>
+<text class="sub" x="92" y="327.0" text-anchor="start">demo: start 10:00 · stop 18:00 PT</text>
+<text class="sub" x="92" y="341.0" text-anchor="start">dev: manual start/stop only</text>
+<rect class="ext" x="80" y="400" width="210" height="66" rx="8"/>
+<text class="lbl" x="92" y="423.0" text-anchor="start">Hugging Face Hub</text>
+<text class="sub" x="92" y="437.0" text-anchor="start">all‑MiniLM‑L6‑v2</text>
+<text class="sub" x="92" y="451.0" text-anchor="start">BAAI/bge‑base‑en‑v1.5</text>
+<rect class="ext" x="80" y="540" width="210" height="66" rx="8"/>
+<text class="lbl" x="92" y="563.0" text-anchor="start">Developer Mac</text>
+<text class="sub" x="92" y="577.0" text-anchor="start">ssh -i ctc01instance.pem ubuntu@…</text>
+<text class="sub" x="92" y="591.0" text-anchor="start">cd ~/cognosa && ./deploy.sh [ref]</text>
+<rect class="ext" x="80" y="660" width="210" height="66" rx="8"/>
+<text class="lbl" x="92" y="683.0" text-anchor="start">Git remotes</text>
+<text class="sub" x="92" y="697.0" text-anchor="start">GitHub origin · GitLab mirror</text>
+<text class="sub" x="92" y="711.0" text-anchor="start">branch main</text>
+<polyline class="edge" points="175.7,114.0 346.2,174.7" marker-end="url(#arrow)" stroke-dasharray="6 4"/>
+<text class="elbl" x="269.5" y="139.4" text-anchor="middle">DNS lookup</text>
+<polyline class="edge" points="150.0,118.0 150.0,250.0 644.7,250.0 644.7,320.5" marker-end="url(#arrow)"/>
+<text class="elbl" x="397.4" y="234.0" text-anchor="middle">HTTPS 443</text>
+<text class="elbl" x="397.4" y="246.0" text-anchor="middle">HTTP 80 → 301</text>
+<polyline class="edge" points="715.0,124.0 674.1,319.3" marker-end="url(#arrow)" stroke-dasharray="6 4"/>
+<text class="elbl" x="698.6" y="188.1" text-anchor="middle">issue / renew cert</text>
+<text class="elbl" x="698.6" y="200.1" text-anchor="middle">nginx_certs volume</text>
+<polyline class="edge" points="290.0,433.0 388.1,462.3" marker-end="url(#arrow)" stroke-dasharray="6 4"/>
+<text class="elbl" x="334.1" y="432.2" text-anchor="middle">model download</text>
+<text class="elbl" x="334.1" y="444.2" text-anchor="middle">on first use</text>
+<polyline class="edge" points="290.0,323.0 379.9,398.6" marker-end="url(#arrow)" stroke-dasharray="6 4"/>
+<text class="elbl" x="335.0" y="352.8" text-anchor="middle">ec2:start / stopInstances</text>
+<polyline class="edge" points="290.0,573.0 401.2,498.3" marker-end="url(#arrow)"/>
+<text class="elbl" x="340.0" y="531.4" text-anchor="middle">ssh 22</text>
+<polyline class="edge" points="290.0,693.0 470.9,538.9" marker-end="url(#arrow)"/>
+<text class="elbl" x="371.4" y="609.7" text-anchor="middle">deploy.sh: git pull origin/main</text>
+<text class="elbl" x="371.4" y="621.7" text-anchor="middle">compose build → up -d</text>
+<polyline class="edge" points="185.0,606.0 185.0,658.0" marker-end="url(#arrow)"/>
+<text class="sub" x="196" y="638">push / pull</text>
+<polyline class="edge" points="979.4,500.2 1076.5,362.9" marker-end="url(#arrow)"/>
+<text class="elbl" x="1028.0" y="417.5" text-anchor="middle">chat completions, streaming</text>
+<text class="elbl" x="1028.0" y="429.5" text-anchor="middle">ChatOpenAI · ChatAnthropic · ChatGoogleGenerativeAI</text>
+<polyline class="edge" points="985.1,542.6 1151.2,639.8" marker-end="url(#arrow)"/>
+<text class="elbl" x="1076.5" y="588.1" text-anchor="middle">OpenAI‑compatible /v1 :11434</text>
+</svg>
+<figcaption>Solid platform is the dev host as deployed today. Dashed outlines behind it are the same compose stack on other hosts: demo (live, scheduled power) and prod (planned). Nginx terminates TLS and proxies to app; app serves the React SPA and the REST API and writes queries to Postgres; rt polls Postgres for new tasks, embeds and searches in Qdrant, then streams the answer from whichever LLM the group's config names.</figcaption>
+</figure>
+<div class="key">
+  <span><i class="sw" style="background:var(--cmp-t)"></i>Container, Python process (ollama: systemd service)</span>
+  <span><i class="sw" style="background:var(--dat-t)"></i>Container, data store</span>
+  <span><i class="sw" style="background:var(--net-t)"></i>Container, edge / TLS</span>
+  <span><i class="sw" style="background:var(--vol-t)"></i>Volume or bind mount</span>
+  <span><i class="sw" style="background:var(--ext)"></i>External or AWS service</span>
+  <span><i class="sw ghost"></i>Replicated or alternate instance</span>
+  <span>Arrows point from the client that opens the connection to the service that listens; the label says what moves.</span>
+</div>
+
+<h2>Hosts</h2>
+<div class="wrap"><table>
+<thead><tr><th>Host</th><th>Instance</th><th>Runs</th><th>Power</th><th>TLS</th></tr></thead>
+<tbody>
+<tr><td><code>dev.cognosa.net</code><br>44.230.124.164</td><td>c6a.xlarge, Ubuntu 24.04, us-west-2<br><code>i-01cf57d1433d161fc</code></td><td>compose: nginx, app, rt, db, qdrant (+ certbot on demand)</td><td>Manual start and stop</td><td>Let's Encrypt on the box, cron renew</td></tr>
+<tr><td><code>demo.cognosa.net</code><br>52.13.212.94</td><td>c6a.xlarge, Ubuntu 24.04, us-west-2<br><code>i-0cb656285d48d9bfc</code></td><td>Same compose stack</td><td>EventBridge Scheduler 10:00 to 18:00 PT daily</td><td>Let's Encrypt on the box, cron renew</td></tr>
+<tr><td><code>prod</code> (planned)</td><td>TBD</td><td>Same compose stack</td><td>Always on</td><td>Let's Encrypt or CloudFront, undecided</td></tr>
+<tr><td>LLM host</td><td>g6e.2xlarge, NVIDIA L40S 48 GB, 300 GB gp3</td><td><code>ollama serve</code> under systemd on :11434, OpenAI-compatible <code>/v1</code></td><td>Started when a local-model demo needs it</td><td>None, reached as <code>ollama_remote</code></td></tr>
+</tbody></table></div>
+
+<h2>Inside the application host</h2>
+<div class="wrap"><table>
+<thead><tr><th>Container</th><th>Image or build</th><th>Ports</th><th>Storage</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td>nginx</td><td>nginx:stable</td><td>80, 443</td><td><code>nginx_certs</code>, <code>nginx_vhost</code>, <code>./nginx</code></td><td>HTTPS termination, HTTP 301, proxy to <code>app:8000</code>, certbot webroot</td></tr>
+<tr><td>app</td><td>webapp.Dockerfile</td><td>8000 internal</td><td><code>./app_logs</code>, <code>hf_cache</code></td><td>FastAPI + uvicorn, fastapi-users JWT, serves the built React SPA from <code>backend/static</code></td></tr>
+<tr><td>rt</td><td>run_tasks.Dockerfile</td><td>none</td><td><code>./rt_logs</code>, <code>hf_cache</code></td><td><code>run_tasks.py</code>: 2 VDB worker processes with preloaded embedding models, threaded LLM workers, LangChain chains, watchdogs</td></tr>
+<tr><td>db</td><td>postgres:17</td><td>5432</td><td><code>./pg_db_data</code></td><td><code>cwa_db</code>: tenants, users, LLM and VDB configs, contexts, doc_tasks, audit log</td></tr>
+<tr><td>qdrant</td><td>qdrant/qdrant:v1.15.5</td><td>6333</td><td><code>./qdrantdb</code></td><td>One collection per tenant VDB, metadata-filtered hybrid retrieval</td></tr>
+<tr><td>certbot</td><td>certbot/certbot</td><td>none</td><td><code>nginx_certs</code>, <code>nginx_vhost</code></td><td>Profile <code>tools</code>; run on demand for issue and renew</td></tr>
+</tbody></table></div>
+</main>

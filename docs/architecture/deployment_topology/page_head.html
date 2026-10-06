@@ -1,0 +1,80 @@
+<title>Cognosa Deployment Topology</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: one wide figure on a quiet ground, host facts beneath; isometric faces take family hue, top light, right dark */
+:root{
+  --bg:#f6f5f2; --fg:#1f2328; --muted:#5d6672; --line:#2c3440; --panel:#ffffff;
+  --host-t:#e9e6df; --host-l:#d7d3c9; --host-r:#c6c1b5;
+  --cmp-t:#ffd9a8; --cmp-l:#f0b86a; --cmp-r:#d9994a;
+  --dat-t:#bfe0f5; --dat-l:#8fc3e6; --dat-r:#6ea6cf;
+  --net-t:#dcd3f2; --net-l:#bdaee6; --net-r:#9f8dd0;
+  --vol-t:#dfe6ea; --vol-l:#c4ced5; --vol-r:#aab6be;
+  --ext:#ffffff; --ghost:#9aa3ad;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#d7dbe0; --panel:#1d2126;
+  --host-t:#2b3036; --host-l:#22262b; --host-r:#1b1e22;
+  --cmp-t:#b4712c; --cmp-l:#8f5720; --cmp-r:#6f4217;
+  --dat-t:#2f6c94; --dat-l:#255573; --dat-r:#1c4159;
+  --net-t:#5a4a8f; --net-l:#473a72; --net-r:#362c57;
+  --vol-t:#3a434b; --vol-l:#2f363d; --vol-r:#252b31;
+  --ext:#1d2126; --ghost:#6b7480; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#d7dbe0; --panel:#1d2126;
+  --host-t:#2b3036; --host-l:#22262b; --host-r:#1b1e22;
+  --cmp-t:#b4712c; --cmp-l:#8f5720; --cmp-r:#6f4217;
+  --dat-t:#2f6c94; --dat-l:#255573; --dat-r:#1c4159;
+  --net-t:#5a4a8f; --net-l:#473a72; --net-r:#362c57;
+  --vol-t:#3a434b; --vol-l:#2f363d; --vol-r:#252b31;
+  --ext:#1d2126; --ghost:#6b7480; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;margin:0;padding-block:28px 48px;padding-inline:16px}
+main{max-width:1240px;margin:0 auto}
+.subtitle{font-size:16px;color:var(--muted);margin:0 0 12px}
+svg .tag{font-size:10.5px;font-weight:600;fill:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:26px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:17px;font-weight:600;margin:32px 0 10px}
+p{max-width:70ch;margin:0 0 10px}
+.lede{color:var(--muted)}
+figure{margin:20px 0 0;overflow-x:auto}
+figure svg{min-width:900px;width:100%;max-width:1400px;height:auto;display:block;color:var(--fg)}
+figcaption{font-size:13px;color:var(--muted);margin-top:8px;max-width:80ch}
+/* svg classes */
+svg text{font-family:var(--sans);fill:var(--fg)}
+svg .lbl{font-size:12.5px;font-weight:600}
+svg .sub{font-size:10px;fill:var(--muted);font-family:var(--mono)}
+svg .hostlbl{font-size:12px;font-weight:600}
+svg .hostsub{font-size:10px;fill:var(--muted);font-family:var(--mono)}
+svg .ghostlbl{font-size:11.5px;font-weight:600;fill:var(--ghost)}
+svg .ghostsub{font-size:9.5px;fill:var(--ghost);font-family:var(--mono)}
+svg .elbl{font-size:10.5px;fill:var(--muted);font-family:var(--mono);paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+svg polygon{stroke:var(--line);stroke-width:1;stroke-linejoin:round}
+svg .host.t{fill:var(--host-t)} svg .host.l{fill:var(--host-l)} svg .host.r{fill:var(--host-r)}
+svg .cmp.t{fill:var(--cmp-t)} svg .cmp.l{fill:var(--cmp-l)} svg .cmp.r{fill:var(--cmp-r)}
+svg .dat.t{fill:var(--dat-t)} svg .dat.l{fill:var(--dat-l)} svg .dat.r{fill:var(--dat-r)}
+svg .net.t{fill:var(--net-t)} svg .net.l{fill:var(--net-l)} svg .net.r{fill:var(--net-r)}
+svg .vol.t{fill:var(--vol-t)} svg .vol.l{fill:var(--vol-l)} svg .vol.r{fill:var(--vol-r)}
+svg .ghost{fill:var(--bg);stroke:var(--ghost);stroke-dasharray:6 4;stroke-width:1.2}
+svg .ghost.t{fill:var(--host-t);fill-opacity:.35}
+svg .ghost.prod{stroke-dasharray:2 4}
+svg rect.ext{fill:var(--ext);stroke:var(--line);stroke-width:1}
+svg rect.stack{fill:var(--panel)}
+svg .edge{fill:none;stroke:currentColor;stroke-width:1.3}
+svg .person{fill:var(--host-r);stroke:var(--line);stroke-width:1}
+/* key + table */
+.key{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:13px;color:var(--muted);margin-top:10px}
+.key span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:14px;height:14px;border:1px solid var(--line);border-radius:3px;display:inline-block}
+.sw.ghost{border:1.5px dashed var(--ghost);background:transparent}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid color-mix(in srgb,var(--line) 25%,transparent);vertical-align:top}
+th{font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td code,p code{font-family:var(--mono);font-size:12.5px}
+.wrap{overflow-x:auto}
+@media (max-width:640px){ h1{font-size:22px} }
+</style>
+<main>
+<h1>Cognosa Deployment Topology</h1>
+<p class="subtitle">EC2 hosts, Docker Compose containers, and external services</p>
+<p class="lede">Where each runtime piece of the Cognosa web app lives: the per-environment EC2 application host and its six Docker Compose containers, the GPU host for Ollama, the four cloud LLM APIs, and the AWS and external services around them. Qdrant is the vector store shown; ChromaDB and pgvector are tested drop-in alternatives behind the same <code>group_vdbs</code> config.</p>

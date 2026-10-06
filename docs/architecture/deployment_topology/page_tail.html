@@ -1,0 +1,34 @@
+<figcaption>Solid platform is the dev host as deployed today. Dashed outlines behind it are the same compose stack on other hosts: demo (live, scheduled power) and prod (planned). Nginx terminates TLS and proxies to app; app serves the React SPA and the REST API and writes queries to Postgres; rt polls Postgres for new tasks, embeds and searches in Qdrant, then streams the answer from whichever LLM the group's config names.</figcaption>
+</figure>
+<div class="key">
+  <span><i class="sw" style="background:var(--cmp-t)"></i>Container, Python process (ollama: systemd service)</span>
+  <span><i class="sw" style="background:var(--dat-t)"></i>Container, data store</span>
+  <span><i class="sw" style="background:var(--net-t)"></i>Container, edge / TLS</span>
+  <span><i class="sw" style="background:var(--vol-t)"></i>Volume or bind mount</span>
+  <span><i class="sw" style="background:var(--ext)"></i>External or AWS service</span>
+  <span><i class="sw ghost"></i>Replicated or alternate instance</span>
+  <span>Arrows point from the client that opens the connection to the service that listens; the label says what moves.</span>
+</div>
+
+<h2>Hosts</h2>
+<div class="wrap"><table>
+<thead><tr><th>Host</th><th>Instance</th><th>Runs</th><th>Power</th><th>TLS</th></tr></thead>
+<tbody>
+<tr><td><code>dev.cognosa.net</code><br>44.230.124.164</td><td>c6a.xlarge, Ubuntu 24.04, us-west-2<br><code>i-01cf57d1433d161fc</code></td><td>compose: nginx, app, rt, db, qdrant (+ certbot on demand)</td><td>Manual start and stop</td><td>Let's Encrypt on the box, cron renew</td></tr>
+<tr><td><code>demo.cognosa.net</code><br>52.13.212.94</td><td>c6a.xlarge, Ubuntu 24.04, us-west-2<br><code>i-0cb656285d48d9bfc</code></td><td>Same compose stack</td><td>EventBridge Scheduler 10:00 to 18:00 PT daily</td><td>Let's Encrypt on the box, cron renew</td></tr>
+<tr><td><code>prod</code> (planned)</td><td>TBD</td><td>Same compose stack</td><td>Always on</td><td>Let's Encrypt or CloudFront, undecided</td></tr>
+<tr><td>LLM host</td><td>g6e.2xlarge, NVIDIA L40S 48 GB, 300 GB gp3</td><td><code>ollama serve</code> under systemd on :11434, OpenAI-compatible <code>/v1</code></td><td>Started when a local-model demo needs it</td><td>None, reached as <code>ollama_remote</code></td></tr>
+</tbody></table></div>
+
+<h2>Inside the application host</h2>
+<div class="wrap"><table>
+<thead><tr><th>Container</th><th>Image or build</th><th>Ports</th><th>Storage</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td>nginx</td><td>nginx:stable</td><td>80, 443</td><td><code>nginx_certs</code>, <code>nginx_vhost</code>, <code>./nginx</code></td><td>HTTPS termination, HTTP 301, proxy to <code>app:8000</code>, certbot webroot</td></tr>
+<tr><td>app</td><td>webapp.Dockerfile</td><td>8000 internal</td><td><code>./app_logs</code>, <code>hf_cache</code></td><td>FastAPI + uvicorn, fastapi-users JWT, serves the built React SPA from <code>backend/static</code></td></tr>
+<tr><td>rt</td><td>run_tasks.Dockerfile</td><td>none</td><td><code>./rt_logs</code>, <code>hf_cache</code></td><td><code>run_tasks.py</code>: 2 VDB worker processes with preloaded embedding models, threaded LLM workers, LangChain chains, watchdogs</td></tr>
+<tr><td>db</td><td>postgres:17</td><td>5432</td><td><code>./pg_db_data</code></td><td><code>cwa_db</code>: tenants, users, LLM and VDB configs, contexts, doc_tasks, audit log</td></tr>
+<tr><td>qdrant</td><td>qdrant/qdrant:v1.15.5</td><td>6333</td><td><code>./qdrantdb</code></td><td>One collection per tenant VDB, metadata-filtered hybrid retrieval</td></tr>
+<tr><td>certbot</td><td>certbot/certbot</td><td>none</td><td><code>nginx_certs</code>, <code>nginx_vhost</code></td><td>Profile <code>tools</code>; run on demand for issue and renew</td></tr>
+</tbody></table></div>
+</main>
