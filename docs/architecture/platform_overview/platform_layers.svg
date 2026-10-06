@@ -1,0 +1,121 @@
+<svg viewBox="0 0 1200 934" role="img" aria-label="What the Cognosa platform is made of: people, the web application, the API server, the RAG engine, the knowledge and application data, the language model options, and the hosting" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="arrowL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect class="layer ext" x="30" y="20" width="1140" height="114" rx="10"/>
+<text class="rtitle" x="46" y="44">People</text>
+<text class="rnote" x="1154" y="44" text-anchor="end">each group (tenant) sees only its own data</text>
+<rect class="box" x="46.0" y="56" width="358.7" height="66" rx="7"/>
+<text class="btitle" x="225.3" y="76" text-anchor="middle">End users</text>
+<text class="bline" x="225.3" y="94" text-anchor="middle">ask questions, read answers</text>
+<text class="bline" x="225.3" y="109" text-anchor="middle">and sources</text>
+<rect class="box" x="420.7" y="56" width="358.7" height="66" rx="7"/>
+<text class="btitle" x="600.0" y="76" text-anchor="middle">Group administrators</text>
+<text class="bline" x="600.0" y="94" text-anchor="middle">manage their group's users,</text>
+<text class="bline" x="600.0" y="109" text-anchor="middle">knowledge bases, retrieval settings</text>
+<rect class="box" x="795.3" y="56" width="358.7" height="66" rx="7"/>
+<text class="btitle" x="974.7" y="76" text-anchor="middle">Platform administrator</text>
+<text class="bline" x="974.7" y="94" text-anchor="middle">manages groups, models,</text>
+<text class="bline" x="974.7" y="109" text-anchor="middle">settings, audit log</text>
+<line class="flow" x1="600.0" y1="134" x2="600.0" y2="148" marker-end="url(#arrowL)"/>
+<rect class="layer spa" x="30" y="150" width="1140" height="114" rx="10"/>
+<text class="rtitle" x="46" y="174">Web application</text>
+<rect class="box" x="46.0" y="186" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="178.5" y="206" text-anchor="middle">Ask</text>
+<text class="bline" x="178.5" y="224" text-anchor="middle">choose knowledge base and model,</text>
+<text class="bline" x="178.5" y="239" text-anchor="middle">ask, watch the answer arrive</text>
+<rect class="box" x="327.0" y="186" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="459.5" y="206" text-anchor="middle">Review</text>
+<text class="bline" x="459.5" y="224" text-anchor="middle">answer with the passages</text>
+<text class="bline" x="459.5" y="239" text-anchor="middle">it was based on; export</text>
+<rect class="box" x="608.0" y="186" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="740.5" y="206" text-anchor="middle">Prompt templates</text>
+<text class="bline" x="740.5" y="224" text-anchor="middle">each group's instructions</text>
+<text class="bline" x="740.5" y="239" text-anchor="middle">to the model</text>
+<rect class="box" x="889.0" y="186" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="1021.5" y="206" text-anchor="middle">Administration</text>
+<text class="bline" x="1021.5" y="224" text-anchor="middle">users, knowledge bases,</text>
+<text class="bline" x="1021.5" y="239" text-anchor="middle">models, settings, status</text>
+<line class="flow" x1="600.0" y1="264" x2="600.0" y2="278" marker-end="url(#arrowL)"/>
+<rect class="layer app" x="30" y="280" width="1140" height="114" rx="10"/>
+<text class="rtitle" x="46" y="304">API server</text>
+<rect class="box" x="46.0" y="316" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="178.5" y="336" text-anchor="middle">Sign-in and roles</text>
+<text class="bline" x="178.5" y="354" text-anchor="middle">user, group admin,</text>
+<text class="bline" x="178.5" y="369" text-anchor="middle">platform admin</text>
+<rect class="box" x="327.0" y="316" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="459.5" y="336" text-anchor="middle">Group isolation</text>
+<text class="bline" x="459.5" y="354" text-anchor="middle">every request scoped</text>
+<text class="bline" x="459.5" y="369" text-anchor="middle">to the user's group</text>
+<rect class="box" x="608.0" y="316" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="740.5" y="336" text-anchor="middle">Request queue and status</text>
+<text class="bline" x="740.5" y="354" text-anchor="middle">records each question;</text>
+<text class="bline" x="740.5" y="369" text-anchor="middle">reports progress</text>
+<rect class="box" x="889.0" y="316" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="1021.5" y="336" text-anchor="middle">Configuration and audit</text>
+<text class="bline" x="1021.5" y="354" text-anchor="middle">models, knowledge bases,</text>
+<text class="bline" x="1021.5" y="369" text-anchor="middle">settings, change log</text>
+<line class="flow" x1="600.0" y1="394" x2="600.0" y2="408" marker-end="url(#arrowL)"/>
+<rect class="layer rt" x="30" y="410" width="1140" height="114" rx="10"/>
+<text class="rtitle" x="46" y="434">RAG engine</text>
+<text class="rnote" x="1154" y="434" text-anchor="end">built on LangChain · runs in the background, several requests at once</text>
+<rect class="box" x="46.0" y="446" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="178.5" y="466" text-anchor="middle">1 · Embed</text>
+<text class="bline" x="178.5" y="484" text-anchor="middle">turn the question into</text>
+<text class="bline" x="178.5" y="499" text-anchor="middle">a vector</text>
+<rect class="box" x="327.0" y="446" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="459.5" y="466" text-anchor="middle">2 · Retrieve</text>
+<text class="bline" x="459.5" y="484" text-anchor="middle">most relevant passages,</text>
+<text class="bline" x="459.5" y="499" text-anchor="middle">with metadata filters</text>
+<rect class="box" x="608.0" y="446" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="740.5" y="466" text-anchor="middle">3 · Compose</text>
+<text class="bline" x="740.5" y="484" text-anchor="middle">group template + passages</text>
+<text class="bline" x="740.5" y="499" text-anchor="middle">+ question</text>
+<rect class="box" x="889.0" y="446" width="265.0" height="66" rx="7"/>
+<text class="btitle" x="1021.5" y="466" text-anchor="middle">4 · Generate</text>
+<text class="bline" x="1021.5" y="484" text-anchor="middle">language model writes</text>
+<text class="bline" x="1021.5" y="499" text-anchor="middle">the answer, streamed</text>
+<line class="flow" x1="600.0" y1="524" x2="600.0" y2="538" marker-end="url(#arrowL)"/>
+<rect class="layer dat" x="30" y="540" width="1140" height="129" rx="10"/>
+<text class="rtitle" x="46" y="564">Knowledge and application data</text>
+<rect class="box" x="46.0" y="576" width="358.7" height="81" rx="7"/>
+<text class="btitle" x="225.3" y="596" text-anchor="middle">Document ingestion</text>
+<text class="bline" x="225.3" y="614" text-anchor="middle">PDF, DOCX, PPTX, XLSX, TXT</text>
+<text class="bline" x="225.3" y="629" text-anchor="middle">split into passages with</text>
+<text class="bline" x="225.3" y="644" text-anchor="middle">metadata, one tool run per set</text>
+<rect class="box" x="420.7" y="576" width="358.7" height="81" rx="7"/>
+<text class="btitle" x="600.0" y="596" text-anchor="middle">Knowledge base</text>
+<text class="bline" x="600.0" y="614" text-anchor="middle">vector database (Qdrant)</text>
+<text class="bline" x="600.0" y="629" text-anchor="middle">one collection per</text>
+<text class="bline" x="600.0" y="644" text-anchor="middle">knowledge base</text>
+<rect class="box" x="795.3" y="576" width="358.7" height="81" rx="7"/>
+<text class="btitle" x="974.7" y="596" text-anchor="middle">Application database</text>
+<text class="bline" x="974.7" y="614" text-anchor="middle">PostgreSQL: users, groups,</text>
+<text class="bline" x="974.7" y="629" text-anchor="middle">settings, requests, answers,</text>
+<text class="bline" x="974.7" y="644" text-anchor="middle">audit log</text>
+<line class="flow" x1="600.0" y1="669" x2="600.0" y2="683" marker-end="url(#arrowL)"/>
+<rect class="layer ext" x="30" y="685" width="1140" height="114" rx="10"/>
+<text class="rtitle" x="46" y="709">Language models</text>
+<rect class="box" x="46.0" y="721" width="358.7" height="66" rx="7"/>
+<text class="btitle" x="225.3" y="741" text-anchor="middle">Private model</text>
+<text class="bline" x="225.3" y="759" text-anchor="middle">open-source model on</text>
+<text class="bline" x="225.3" y="774" text-anchor="middle">our own GPU server (Ollama)</text>
+<rect class="box" x="420.7" y="721" width="358.7" height="66" rx="7"/>
+<text class="btitle" x="600.0" y="741" text-anchor="middle">Cloud model service</text>
+<text class="bline" x="600.0" y="759" text-anchor="middle">OpenAI, Anthropic, Google,</text>
+<text class="bline" x="600.0" y="774" text-anchor="middle">Alibaba, via their APIs</text>
+<rect class="box" x="795.3" y="721" width="358.7" height="66" rx="7"/>
+<text class="btitle" x="974.7" y="741" text-anchor="middle">Chosen per group</text>
+<text class="bline" x="974.7" y="759" text-anchor="middle">any mix; the model is</text>
+<text class="bline" x="974.7" y="774" text-anchor="middle">picked when asking</text>
+<line class="flow" x1="600.0" y1="799" x2="600.0" y2="813" marker-end="url(#arrowL)"/>
+<rect class="layer host" x="30" y="815" width="1140" height="99" rx="10"/>
+<text class="rtitle" x="46" y="839">Hosting</text>
+<rect class="box" x="46.0" y="851" width="358.7" height="51" rx="7"/>
+<text class="btitle" x="225.3" y="871" text-anchor="middle">One server per environment</text>
+<text class="bline" x="225.3" y="889" text-anchor="middle">AWS EC2: dev, demo, prod</text>
+<rect class="box" x="420.7" y="851" width="358.7" height="51" rx="7"/>
+<text class="btitle" x="600.0" y="871" text-anchor="middle">Containers</text>
+<text class="bline" x="600.0" y="889" text-anchor="middle">web + API, engine, databases</text>
+<rect class="box" x="795.3" y="851" width="358.7" height="51" rx="7"/>
+<text class="btitle" x="974.7" y="871" text-anchor="middle">Secure access</text>
+<text class="bline" x="974.7" y="889" text-anchor="middle">HTTPS, certificates renewed automatically</text>
+</svg>

@@ -11,7 +11,7 @@
 #   3. Uploads the wrapped files to the bucket root with an explicit HTML content type.
 #      Without --content-type S3 stores "binary/octet-stream" and browsers download the
 #      file instead of rendering it (see ~/0_playbooks/canonical/infrastructure.md, "S3").
-#   4. Invalidates the three paths on the CloudFront distribution that fronts
+#   4. Invalidates the published paths on the CloudFront distribution that fronts
 #      files.cognosa.net, so the new versions appear within a minute or two rather
 #      than after the 5-minute cache-control expires.
 #   5. Fetches each public URL and prints the HTTP status, content type and size.
@@ -20,6 +20,7 @@
 #   deployment_topology/cognosa_deployment_topology.html -> Cognosa_deployment_topology.html
 #   component_stack/cognosa_component_stack.html         -> Cognosa_component_stack.html
 #   query_sequence/cognosa_query_sequence.html           -> Cognosa_query_sequence.html
+#   platform_overview/cognosa_platform_overview.html     -> Cognosa_platform_overview.html
 #
 # USAGE
 #   docs/architecture/publish_s3.sh            # regenerate, wrap, upload all three, invalidate, verify
@@ -38,7 +39,7 @@
 #   CloudFront:    EAZCV38S6H0ST, alias files.cognosa.net, HTTPS via the *.cognosa.net ACM cert
 #   Cache policy:  objects are uploaded with "public, max-age=300"
 #
-# This script never deletes anything. Re-running it overwrites the three keys above and
+# This script never deletes anything. Re-running it overwrites the keys above and
 # nothing else. The private claude.ai artifact copies are separate and are republished
 # from a Claude Code session, not by this script.
 
@@ -55,6 +56,7 @@ declare -a ALL=(
   "deployment_topology|gen_deployment_topology.py|cognosa_deployment_topology.html|Cognosa_deployment_topology.html"
   "component_stack|gen_component_stack.py|cognosa_component_stack.html|Cognosa_component_stack.html"
   "query_sequence|gen_query_sequence.py|cognosa_query_sequence.html|Cognosa_query_sequence.html"
+  "platform_overview|gen_platform_overview.py|cognosa_platform_overview.html|Cognosa_platform_overview.html"
 )
 
 GEN=1; DRY=0; SELECT=()
@@ -75,7 +77,7 @@ for row in "${ALL[@]}"; do
     for s in "${SELECT[@]}"; do [ "$s" = "$folder" ] && ROWS+=("$row"); done
   fi
 done
-[ ${#ROWS[@]} -gt 0 ] || { echo "no matching diagram folder; choose from: deployment_topology component_stack query_sequence" >&2; exit 1; }
+[ ${#ROWS[@]} -gt 0 ] || { echo "no matching diagram folder; choose from: deployment_topology component_stack query_sequence platform_overview" >&2; exit 1; }
 
 command -v aws >/dev/null || { echo "aws CLI not found" >&2; exit 1; }
 command -v python3 >/dev/null || { echo "python3 not found" >&2; exit 1; }

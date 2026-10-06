@@ -1,0 +1,75 @@
+<svg viewBox="0 0 1220 760" role="img" aria-label="How Cognosa answers a question: the user asks in the web app, the API server records the request, the RAG engine retrieves passages from the knowledge base, sends them with the question to a language model, and the answer with sources is shown in the web app" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="arrowF" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect class="band" x="418" y="110" width="584" height="630" rx="10"/>
+<text class="bandname" x="430" y="126">back end · runs on our server</text>
+<text class="bandname" x="1050" y="126">private or cloud</text>
+<line class="life" x1="110" y1="104" x2="110" y2="740"/>
+<g class="person" transform="translate(90,34)"><circle cx="20" cy="11" r="11"/><path d="M0,48 a20,20 0 0 1 40,0 z"/></g>
+<text class="ltitle" x="110" y="96" text-anchor="middle">User</text>
+<line class="life" x1="310" y1="104" x2="310" y2="740"/>
+<rect class="lane spa" x="224" y="40" width="172" height="58" rx="8"/>
+<text class="ltitle" x="310" y="64" text-anchor="middle">Web app</text>
+<text class="lsub" x="310" y="82" text-anchor="middle">in the browser</text>
+<line class="life" x1="510" y1="104" x2="510" y2="740"/>
+<rect class="lane app" x="424" y="40" width="172" height="58" rx="8"/>
+<text class="ltitle" x="510" y="64" text-anchor="middle">API server</text>
+<text class="lsub" x="510" y="82" text-anchor="middle">sign-in, records the request</text>
+<line class="life" x1="710" y1="104" x2="710" y2="740"/>
+<rect class="lane rt" x="624" y="40" width="172" height="58" rx="8"/>
+<text class="ltitle" x="710" y="64" text-anchor="middle">RAG engine</text>
+<text class="lsub" x="710" y="82" text-anchor="middle">background processor</text>
+<line class="life" x1="910" y1="104" x2="910" y2="740"/>
+<rect class="lane dat" x="824" y="40" width="172" height="58" rx="8"/>
+<text class="ltitle" x="910" y="64" text-anchor="middle">Knowledge base</text>
+<text class="lsub" x="910" y="82" text-anchor="middle">vector database</text>
+<line class="life" x1="1110" y1="104" x2="1110" y2="740"/>
+<rect class="lane ext" x="1024" y="40" width="172" height="58" rx="8"/>
+<text class="ltitle" x="1110" y="64" text-anchor="middle">Language model</text>
+<text class="lsub" x="1110" y="82" text-anchor="middle">private or cloud</text>
+<line class="msg" x1="110" y1="150" x2="310" y2="150" marker-end="url(#arrowF)"/>
+<text class="mlbl" x="210.0" y="128.0" text-anchor="middle">asks a question, picks a</text>
+<text class="mlbl" x="210.0" y="142.0" text-anchor="middle">knowledge base and a model</text>
+<circle class="badge" cx="124" cy="150" r="10"/>
+<text class="badgetext" x="124" y="153.5" text-anchor="middle">1</text>
+<line class="msg" x1="310" y1="208" x2="510" y2="208" marker-end="url(#arrowF)"/>
+<text class="mlbl" x="410.0" y="186.0" text-anchor="middle">submits the question</text>
+<text class="mlbl" x="410.0" y="200.0" text-anchor="middle">(signed-in user, their group)</text>
+<circle class="badge" cx="324" cy="208" r="10"/>
+<text class="badgetext" x="324" y="211.5" text-anchor="middle">2</text>
+<path class="msg" d="M510,257 h30 v18 h-24" marker-end="url(#arrowF)"/>
+<text class="mlbl" x="548.0" y="257.0" text-anchor="start">records the request;</text>
+<text class="mlbl" x="548.0" y="271.0" text-anchor="start">web app checks progress</text>
+<circle class="badge" cx="524" cy="266" r="10"/>
+<text class="badgetext" x="524" y="269.5" text-anchor="middle">3</text>
+<line class="msg" x1="710" y1="324" x2="510" y2="324" marker-end="url(#arrowF)"/>
+<text class="mlbl" x="610.0" y="316.0" text-anchor="middle">picks up the request</text>
+<circle class="badge" cx="696" cy="324" r="10"/>
+<text class="badgetext" x="696" y="327.5" text-anchor="middle">4</text>
+<line class="msg" x1="710" y1="382" x2="910" y2="382" marker-end="url(#arrowF)"/>
+<text class="mlbl" x="810.0" y="360.0" text-anchor="middle">finds the most relevant passages</text>
+<text class="mlbl" x="810.0" y="374.0" text-anchor="middle">(filters, top matches)</text>
+<circle class="badge" cx="724" cy="382" r="10"/>
+<text class="badgetext" x="724" y="385.5" text-anchor="middle">5</text>
+<line class="msg" x1="910" y1="440" x2="710" y2="440" marker-end="url(#arrowF)" stroke-dasharray="7 5"/>
+<text class="mlbl" x="810.0" y="432.0" text-anchor="middle">passages with their sources</text>
+<circle class="badge" cx="896" cy="440" r="10"/>
+<text class="badgetext" x="896" y="443.5" text-anchor="middle">6</text>
+<line class="msg" x1="710" y1="498" x2="1110" y2="498" marker-end="url(#arrowF)"/>
+<text class="mlbl" x="910.0" y="476.0" text-anchor="middle">question + passages +</text>
+<text class="mlbl" x="910.0" y="490.0" text-anchor="middle">the group's instructions</text>
+<circle class="badge" cx="724" cy="498" r="10"/>
+<text class="badgetext" x="724" y="501.5" text-anchor="middle">7</text>
+<line class="msg" x1="1110" y1="556" x2="710" y2="556" marker-end="url(#arrowF)" stroke-dasharray="7 5"/>
+<text class="mlbl" x="910.0" y="548.0" text-anchor="middle">answer, streamed as it is written</text>
+<circle class="badge" cx="1096" cy="556" r="10"/>
+<text class="badgetext" x="1096" y="559.5" text-anchor="middle">8</text>
+<line class="msg" x1="710" y1="614" x2="510" y2="614" marker-end="url(#arrowF)"/>
+<text class="mlbl" x="610.0" y="592.0" text-anchor="middle">saves progress, then the</text>
+<text class="mlbl" x="610.0" y="606.0" text-anchor="middle">final answer and sources</text>
+<circle class="badge" cx="696" cy="614" r="10"/>
+<text class="badgetext" x="696" y="617.5" text-anchor="middle">9</text>
+<line class="msg" x1="310" y1="672" x2="110" y2="672" marker-end="url(#arrowF)" stroke-dasharray="7 5"/>
+<text class="mlbl" x="210.0" y="664.0" text-anchor="middle">shows the answer with sources</text>
+<circle class="badge" cx="296" cy="672" r="10"/>
+<text class="badgetext" x="296" y="675.5" text-anchor="middle">10</text>
+</svg>

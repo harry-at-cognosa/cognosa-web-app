@@ -1,0 +1,59 @@
+<title>Cognosa Platform Overview</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: two executive figures, each with a one-paragraph caption; same hues as the detailed diagrams */
+:root{
+  --bg:#f6f5f2; --fg:#1f2328; --muted:#5d6672; --line:#2c3440; --panel:#ffffff;
+  --spa:#e8eef7; --app:#e4efe6; --rt:#fdf0dc; --dat:#d9eaf5; --ext:#ffffff; --host:#ecebe6;
+  --band:#f0eee8; --badge:#1f2328; --badgetext:#ffffff;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#c9ced4; --panel:#1d2126;
+  --spa:#1e2a3a; --app:#1d2e22; --rt:#3a2b17; --dat:#1c3447; --ext:#1d2126; --host:#22262b;
+  --band:#1b1f24; --badge:#e8e6e1; --badgetext:#14171b; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#c9ced4; --panel:#1d2126;
+  --spa:#1e2a3a; --app:#1d2e22; --rt:#3a2b17; --dat:#1c3447; --ext:#1d2126; --host:#22262b;
+  --band:#1b1f24; --badge:#e8e6e1; --badgetext:#14171b; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.55;margin:0;padding-block:28px 48px;padding-inline:16px}
+main{max-width:1200px;margin:0 auto}
+h1{font-size:28px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
+.subtitle{font-size:17px;color:var(--muted);margin:0 0 12px}
+h2{font-size:20px;font-weight:600;margin:40px 0 6px}
+p{max-width:70ch;margin:0 0 10px}
+.lede{color:var(--muted)}
+figure{margin:16px 0 0;overflow-x:auto}
+figure svg{min-width:760px;width:100%;height:auto;display:block;color:var(--fg)}
+figcaption{font-size:14px;color:var(--muted);margin-top:10px;max-width:80ch}
+svg text{font-family:var(--sans);fill:var(--fg)}
+/* figure 1 */
+svg .ltitle{font-size:15px;font-weight:600}
+svg .lsub{font-size:11.5px;fill:var(--muted)}
+svg rect.lane{stroke:var(--line);stroke-width:1;fill:var(--panel)}
+svg rect.lane.spa{fill:var(--spa)} svg rect.lane.app{fill:var(--app)} svg rect.lane.rt{fill:var(--rt)} svg rect.lane.dat{fill:var(--dat)} svg rect.lane.ext{fill:var(--ext)}
+svg .person{fill:var(--host);stroke:var(--line);stroke-width:1}
+svg .life{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4}
+svg rect.band{fill:var(--band);stroke:none}
+svg .bandname{font-size:11.5px;fill:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+svg .msg{fill:none;stroke:currentColor;stroke-width:1.5}
+svg .mlbl{font-size:13px;fill:var(--fg)}
+svg circle.badge{fill:var(--badge);stroke:var(--bg);stroke-width:1.5}
+svg .badgetext{font-size:11px;font-weight:600;fill:var(--badgetext)}
+/* figure 2 */
+svg rect.layer{stroke:var(--line);stroke-width:1;fill:var(--panel)}
+svg rect.layer.spa{fill:var(--spa)} svg rect.layer.app{fill:var(--app)} svg rect.layer.rt{fill:var(--rt)} svg rect.layer.dat{fill:var(--dat)} svg rect.layer.ext{fill:var(--ext)} svg rect.layer.host{fill:var(--host)}
+svg .rtitle{font-size:16px;font-weight:600}
+svg .rnote{font-size:12px;fill:var(--muted)}
+svg rect.box{fill:var(--panel);stroke:var(--line);stroke-width:.8}
+svg .btitle{font-size:13.5px;font-weight:600}
+svg .bline{font-size:12px;fill:var(--muted)}
+svg .flow{stroke:currentColor;stroke-width:1.5}
+</style>
+<main>
+<h1>Cognosa Platform Overview</h1>
+<p class="subtitle">How a question is answered, and what the platform is made of</p>
+<p class="lede">Cognosa lets an organisation ask questions of its own documents and get answers with sources, using whichever language model it prefers. Each client group has its own knowledge bases, users, instructions, and model choices, kept separate from every other group. The two figures below are the executive view; the detailed engineering diagrams sit behind them.</p>
+
+<h2>Figure 1. How a question is answered</h2>
