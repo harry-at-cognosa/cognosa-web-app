@@ -35,3 +35,16 @@ docs/architecture/publish_s3.sh --no-gen component_stack   # one diagram, commit
 
 The header of the script lists the bucket, distribution id, cache policy, and the
 AWS identity it expects.
+
+### Root index of files.cognosa.net
+
+`files_cognosa_net_index.html` is the bucket's `index.html`: a short link table to the
+four diagram pages and nothing else. The previous full file index is kept at
+https://files.cognosa.net/old_index_261006.html (reachable by URL, not served at the root).
+To change the root page, edit the file here and upload it the same way as the diagrams:
+
+```sh
+aws s3 cp docs/architecture/files_cognosa_net_index.html s3://files.cognosa.net/index.html \
+  --content-type "text/html; charset=utf-8" --cache-control "public, max-age=300"
+aws cloudfront create-invalidation --distribution-id EAZCV38S6H0ST --paths "/" "/index.html"
+```
