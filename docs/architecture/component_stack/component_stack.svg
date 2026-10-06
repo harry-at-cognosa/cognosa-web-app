@@ -1,0 +1,265 @@
+<svg viewBox="0 0 1400 1131" role="img" aria-label="Cognosa component stack: React SPA, FastAPI app process, run_tasks process, offline tools, the shared common package, and the data stores and LLM endpoints they connect to" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect class="col spa" x="30" y="60" width="290" height="718" rx="10"/>
+<text class="ctitle" x="42" y="84">React SPA (browser)</text>
+<text class="csub" x="42" y="100">frontend/src · Vite build → backend/static</text>
+<rect class="pnl lib" x="42" y="582" width="266" height="184" rx="6"/>
+<text class="ptitle" x="52" y="599">libraries</text>
+<rect class="col app" x="350" y="60" width="310" height="806" rx="10"/>
+<text class="ctitle" x="362" y="84">app · FastAPI process</text>
+<text class="csub" x="362" y="100">backend/webapp.py → cwa_lib/</text>
+<rect class="pnl lib" x="362" y="582" width="286" height="184" rx="6"/>
+<text class="ptitle" x="372" y="599">libraries</text>
+<rect class="col rt" x="690" y="60" width="420" height="806" rx="10"/>
+<text class="ctitle" x="702" y="84">rt · task processor</text>
+<text class="csub" x="702" y="100">backend/run_tasks.py → tasks_lib/</text>
+<rect class="pnl lib" x="702" y="582" width="396" height="184" rx="6"/>
+<text class="ptitle" x="712" y="599">libraries</text>
+<rect class="col tools" x="1130" y="60" width="240" height="806" rx="10"/>
+<text class="ctitle" x="1142" y="84">Offline tools</text>
+<text class="csub" x="1142" y="100">backend/*.py · tools/</text>
+<rect class="pnl lib" x="1142" y="582" width="216" height="184" rx="6"/>
+<text class="ptitle" x="1152" y="599">libraries</text>
+<rect class="pnl" x="42" y="112" width="266" height="202" rx="6"/>
+<text class="ptitle" x="52" y="129">pages/</text>
+<text class="psub" x="298" y="129" text-anchor="end">React Router</text>
+<text class="item" x="52" y="152">QueryDocuments · ManageContexts ·</text>
+<text class="item" x="52" y="166">   HomePage</text>
+<text class="item" x="52" y="180">Ga*: ManageUsers · ManageVDBs ·</text>
+<text class="item" x="52" y="194">   ManageDocTasks · GVDBsRetrParams</text>
+<text class="item" x="52" y="208">Su*: ManageGroups · ManageUsers ·</text>
+<text class="item" x="52" y="222">   ManageLLMs · ManageVDBs ·</text>
+<text class="item" x="52" y="236">   ManageApiSettings · ManageLogCRUD ·</text>
+<text class="item" x="52" y="250">   ServerStatus</text>
+<text class="item" x="52" y="264">guards: GroupAdminRoute ·</text>
+<text class="item" x="52" y="278">   SuperUserRoute</text>
+<text class="item" x="52" y="292">QueryDocuments polls doc_tasks until</text>
+<text class="item" x="52" y="306">   status ≥ 6</text>
+<rect class="pnl" x="42" y="324" width="266" height="160" rx="6"/>
+<text class="ptitle" x="52" y="341">stores/ · tables/ · components/</text>
+<text class="item" x="52" y="364">Zustand: useLoggedUserStore ·</text>
+<text class="item" x="52" y="378">   useWebAppOptionsStore · per-page</text>
+<text class="item" x="52" y="392">   stores (createResettableStore)</text>
+<text class="item" x="52" y="406">UniversalTable + TableStoreFactory</text>
+<text class="item" x="52" y="420">   (CRUD grids)</text>
+<text class="item" x="52" y="434">GVDBsRetrParams / GVDBsRetrFilters</text>
+<text class="item" x="52" y="448">   editors</text>
+<text class="item" x="52" y="462">MarkdownRenderer · TopNavBar ·</text>
+<text class="item" x="52" y="476">   ThemeColor</text>
+<rect class="pnl" x="42" y="494" width="266" height="76" rx="6"/>
+<text class="ptitle" x="52" y="511">api/</text>
+<text class="item" x="52" y="534">axiosClient: JWT bearer, 401 → logout</text>
+<text class="item" x="52" y="548">apiURL: /api/v1 prefix ·</text>
+<text class="item" x="52" y="562">   NavigationInjector</text>
+<rect class="pnl" x="362" y="112" width="286" height="132" rx="6"/>
+<text class="ptitle" x="372" y="129">cwa_lib/app.py · users.py</text>
+<text class="psub" x="638" y="129" text-anchor="end">uvicorn webapp:app</text>
+<text class="item" x="372" y="152">FastAPI app factory · CORS · static SPA</text>
+<text class="item" x="372" y="166">   mount</text>
+<text class="item" x="372" y="180">fastapi-users JWT (7-day), username-or-</text>
+<text class="item" x="372" y="194">   email login</text>
+<text class="item" x="372" y="208">middleware/last_seen · Depends() auth</text>
+<text class="item" x="372" y="222">   guards</text>
+<text class="item" x="372" y="236">roles: user · group admin · superuser</text>
+<rect class="pnl" x="362" y="254" width="286" height="174" rx="6"/>
+<text class="ptitle" x="372" y="271">routers/ → pages/ → sql_tables/</text>
+<text class="psub" x="638" y="271" text-anchor="end">/api/v1/*</text>
+<text class="item" x="372" y="294">user: doc_tasks · manage_contexts · users</text>
+<text class="item" x="372" y="308">   · misc · webapp_options</text>
+<text class="item" x="372" y="322">ga_*: manage_users · manage_vdbs ·</text>
+<text class="item" x="372" y="336">   manage_doc_tasks · settings (retrieval</text>
+<text class="item" x="372" y="350">   params)</text>
+<text class="item" x="372" y="364">su_*: groups · users · llms · vdbs ·</text>
+<text class="item" x="372" y="378">   api_settings · doc_tasks · log_crud ·</text>
+<text class="item" x="372" y="392">   server_status · change_oneself</text>
+<text class="item" x="372" y="406">pages/ = handlers · sql_tables/ =</text>
+<text class="item" x="372" y="420">   repositories</text>
+<rect class="pnl" x="362" y="438" width="286" height="90" rx="6"/>
+<text class="ptitle" x="372" y="455">pydantic_schemas/ · validators/</text>
+<text class="item" x="372" y="478">request / response models per router</text>
+<text class="item" x="372" y="492">doc_tasks create: snapshots the</text>
+<text class="item" x="372" y="506">   group_vdbs and group_llms rows into</text>
+<text class="item" x="372" y="520">   the task</text>
+<rect class="pnl" x="362" y="538" width="286" height="30" rx="6"/>
+<text class="ptitle" x="372" y="555">alembic/</text>
+<text class="psub" x="638" y="555" text-anchor="end">migrations</text>
+<rect class="pnl" x="702" y="112" width="396" height="104" rx="6"/>
+<text class="ptitle" x="712" y="129">run_tasks.py · main_iteration.py</text>
+<text class="psub" x="1088" y="129" text-anchor="end">1 process</text>
+<text class="item" x="712" y="152">poll doc_tasks WHERE status IN (0, 3) FOR UPDATE SKIP</text>
+<text class="item" x="712" y="166">   LOCKED</text>
+<text class="item" x="712" y="180">qd_lib/qd_init → VDB queue · qd_lib/qd_vdb_fetched → LLM</text>
+<text class="item" x="712" y="194">   thread</text>
+<text class="item" x="712" y="208">group_vdbs_tasks: refresh filter select values</text>
+<rect class="pnl" x="702" y="226" width="396" height="132" rx="6"/>
+<text class="ptitle" x="712" y="243">vdb_lib/</text>
+<text class="psub" x="1088" y="243" text-anchor="end">RT_VDB_PROCESS_NUM processes</text>
+<text class="item" x="712" y="266">VDBWorker(Process) reads a multiprocessing Queue</text>
+<text class="item" x="712" y="280">emb_models: HuggingFaceEmbeddings, preloaded per model name</text>
+<text class="item" x="712" y="294">vdb_ops → qdrant_ops | chromadb_ops | pgvector_ops</text>
+<text class="item" x="712" y="308">qdrant_filters: payload filter from group retrieval filters</text>
+<text class="item" x="712" y="322">retriever: similarity · mmr · similarity_score_threshold</text>
+<text class="item" x="712" y="336">   (k, fetch_k, lambda_mult, score_threshold)</text>
+<text class="item" x="712" y="350">found_documents → doc_tasks.context_json</text>
+<rect class="pnl" x="702" y="368" width="396" height="104" rx="6"/>
+<text class="ptitle" x="712" y="385">llm_lib/</text>
+<text class="psub" x="1088" y="385" text-anchor="end">1 thread per task</text>
+<text class="item" x="712" y="408">LLMWorker(Thread) · llm_ops: prepare_context + chain</text>
+<text class="item" x="712" y="422">llm_type_openai: ChatGPT · Qwen · Ollama local / remote</text>
+<text class="item" x="712" y="436">llm_type_claude · llm_type_gemini · tiktoken_count</text>
+<text class="item" x="712" y="450">chain: {context, question} | PromptTemplate | llm |</text>
+<text class="item" x="712" y="464">   StrOutputParser, run with .stream()</text>
+<rect class="pnl" x="702" y="482" width="396" height="62" rx="6"/>
+<text class="ptitle" x="712" y="499">entities/ · vdb_llm_status_worker.py · watchdogs</text>
+<text class="item" x="712" y="522">queue messages · VDB / LLM availability checks →</text>
+<text class="item" x="712" y="536">   api_processes</text>
+<rect class="pnl" x="1142" y="112" width="216" height="118" rx="6"/>
+<text class="ptitle" x="1152" y="129">ingestion</text>
+<text class="item" x="1152" y="152">document_loader_qdrant.py ·</text>
+<text class="item" x="1152" y="166">   document_loader_pgvector.py</text>
+<text class="item" x="1152" y="180">tools/ingest_dev/: casambi_*,</text>
+<text class="item" x="1152" y="194">   furocad_book_loader.py</text>
+<text class="item" x="1152" y="208">multi-strategy chunking,</text>
+<text class="item" x="1152" y="222">   metadata per document class</text>
+<rect class="pnl" x="1142" y="240" width="216" height="104" rx="6"/>
+<text class="ptitle" x="1152" y="257">database</text>
+<text class="item" x="1152" y="280">init_sql_db.py</text>
+<text class="item" x="1152" y="294">   (.init_sql_data/)</text>
+<text class="item" x="1152" y="308">create_user.py · alembic</text>
+<text class="item" x="1152" y="322">   upgrade head</text>
+<text class="item" x="1152" y="336">tools/db: backup / restore</text>
+<rect class="pnl" x="1142" y="354" width="216" height="76" rx="6"/>
+<text class="ptitle" x="1152" y="371">checks</text>
+<text class="item" x="1152" y="394">check_qdrant_server.py ·</text>
+<text class="item" x="1152" y="408">   check_pgvector.py ·</text>
+<text class="item" x="1152" y="422">   check_chroma_server.py</text>
+<rect class="chip" x="52" y="608" width="74" height="18" rx="9"/>
+<text class="chiptext" x="88.8" y="620.5" text-anchor="middle">React 19</text>
+<rect class="chip" x="131.6" y="608" width="117" height="18" rx="9"/>
+<text class="chiptext" x="190.0" y="620.5" text-anchor="middle">TypeScript 5.8</text>
+<rect class="chip" x="52" y="630" width="59" height="18" rx="9"/>
+<text class="chiptext" x="81.6" y="642.5" text-anchor="middle">Vite 7</text>
+<rect class="chip" x="117.2" y="630" width="146" height="18" rx="9"/>
+<text class="chiptext" x="190.0" y="642.5" text-anchor="middle">react-router-dom 7</text>
+<rect class="chip" x="52" y="652" width="160" height="18" rx="9"/>
+<text class="chiptext" x="132.0" y="664.5" text-anchor="middle">React Bootstrap 2.10</text>
+<rect class="chip" x="52" y="674" width="124" height="18" rx="9"/>
+<text class="chiptext" x="114.0" y="686.5" text-anchor="middle">Bootstrap Icons</text>
+<rect class="chip" x="182.0" y="674" width="81" height="18" rx="9"/>
+<text class="chiptext" x="222.4" y="686.5" text-anchor="middle">Zustand 5</text>
+<rect class="chip" x="52" y="696" width="52" height="18" rx="9"/>
+<text class="chiptext" x="78.0" y="708.5" text-anchor="middle">Axios</text>
+<rect class="chip" x="110.0" y="696" width="117" height="18" rx="9"/>
+<text class="chiptext" x="168.4" y="708.5" text-anchor="middle">react-markdown</text>
+<rect class="chip" x="52" y="718" width="131" height="18" rx="9"/>
+<text class="chiptext" x="117.6" y="730.5" text-anchor="middle">rehype-highlight</text>
+<rect class="chip" x="189.2" y="718" width="102" height="18" rx="9"/>
+<text class="chiptext" x="240.4" y="730.5" text-anchor="middle">SheetJS xlsx</text>
+<rect class="chip" x="372" y="608" width="110" height="18" rx="9"/>
+<text class="chiptext" x="426.8" y="620.5" text-anchor="middle">FastAPI 0.116</text>
+<rect class="chip" x="487.6" y="608" width="66" height="18" rx="9"/>
+<text class="chiptext" x="520.8" y="620.5" text-anchor="middle">Uvicorn</text>
+<rect class="chip" x="372" y="630" width="131" height="18" rx="9"/>
+<text class="chiptext" x="437.6" y="642.5" text-anchor="middle">fastapi-users 14</text>
+<rect class="chip" x="509.2" y="630" width="95" height="18" rx="9"/>
+<text class="chiptext" x="556.8" y="642.5" text-anchor="middle">Pydantic v2</text>
+<rect class="chip" x="372" y="652" width="146" height="18" rx="9"/>
+<text class="chiptext" x="444.8" y="664.5" text-anchor="middle">SQLAlchemy 2 async</text>
+<rect class="chip" x="523.6" y="652" width="66" height="18" rx="9"/>
+<text class="chiptext" x="556.8" y="664.5" text-anchor="middle">asyncpg</text>
+<rect class="chip" x="372" y="674" width="66" height="18" rx="9"/>
+<text class="chiptext" x="405.2" y="686.5" text-anchor="middle">Alembic</text>
+<rect class="chip" x="444.4" y="674" width="59" height="18" rx="9"/>
+<text class="chiptext" x="474.0" y="686.5" text-anchor="middle">Jinja2</text>
+<rect class="chip" x="712" y="608" width="146" height="18" rx="9"/>
+<text class="chiptext" x="784.8" y="620.5" text-anchor="middle">LangChain core 1.0</text>
+<rect class="chip" x="863.6" y="608" width="167" height="18" rx="9"/>
+<text class="chiptext" x="947.2" y="620.5" text-anchor="middle">langchain-huggingface</text>
+<rect class="chip" x="712" y="630" width="167" height="18" rx="9"/>
+<text class="chiptext" x="795.6" y="642.5" text-anchor="middle">sentence-transformers</text>
+<rect class="chip" x="885.2" y="630" width="131" height="18" rx="9"/>
+<text class="chiptext" x="950.8" y="642.5" text-anchor="middle">langchain-qdrant</text>
+<rect class="chip" x="712" y="652" width="110" height="18" rx="9"/>
+<text class="chiptext" x="766.8" y="664.5" text-anchor="middle">qdrant-client</text>
+<rect class="chip" x="827.6" y="652" width="131" height="18" rx="9"/>
+<text class="chiptext" x="893.2" y="664.5" text-anchor="middle">langchain-chroma</text>
+<rect class="chip" x="712" y="674" width="218" height="18" rx="9"/>
+<text class="chiptext" x="820.8" y="686.5" text-anchor="middle">langchain-community PGVector</text>
+<rect class="chip" x="935.6" y="674" width="131" height="18" rx="9"/>
+<text class="chiptext" x="1001.2" y="686.5" text-anchor="middle">langchain-openai</text>
+<rect class="chip" x="712" y="696" width="153" height="18" rx="9"/>
+<text class="chiptext" x="788.4" y="708.5" text-anchor="middle">langchain-anthropic</text>
+<rect class="chip" x="870.8" y="696" width="174" height="18" rx="9"/>
+<text class="chiptext" x="958.0" y="708.5" text-anchor="middle">langchain-google-genai</text>
+<rect class="chip" x="712" y="718" width="74" height="18" rx="9"/>
+<text class="chiptext" x="748.8" y="730.5" text-anchor="middle">tiktoken</text>
+<rect class="chip" x="791.6" y="718" width="138" height="18" rx="9"/>
+<text class="chiptext" x="860.8" y="730.5" text-anchor="middle">SQLAlchemy 2 sync</text>
+<rect class="chip" x="936.0" y="718" width="74" height="18" rx="9"/>
+<text class="chiptext" x="972.8" y="730.5" text-anchor="middle">psycopg2</text>
+<rect class="chip" x="712" y="740" width="124" height="18" rx="9"/>
+<text class="chiptext" x="774.0" y="752.5" text-anchor="middle">multiprocessing</text>
+<rect class="chip" x="842.0" y="740" width="81" height="18" rx="9"/>
+<text class="chiptext" x="882.4" y="752.5" text-anchor="middle">threading</text>
+<rect class="chip" x="1152" y="608" width="138" height="18" rx="9"/>
+<text class="chiptext" x="1221.2" y="620.5" text-anchor="middle">community loaders</text>
+<rect class="chip" x="1152" y="630" width="117" height="18" rx="9"/>
+<text class="chiptext" x="1210.4" y="642.5" text-anchor="middle">text splitters</text>
+<rect class="chip" x="1274.8" y="630" width="52" height="18" rx="9"/>
+<text class="chiptext" x="1300.8" y="642.5" text-anchor="middle">pypdf</text>
+<rect class="chip" x="1152" y="652" width="74" height="18" rx="9"/>
+<text class="chiptext" x="1188.8" y="664.5" text-anchor="middle">docx2txt</text>
+<rect class="chip" x="1231.6" y="652" width="95" height="18" rx="9"/>
+<text class="chiptext" x="1279.2" y="664.5" text-anchor="middle">python-pptx</text>
+<rect class="chip" x="1152" y="674" width="74" height="18" rx="9"/>
+<text class="chiptext" x="1188.8" y="686.5" text-anchor="middle">openpyxl</text>
+<rect class="chip" x="1231.6" y="674" width="102" height="18" rx="9"/>
+<text class="chiptext" x="1282.8" y="686.5" text-anchor="middle">unstructured</text>
+<rect class="chip" x="1152" y="696" width="66" height="18" rx="9"/>
+<text class="chiptext" x="1185.2" y="708.5" text-anchor="middle">pg_dump</text>
+<rect class="pnl common" x="362" y="778" width="996" height="76" rx="6"/>
+<text class="ptitle" x="372" y="795">common/  —  shared package: ORM models, enums, retrieval settings, DB session factories, watchdogs</text>
+<text class="item" x="372" y="818">sql_models/: api_groups · api_users · group_llms · group_vdbs · group_contexts · doc_tasks · api_settings · api_processes · log_crud · group_vdbs_tasks</text>
+<text class="item" x="372" y="832">enums/: TaskStatus 0 → 6 · GLLMsTypes · GVDBsTypes      features/: gvdbs_retr_params · gvdbs_retr_filters      sql_db_async · sql_db_sync (session</text>
+<text class="item" x="372" y="846">   factories) · watchdogs/ · async_log · .env config</text>
+<rect class="pnl dat" x="30" y="1031" width="300" height="114" rx="6"/>
+<text class="ptitle" x="40" y="1048">PostgreSQL · cwa_db</text>
+<text class="item" x="40" y="1071">tenants, users, roles · group LLM / VDB /</text>
+<text class="item" x="40" y="1085">   context configs</text>
+<text class="item" x="40" y="1099">doc_tasks: question, context_json,</text>
+<text class="item" x="40" y="1113">   sent_to_llm, answer, status</text>
+<text class="item" x="40" y="1127">log_crud audit · api_processes health</text>
+<rect class="pnl dat" x="350" y="1031" width="310" height="100" rx="6"/>
+<text class="ptitle" x="360" y="1048">Qdrant</text>
+<text class="item" x="360" y="1071">one collection per group VDB · dense vectors</text>
+<text class="item" x="360" y="1085">   + payload metadata</text>
+<text class="item" x="360" y="1099">collections today: casambi, furocad</text>
+<text class="item" x="360" y="1113">ChromaDB / pgvector: same vdb_ops interface</text>
+<rect class="pnl vol" x="690" y="1031" width="190" height="86" rx="6"/>
+<text class="ptitle" x="700" y="1048">HF model cache</text>
+<text class="item" x="700" y="1071">hf_cache volume</text>
+<text class="item" x="700" y="1085">all-MiniLM-L6-v2</text>
+<text class="item" x="700" y="1099">BAAI/bge-base-en-v1.5</text>
+<rect class="pnl ext" x="910" y="1031" width="460" height="86" rx="6"/>
+<text class="ptitle" x="920" y="1048">LLM endpoints</text>
+<text class="item" x="920" y="1071">Ollama local / remote :11434 (OpenAI-compatible /v1)</text>
+<text class="item" x="920" y="1085">OpenAI · Anthropic · Google · Alibaba DashScope</text>
+<text class="item" x="920" y="1099">chosen per task from the group_llms snapshot (gllms_json)</text>
+<polyline class="edge" points="320,152 350,152" marker-end="url(#arrow)"/>
+<text class="elbl" x="335" y="144" text-anchor="middle">HTTPS</text>
+<text class="elbl" x="335" y="170" text-anchor="middle">JWT</text>
+<polyline class="edge" points="480,866 480,888 200,888 200,1031" marker-end="url(#arrow)"/>
+<text class="elbl" x="340.0" y="884.0" text-anchor="middle">app → Postgres: SQLAlchemy async, asyncpg :5432</text>
+<polyline class="edge" points="760,866 760,907 120,907 120,1031" marker-end="url(#arrow)"/>
+<text class="elbl" x="440.0" y="903.0" text-anchor="middle">rt → Postgres: sync session, poll + write doc_tasks</text>
+<polyline class="edge" points="840,866 840,926 520,926 520,1031" marker-end="url(#arrow)"/>
+<text class="elbl" x="680.0" y="922.0" text-anchor="middle">rt → Qdrant: embed + search, langchain-qdrant :6333</text>
+<polyline class="edge" points="920,866 920,945 790,945 790,1031" marker-end="url(#arrow)" stroke-dasharray="6 4"/>
+<text class="elbl" x="855.0" y="941.0" text-anchor="middle">rt → model cache</text>
+<polyline class="edge" points="1040,866 1040,964 1130,964 1130,1031" marker-end="url(#arrow)"/>
+<text class="elbl" x="1040.0" y="911.0" text-anchor="middle">rt → LLM: chat completions, streamed</text>
+<polyline class="edge" points="1210,866 1210,983 600,983 600,1031" marker-end="url(#arrow)" stroke-dasharray="6 4"/>
+<text class="elbl" x="905.0" y="979.0" text-anchor="middle">ingestion → Qdrant: load, chunk, embed, upsert</text>
+<polyline class="edge" points="1300,866 1300,1002 280,1002 280,1031" marker-end="url(#arrow)" stroke-dasharray="6 4"/>
+<text class="elbl" x="790.0" y="998.0" text-anchor="middle">db tools → Postgres: init, migrate, backup / restore</text>
+</svg>

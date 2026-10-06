@@ -1,0 +1,59 @@
+<title>Cognosa Component Stack</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: four process columns over a shared band and a data-store row; one hue per column family */
+:root{
+  --bg:#f6f5f2; --fg:#1f2328; --muted:#5d6672; --line:#2c3440; --panel:#ffffff;
+  --spa:#e8eef7; --app:#e4efe6; --rt:#fdf0dc; --tools:#eeeaf3; --common:#f1efe8;
+  --dat:#d9eaf5; --vol:#e3e8ec; --ext:#ffffff; --lib:#f7f6f3; --chip:#ffffff;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#c9ced4; --panel:#1d2126;
+  --spa:#1e2a3a; --app:#1d2e22; --rt:#3a2b17; --tools:#2a2434; --common:#262a2f;
+  --dat:#1c3447; --vol:#262c31; --ext:#1d2126; --lib:#1a1e22; --chip:#2a2f35; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#c9ced4; --panel:#1d2126;
+  --spa:#1e2a3a; --app:#1d2e22; --rt:#3a2b17; --tools:#2a2434; --common:#262a2f;
+  --dat:#1c3447; --vol:#262c31; --ext:#1d2126; --lib:#1a1e22; --chip:#2a2f35; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;margin:0;padding-block:28px 48px;padding-inline:16px}
+main{max-width:1240px;margin:0 auto}
+h1{font-size:26px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
+.subtitle{font-size:16px;color:var(--muted);margin:0 0 12px}
+h2{font-size:17px;font-weight:600;margin:32px 0 10px}
+p{max-width:72ch;margin:0 0 10px}
+.lede{color:var(--muted)}
+figure{margin:20px 0 0;overflow-x:auto}
+figure svg{min-width:980px;width:100%;max-width:1400px;height:auto;display:block;color:var(--fg)}
+figcaption{font-size:13px;color:var(--muted);margin-top:8px;max-width:84ch}
+svg text{font-family:var(--sans);fill:var(--fg)}
+svg .ctitle{font-size:15px;font-weight:600}
+svg .csub{font-size:10.5px;fill:var(--muted);font-family:var(--mono)}
+svg .ptitle{font-size:12px;font-weight:600}
+svg .psub{font-size:10px;fill:var(--muted);font-family:var(--mono)}
+svg .item{font-size:10.5px;font-family:var(--mono);fill:var(--fg)}
+svg .chiptext{font-size:10px;font-family:var(--mono);fill:var(--fg)}
+svg .elbl{font-size:10.5px;fill:var(--muted);font-family:var(--mono);paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+svg rect.col{stroke:var(--line);stroke-width:1;fill:var(--panel)}
+svg rect.col.spa{fill:var(--spa)} svg rect.col.app{fill:var(--app)} svg rect.col.rt{fill:var(--rt)} svg rect.col.tools{fill:var(--tools)}
+svg rect.pnl{fill:var(--panel);stroke:var(--line);stroke-width:.8}
+svg rect.pnl.lib{fill:var(--lib);stroke-dasharray:3 3}
+svg rect.pnl.common{fill:var(--common)}
+svg rect.pnl.dat{fill:var(--dat)} svg rect.pnl.vol{fill:var(--vol)} svg rect.pnl.ext{fill:var(--ext)}
+svg rect.chip{fill:var(--chip);stroke:var(--line);stroke-width:.6}
+svg .edge{fill:none;stroke:currentColor;stroke-width:1.2}
+.key{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:13px;color:var(--muted);margin-top:10px}
+.key span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:14px;height:14px;border:1px solid var(--line);border-radius:3px;display:inline-block}
+.sw.dash{border-style:dashed;background:var(--lib)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid color-mix(in srgb,var(--line) 25%,transparent);vertical-align:top}
+th{font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td code,p code{font-family:var(--mono);font-size:12.5px}
+.wrap{overflow-x:auto}
+</style>
+<main>
+<h1>Cognosa Component Stack</h1>
+<p class="subtitle">Runtime processes, the packages inside them, the libraries they are built on, and the stores they talk to</p>
+<p class="lede">The platform is three runtime pieces plus a set of offline tools. The React single-page app runs in the browser. The <code>app</code> process serves it and the REST API. The <code>rt</code> process executes the RAG pipeline. All Python code shares the <code>common</code> package. LangChain lives only in <code>rt</code> and the ingestion tools: it is the retrieval and chat abstraction, never part of the web API.</p>

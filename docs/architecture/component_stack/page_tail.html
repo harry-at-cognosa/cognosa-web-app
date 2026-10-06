@@ -1,0 +1,34 @@
+<figcaption>Columns are the runtime processes; the panels inside each are the repo packages in call order, top to bottom, with the third-party libraries at the foot. The shared common package spans everything Python. Arrows show which process opens a connection to which store or endpoint. Only Qdrant is drawn as the vector store; ChromaDB and pgvector implement the same vdb_ops interface.</figcaption>
+</figure>
+<div class="key">
+  <span><i class="sw" style="background:var(--spa)"></i>Browser</span>
+  <span><i class="sw" style="background:var(--app)"></i>app process</span>
+  <span><i class="sw" style="background:var(--rt)"></i>rt process</span>
+  <span><i class="sw" style="background:var(--tools)"></i>Offline tools</span>
+  <span><i class="sw" style="background:var(--common)"></i>Shared package</span>
+  <span><i class="sw" style="background:var(--dat)"></i>Data store</span>
+  <span><i class="sw dash"></i>Third-party libraries</span>
+</div>
+
+<h2>Where LangChain is used</h2>
+<div class="wrap"><table>
+<thead><tr><th>Package</th><th>Used in</th><th>For</th></tr></thead>
+<tbody>
+<tr><td><code>langchain_core</code></td><td><code>tasks_lib/llm_lib/llm_type_*.py</code></td><td>PromptTemplate, RunnablePassthrough, RunnableLambda, StrOutputParser; the chain is <code>{context, question} | prompt | llm | parser</code>, run with <code>.stream()</code></td></tr>
+<tr><td><code>langchain_openai</code></td><td><code>llm_type_openai.py</code></td><td>ChatOpenAI for OpenAI, Qwen (DashScope), and Ollama local or remote through the OpenAI-compatible endpoint</td></tr>
+<tr><td><code>langchain_anthropic</code>, <code>langchain_google_genai</code></td><td><code>llm_type_claude.py</code>, <code>llm_type_gemini.py</code></td><td>ChatAnthropic, ChatGoogleGenerativeAI</td></tr>
+<tr><td><code>langchain_huggingface</code> + sentence-transformers</td><td><code>vdb_lib/emb_models.py</code>, loaders</td><td>HuggingFaceEmbeddings, preloaded per model name from <code>RT_VDB_EMB_MODELS_PRELOAD</code></td></tr>
+<tr><td><code>langchain_qdrant</code>, <code>langchain_chroma</code>, <code>langchain_community</code> PGVector</td><td><code>vdb_lib/*_ops.py</code></td><td>Vector store wrappers; <code>as_retriever(search_type, search_kwargs)</code> with a Qdrant payload filter built from the group's retrieval filters</td></tr>
+<tr><td><code>langchain_community</code> loaders, <code>langchain_text_splitters</code></td><td><code>document_loader_*.py</code>, <code>tools/ingest_dev/</code></td><td>PDF, DOCX, PPTX, XLSX, TXT loading and chunking at ingestion time</td></tr>
+</tbody></table></div>
+
+<h2>Runtime processes</h2>
+<div class="wrap"><table>
+<thead><tr><th>Process</th><th>Entry point</th><th>Concurrency</th><th>Talks to</th></tr></thead>
+<tbody>
+<tr><td>React SPA</td><td><code>frontend/src/main.tsx</code>, built by Vite into <code>backend/static</code></td><td>Browser; polls <code>GET /api/v1/doc_tasks/{uuid}</code> until the task finishes</td><td>app only, over HTTPS with a JWT bearer</td></tr>
+<tr><td>app</td><td><code>backend/webapp.py</code> under uvicorn</td><td>Async; one worker</td><td>PostgreSQL (async SQLAlchemy); reads VDB and LLM health from <code>api_processes</code></td></tr>
+<tr><td>rt</td><td><code>backend/run_tasks.py</code></td><td>Main loop; <code>RT_VDB_PROCESS_NUM</code> VDB worker processes; one LLM thread per task; watchdog threads</td><td>PostgreSQL (sync SQLAlchemy), Qdrant, Ollama hosts, cloud LLM APIs, Hugging Face Hub on first model load</td></tr>
+<tr><td>Offline tools</td><td>Run by hand from <code>backend/</code></td><td>Loaders use a multiprocessing pool per file</td><td>Qdrant (ingestion), PostgreSQL (init, migrate, backup)</td></tr>
+</tbody></table></div>
+</main>

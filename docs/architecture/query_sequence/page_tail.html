@@ -1,0 +1,23 @@
+<figcaption>Numbered arrows are messages in time order, top to bottom. Solid arrows are calls, dashed arrows are returns or polled reads. A black pill on the Postgres lane is the doc_tasks.status value written at that step. Shaded bands group the steps into the four phases.</figcaption>
+</figure>
+
+<h2>Task status machine</h2>
+<div class="wrap"><table>
+<thead><tr><th>Status</th><th>Name</th><th>Written by</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>0</td><td><code>QD_INIT</code></td><td>app</td><td>Row inserted; question and the group's VDB and LLM config snapshots stored</td></tr>
+<tr><td>1</td><td><code>QD_INIT_FETCHED</code></td><td>rt main loop</td><td>Picked up; options validated</td></tr>
+<tr><td>2</td><td><code>QD_VDB_PENDING</code></td><td>rt main loop</td><td>Queued to a VDB worker process</td></tr>
+<tr><td>3</td><td><code>QD_VDB_FETCHED</code></td><td>VDB worker</td><td>Retrieved chunks saved in <code>context_json</code></td></tr>
+<tr><td>4</td><td><code>QD_LLM_PENDING</code></td><td>rt main loop</td><td>LLM thread started</td></tr>
+<tr><td>5</td><td><code>QD_LLM_WRITING</code></td><td>LLM worker</td><td>Streaming; partial answer visible to the SPA</td></tr>
+<tr><td>6</td><td><code>QD_LLM_FETCHED</code></td><td>LLM worker</td><td>Complete; answer and timings final</td></tr>
+<tr><td>-1 / -3 / -6</td><td><code>QD_INIT_ERROR</code> / <code>QD_VDB_ERROR</code> / <code>QD_LLM_ERROR</code></td><td>stage that failed</td><td>Terminal; <code>status_text</code> and <code>exc_text</code> carry the reason</td></tr>
+</tbody></table></div>
+
+<h2>What the browser sees</h2>
+<p>The QueryDocuments page submits once, then polls the task by uuid on a timeout loop. Each poll returns the status, a status text, a percent derived from status divided by six, the answer so far, and once complete the retrieved documents from <code>context_json</code> rendered as sources. Polling stops when the status is 6 or negative.</p>
+
+<h2>Retrieval parameters in play</h2>
+<p>The group's VDB row carries the embedding model name, the Qdrant collection, a retrieval parameter set, and optional retrieval filters. The parameter set selects the LangChain retriever mode, one of similarity, mmr, or similarity with a score threshold, with k, fetch_k, lambda_mult, and score_threshold. The filters become a Qdrant payload filter so the search is restricted to matching metadata before similarity is computed.</p>
+</main>

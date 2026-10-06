@@ -1,0 +1,59 @@
+<title>Cognosa Query Sequence</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: eight lifelines, numbered horizontal messages, status pills on the Postgres lane, phase bands behind */
+:root{
+  --bg:#f6f5f2; --fg:#1f2328; --muted:#5d6672; --line:#2c3440; --panel:#ffffff;
+  --spa:#e8eef7; --app:#e4efe6; --rt:#fdf0dc; --dat:#d9eaf5; --ext:#ffffff;
+  --phase:#ecebe6; --pill:#1f2328; --pilltext:#ffffff; --badge:#1f2328; --badgetext:#ffffff;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#c9ced4; --panel:#1d2126;
+  --spa:#1e2a3a; --app:#1d2e22; --rt:#3a2b17; --dat:#1c3447; --ext:#1d2126;
+  --phase:#1b1f24; --pill:#e8e6e1; --pilltext:#14171b; --badge:#e8e6e1; --badgetext:#14171b; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#14171b; --fg:#e8e6e1; --muted:#a2aab4; --line:#c9ced4; --panel:#1d2126;
+  --spa:#1e2a3a; --app:#1d2e22; --rt:#3a2b17; --dat:#1c3447; --ext:#1d2126;
+  --phase:#1b1f24; --pill:#e8e6e1; --pilltext:#14171b; --badge:#e8e6e1; --badgetext:#14171b; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;margin:0;padding-block:28px 48px;padding-inline:16px}
+main{max-width:1240px;margin:0 auto}
+h1{font-size:26px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
+.subtitle{font-size:16px;color:var(--muted);margin:0 0 12px}
+h2{font-size:17px;font-weight:600;margin:32px 0 10px}
+p{max-width:72ch;margin:0 0 10px}
+.lede{color:var(--muted)}
+figure{margin:20px 0 0;overflow-x:auto}
+figure svg{min-width:1000px;width:100%;max-width:1460px;height:auto;display:block;color:var(--fg)}
+figcaption{font-size:13px;color:var(--muted);margin-top:8px;max-width:84ch}
+svg text{font-family:var(--sans);fill:var(--fg)}
+svg .ltitle{font-size:13px;font-weight:600}
+svg .lsub{font-size:9.5px;fill:var(--muted);font-family:var(--mono)}
+svg rect.lane{stroke:var(--line);stroke-width:1;fill:var(--panel)}
+svg rect.lane.spa{fill:var(--spa)} svg rect.lane.app{fill:var(--app)} svg rect.lane.rt{fill:var(--rt)} svg rect.lane.dat{fill:var(--dat)} svg rect.lane.ext{fill:var(--ext)}
+svg .life{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4}
+svg rect.phase{fill:var(--phase);stroke:none}
+svg rect.phase.alt{fill:transparent}
+svg .phasename{font-size:10.5px;fill:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+svg .msg{fill:none;stroke:currentColor;stroke-width:1.3}
+svg .mlbl{font-size:10.5px;font-family:var(--mono);fill:var(--fg)}
+svg .mlbl.act{fill:var(--muted)}
+svg circle.badge{fill:var(--badge);stroke:var(--bg);stroke-width:1.5}
+svg .badgetext{font-size:10px;font-weight:600;fill:var(--badgetext)}
+svg rect.pill{fill:var(--pill)}
+svg .pilltext{font-size:9.5px;font-family:var(--mono);font-weight:500;fill:var(--pilltext)}
+svg .note{font-size:11px;fill:var(--muted)}
+.key{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:13px;color:var(--muted);margin-top:10px}
+.key span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:14px;height:14px;border:1px solid var(--line);border-radius:3px;display:inline-block}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid color-mix(in srgb,var(--line) 25%,transparent);vertical-align:top}
+th{font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td code,p code{font-family:var(--mono);font-size:12.5px}
+.wrap{overflow-x:auto}
+</style>
+<main>
+<h1>Cognosa Query Sequence</h1>
+<p class="subtitle">One question from the browser to the answer, across the SPA, app, Postgres, the rt workers, Qdrant, and the LLM</p>
+<p class="lede">The web request ends at step 3. Everything after that is asynchronous: the <code>doc_tasks</code> row in Postgres is the only channel between the app process and the rt process, and its <code>status</code> column is the state machine the browser polls. The vector store shown is Qdrant; ChromaDB and pgvector follow the same path.</p>
