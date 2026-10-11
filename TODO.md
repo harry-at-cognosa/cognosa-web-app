@@ -48,6 +48,10 @@ silently rather than warning.
 derives point IDs as `uuid5` over an NFKC-normalised SHA-256 of the chunk text. Verified: a
 full re-run leaves the collection at 29,748 points.
 
+**Also fixed 2026-10-11** for incremental batches: the CPA loader checks for existing IDs
+and skips them, so re-loading never re-embeds or overwrites (`PLAN-batch-refresh_261011.md`
+in `p666_cpa_load`).
+
 **Still open** for every other collection — `ledra_brands_products_xlsx`,
 `wab_group_products`, `casambi_collection`, `furocad`, `furocad_footnotes` — all of which
 still load through the original path. The fix is small: thread an `ids` argument through
@@ -83,6 +87,11 @@ or on any move to a single collection with a tenant-id filter.
 
 Relevant now that `cpa-c42t_collection` carries `flag_a`…`flag_f`, `flags_set` and
 `row_number` metadata specifically intended for future filtered retrieval.
+
+**Update 2026-10-11:** `cpa-c42t_collection` now has two keyword indexes,
+`metadata.cpa_batch` and `metadata.cpa_source_file`, created by
+`backend/cpa/cpa_payload_indexes.py` on M1, dev and demo. Everything else above still
+holds.
 
 ---
 

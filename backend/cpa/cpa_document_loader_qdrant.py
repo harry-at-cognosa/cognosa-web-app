@@ -17,6 +17,11 @@ Two things differ from the original, both deliberate:
 
 Input is LOAD-MANIFEST.csv produced by cpa_select_files.py; only rows with
 status == 'load' are processed.
+
+Batch mode (2026-10-11, PLAN-batch-refresh_261011.md section 4.3): --batch labels
+every point with metadata.cpa_batch, and IDs already present in the collection are
+skipped before embedding, so an existing point is never re-embedded or overwritten
+and a batch owns exactly the points it created.
 """
 import argparse, csv, hashlib, re, sys, unicodedata, uuid
 from collections import Counter
@@ -109,7 +114,10 @@ def main():
     ap.add_argument('--dry-run', action='store_true',
                     help='parse and deduplicate, write the report, embed nothing')
     ap.add_argument('--limit', type=int, default=0, help='process only the first N files')
+    ap.add_argument('--batch', help='batch label written to metadata.cpa_batch; required with --append')
     args = ap.parse_args()
+    if args.append and not args.batch:
+        sys.exit("ERROR: --append requires --batch <label>")
 
     rows = [r for r in csv.DictReader(open(args.manifest, encoding='utf-8'))
             if r['status'] == 'load']
@@ -135,12 +143,12 @@ def main():
                 print(f"  parsed {done}/{len(rows)}  ({time()-t0:.0f}s)")
 
     # ---- deduplicate serially, first writer wins ----
-    seen, docs, ids, report = {}, [], [], []
+    seen, per_row = {}, []
     for row, chunks, err in parsed:
         if err:
-            report.append((row, 'failed', 0, 0, err))
+            per_row.append((row, None, 0, err))
             continue
-        kept = dropped = 0
+        items, dropped = [], 0
         for c in chunks:
             pid = content_id(c['text'])
             if pid in seen:
@@ -149,26 +157,51 @@ def main():
             seen[pid] = row['filename']
             meta = dict(c['metadata'])
             meta['cpa_source_file'] = row['filename']
-            meta['cpa_corpus'] = row['corpus']
-            docs.append({'text': c['text'], 'metadata': meta})
-            ids.append(pid)
-            kept += 1
-        report.append((row, 'loaded' if kept else 'all-chunks-duplicate',
-                       kept, dropped, ''))
+            meta['cpa_corpus'] = 'batch' if args.batch else row['corpus']
+            if args.batch:
+                meta['cpa_batch'] = args.batch
+            meta['cpa_doc_kind'] = row.get('kind') or 'paper'
+            items.append((pid, {'text': c['text'], 'metadata': meta}))
+        per_row.append((row, items, dropped, ''))
+
+    # ---- skip IDs already in the collection (never re-embed, never overwrite) ----
+    existing = set()
+    if exists:
+        all_ids = [pid for _, items, _, err in per_row if not err for pid, _ in items]
+        for i in range(0, len(all_ids), 1000):
+            got = client.retrieve(args.collection, ids=all_ids[i:i + 1000],
+                                  with_payload=False, with_vectors=False)
+            existing.update(str(p.id) for p in got)
+
+    docs, ids, report = [], [], []
+    for row, items, dropped, err in per_row:
+        if err:
+            report.append((row, 'failed', 0, 0, 0, err))
+            continue
+        kept = present = 0
+        for pid, d in items:
+            if pid in existing:
+                present += 1
+                continue
+            docs.append(d); ids.append(pid); kept += 1
+        outcome = 'loaded' if kept else ('already-present' if present else 'all-chunks-duplicate')
+        report.append((row, outcome, kept, dropped, present, ''))
 
     total_chunks = sum(len(c) for _, c, e in parsed if not e)
-    print(f"\nparsed {total_chunks:,} chunks -> {len(docs):,} unique "
-          f"({total_chunks - len(docs):,} collapsed as duplicate content)")
+    print(f"\nparsed {total_chunks:,} chunks -> {len(docs):,} to upsert "
+          f"({total_chunks - len(docs) - len(existing):,} collapsed as duplicate content, "
+          f"{len(existing):,} already in collection)")
+    print(f"expected_delta = {len(docs):,}")
 
     with open(args.report, 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f)
-        w.writerow(['filename', 'corpus', 'ext', 'outcome',
-                    'chunks_kept', 'chunks_dropped_dup', 'error', 'abspath'])
-        for row, outcome, kept, dropped, err in report:
-            w.writerow([row['filename'], row['corpus'], row['ext'], outcome,
-                        kept, dropped, err, row['abspath']])
+        w.writerow(['filename', 'corpus', 'kind', 'ext', 'outcome', 'chunks_kept',
+                    'chunks_dropped_dup', 'chunks_already_present', 'error', 'abspath'])
+        for row, outcome, kept, dropped, present, err in report:
+            w.writerow([row['filename'], row['corpus'], row.get('kind') or 'paper', row['ext'],
+                        outcome, kept, dropped, present, err, row['abspath']])
     print(f"report -> {args.report}")
-    for k, v in sorted(Counter(o for _, o, _, _, _ in report).items()):
+    for k, v in sorted(Counter(o for _, o, _, _, _, _ in report).items()):
         print(f"  {k:<24} {v:>5}")
 
     if args.dry_run:
@@ -186,6 +219,10 @@ def main():
         )
         print(f"created '{args.collection}' dim={size} "
               f"indexing_threshold={INDEXING_THRESHOLD}KB")
+
+    if not docs:
+        print("\nnothing to upsert")
+        return
 
     # ---- embed and upsert ----
     from langchain_core.documents import Document
