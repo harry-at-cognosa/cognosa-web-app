@@ -44,7 +44,8 @@ CREATE TYPE public.gllms_type_enum AS ENUM (
     'chatgpt',
     'gemini',
     'claude',
-    'qwen'
+    'qwen',
+    'mistral'
 );
 
 

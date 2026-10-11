@@ -52,5 +52,14 @@
     "gllms_api_base": "https://dashscope-us.aliyuncs.com/compatible-mode/v1",
     "gllms_model": "qwen3.8-max",
     "gllms_api_key": "sk-your-dashscope-key"
+  },
+  {
+    "group_id": 1,
+    "gllms_seqn": 5,
+    "gllms_type": "mistral",
+    "gllms_name": "Mistral Large",
+    "gllms_api_base": "https://api.mistral.ai/v1",
+    "gllms_model": "mistral-large-latest",
+    "gllms_api_key": "your-mistral-api-key"
   }
 ]

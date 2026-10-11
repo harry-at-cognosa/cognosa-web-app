@@ -6,11 +6,13 @@ class GLLMsTypes:
     GEMINI = 'gemini'
     CLAUDE = 'claude'
     QWEN = 'qwen'
+    MISTRAL = 'mistral'
 
 
 public_api_gllms_types = [
     GLLMsTypes.CHATGPT,
     GLLMsTypes.GEMINI,
     GLLMsTypes.CLAUDE,
-    GLLMsTypes.QWEN
+    GLLMsTypes.QWEN,
+    GLLMsTypes.MISTRAL
 ]

@@ -43,7 +43,8 @@ class LLMTypeOpenAI:
                 full_url = f"https://api.openai.com/v1/models/{quote(self.llm_model)}"
                 headers = {"Authorization": f"Bearer {self.llm_api_key.get_secret_value()}"}
                 return requests.get(full_url, timeout=5, headers=headers).status_code == 200
-            elif self.llm_type == GLLMsTypes.QWEN:
+            elif self.llm_type in (GLLMsTypes.QWEN, GLLMsTypes.MISTRAL):
+                # OpenAI-compatible vendor endpoint: bearer-auth GET {api_base}/models
                 full_url = f"{self.llm_api_base}/models"
                 headers = {"Authorization": f"Bearer {self.llm_api_key.get_secret_value()}"}
                 return requests.get(full_url, timeout=5, headers=headers).status_code == 200
