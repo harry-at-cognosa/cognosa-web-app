@@ -31,8 +31,12 @@ class VDBWorker(Process):
     def _save_error_to_sql(self, session: Session, task: DocTasks, error_msg: str, exc_msg: str | None = None):
         log.info(f"Task id {task.doc_task_id} error")
         exc_msg = exc_msg if exc_msg else error_msg
-        task.exc_text = exc_msg[:20000]
-        task.status_text = error_msg[:1000]
+        # Roll back first: a failed flush leaves the session unusable and the error
+        # itself could not be written, leaving the task stuck "in progress".
+        session.rollback()
+        task = session.merge(task)
+        task.exc_text = exc_msg.replace('\x00', '')[:20000]
+        task.status_text = error_msg.replace('\x00', '')[:1000]
         task.status = TaskStatus.QD_VDB_ERROR
         session.commit()        
 

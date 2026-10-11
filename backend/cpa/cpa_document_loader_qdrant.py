@@ -91,8 +91,13 @@ def parse_one(row):
             return row, [], 'no chunks after splitting'
         out = []
         for c in chunks:
-            if canonical(c.page_content):
-                out.append({'text': c.page_content, 'metadata': dict(c.metadata)})
+            # PDF extraction can emit NUL bytes; Postgres rejects them when the
+            # app stores retrieved context, which kills the query task.
+            text = c.page_content.replace('\x00', '')
+            meta = {k: (v.replace('\x00', '') if isinstance(v, str) else v)
+                    for k, v in c.metadata.items()}
+            if canonical(text):
+                out.append({'text': text, 'metadata': meta})
         if not out:
             return row, [], 'all chunks empty after normalisation'
         return row, out, ''

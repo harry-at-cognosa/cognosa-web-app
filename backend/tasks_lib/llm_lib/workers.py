@@ -22,6 +22,12 @@ class LLMGroupContextWrong(Exception):
     pass
 
 
+def _db_text(s) -> str:
+    """Strip NUL bytes: PostgreSQL rejects them in text columns, and PDF extraction
+    can emit them. A NUL in sent_to_llm killed task 172 on 2026-10-11."""
+    return str(s).replace('\x00', '') if s is not None else ''
+
+
 class LLMWorker(Thread):
     def __init__(self, msg: LLMWorkerMsg) -> None:
         super().__init__()
@@ -40,21 +46,26 @@ class LLMWorker(Thread):
     def write_status_error(self, session: Session, task: DocTasks, error_msg: str, exc_msg: str | None = None):
         log.error(f"LLM run error in {task.doc_task_id=}:\n{error_msg=}{exc_msg=}")
         exc_msg = exc_msg if exc_msg else error_msg
-        task.status_text = error_msg[:1000]
-        task.exc_text = exc_msg[:20000]
+        # A failed flush leaves the session unusable until rolled back; without
+        # this the error itself cannot be written and the task stays "in progress".
+        session.rollback()
+        task = session.merge(task)
+        task.status_text = _db_text(error_msg)[:1000]
+        task.exc_text = _db_text(exc_msg)[:20000]
         task.status = TaskStatus.QD_LLM_ERROR
         task.completed_at = func.now()        
         session.commit()
 
     def write_sent_to_llm(self, session: Session, task: DocTasks, sent_to_llm: str):
         if sent_to_llm and (not task.sent_to_llm):
-            task.sent_to_llm = str(sent_to_llm)
+            task.sent_to_llm = _db_text(sent_to_llm)
             task.llm_tokens_sent = int(self.tiktoken_count.count(sent_to_llm))
             session.commit()
 
     def write_llm_writing(self, session: Session, task: DocTasks, answer: str):
         task.status = TaskStatus.QD_LLM_WRITING
         task.status_text = "LLM answering..."
+        answer = _db_text(answer)
         if task.question_number == 1:
             task.output_text = answer
         else:
@@ -65,6 +76,7 @@ class LLMWorker(Thread):
     def write_llm_finished(self, session: Session, task: DocTasks, answer: str, llm_query_seconds: float):
         task.status = TaskStatus.QD_LLM_FETCHED
         task.status_text = "Task completed"
+        answer = _db_text(answer)
         if task.question_number == 1:
             task.output_text = answer
         else:
