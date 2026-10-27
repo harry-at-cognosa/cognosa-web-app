@@ -1,12 +1,13 @@
 import json
 from traceback import format_exc
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update, func, text, exists
+from common.sql_models.api_processes import ApiProcesses
 from common import log
 from common.sql_db_async import AsyncSession
 from common.sql_models import GroupVDBs, GroupLLMs, DocTasks
 from common.sql_models.doc_tasks import get_short_name, default_short_name
 from cwa_lib.pydantic_schemas.doc_tasks import DocTaskQueryShort, DocTaskQueryShortItem, DocTaskQueryResult
-from common.enums.doc_task_status import TaskStatus
+from common.enums.doc_task_status import TaskStatus, TASK_ABANDON_NO_RUNNER_SEC, TASK_TIMEOUT_SEC
 
 
 class DocTasksTable:
@@ -53,7 +54,77 @@ class DocTasksTable:
             )
         return result.scalar_one_or_none()
 
+    async def sweep_stale(self, where_clause) -> int:
+        """Abandon in-flight tasks nobody will ever finish; returns rows changed.
+
+        Runs inside the web app on every read of a task, so a task placed while
+        run_tasks is down is reported rather than spinning forever (a sweep in
+        run_tasks itself cannot catch that case). Two rules, see the constants
+        in common.enums.doc_task_status. Both are guarded on the in-flight
+        statuses, so a task that finishes between the read and this UPDATE is
+        left alone.
+        """
+        in_flight = DocTasks.status.notin_(TaskStatus.FINISHED_LIST)
+        stage_at = func.coalesce(DocTasks.context_at, DocTasks.fetched_at, DocTasks.created_at)
+        runner_alive = exists().where(
+            ApiProcesses.ap_type == 'run_tasks',
+            ApiProcesses.ap_subname == 'watchdog',
+            ApiProcesses.ap_status != 'exit',
+            ApiProcesses.ap_updated_at > func.now() - text("interval '10 seconds'"),
+        )
+        changed = 0
+        no_runner = await self.session.execute(
+            update(DocTasks)
+            .where(where_clause, in_flight, ~runner_alive,
+                   stage_at < func.now() - text(f"interval '{TASK_ABANDON_NO_RUNNER_SEC} seconds'"))
+            .values(
+                status=TaskStatus.QD_TIMEOUT,
+                status_text="Task runner is not running; task abandoned. Ask again once the runner is back.",
+                completed_at=func.now(),
+            )
+        )
+        changed += no_runner.rowcount
+        timed_out = await self.session.execute(
+            update(DocTasks)
+            .where(where_clause, in_flight,
+                   stage_at < func.now() - text(f"interval '{TASK_TIMEOUT_SEC} seconds'"))
+            .values(
+                status=TaskStatus.QD_TIMEOUT,
+                status_text=func.concat(
+                    f"Timed out after {TASK_TIMEOUT_SEC // 60} min at: ", DocTasks.status_text),
+                completed_at=func.now(),
+            )
+        )
+        changed += timed_out.rowcount
+        if changed:
+            await self.session.commit()
+            log.info(f"sweep_stale: abandoned {changed} stuck doc_tasks row(s)")
+        return changed
+
+    async def cancel_one(self, doc_task_id: int, group_id: int | None) -> bool:
+        """Move an in-flight task to QD_CANCELLED. Returns False if the task
+        was not found for this group or had already finished.
+
+        Guarded on status: the run_tasks writers are guarded the same way, so
+        whichever side commits first wins and the other backs off.
+        """
+        where_clause = DocTasks.doc_task_id == doc_task_id
+        if group_id is not None:
+            where_clause = where_clause & (DocTasks.group_id == group_id)
+        result = await self.session.execute(
+            update(DocTasks)
+            .where(where_clause, DocTasks.status.notin_(TaskStatus.FINISHED_LIST))
+            .values(
+                status=TaskStatus.QD_CANCELLED,
+                status_text="Cancelled by user",
+                completed_at=func.now(),
+            )
+        )
+        await self.session.commit()
+        return bool(result.rowcount)
+
     async def short_query_all_by_group_id_user_id(self, group_id: int, user_id: int) -> DocTaskQueryShort:
+        await self.sweep_stale((DocTasks.group_id == group_id) & (DocTasks.user_id == user_id))
         result = await self.session.execute(
             select(DocTasks)
             .where(
@@ -189,6 +260,7 @@ class DocTasksTable:
             return None
 
     async def query_one_by_doc_task_id(self, doc_task_id: int) -> DocTaskQueryResult | None:
+        await self.sweep_stale(DocTasks.doc_task_id == doc_task_id)
         result = await self.session.execute(
             select(DocTasks)
             .where(

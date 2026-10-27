@@ -2,7 +2,7 @@ from multiprocessing import Process, Queue, cpu_count
 from queue import Empty
 from time import time
 from traceback import format_exc
-from sqlalchemy import text, delete, insert
+from sqlalchemy import text, delete, insert, update
 from common import log, LOG_SQLALCHEMY_RT, RT_VDB_PROCESS_NUM
 from common.enums.group_vdbs_tasks import GroupVDBsTasksStatus, GroupVDBsTasksTypes
 from common.features.gvdbs_retr_filters import FormSchemaGVDBsRF, GVDBsRetrFiltersFunctions
@@ -42,13 +42,29 @@ class VDBWorker(Process):
 
     def _save_results_to_sql(self, session: Session, task: DocTasks, result_list: list[dict], vdb_query_seconds: float):
         doc_number = len(result_list)
-        task.context_at = utcnow()
-        FoundDocuments(task).append(result_list)  # save / append context_json
-        task.status = TaskStatus.QD_VDB_FETCHED
-        task.status_text = f"Documents search completed. Found {doc_number} documents. Sending to LLM..."
-        task.vdb_query_seconds=vdb_query_seconds
+        FoundDocuments(task).append(result_list)  # save / append context_json (in memory)
+        # Guarded on status: if the user cancelled (or the sweep abandoned the
+        # task) during the search, the terminal status must not be overwritten.
+        stmt = (
+            update(DocTasks)
+            .where(
+                DocTasks.doc_task_id == task.doc_task_id,
+                DocTasks.status.notin_(TaskStatus.FINISHED_LIST),
+            )
+            .values(
+                context_at=utcnow(),
+                context_json=task.context_json,
+                status=TaskStatus.QD_VDB_FETCHED,
+                status_text=f"Documents search completed. Found {doc_number} documents. Sending to LLM...",
+                vdb_query_seconds=vdb_query_seconds,
+            )
+        )
+        rowcount = session.execute(stmt).rowcount
         session.commit()
-        log.info(f"Task id {task.doc_task_id} completed")
+        if rowcount:
+            log.info(f"Task id {task.doc_task_id} completed")
+        else:
+            log.info(f"Task id {task.doc_task_id} was cancelled during VectorDB search; results discarded")
 
     def _update_ap_status(self, session: Session, ap_status: str):
         ApiProcessesTable(session).upsert_api_process(

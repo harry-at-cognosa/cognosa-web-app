@@ -42,6 +42,25 @@ async def get_task(
         task.context_json = None
     return task
 
+# Cancel an in-flight Query Documents task
+@router__doc_tasks.post("/doc_tasks/{doc_task_id:int}/cancel", tags=["Query Documents tasks"], response_model=DocTaskQueryResult)
+async def cancel_task(
+    doc_task_id: int,
+    user: User = Depends(current_active_user),
+    session: AsyncSession = Depends(async_get_session),
+    ):
+    # superuser can cancel any task; a regular user only tasks of their group.
+    # A task that already finished is left as is; the current row is returned
+    # either way so the client can simply refresh from it.
+    use_group_id = None if user.is_superuser else user.group_id
+    await DocTasksTable(session).cancel_one(doc_task_id=doc_task_id, group_id=use_group_id)
+    task = await DocTasksTable(session).query_one_by_doc_task_id(doc_task_id=doc_task_id)
+    if task is None or ((not user.is_superuser) and (task.group_id != user.group_id)):
+        raise HTTPException(status_code=404)
+    if not user.is_superuser:
+        task.context_json = None
+    return task
+
 # Delete Query Documents task
 @router__doc_tasks.delete("/doc_tasks/{doc_task_id}", tags=["Query Documents tasks"], response_model=DocTaskDeleteResult)
 async def delete_task(

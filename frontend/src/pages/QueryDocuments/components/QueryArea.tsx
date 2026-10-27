@@ -14,6 +14,7 @@ import QueryTokensCounter from "./QueryTokensCounter";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import ContextJSON from "./ContextJSON";
 import AskButton from "./AskButton";
+import CancelQueryButton from "./CancelQueryButton";
 import CloneQueryButton from "./CloneQueryButton";
 import SaveResultButton from "./SaveResultButton";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
@@ -197,6 +198,7 @@ function QueryArea() {
         onChange={(e) => current.setOptionalText(e.target.value)}
       />
       <AskButton handleSubmit={handleSubmit} />
+      <CancelQueryButton />
       <br className="mt-0" />
       <div style={{ visibility: queryStore.isPolling ? "visible" : "hidden" }}>
         <ProgressBar animated now={current.status_pct || 0} />

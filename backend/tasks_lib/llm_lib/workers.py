@@ -2,7 +2,7 @@ import json
 from threading import Thread
 from time import time
 from traceback import format_exc
-from sqlalchemy import select, func
+from sqlalchemy import select, update, func
 from common import log
 from common.enums.doc_task_status import TaskStatus
 from common.sql_models import DocTasks, GroupContexts, GroupLLMs
@@ -22,6 +22,11 @@ class LLMGroupContextNotFound(Exception):
 class LLMGroupContextWrong(Exception):
     pass
 
+class LLMTaskCancelled(Exception):
+    """The task left the in-flight statuses (cancelled by the user or swept as
+    stale) while the LLM was still streaming. Nothing more may be written."""
+    pass
+
 
 def _db_text(s) -> str:
     """Strip NUL bytes: PostgreSQL rejects them in text columns, and PDF extraction
@@ -35,6 +40,7 @@ class LLMWorker(Thread):
         self.msg = msg
         self.doc_task_id = msg.doc_task_id
         self.tiktoken_count = TikTokenCount('')
+        self._sent_written = False
 
     def get_llm_settings(self, task: DocTasks) -> GroupLLMs:
         try:
@@ -50,42 +56,82 @@ class LLMWorker(Thread):
         # A failed flush leaves the session unusable until rolled back; without
         # this the error itself cannot be written and the task stays "in progress".
         session.rollback()
-        task = session.merge(task)
-        task.status_text = _db_text(error_msg)[:1000]
-        task.exc_text = _db_text(exc_msg)[:20000]
-        task.status = TaskStatus.QD_LLM_ERROR
-        task.completed_at = func.now()        
+        # Guarded like the streaming writes: a task the user cancelled (or the
+        # sweep abandoned) keeps that status even if the stream then errors.
+        stmt = (
+            update(DocTasks)
+            .where(
+                DocTasks.doc_task_id == task.doc_task_id,
+                DocTasks.status.notin_(TaskStatus.FINISHED_LIST),
+            )
+            .values(
+                status_text=_db_text(error_msg)[:1000],
+                exc_text=_db_text(exc_msg)[:20000],
+                status=TaskStatus.QD_LLM_ERROR,
+                completed_at=func.now(),
+            )
+        )
+        if not session.execute(stmt).rowcount:
+            log.info(f"LLM task {task.doc_task_id} already finished/cancelled; error not written")
         session.commit()
+
+    @staticmethod
+    def _update_if_live(session: Session, task: DocTasks, **values) -> None:
+        """UPDATE the row only while it is still in flight.
+
+        The cancel endpoint and the stale-task sweep move a task to a terminal
+        status from outside this process. An unconditional ORM commit here would
+        overwrite that, so every write during streaming is guarded on the status
+        column and a zero rowcount raises LLMTaskCancelled to stop the stream.
+        """
+        stmt = (
+            update(DocTasks)
+            .where(
+                DocTasks.doc_task_id == task.doc_task_id,
+                DocTasks.status.notin_(TaskStatus.FINISHED_LIST),
+            )
+            .values(**values)
+        )
+        rowcount = session.execute(stmt).rowcount
+        session.commit()
+        if not rowcount:
+            raise LLMTaskCancelled
+        # Deliberately no setattr on `task`: a dirty ORM attribute would be
+        # autoflushed as an unguarded UPDATE on the next execute.
 
     def write_sent_to_llm(self, session: Session, task: DocTasks, sent_to_llm: str):
-        if sent_to_llm and (not task.sent_to_llm):
-            task.sent_to_llm = _db_text(sent_to_llm)
-            task.llm_tokens_sent = int(self.tiktoken_count.count(sent_to_llm))
-            session.commit()
+        if sent_to_llm and not self._sent_written:
+            self._update_if_live(
+                session, task,
+                sent_to_llm=_db_text(sent_to_llm),
+                llm_tokens_sent=int(self.tiktoken_count.count(sent_to_llm)),
+            )
+            self._sent_written = True
+
+    def _answer_column(self, task: DocTasks) -> str:
+        return 'output_text' if task.question_number == 1 else 'output_text_2'
 
     def write_llm_writing(self, session: Session, task: DocTasks, answer: str):
-        task.status = TaskStatus.QD_LLM_WRITING
-        task.status_text = "LLM answering..."
         answer = _db_text(answer)
-        if task.question_number == 1:
-            task.output_text = answer
-        else:
-            task.output_text_2 = answer
-        task.llm_tokens_received = self.tiktoken_count.count(answer)
-        session.commit()
+        self._update_if_live(
+            session, task,
+            status=TaskStatus.QD_LLM_WRITING,
+            status_text="LLM answering...",
+            llm_tokens_received=self.tiktoken_count.count(answer),
+            **{self._answer_column(task): answer},
+        )
     
     def write_llm_finished(self, session: Session, task: DocTasks, answer: str, llm_query_seconds: float):
-        task.status = TaskStatus.QD_LLM_FETCHED
-        task.status_text = "Task completed"
         answer = _db_text(answer)
-        if task.question_number == 1:
-            task.output_text = answer
-        else:
-            task.output_text_2 = answer
-        task.completed_at = func.now()
-        task.llm_query_seconds = llm_query_seconds
-        task.llm_tokens_received = self.tiktoken_count.count(answer)
-        session.commit()
+        self._update_if_live(
+            session, task,
+            status=TaskStatus.QD_LLM_FETCHED,
+            status_text="Task completed",
+            completed_at=func.now(),
+            llm_query_seconds=llm_query_seconds,
+            llm_tokens_received=self.tiktoken_count.count(answer),
+            **{self._answer_column(task): answer},
+        )
 
     def fetch_group_context(self, session: Session, task: DocTasks) -> GroupContexts:
         stmt = select(GroupContexts).where(
@@ -145,6 +191,11 @@ class LLMWorker(Thread):
                         answer += chunk
                         self.write_sent_to_llm(session, task, llm_ops.llm_obj.sent_to_llm)
                         self.write_llm_writing(session, task, answer)                                        
+                except LLMTaskCancelled:
+                    # Terminal status already written by whoever cancelled or
+                    # swept the task; just stop streaming and leave it as is.
+                    log.info(f"LLM task {task.doc_task_id} cancelled while streaming; stopping")
+                    raise
                 except Exception as exc:
                     exc_msg = f"LLMOps exception for {task.doc_task_id=}, {task.group_id=}, {task.gc_id=}:\n{format_exc()}"
                     self.write_status_error(session, task, error_msg=classify_llm_exception(exc), exc_msg=exc_msg)
@@ -152,6 +203,8 @@ class LLMWorker(Thread):
                 else:
                     self.write_llm_finished(session, task, llm_ops.llm_obj.answer, llm_query_seconds=round(time()-start_time, 3))
         
+        except LLMTaskCancelled:
+            pass  # already logged where it was detected
         except Exception:
             log.error(format_exc())
         log.info(f"Finished LLM task ID {self.doc_task_id}")
