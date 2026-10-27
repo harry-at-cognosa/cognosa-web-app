@@ -9,6 +9,7 @@ from common.sql_models import DocTasks, GroupContexts, GroupLLMs
 from common.sql_db_sync import Session, get_engine_sessionmaker
 from tasks_lib.entities.llm_worker_msg import LLMWorkerMsg
 from tasks_lib.llm_lib.llm_ops import LLMOps
+from tasks_lib.llm_lib.llm_errors import classify_llm_exception
 from .tiktoken_count import TikTokenCount
 
 
@@ -144,9 +145,9 @@ class LLMWorker(Thread):
                         answer += chunk
                         self.write_sent_to_llm(session, task, llm_ops.llm_obj.sent_to_llm)
                         self.write_llm_writing(session, task, answer)                                        
-                except Exception:
+                except Exception as exc:
                     exc_msg = f"LLMOps exception for {task.doc_task_id=}, {task.group_id=}, {task.gc_id=}:\n{format_exc()}"
-                    self.write_status_error(session, task, error_msg="Undefined LLM error", exc_msg=exc_msg)
+                    self.write_status_error(session, task, error_msg=classify_llm_exception(exc), exc_msg=exc_msg)
                     raise
                 else:
                     self.write_llm_finished(session, task, llm_ops.llm_obj.answer, llm_query_seconds=round(time()-start_time, 3))
