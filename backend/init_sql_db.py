@@ -93,8 +93,10 @@ class InitDatabase:
                 await session.commit()
                 print(f"Inserted {len(api_settings_objects)} api_settings rows")
                 
+                # default retrieval parameters for api_groups and group_vdbs (NOT NULL columns)
+                def_retr_params = next(i['value'] for i in api_settings_initial_data if i['name'] == 'gvdbs_def_retr_params')
                 api_groups_objects = [
-                    ApiGroups(group_id=item['group_id'], group_name=item['group_name'], created_at=utcnow())
+                    ApiGroups(group_id=item['group_id'], group_name=item['group_name'], gvdbs_retr_params=def_retr_params, created_at=utcnow())
                     for item in api_groups_initial_data                
                 ]
                 session.add_all(api_groups_objects)
@@ -132,6 +134,7 @@ class InitDatabase:
                         gvdbs_url=item['gvdbs_url'], 
                         gvdbs_collection=item['gvdbs_collection'], 
                         gvdbs_emb_model=item['gvdbs_emb_model'],
+                        gvdbs_retr_params=def_retr_params,
                         gvdbs_created_at=utcnow()
                     )
                     for item in group_vdbs_initial_data                

@@ -1,11 +1,30 @@
 [
-  { "name": "app_version", "value": "0.48.0" },
-  { "name": "db_version", "value": "0.12" },
-  { "name": "webapp_main_color", "value": "gray" },
-  { "name": "suppress_retrieval_parameters", "value": "FALSE" },
-  { "name": "index_page", "value": "Empty index page" },
+  {
+    "name": "app_version",
+    "value": "0.48.0"
+  },
+  {
+    "name": "db_version",
+    "value": "0.12"
+  },
+  {
+    "name": "webapp_main_color",
+    "value": "gray"
+  },
+  {
+    "name": "suppress_retrieval_parameters",
+    "value": "FALSE"
+  },
+  {
+    "name": "index_page",
+    "value": "Empty index page"
+  },
   {
     "name": "gvdbs_def_retr_params",
     "value": "{\"search_type\": \"similarity\", \"search_kwargs__similarity\": {\"k\": 10}, \"search_kwargs__mmr\": {\"k\": 10, \"fetch_k\": 20, \"lambda_mult\": 0.5}, \"search_kwargs__similarity_score_threshold\": {\"k\": 10, \"score_threshold\": 0.5}}"
+  },
+  {
+    "name": "future",
+    "value": ""
   }
 ]

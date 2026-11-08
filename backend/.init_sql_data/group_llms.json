@@ -11,33 +11,78 @@
   {
     "group_id": 1,
     "gllms_seqn": 2,
-    "gllms_type": "ollama_local",
-    "gllms_name": "Ollama Gemma3",
-    "gllms_api_base": "ollama_local",
-    "gllms_model": "gemma3",
-    "gllms_api_key": "ollama"
+    "gllms_type": "claude",
+    "gllms_name": "Claude Sonnet 5",
+    "gllms_api_base": "https://api.anthropic.com/v1",
+    "gllms_model": "claude-sonnet-5",
+    "gllms_api_key": ""
   },
   {
     "group_id": 1,
     "gllms_seqn": 3,
     "gllms_type": "claude",
-    "gllms_name": "Claude Sonnet 5",
+    "gllms_name": "Claude Opus 5",
     "gllms_api_base": "https://api.anthropic.com/v1",
-    "gllms_model": "claude-sonnet-5",
-    "gllms_api_key": "sk-ant-your-anthropic-key"
+    "gllms_model": "claude-opus-5",
+    "gllms_api_key": ""
   },
   {
-    "group_id": 3,
-    "gllms_seqn": 1,
-    "gllms_type": "claude",
-    "gllms_name": "Claude Sonnet 5",
-    "gllms_api_base": "https://api.anthropic.com/v1",
-    "gllms_model": "claude-sonnet-5",
-    "gllms_api_key": "sk-ant-your-anthropic-key"
+    "group_id": 1,
+    "gllms_seqn": 4,
+    "gllms_type": "chatgpt",
+    "gllms_name": "GPT 5.6 Terra",
+    "gllms_api_base": "",
+    "gllms_model": "gpt-5.6-terra",
+    "gllms_api_key": ""
   },
   {
-    "group_id": 3,
-    "gllms_seqn": 2,
+    "group_id": 1,
+    "gllms_seqn": 5,
+    "gllms_type": "chatgpt",
+    "gllms_name": "GPT 5.6 Luna",
+    "gllms_api_base": "",
+    "gllms_model": "gpt-5.6-luna",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 1,
+    "gllms_seqn": 6,
+    "gllms_type": "gemini",
+    "gllms_name": "Gemini 3.7 Flash",
+    "gllms_api_base": "",
+    "gllms_model": "gemini-3.7-flash",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 1,
+    "gllms_seqn": 7,
+    "gllms_type": "qwen",
+    "gllms_name": "Qwen 3.8 Max",
+    "gllms_api_base": "https://dashscope-us.aliyuncs.com/compatible-mode/v1",
+    "gllms_model": "qwen3.8-max",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 1,
+    "gllms_seqn": 8,
+    "gllms_type": "mistral",
+    "gllms_name": "Mistral Large",
+    "gllms_api_base": "https://api.mistral.ai/v1",
+    "gllms_model": "mistral-large-latest",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 1,
+    "gllms_seqn": 9,
+    "gllms_type": "mistral",
+    "gllms_name": "Mistral Small",
+    "gllms_api_base": "https://api.mistral.ai/v1",
+    "gllms_model": "mistral-small-latest",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 1,
+    "gllms_seqn": 10,
     "gllms_type": "ollama_local",
     "gllms_name": "Ollama Gemma3",
     "gllms_api_base": "ollama_local",
@@ -46,20 +91,110 @@
   },
   {
     "group_id": 1,
+    "gllms_seqn": 11,
+    "gllms_type": "ollama_remote",
+    "gllms_name": "Ollama remote (set host and model)",
+    "gllms_api_base": "http://OLLAMA_HOST:11434/v1",
+    "gllms_model": "gemma3",
+    "gllms_api_key": "ollama"
+  },
+  {
+    "group_id": 2,
+    "gllms_seqn": 1,
+    "gllms_type": "dummy",
+    "gllms_name": "Dummy LLM",
+    "gllms_api_base": "",
+    "gllms_model": "Dummy model",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 2,
+    "gllms_seqn": 2,
+    "gllms_type": "claude",
+    "gllms_name": "Claude Sonnet 5",
+    "gllms_api_base": "https://api.anthropic.com/v1",
+    "gllms_model": "claude-sonnet-5",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 2,
+    "gllms_seqn": 3,
+    "gllms_type": "claude",
+    "gllms_name": "Claude Opus 5",
+    "gllms_api_base": "https://api.anthropic.com/v1",
+    "gllms_model": "claude-opus-5",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 2,
     "gllms_seqn": 4,
+    "gllms_type": "chatgpt",
+    "gllms_name": "GPT 5.6 Terra",
+    "gllms_api_base": "",
+    "gllms_model": "gpt-5.6-terra",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 2,
+    "gllms_seqn": 5,
+    "gllms_type": "chatgpt",
+    "gllms_name": "GPT 5.6 Luna",
+    "gllms_api_base": "",
+    "gllms_model": "gpt-5.6-luna",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 2,
+    "gllms_seqn": 6,
+    "gllms_type": "gemini",
+    "gllms_name": "Gemini 3.7 Flash",
+    "gllms_api_base": "",
+    "gllms_model": "gemini-3.7-flash",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 2,
+    "gllms_seqn": 7,
     "gllms_type": "qwen",
     "gllms_name": "Qwen 3.8 Max",
     "gllms_api_base": "https://dashscope-us.aliyuncs.com/compatible-mode/v1",
     "gllms_model": "qwen3.8-max",
-    "gllms_api_key": "sk-your-dashscope-key"
+    "gllms_api_key": ""
   },
   {
-    "group_id": 1,
-    "gllms_seqn": 5,
+    "group_id": 2,
+    "gllms_seqn": 8,
     "gllms_type": "mistral",
     "gllms_name": "Mistral Large",
     "gllms_api_base": "https://api.mistral.ai/v1",
     "gllms_model": "mistral-large-latest",
-    "gllms_api_key": "your-mistral-api-key"
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 2,
+    "gllms_seqn": 9,
+    "gllms_type": "mistral",
+    "gllms_name": "Mistral Small",
+    "gllms_api_base": "https://api.mistral.ai/v1",
+    "gllms_model": "mistral-small-latest",
+    "gllms_api_key": ""
+  },
+  {
+    "group_id": 2,
+    "gllms_seqn": 10,
+    "gllms_type": "ollama_local",
+    "gllms_name": "Ollama Gemma3",
+    "gllms_api_base": "ollama_local",
+    "gllms_model": "gemma3",
+    "gllms_api_key": "ollama"
+  },
+  {
+    "group_id": 2,
+    "gllms_seqn": 11,
+    "gllms_type": "ollama_remote",
+    "gllms_name": "Ollama remote (set host and model)",
+    "gllms_api_base": "http://OLLAMA_HOST:11434/v1",
+    "gllms_model": "gemma3",
+    "gllms_api_key": "ollama"
   }
 ]

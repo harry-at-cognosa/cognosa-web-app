@@ -9,30 +9,12 @@
     "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2"
   },
   {
-    "group_id": 1,
-    "gvdbs_seqn": 2,
-    "gvdbs_type": "pgvector",
-    "gvdbs_name": "PGVector collection_1 db",
-    "gvdbs_url": "pg_local",
-    "gvdbs_collection": "collection_1",
-    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2"
-  },
-  {
-    "group_id": 1,
-    "gvdbs_seqn": 3,
-    "gvdbs_type": "chroma",
-    "gvdbs_name": "Chroma collection_1 db",
-    "gvdbs_url": "chroma_local",
-    "gvdbs_collection": "collection_1",
-    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2"
-  },
-  {
-    "group_id": 3,
-    "gvdbs_seqn": 4,
+    "group_id": 2,
+    "gvdbs_seqn": 1,
     "gvdbs_type": "qdrant",
-    "gvdbs_name": "Qdrant wab_group_products db",
+    "gvdbs_name": "Qdrant customer_docs db",
     "gvdbs_url": "qdrant_local",
-    "gvdbs_collection": "wab_group_products",
+    "gvdbs_collection": "customer_docs",
     "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2"
   }
 ]
