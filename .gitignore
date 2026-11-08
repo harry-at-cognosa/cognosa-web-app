@@ -132,3 +132,8 @@ dmypy.json
 backend/tools/ingest_dev/furocad_out/*.jsonl
 .DS_Store
 20000
+
+# Local tooling, credentials dir, runtime markers
+.claude/
+.ssh/
+.qdrant-initialized
