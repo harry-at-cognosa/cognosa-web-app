@@ -29,6 +29,8 @@ Source: local `cwa_db`, `doc_tasks.doc_task_id = 175`, run 2026-10-11 16:26–16
 
 **Possible fixes.** Cheap: snapshot the first query's `input_text`, `gvdbs_cfg_json`, `sent_to_llm`, timings and tokens into new `_q1` columns before the overwrite. Larger: a separate `doc_task` row per question.
 
+**For the future `doc_tasks` column change.** The overwrite happens in `backend/cwa_lib/sql_tables/doc_tasks.py:231-245`. That is where the follow-up sets the fields listed above on the existing row and increments `question_number`. Any snapshot columns (for example `_q1` copies) would be filled there, before those assignments. `question_number > 1` already raises "Task already has follow-up question", so there is only ever one follow-up per row. This is deferred: it is not an issue for now.
+
 ---
 
 ## Question 2 (Harry)
