@@ -109,5 +109,20 @@ regenerated from a known-good environment.
 
 ---
 
+## 6. Manage Contexts: make the Name and Text column widths adjustable
+
+**Raised by:** Harry, 2026-11-11, while capturing screens for the SBS demo video (p67_sbs_demo).
+
+On Manage Contexts (`/app/manage_contexts`, `frontend/src/pages/ManageContexts/`) the Name
+column takes most of the table width and the Text column is narrow, so each context's text
+shows only its first five or six wrapped lines. Reading a whole context means dragging the
+text box's resize handle taller, row by row, or opening Edit.
+
+**Wanted:** adjustable widths for the Name and Text columns (drag to resize), so the Text
+column can be given the room. A wider default for Text would help on its own: the names are
+short and the text is the content.
+
+---
+
 *Items 2–5 were observed by Claude during the p666 CPA collection rebuild and are recorded
 here for triage; delete any that are not worth tracking.*
