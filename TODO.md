@@ -124,5 +124,38 @@ short and the text is the content.
 
 ---
 
+## 7. Manage Doc Tasks: filter rows on column values
+
+**Raised by:** Harry, 2026-11-12. Future feature.
+
+On Manage Doc Tasks (`/app/manage_doc_tasks`; `backend/cwa_lib/pages/su_manage_doc_tasks.py`
+and `ga_manage_doc_tasks.py`, `frontend/src/pages/SuManageDocTasks/`, `GaManageDocTasks/`)
+the only row filter today is the **Group ID: Name** dropdown.
+
+**Wanted:**
+
+- **User ID / Name** — a dropdown like the group one, cascading from it: list only the users
+  that survive the group selection to its left, and further limit the rows.
+- **`status`**, **`gvdbs_id`**, **`gllms_id`** — filter on value.
+- **`fetched_at`** — user-set minimum and maximum datetime (a range; the control is open).
+
+Filters combine (AND) with each other and with the group selection.
+
+---
+
+## 8. Manage Doc Tasks: column selection and column resizing
+
+**Raised by:** Harry, 2026-11-12. Future feature. Two requirements, on Manage Doc Tasks
+(`/app/manage_doc_tasks`; same files as item 7).
+
+1. **Column selection.** The first four columns — doc task id, Group ID: Name,
+   User ID / Name, status — are always shown. Every column after those is selectable: the
+   user chooses whether it is included in the visible set of columns on the page. Harry has
+   a UX in mind for the selector; ask him for it before designing one.
+2. **Column resizing.** Adjustable column widths (drag to resize), as item 6 asks for
+   Manage Contexts.
+
+---
+
 *Items 2–5 were observed by Claude during the p666 CPA collection rebuild and are recorded
 here for triage; delete any that are not worth tracking.*
