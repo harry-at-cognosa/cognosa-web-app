@@ -134,6 +134,7 @@ the only row filter today is the **Group ID: Name** dropdown.
 
 **Wanted:**
 
+- **ID (`doc_task_id`)** — a single value, or a minimum and/or maximum (a range).
 - **User ID / Name** — a dropdown like the group one, cascading from it: list only the users
   that survive the group selection to its left, and further limit the rows.
 - **`status`**, **`gvdbs_id`**, **`gllms_id`** — filter on value.
@@ -154,6 +155,27 @@ Filters combine (AND) with each other and with the group selection.
    a UX in mind for the selector; ask him for it before designing one.
 2. **Column resizing.** Adjustable column widths (drag to resize), as item 6 asks for
    Manage Contexts.
+
+---
+
+## 9. Manage Doc Tasks: raise the rows-per-page maximum, and make it a setting
+
+**Raised by:** Harry, 2026-11-12.
+
+Both Manage Doc Tasks pages inherit `max_limit = 20` and `select_limit = [5, 10, 20]`, the
+class defaults at `backend/cwa_lib/pydantic_schemas/generic_table.py:36`. The server clamps
+the requested limit to `max_limit` (`backend/cwa_lib/pages/__init__.py:86`). Since the Excel
+and JSON exports write only the current page, no single export can exceed 20 rows.
+
+**Wanted:**
+
+- The maximum comes from a setting, `doc_task_max_rows_ret`, default **50**, in place of
+  the hardcoded value. It lives in the existing `api_settings` table (Manage API Settings
+  page) and is system-wide, not per group.
+- `select_limit = [5, 10, 20, 50]` on both pages.
+
+The Limit box is a number input with the `select_limit` values as suggestions, so a value
+off the list can already be typed: with the setting at 75, a user could enter 40.
 
 ---
 
