@@ -13,6 +13,7 @@ class ColumnType(BaseModel):
     default: str | int | bool | None = None
     select: list[SelectOption] | None = None
     min_width: str | None = None
+    width: str | None = None  # default column width (CSS value), e.g. '60%'
     cu_required: bool = False  # create/update edit control: mark *
     cu_edit_msg: str = ''  # create/update edit control: description below
 
@@ -27,6 +28,8 @@ class TableOptions(BaseModel):
     update__ask_columns: list[str] = []  # on button Update, ask this column names values
     delete__ask_columns: list[str] = []  # on button Delete, ask this column names values
     order_by__allow: list[str] = []
+    # columns whose width the user may change by dragging the header's right edge
+    resize__allow: list[str] = []
     # Feature 202: columns the client may filter on (equality). Empty = no filter row.
     filter__allow: list[str] = []
     # additional values e.g. {'group_id_name': {<group_id>: <group_name>, ...}, ...}

@@ -49,6 +49,28 @@ groups to `api_groups.json` first.
 
 ---
 
+## 6. Manage Contexts: make the Name and Text column widths adjustable
+
+**Raised by:** Harry, 2026-11-11, while capturing screens for the SBS demo video (p67_sbs_demo).
+
+On Manage Contexts (`/app/manage_contexts`, `frontend/src/pages/ManageContexts/`) the Name
+column takes most of the table width and the Text column is narrow, so each context's text
+shows only its first five or six wrapped lines. Reading a whole context means dragging the
+text box's resize handle taller, row by row, or opening Edit.
+
+**Wanted:** adjustable widths for the Name and Text columns (drag to resize), so the Text
+column can be given the room. A wider default for Text would help on its own: the names are
+short and the text is the content.
+
+**Done 2026-11-13.** Name and Text each have a grip on the right edge of the column header:
+drag to resize, double-click to return to the default. Text defaults to 65% of the table
+width. Widths are kept per browser (localStorage), not per user or group. Built into the
+shared table (`frontend/src/tables/`): a page opts in with `TableOptions.resize__allow` and
+may set a default `ColumnType.width` (`backend/cwa_lib/pydantic_schemas/generic_table.py`;
+used in `backend/cwa_lib/pages/manage_contexts.py`).
+
+---
+
 ## 10. New Query: keep collection, retrieval parameters, context and LLM
 
 **Raised by:** Harry, 2026-11-13, following the retrieval-filter carry-over fix.

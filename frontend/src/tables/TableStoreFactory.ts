@@ -21,6 +21,7 @@ export interface TableColumnData {
   default: string | number | boolean | null;
   select: SelectOption[] | null;
   min_width: string | null;
+  width?: string | null;
   cu_required: boolean;
   cu_edit_msg: string;
 }
@@ -38,6 +39,7 @@ export interface TableOptions {
   delete__ask_columns: string[];
   order_by__allow: string[];
   filter__allow?: string[];
+  resize__allow?: string[];
   add_values: Record<string, any>;
   default_limit: number;
   max_limit: number;

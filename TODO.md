@@ -7,7 +7,7 @@ Started 2026-09-02 during the CPA collection rebuild (p666_cpa_load).
 
 ---
 
-*Items 1, 5 and 10 are in `todo_archive.md` (moved 2026-11-13). Numbers are kept stable, so
+*Items 1, 5, 6 and 10 are in `todo_archive.md` (moved 2026-11-13). Numbers are kept stable, so
 the list starts at 2.*
 
 ---
@@ -78,21 +78,6 @@ holds.
 
 ---
 
-## 6. Manage Contexts: make the Name and Text column widths adjustable
-
-**Raised by:** Harry, 2026-11-11, while capturing screens for the SBS demo video (p67_sbs_demo).
-
-On Manage Contexts (`/app/manage_contexts`, `frontend/src/pages/ManageContexts/`) the Name
-column takes most of the table width and the Text column is narrow, so each context's text
-shows only its first five or six wrapped lines. Reading a whole context means dragging the
-text box's resize handle taller, row by row, or opening Edit.
-
-**Wanted:** adjustable widths for the Name and Text columns (drag to resize), so the Text
-column can be given the room. A wider default for Text would help on its own: the names are
-short and the text is the content.
-
----
-
 ## 7. Manage Doc Tasks: filter rows on column values
 
 **Raised by:** Harry, 2026-11-12. Future feature.
@@ -122,8 +107,9 @@ Filters combine (AND) with each other and with the group selection.
    User ID / Name, status — are always shown. Every column after those is selectable: the
    user chooses whether it is included in the visible set of columns on the page. Harry has
    a UX in mind for the selector; ask him for it before designing one.
-2. **Column resizing.** Adjustable column widths (drag to resize), as item 6 asks for
-   Manage Contexts.
+2. **Column resizing.** Adjustable column widths (drag to resize), as item 6 did for
+   Manage Contexts. The mechanism from item 6 is generic: list the columns in the page's
+   `TableOptions.resize__allow` (and give a column a default `width` in its `ColumnType`).
 
 ---
 

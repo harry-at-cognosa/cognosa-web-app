@@ -3,6 +3,8 @@ import ColumnDisplayName from "./ColumnDisplayName";
 import HeaderColumnOrderArrow from "./HeaderColumnOrderArrow";
 import styles from "./HeaderColumnsRow.module.css";
 import clsx from "clsx";
+import ColumnResizeHandle from "./ColumnResizeHandle";
+import { useColumnWidths } from "../hooks/useColumnWidths";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -11,7 +13,19 @@ interface Props {
 export default function HeaderColumnsRow({ useStore }: Props) {
   const tableStore = useStore();
   const { data } = tableStore;
+  const userWidths = useColumnWidths((state) => state.widths);
   if (!data) return null;
+  const tableWidths = userWidths[data.name] || {};
+  const resizeAllow = data.table_options.resize__allow || [];
+  // a user-set width wins over the column's default width / min width
+  function widthStyle(col: string) {
+    const px = tableWidths[col];
+    if (px) return { width: px + "px", minWidth: px + "px" };
+    return {
+      width: data!.columns[col].width || undefined,
+      minWidth: data!.columns[col].min_width || "",
+    };
+  }
   async function onHeaderClick(col: string) {
     if (!data?.table_options.order_by__allow.includes(col)) return;
     if (tableStore.busy) return;
@@ -47,9 +61,10 @@ export default function HeaderColumnsRow({ useStore }: Props) {
             tableStore.nextRequest.order_by === col ? "bg-tc-300" : "bg-tc-100",
             data.table_options.order_by__allow.includes(col)
               ? styles.sortableHeader
-              : null
+              : null,
+            resizeAllow.includes(col) ? styles.resizableHeader : null
           )}
-          style={{ minWidth: data.columns[col].min_width || "" }}
+          style={widthStyle(col)}
           onClick={() => {
             onHeaderClick(col);
           }}
@@ -65,6 +80,9 @@ export default function HeaderColumnsRow({ useStore }: Props) {
             col={col}
             nextRequest={tableStore.nextRequest}
           ></HeaderColumnOrderArrow>
+          {resizeAllow.includes(col) ? (
+            <ColumnResizeHandle table={data.name} col={col} />
+          ) : null}
         </th>
       ))}
       {/* delete th */}

@@ -30,7 +30,7 @@ manage_contexts__query_columns = {
                           cu_edit_msg="Placement # in the list"),
     'gc_name': ColumnType(display='Name', type='string', default="New context", 
                           cu_required=True, cu_edit_msg=description__gc_name),
-    'gc_text': ColumnType(display='Text', type='text', default=default_gc_text, 
+    'gc_text': ColumnType(display='Text', type='text', default=default_gc_text, width='65%',
                           cu_required=True, cu_edit_msg=description__gc_text),
 }
 
@@ -41,7 +41,8 @@ manage_contexts__table_options = TableOptions(
     create__ask_columns=['gc_seqn', 'gc_name', 'gc_text'],
     update__ask_columns=['gc_seqn', 'gc_name', 'gc_text'],
     delete__ask_columns=['gc_name'],
-    order_by__allow=['gc_seqn', 'gc_name']
+    order_by__allow=['gc_seqn', 'gc_name'],
+    resize__allow=['gc_name', 'gc_text']
 )
 
 class ManageContextsTableRead(GenericTableRead):

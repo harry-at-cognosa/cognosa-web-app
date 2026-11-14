@@ -6,6 +6,7 @@ import type { createTableStore } from "../TableStoreFactory";
 import { BusyCell } from "../CellRenders/BusyCell";
 import { useLayoutEffect, useRef } from "react";
 import { fixTextareaHeights } from "../functions/fixTextareaHeights";
+import { useColumnWidths } from "../hooks/useColumnWidths";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -15,12 +16,19 @@ export default function TableBody({ useStore }: Props) {
   const tableStore = useStore();
   const { data } = tableStore;
   const tbodyRef = useRef<HTMLTableSectionElement | null>(null);
+  // text reflows when a column is resized, so the row heights change
+  const userWidths = useColumnWidths((state) => state.widths);
   if (!data) return null;
   const isBusy = tableStore.busy === "read";
   useLayoutEffect(() => {
     if (!tbodyRef.current) return;
     fixTextareaHeights(tbodyRef.current);
-  }, [data.rows, data.table_options.read__visible_columns, tableStore.busy]);
+  }, [
+    data.rows,
+    data.table_options.read__visible_columns,
+    tableStore.busy,
+    userWidths,
+  ]);
   return (
     <tbody ref={tbodyRef}>
       {data.rows.map((row) => (
