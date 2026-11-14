@@ -7,8 +7,26 @@ export interface GVDBsRetrFiltersHistoryEntry {
 
 export class GVDBsRetrFiltersHistory {
   // data: {doc_task_id: {gvdbs_id: GVDBsRetrFiltersHistoryEntry, ...}, ...}
+  // Key 0 is the query being composed, which has no doc_task_id yet.
   static data: Record<number, Record<number, GVDBsRetrFiltersHistoryEntry>> =
     {};
+  // A new query starts with no filters on any collection.
+  static clearNewQuery() {
+    delete GVDBsRetrFiltersHistory.data[0];
+  }
+  // A cloned query starts with the filters of the query it was cloned from.
+  static copyToNewQuery(doc_task_id: number | null, gvdbs_id: number | null) {
+    if (!doc_task_id) return;
+    const entry = GVDBsRetrFiltersHistory.get(doc_task_id, gvdbs_id);
+    GVDBsRetrFiltersHistory.clearNewQuery();
+    if (entry)
+      GVDBsRetrFiltersHistory.update(
+        null,
+        gvdbs_id,
+        entry.global_not_value,
+        entry.rf_field_id__values,
+      );
+  }
   static updateFromGVDBsCfgJSON(
     doc_task_id: number | null,
     gvdbs_id: number | null,

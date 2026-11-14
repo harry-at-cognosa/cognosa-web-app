@@ -38,11 +38,11 @@ export default function GVDBsRetrFiltersTable() {
             <tr key={d.key}>
               <th
                 className={"text-nowrap py-0"}
-                style={{ width: "1%", backgroundColor: "#fff0" }}
+                style={{ width: "1%", backgroundColor: "#fff3cd" }}
               >
                 {d.display}
               </th>
-              <th className="py-0" style={{ backgroundColor: "#fff0" }}>
+              <th className="py-0" style={{ backgroundColor: "#fff3cd" }}>
                 {d.is_not ? (
                   <span className="me-2 pb-1" style={{ color: "#e00000" }}>
                     NOT:

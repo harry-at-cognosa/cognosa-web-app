@@ -54,6 +54,18 @@
   border-color: var(--theme-color-500) !important;
 }
 
+/* Retrieval Filters button while at least one filter is set */
+.btn-filters-active {
+  background-color: #ffc107 !important;
+  border-color: #e0a800 !important;
+}
+.btn-filters-active:hover {
+  background-color: #e0a800 !important;
+}
+.btn-filters-active:active {
+  background-color: #c69500 !important;
+}
+
 /* Feature 201: Save Result alone in the filters row */
 .no-left-margin-children > .ms-2 {
   margin-left: 0 !important;

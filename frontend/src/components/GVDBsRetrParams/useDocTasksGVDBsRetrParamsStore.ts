@@ -14,6 +14,10 @@ interface DocTasksGVDBsRetrParamsActions {
   setFromDocTaskData: (gvdbs_cfg_json: string) => void;
   getShortName: () => string;
   getGVDBsRetrParamsDict: () => DocTasksGVDBsCfgState | null;
+  // Collection id + its default parameters string that the current values
+  // were last initialised from; see QuerySelectVDB.
+  defaultsKey: string | null;
+  setDefaultsKey: (defaultsKey: string | null) => void;
 }
 
 export const useDocTasksGVDBsRetrParamsStore = create<
@@ -25,6 +29,8 @@ export const useDocTasksGVDBsRetrParamsStore = create<
   search_kwargs__similarity_score_threshold: null,
   isLoaded: false,
   setIsLoaded: (isLoaded: boolean) => set({ isLoaded }),
+  defaultsKey: null,
+  setDefaultsKey: (defaultsKey: string | null) => set({ defaultsKey }),
   getGVDBsRetrParamsDict: () => {
     let search_type = get().search_type;
     let sk_sim = get().search_kwargs__similarity;

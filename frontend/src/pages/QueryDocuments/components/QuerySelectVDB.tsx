@@ -36,11 +36,12 @@ export default function QuerySelectVDB() {
   }, [waitingState, current.gvdbs_id]);
 
   // update gvdbs_retr_params from group_vdbs row if necessary.
-  // After copying the collection defaults, re-apply the parameters of the
-  // query that is currently loaded (previousQuery = last submitted query or
-  // the task loaded from history) so a saved query shows its own values,
-  // not the defaults. Runs independently of the Retrieval Filters effect
-  // below, which flips its isLoaded flag on every poll.
+  // A loaded query (previousQuery = last submitted query or the task loaded
+  // from history) shows its own values on top of the collection defaults.
+  // Otherwise the collection defaults are applied only when the collection
+  // or its defaults changed, so parameters the user set by hand survive
+  // "New Query". Runs independently of the Retrieval Filters effect below,
+  // which flips its isLoaded flag on every poll.
   useEffect(() => {
     if (docTaskOptionsStore.needReload) return;
     if (!current.gvdbs_id || current.gvdbs_id === -1) return;
@@ -48,13 +49,19 @@ export default function QuerySelectVDB() {
     const gvdbs_retr_params_str = gvdbs_row?.gvdbs_retr_params;
     if (!gvdbs_retr_params_str) return;
     defGVDBsRetrParamsStore.setData(gvdbs_retr_params_str);
-    curGVDBsRetrParamsStore.copyFromDefault();
+    const defaultsKey = current.gvdbs_id + ":" + gvdbs_retr_params_str;
     const pq = current.previousQuery;
     if (pq && pq.gvdbs_id === current.gvdbs_id && pq.gvdbs_cfg_json) {
+      curGVDBsRetrParamsStore.copyFromDefault();
       curGVDBsRetrParamsStore.setFromDocTaskData(
         JSON.stringify(pq.gvdbs_cfg_json),
       );
+    } else if (
+      useDocTasksGVDBsRetrParamsStore.getState().defaultsKey !== defaultsKey
+    ) {
+      curGVDBsRetrParamsStore.copyFromDefault();
     }
+    curGVDBsRetrParamsStore.setDefaultsKey(defaultsKey);
   }, [
     docTaskOptionsStore.needReload,
     defGVDBsRetrParamsStore.isLoaded,

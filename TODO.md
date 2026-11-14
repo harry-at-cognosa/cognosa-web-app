@@ -179,5 +179,28 @@ off the list can already be typed: with the setting at 75, a user could enter 40
 
 ---
 
+## 10. New Query: keep collection, retrieval parameters, context and LLM
+
+**Raised by:** Harry, 2026-11-13, following the retrieval-filter carry-over fix (branch
+`worktree-clear-filters-on-new-query`).
+
+Today "New Query" (`setNewQuery` in
+`frontend/src/pages/QueryDocuments/stores/useDocTasksCurrent.ts`, called from
+`QueriesListBar.tsx`) resets everything to defaults: Document Collection, Retrieval
+Parameters, Context and LLM, along with the query text.
+
+**Wanted:** New Query clears the **retrieval filters** (and the query text, short name and
+response) but keeps the **Document Collection, Retrieval Parameters, Context and LLM** as
+the user last had them. Assume the user will reuse those settings; they change only when
+the user resets or changes them by hand.
+
+Related to item 1, which asks for retrieval settings to persist across queries.
+
+**Done 2026-11-13** on the same branch. Changing the Document Collection by hand still
+loads that collection's default retrieval parameters, and opening a query from the history
+list still shows that query's own settings; New Query then keeps whatever is showing.
+
+---
+
 *Items 2–5 were observed by Claude during the p666 CPA collection rebuild and are recorded
 here for triage; delete any that are not worth tracking.*

@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Button, Container, Modal } from "react-bootstrap";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
-import { ArrowRepeat, CheckCircleFill, GearFill } from "react-bootstrap-icons";
+import {
+  ArrowRepeat,
+  CheckCircleFill,
+  FunnelFill,
+  GearFill,
+} from "react-bootstrap-icons";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useDefaultGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDefaultGVDBsRetrFiltersStore";
 import { useModalGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useModalGVDBsRetrFiltersStore";
@@ -28,6 +33,9 @@ export default function DocTasksGVDBsRetrFilters({
     !DocTaskOptionsStore.needReload &&
     Boolean(defStore.isLoaded && defStore.fields) &&
     gvdbs_id !== -1;
+
+  // Number of filter fields that hold a value; drives the active indicator.
+  const activeCount = curStore.getDict()?.values.length || 0;
 
   const handleCancel = () => {
     setShow(false);
@@ -83,15 +91,29 @@ export default function DocTasksGVDBsRetrFilters({
     <Container fluid className="mb-2 p-0">
       <Button
         variant="outline-secondary"
-        className="fw-bold btn-tc-300-400"
+        className={
+          "fw-bold " +
+          (activeCount ? "btn-filters-active" : "btn-tc-300-400")
+        }
         style={{
           color: "black",
         }}
         onClick={handleShow}
+        title={
+          activeCount
+            ? "Retrieval filters are limiting this query"
+            : "No retrieval filters set"
+        }
       >
-        <GearFill size={"20px"} style={{ marginBottom: "2px" }}></GearFill>
+        {activeCount ? (
+          <FunnelFill size={"20px"} style={{ marginBottom: "2px" }} />
+        ) : (
+          <GearFill size={"20px"} style={{ marginBottom: "2px" }}></GearFill>
+        )}
         &nbsp;
-        {"Retrieval Filters "}
+        {activeCount
+          ? `Retrieval Filters: ${activeCount} active`
+          : "Retrieval Filters "}
       </Button>
       <Button
         variant="outline-secondary"

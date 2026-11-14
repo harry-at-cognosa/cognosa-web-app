@@ -3,6 +3,8 @@ import type { DocTasksQuery } from "../models/docTasksQuery";
 import type { DocTasksShortItem } from "../models/docTasksShortItem";
 import { createResettableStore } from "../../../api/createResettableStore";
 import type { DocTasksGVDBsCfgState } from "../../../components/GVDBsRetrParams/types";
+import { GVDBsRetrFiltersHistory } from "../../../components/GVDBsRetrFilters/history";
+import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
 
 interface DocTasksCurrentState {
   doc_task_id: number | null;
@@ -163,11 +165,22 @@ export const useDocTasksCurrentStore =
         llm_tokens_received: null,
         is_error: null,
       }),
-    setNewQuery: () => set(defaultState),
+    setNewQuery: () => {
+      // Retrieval filters never carry over into a new query.
+      GVDBsRetrFiltersHistory.clearNewQuery();
+      useDocTasksGVDBsRetrFiltersStore.getState().reset();
+      // Collection, context and LLM stay as the user last had them.
+      const { gvdbs_id, gllms_id, gc_id } = get();
+      set({ ...defaultState, gvdbs_id, gllms_id, gc_id });
+    },
     isSameAsPreviousQuery: (query: DocTasksQuery) => {
       return compareWithPreviousQuery(query, get().previousQuery);
     },
-    cloneQuery: () =>
+    cloneQuery: () => {
+      GVDBsRetrFiltersHistory.copyToNewQuery(
+        get().doc_task_id,
+        get().gvdbs_id,
+      );
       set({
         doc_task_id: null,
         status: null,
@@ -182,5 +195,6 @@ export const useDocTasksCurrentStore =
         llm_tokens_received: null,
         is_processing: null,
         is_error: null,
-      }),
+      });
+    },
   }));
