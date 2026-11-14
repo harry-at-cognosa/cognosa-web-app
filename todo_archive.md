@@ -69,6 +69,11 @@ shared table (`frontend/src/tables/`): a page opts in with `TableOptions.resize_
 may set a default `ColumnType.width` (`backend/cwa_lib/pydantic_schemas/generic_table.py`;
 used in `backend/cwa_lib/pages/manage_contexts.py`).
 
+**Added 2026-11-14:** the whole Manage Contexts table can be made wider or narrower with a
+grip on its right edge (drag; double-click to reset; never wider than the window; kept per
+browser). The page wraps its table in `frontend/src/tables/elements/ResizableTableWidth.tsx`
+in place of the fixed Bootstrap `container`; other pages can do the same.
+
 ---
 
 ## 10. New Query: keep collection, retrieval parameters, context and LLM

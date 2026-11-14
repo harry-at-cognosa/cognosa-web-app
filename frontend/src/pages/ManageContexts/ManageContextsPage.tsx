@@ -1,11 +1,12 @@
 import { useTopNavBarTitle } from "../../hooks/useTopNavBarTitle";
+import ResizableTableWidth from "../../tables/elements/ResizableTableWidth";
 import TableManageContexts from "./TableManageContexts";
 
 export default function ManageContextsPage() {
   useTopNavBarTitle("Manage Contexts");
   return (
-    <div className="container my-4">
+    <ResizableTableWidth table="manage_contexts">
       <TableManageContexts />
-    </div>
+    </ResizableTableWidth>
   );
 }
