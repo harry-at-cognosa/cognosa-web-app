@@ -3,18 +3,252 @@
     "group_id": 1,
     "gvdbs_seqn": 1,
     "gvdbs_type": "qdrant",
-    "gvdbs_name": "Qdrant collection_1 db",
+    "gvdbs_name": "cpa-c42t_collection (qdrant-Sim20)",
     "gvdbs_url": "qdrant_local",
+    "gvdbs_collection": "cpa-c42t_collection",
+    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "enabled": true,
+    "gvdbs_retr_params": {
+      "search_type": "similarity",
+      "search_kwargs__similarity": {
+        "k": 20
+      },
+      "search_kwargs__mmr": {
+        "k": 20,
+        "fetch_k": 35,
+        "lambda_mult": 0.5
+      },
+      "search_kwargs__similarity_score_threshold": {
+        "k": 20,
+        "score_threshold": 0.5
+      }
+    },
+    "gvdbs_retr_filters": {}
+  },
+  {
+    "group_id": 1,
+    "gvdbs_seqn": 3,
+    "gvdbs_type": "pgvector",
+    "gvdbs_name": "PGVector collection_1 db",
+    "gvdbs_url": "pg_local",
     "gvdbs_collection": "collection_1",
-    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2"
+    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "enabled": false,
+    "gvdbs_retr_params": {
+      "search_type": "similarity",
+      "search_kwargs__similarity": {
+        "k": 20
+      },
+      "search_kwargs__mmr": {
+        "k": 20,
+        "fetch_k": 35,
+        "lambda_mult": 0.5
+      },
+      "search_kwargs__similarity_score_threshold": {
+        "k": 20,
+        "score_threshold": 0.5
+      }
+    },
+    "gvdbs_retr_filters": {}
+  },
+  {
+    "group_id": 1,
+    "gvdbs_seqn": 4,
+    "gvdbs_type": "chroma",
+    "gvdbs_name": "Chroma collection_1 db",
+    "gvdbs_url": "chroma_local",
+    "gvdbs_collection": "collection_1",
+    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "enabled": false,
+    "gvdbs_retr_params": {
+      "search_type": "similarity",
+      "search_kwargs__similarity": {
+        "k": 20
+      },
+      "search_kwargs__mmr": {
+        "k": 20,
+        "fetch_k": 35,
+        "lambda_mult": 0.5
+      },
+      "search_kwargs__similarity_score_threshold": {
+        "k": 20,
+        "score_threshold": 0.5
+      }
+    },
+    "gvdbs_retr_filters": {}
   },
   {
     "group_id": 2,
     "gvdbs_seqn": 1,
     "gvdbs_type": "qdrant",
-    "gvdbs_name": "Qdrant customer_docs db",
+    "gvdbs_name": "Architectural Lighting Solutions [SIM30]",
     "gvdbs_url": "qdrant_local",
-    "gvdbs_collection": "customer_docs",
-    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2"
+    "gvdbs_collection": "ledra_brands_products_xlsx",
+    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "enabled": true,
+    "gvdbs_retr_params": {
+      "search_type": "similarity",
+      "search_kwargs__similarity": {
+        "k": 30
+      },
+      "search_kwargs__mmr": {
+        "k": 20,
+        "fetch_k": 45,
+        "lambda_mult": 0.5
+      },
+      "search_kwargs__similarity_score_threshold": {
+        "k": 30,
+        "score_threshold": 0.52
+      }
+    },
+    "gvdbs_retr_filters": {
+      "global_not_enabled": true,
+      "fields": [
+        {
+          "rf_field_id": "base_alt",
+          "title": "Base/Alt",
+          "path": "metadata.alt_product_id",
+          "type": "select",
+          "values": [
+            "base",
+            "alt"
+          ],
+          "max_select": 1,
+          "sub_type": "ledra_base_alt"
+        },
+        {
+          "rf_field_id": "product_id",
+          "title": "Product ID",
+          "short_title": "ProdID",
+          "path": "metadata.base_product_id",
+          "type": "string",
+          "max_length": 100,
+          "sub_type": "ledra_product_id"
+        },
+        {
+          "rf_field_id": "product_name",
+          "title": "Product Name",
+          "short_title": "ProdName",
+          "path": "metadata.product_name",
+          "type": "string",
+          "max_length": 100
+        },
+        {
+          "rf_field_id": "sku",
+          "title": "SKU",
+          "path": "metadata.sku",
+          "type": "string",
+          "max_length": 100
+        },
+        {
+          "rf_field_id": "chunk_type",
+          "title": "Type",
+          "path": "metadata.chunk_type",
+          "type": "select",
+          "values": [
+            "base_key_data",
+            "base_descriptive",
+            "base_option",
+            "alt_key_data",
+            "alt_option"
+          ],
+          "max_select": -1
+        },
+        {
+          "rf_field_id": "prodseries",
+          "title": "Product Series",
+          "short_title": "ProdSeries",
+          "path": "metadata.prodseries",
+          "type": "string",
+          "max_length": 100
+        },
+        {
+          "rf_field_id": "category",
+          "title": "Select Category",
+          "short_title": "Cat",
+          "path": "metadata.category",
+          "type": "select",
+          "values": [],
+          "auto_fill": true,
+          "max_select": -1
+        },
+        {
+          "rf_field_id": "subcategory",
+          "title": "Select SubCat",
+          "short_title": "SubCat",
+          "path": "metadata.subcategory",
+          "type": "select",
+          "values": [],
+          "auto_fill": true,
+          "max_select": -1
+        },
+        {
+          "rf_field_id": "brand",
+          "title": "Brand",
+          "path": "metadata.brand",
+          "type": "string",
+          "max_length": 100
+        },
+        {
+          "rf_field_id": "product_alias",
+          "title": "Alias",
+          "path": "metadata.product_alias",
+          "type": "string",
+          "max_length": 100
+        }
+      ]
+    }
+  },
+  {
+    "group_id": 2,
+    "gvdbs_seqn": 3,
+    "gvdbs_type": "qdrant",
+    "gvdbs_name": "casambi_collection  (MMR: 25/45/0.5)",
+    "gvdbs_url": "qdrant_local",
+    "gvdbs_collection": "casambi_collection",
+    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "enabled": true,
+    "gvdbs_retr_params": {
+      "search_type": "mmr",
+      "search_kwargs__similarity": {
+        "k": 30
+      },
+      "search_kwargs__mmr": {
+        "k": 25,
+        "fetch_k": 45,
+        "lambda_mult": 0.5
+      },
+      "search_kwargs__similarity_score_threshold": {
+        "k": 20,
+        "score_threshold": 0.5
+      }
+    },
+    "gvdbs_retr_filters": {}
+  },
+  {
+    "group_id": 2,
+    "gvdbs_seqn": 2,
+    "gvdbs_type": "qdrant",
+    "gvdbs_name": "qdrant casambi (SIM 20 Retrievals)",
+    "gvdbs_url": "qdrant_local",
+    "gvdbs_collection": "casambi_collection",
+    "gvdbs_emb_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "enabled": false,
+    "gvdbs_retr_params": {
+      "search_type": "similarity",
+      "search_kwargs__similarity": {
+        "k": 20
+      },
+      "search_kwargs__mmr": {
+        "k": 20,
+        "fetch_k": 35,
+        "lambda_mult": 0.5
+      },
+      "search_kwargs__similarity_score_threshold": {
+        "k": 20,
+        "score_threshold": 0.5
+      }
+    },
+    "gvdbs_retr_filters": {}
   }
 ]

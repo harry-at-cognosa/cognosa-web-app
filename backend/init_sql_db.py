@@ -134,10 +134,13 @@ class InitDatabase:
                         gvdbs_url=item['gvdbs_url'], 
                         gvdbs_collection=item['gvdbs_collection'], 
                         gvdbs_emb_model=item['gvdbs_emb_model'],
-                        gvdbs_retr_params=def_retr_params,
+                        # optional per-row values; without them: default params, no filters, enabled
+                        gvdbs_retr_params=json.dumps(item['gvdbs_retr_params']) if item.get('gvdbs_retr_params') else def_retr_params,
+                        gvdbs_retr_filters=json.dumps(item['gvdbs_retr_filters'], indent=2) if item.get('gvdbs_retr_filters') else "{}",
+                        enabled=item.get('enabled', True),
                         gvdbs_created_at=utcnow()
                     )
-                    for item in group_vdbs_initial_data                
+                    for item in group_vdbs_initial_data
                 ]
                 session.add_all(group_vdbs_objects)
                 await session.commit()

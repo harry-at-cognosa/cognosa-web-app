@@ -7,25 +7,8 @@ Started 2026-09-02 during the CPA collection rebuild (p666_cpa_load).
 
 ---
 
-## 1. Retrieval parameter selection resets to default after every query
-
-**Raised by:** Harry, 2026-09-02.
-
-After a query completes, the UI reverts the retrieval configuration to the default. Running
-a second query with the same non-default settings means re-selecting them every time.
-
-This is worse than re-entering a single number. Different **retrieval types** take different
-*parameter fields*, not merely different values — so restoring a configuration means
-re-choosing the type and then re-populating a different set of inputs.
-
-**Current workaround:** multiple `group_vdbs` rows pointing at the same collection, each
-carrying its own default retrieval parameters. Selecting the entry swaps the whole
-configuration in one step. Group 2 does this for `casambi_collection`, and Ledra likewise.
-It works, but it is a workaround for the reset — not the reason the feature should exist.
-
-**Wanted:** retrieval settings persist across queries within a session, or an explicit
-"keep settings" control. The A/B comparison the workaround enables should not require
-duplicate database rows to be usable.
+*Items 1, 5 and 10 are in `todo_archive.md` (moved 2026-11-13). Numbers are kept stable, so
+the list starts at 2.*
 
 ---
 
@@ -92,20 +75,6 @@ Relevant now that `cpa-c42t_collection` carries `flag_a`…`flag_f`, `flags_set`
 `metadata.cpa_batch` and `metadata.cpa_source_file`, created by
 `backend/cpa/cpa_payload_indexes.py` on M1, dev and demo. Everything else above still
 holds.
-
----
-
-## 5. `group_vdbs.json` seed has drifted from production
-
-**Observed:** 2026-09-01.
-
-`backend/.init_sql_data/group_vdbs.json` holds **4 rows**. The live `group_vdbs` table on
-both demo and the M1 holds **9**, including `furocad`, `furocad_footnotes` and
-`casambi_collection` entries absent from the seed.
-
-A new instance built from the seed will not reproduce the current configuration. Either the
-seed is a deliberate minimal fixture — in which case say so in the file — or it should be
-regenerated from a known-good environment.
 
 ---
 
@@ -179,28 +148,5 @@ off the list can already be typed: with the setting at 75, a user could enter 40
 
 ---
 
-## 10. New Query: keep collection, retrieval parameters, context and LLM
-
-**Raised by:** Harry, 2026-11-13, following the retrieval-filter carry-over fix (branch
-`worktree-clear-filters-on-new-query`).
-
-Today "New Query" (`setNewQuery` in
-`frontend/src/pages/QueryDocuments/stores/useDocTasksCurrent.ts`, called from
-`QueriesListBar.tsx`) resets everything to defaults: Document Collection, Retrieval
-Parameters, Context and LLM, along with the query text.
-
-**Wanted:** New Query clears the **retrieval filters** (and the query text, short name and
-response) but keeps the **Document Collection, Retrieval Parameters, Context and LLM** as
-the user last had them. Assume the user will reuse those settings; they change only when
-the user resets or changes them by hand.
-
-Related to item 1, which asks for retrieval settings to persist across queries.
-
-**Done 2026-11-13** on the same branch. Changing the Document Collection by hand still
-loads that collection's default retrieval parameters, and opening a query from the history
-list still shows that query's own settings; New Query then keeps whatever is showing.
-
----
-
-*Items 2–5 were observed by Claude during the p666 CPA collection rebuild and are recorded
+*Items 2–4 were observed by Claude during the p666 CPA collection rebuild and are recorded
 here for triage; delete any that are not worth tracking.*
