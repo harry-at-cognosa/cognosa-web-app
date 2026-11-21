@@ -2,6 +2,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
+import remarkGfm from "remark-gfm";
 import "highlight.js/styles/github-dark.css";
 
 interface MarkdownRendererProps {
@@ -12,9 +13,20 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   return (
     <div className="markdown-content">
       <ReactMarkdown
+        // GitHub-flavoured Markdown: tables, strikethrough, task lists, bare links
+        remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
         components={
           {
+            // Bootstrap styles a table only when it carries the `table` class.
+            // The wrapper lets a wide table scroll sideways inside the answer.
+            table: ({ children }) => (
+              <div className="table-responsive">
+                <table className="table table-sm table-bordered w-auto">
+                  {children}
+                </table>
+              </div>
+            ),
             //   h1: ({ children }) => (
             //     <h1 className="text-2xl font-bold mt-6 mb-3">{children}</h1>
             //   ),
