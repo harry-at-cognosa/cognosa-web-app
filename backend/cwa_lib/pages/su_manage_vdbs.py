@@ -28,11 +28,17 @@ su_manage_vdbs__query_columns = {
     'rf_refresh_metadata': ColumnType(display='Refresh Metadata Indexes', type='boolean', default=False, 
                                       cu_edit_msg="will update select values for specified fields in Retrieval Filters"),
     'gvdbs_retr_filters': ColumnType(display='Retrieval Filters', type='gvdbs_retr_filters', default="{}"),
+    'gvdbs_chat_cfg': ColumnType(
+        display='Chat Settings', type='text', default="{}",
+        cu_edit_msg='Optional JSON for the Chat page. Keys, all optional: "search_type" (similarity, mmr, '
+                    'similarity_score_threshold), "search_kwargs" (k, fetch_k, lambda_mult, score_threshold), '
+                    '"system_prompt" (must contain {context}). {} uses the collection\'s search type with k capped at 8 '
+                    'and the built-in prompt.'),
     'gvdbs_status': ColumnType(display='Status', type='gvdbs_status'),
 }
 gvdbs_read_columns = [x for x in su_manage_vdbs__query_columns.keys() if (x not in ('rf_refresh_metadata', ))]
 gvdbs_edit_columns = [x for x in su_manage_vdbs__query_columns.keys() if (x not in ('gvdbs_id', 'gvdbs_status'))]
-gvdbs_create_columns = [x for x in gvdbs_edit_columns if (x not in ('gvdbs_retr_params', 'rf_refresh_metadata'))]
+gvdbs_create_columns = [x for x in gvdbs_edit_columns if (x not in ('gvdbs_retr_params', 'rf_refresh_metadata', 'gvdbs_chat_cfg'))]
 gvdbs_order_columns = ['gvdbs_id', 'group_id', 'enabled', 'gvdbs_seqn', 'gvdbs_type', 'gvdbs_name', 'gvdbs_url', 'gvdbs_collection']
 
 def must_recheck_status_after_update(col: str, value) -> bool:

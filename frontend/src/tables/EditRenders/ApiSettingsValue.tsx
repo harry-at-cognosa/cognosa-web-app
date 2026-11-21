@@ -64,6 +64,21 @@ export default function ApiSettingsValue({ onChange, useStore, col }: Props) {
       </Form.Select>
     );
   }
+  // Chat: number of earlier turns resent to the LLM (validated on the server)
+  if (pk_value_str === "chat_history_turns") {
+    return (
+      <Form.Control
+        type="number"
+        min={1}
+        step={1}
+        value={value_str}
+        key={key}
+        onChange={(e) => onChange(e.target.value)}
+        autoComplete="off"
+        isInvalid={isInvalid}
+      />
+    );
+  }
   if (pk_value_str === "gvdbs_def_retr_params") {
     return (
       <EditCellGVDBDefRetrParams

@@ -3,6 +3,7 @@ from pydantic import BaseModel, field_validator, ValidationError
 from .generic_table import TableQueryResult
 from common.features.gvdbs_retr_filters import FormSchemaGVDBsRF
 from common.features.gvdbs_retr_params import GVDBsDefRetrParams
+from common.features.chat_cfg import ChatCfg
 
 
 class SuManageVDBsRead(BaseModel):
@@ -17,6 +18,7 @@ class SuManageVDBsRead(BaseModel):
     gvdbs_retr_params: str
     rf_refresh_metadata: bool = False
     gvdbs_retr_filters: str
+    gvdbs_chat_cfg: str = '{}'
     gvdbs_status: str
     gvdbs_status_text: str
     class Config:
@@ -62,6 +64,17 @@ class SuManageVDBsUpdate(BaseModel):
     gvdbs_retr_params: str | None = None
     rf_refresh_metadata: bool | None = None
     gvdbs_retr_filters: str | None = None
+    gvdbs_chat_cfg: str | None = None
+    @field_validator('gvdbs_chat_cfg')
+    @staticmethod
+    def validate__gvdbs_chat_cfg(v: str | None) -> str | None:
+        if v is None:
+            return v
+        try:
+            return ChatCfg.validate_str(v.strip() or '{}')
+        except ValidationError as exc:
+            # pydantic prefixes each message with "Value error, "; one prefix is enough
+            raise ValueError("; ".join(e['msg'].removeprefix('Value error, ') for e in exc.errors())) from None
     @field_validator('gvdbs_retr_params')
     @staticmethod
     def validate__gvdbs_retr_params(v: str | None) -> str | None:
