@@ -95,7 +95,13 @@ export default function ConversationsBar({ onOpen, onNew }: Props) {
                     onOpen(item.conv_id);
                   }}
                 >
-                  <div className={styles.itemTitle} title={item.title}>
+                  {/* number first, as the Queries list does; it is the
+                      "Conversation #" of the download and of the page address */}
+                  <div
+                    className={styles.itemTitle}
+                    title={`Conversation ${item.conv_id}: ${item.title}`}
+                  >
+                    <span className="fw-bold">{item.conv_id}</span>&nbsp;
                     {item.title || <em className="text-muted">New chat</em>}
                   </div>
                   <div className={styles.meta}>

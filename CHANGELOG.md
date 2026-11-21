@@ -2,6 +2,11 @@
 
 _Nothing yet._
 
+## [1.0.1] (2026-11-20)
+
+1. `Chat`: the conversation number is shown before each title in the sidebar (as the
+   `Queries` list shows the query number). It is the `Conversation #` of the download.
+
 ## [1.0.0] (2026-11-20)
 
 1. Conversation mode: a `Chat` page (`Query Documents` / `Chat`, `/app/chat`) for
