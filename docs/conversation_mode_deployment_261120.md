@@ -13,9 +13,10 @@ The repository uses three-part version numbers with `v` tags (`v0.48.0` was the 
 | Label | What it is | Use |
 |---|---|---|
 | `v0.49.0` | `main` as it stood before any chat code (commit `12c4b60`). Everything built since 0.48.0: resizable tables, Manage Doc Tasks filters, cancel button, backup scripts. | **Rollback point.** |
-| `v1.0.0` | The first version with Chat. Tagged 2026-11-20 after dev passed. | What dev and demo run. |
+| `v1.0.0` | The first version with Chat. Tagged 2026-11-20 after dev passed. | Superseded the same evening. |
+| `v1.0.1` | Adds token counts to the download and the conversation number to the sidebar. | **What dev and demo run.** |
 
-Fixes found while testing become `v1.0.1`, `v1.0.2`, and so on.
+Further fixes become `v1.0.2`, and so on.
 
 Dev first ran the branch `feature/conversation-mode` by name (section 6), then `v1.0.0`.
 
@@ -27,8 +28,8 @@ Dev first ran the branch `feature/conversation-mode` by name (section 6), then `
 |---|---|---|
 | Address | dev.cognosa.net, 44.230.124.164 | demo.cognosa.net, 52.13.212.94 |
 | Instance | `i-01cf57d1433d161fc`, `c6a.xlarge` (4 vCPU, 8 GiB) | `i-0cb656285d48d9bfc`, `c6a.xlarge` |
-| Disk | 48 GiB gp3; 14 GiB free before deploy | 48 GiB gp3 |
-| Running before deploy | commit `6ae5de4` (2026-10-27), migration `7c3d9e2a1b54` | not checked (stopped) |
+| Disk | 48 GiB gp3; 14 GiB free before deploy | 48 GiB gp3; 19 GiB free before, 16 GiB after |
+| Running before deploy | commit `6ae5de4` (2026-10-27), migration `7c3d9e2a1b54` | the same: `6ae5de4`, `7c3d9e2a1b54` |
 
 **No resizing is needed.** On dev, memory in use before the deploy was 2.4 GiB of 7.7 GiB
 (`rt` 2.0 GiB, Qdrant 1.0 GiB). The chat container is one more Python process holding one
@@ -76,7 +77,10 @@ cp nginx/conf.d/default.conf nginx/conf.d/default.conf.bak-pre-chat
 
 The first run on a host uses the previous copy of `deploy.sh`, which does not know about
 chat; it still works, because `docker compose up -d` builds and starts any container that
-is missing. A line `!! nginx -> chat returned 404` on later runs before step 4 is expected.
+is missing. **On that first run the chat image may be built after `app` and `rt` have
+already been stopped**, which on demo meant about 12 minutes of downtime (section 7). Both
+hosts are past that now; later deploys build all three images before stopping anything.
+A line `!! nginx -> chat returned 404` on later runs before step 4 is expected.
 
 **Step 4 — Add the nginx route.** In `nginx/conf.d/default.conf`, inside the
 `listen 443 ssl` server, above the line `# Proxy everything to the FastAPI app (uvicorn)`:
@@ -193,4 +197,54 @@ over SSH. Deployed ref: branch `feature/conversation-mode` at commit `7fdf59f`.
 4. **Not yet checked on dev:** the Chat page in a browser (the smoke test exercises the
    service through nginx, not the page), the filter control, "Open in Queries", the
    download, and the other three LLM types.
-5. **Demo is untouched** and stopped. It still needs the whole of section 4.
+5. Demo was deployed later the same evening; see section 7.
+
+**Later the same evening on dev**
+
+| Step | Result |
+|---|---|
+| `./deploy.sh v1.0.0` (05:54 UTC) | Exit 0. First run of the new deploy script: printed `nginx -> app OK` and `nginx -> chat OK`. Smoke test 25 of 25. |
+| `./deploy.sh v1.0.1` (06:16 UTC) | Exit 0, both route checks OK. Smoke test passed. 6.3 GiB memory available, 14 GiB disk free. |
+
+Each of these took about two minutes, with `app`, `rt` and `chat` down only for the
+restart.
+
+---
+
+## 7. Log — demo, 2026-11-20
+
+Times UTC (2026-11-21 05:56–06:20). Demo was stopped; started with `~/bin/startup_demo.sh`.
+Deployed ref: tag `v1.0.1` (`29b6c40`), directly from `6ae5de4`.
+
+| # | Step | Result |
+|---|---|---|
+| 0 | Inspection before any change | Same starting state as dev: commit `6ae5de4`, migration `7c3d9e2a1b54`, five containers running, 5.4 GiB memory available, 19 GiB disk free. |
+| 1 | Database backup | `~/cognosa/pg_backup_pre_chat_261120.dump`, 1.39 MB, readable (13 tables of data). |
+| 2 | nginx config backup | `~/cognosa/nginx/conf.d/default.conf.bak-pre-chat`. |
+| 3 | `./deploy.sh v1.0.1` | Exit code 0, but **16.5 minutes** (05:57–06:13). Migration applied. Output in `~/cognosa/deploy_v1.0.1_261120.log`. |
+| 4 | nginx route added | The same 15 lines as on dev. |
+| 5 | nginx test and reload | "syntax is ok", "test is successful"; reloaded. |
+| 6 | Route check | `https://demo.cognosa.net/api/v1/chat/options` returns 401; login page 200. |
+| 7 | Ordinary query | As `lb_admin`, a Casambi query with Claude Sonnet 5 completed (status 6, 1,772 characters, search 0.6 s, LLM 4.4 s). Test query deleted. |
+| 8 | Chat switched on | Group 2 only, through the superuser Manage Groups API as `lb_admin` (a superuser on demo). Server Status lists `chat_service` as running. |
+| 9 | Chat smoke test with real turns | 25 of 25 passed against `https://demo.cognosa.net`. Test conversations deleted. |
+| 10 | Chat settings | Not applied; defaults in use. |
+
+**State after deployment:** six containers running; `chat` 0.6 GiB, `rt` 2.0 GiB, 4.7 GiB
+memory available; 16 GiB disk free; no chat log errors; no conversations in the database.
+
+**Issues and observations**
+
+1. **About 12 minutes of downtime on demo during step 3.** The previous `deploy.sh` built
+   `app` and `rt`, stopped them, and only then did `docker compose up -d` discover that the
+   `chat` image did not exist and build it, with a full reinstall of the Python libraries.
+   `app` and `rt` stayed down for that build. Dev did not show this, because there the chat
+   build reused what the `rt` build had just produced. It cannot recur on either host: the
+   new script builds all three images before stopping anything.
+2. **The `rt` and `chat` images are each listed at 10.6 GB.** Disk free went from 19 to
+   16 GiB, so they share most of their content, but watch free space on future deploys;
+   `docker builder prune` reclaims build cache if needed.
+3. **Demo was left running** after the deployment. The power schedule stops it at 23:00
+   Pacific.
+4. **Not checked in a browser on demo:** the Chat page itself. The smoke test exercises the
+   service through nginx.
