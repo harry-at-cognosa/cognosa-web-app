@@ -155,4 +155,42 @@ cd ~/cognosa && ./deploy.sh v0.49.0
 
 ## 6. Log — dev, 2026-11-20
 
-_Filled in as each step is run._
+All times UTC (2026-11-21 04:50–05:00; evening of 2026-11-20 Pacific). Run from the M1
+over SSH. Deployed ref: branch `feature/conversation-mode` at commit `7fdf59f`.
+
+| # | Step | Result |
+|---|---|---|
+| 0 | Local preparation | Slice 7 committed. `v0.49.0` tagged on pre-chat `main` (`12c4b60`). `main`, the tag and the branch pushed to GitHub. |
+| 1 | Database backup | `~/cognosa/pg_backup_pre_chat_261120.dump`, 969 KB, readable (13 tables of data). |
+| 2 | nginx config backup | `~/cognosa/nginx/conf.d/default.conf.bak-pre-chat`. |
+| 3 | `./deploy.sh origin/feature/conversation-mode` | Exit code 0, about 4.5 minutes. Migration `7c3d9e2a1b54 -> 3f8a1c5d9e27` applied. `app`, `rt` and the new `chat` container started. Output kept in `~/cognosa/deploy_chat_261120.log`. |
+| 3a | Chat container check | Started cleanly, loaded the embedding model in 13 s, answers 401 inside the Docker network. Through nginx: 404, as expected before step 4. |
+| 4 | nginx route added | Block inserted above `location /` in the 443 server; the only difference from the backup is those 15 lines. |
+| 5 | nginx test and reload | "syntax is ok", "test is successful"; reloaded. |
+| 6 | Route check | `https://dev.cognosa.net/api/v1/chat/options` returns 401; login page returns 200. |
+| 7 | Ordinary query | As `lb_admin`, a Casambi query with Claude Sonnet 5 completed (status 6, 1,644 characters, search 0.4 s, LLM 4.5 s). Test query deleted. |
+| 8 | Chat switched on | Group 2 only, by SQL (`update api_groups set chat_enabled = true where group_id = 2`), because `lb_admin` is not a superuser on dev. |
+| 9 | Chat smoke test with real turns | 25 of 25 passed against `https://dev.cognosa.net` as `lb_admin`: streamed answer (89 pieces, first after 4.3 s), follow-up rewritten before searching, stop, refusal of a second send, two conversations at once. Test conversations deleted. |
+| 10 | Chat settings | Not applied. Both group 2 collections run on the defaults. |
+
+**State after deployment**
+
+- Containers: `app`, `chat`, `db`, `nginx`, `qdrant`, `rt` all running.
+- Memory: `chat` 0.9 GiB, `rt` 1.7 GiB; 4.5 GiB available on the host.
+- Disk: 14 GiB free, unchanged.
+- Chat log: no errors. Logs are in `~/cognosa/chat_logs/`.
+- No conversations or messages left in the database.
+
+**Issues and observations**
+
+1. **`lb_admin` is not a superuser on dev** (it is on the local M1 database), so the
+   switch could not be set through SuperUser / Groups with that account. The superuser
+   in group 2 on dev is `hal_ledra`. Step 8 was done by SQL instead.
+2. **The first deploy ran the previous `deploy.sh`**, as predicted in section 4, so it
+   did not print the new "nginx -> chat" line. Later deploys will.
+3. **nginx was not restarted by the deploy**, only reloaded. Adding `chat` to its
+   `depends_on` did not recreate the container.
+4. **Not yet checked on dev:** the Chat page in a browser (the smoke test exercises the
+   service through nginx, not the page), the filter control, "Open in Queries", the
+   download, and the other three LLM types.
+5. **Demo is untouched** and stopped. It still needs the whole of section 4.
