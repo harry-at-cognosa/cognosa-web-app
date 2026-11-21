@@ -13,11 +13,11 @@ The repository uses three-part version numbers with `v` tags (`v0.48.0` was the 
 | Label | What it is | Use |
 |---|---|---|
 | `v0.49.0` | `main` as it stood before any chat code (commit `12c4b60`). Everything built since 0.48.0: resizable tables, Manage Doc Tasks filters, cancel button, backup scripts. | **Rollback point.** |
-| `v1.0.0` | The first version with Chat. Tagged only after dev has passed. | What demo will receive. |
+| `v1.0.0` | The first version with Chat. Tagged 2026-11-20 after dev passed. | What dev and demo run. |
 
 Fixes found while testing become `v1.0.1`, `v1.0.2`, and so on.
 
-Until `v1.0.0` is tagged, dev runs the branch `feature/conversation-mode` by name.
+Dev first ran the branch `feature/conversation-mode` by name (section 6), then `v1.0.0`.
 
 ---
 

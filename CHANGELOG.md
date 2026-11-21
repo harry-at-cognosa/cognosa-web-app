@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.0.0] (2026-11-20)
+
 1. Conversation mode: a `Chat` page (`Query Documents` / `Chat`, `/app/chat`) for
    multi-turn questions over one collection. Design and plan:
    `docs/conversation_mode_design_261120.md`,
