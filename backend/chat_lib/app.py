@@ -1,9 +1,11 @@
+import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from common import API_URL_PREFIX, CORS_ORIGINS, log
 from cwa_lib.middleware.last_seen import refresh_last_seen
 from chat_lib.heartbeat import Heartbeat
+from chat_lib.retrieval import embedding_models
 from chat_lib.routers import router__chat
 
 CHAT_URL_PREFIX = API_URL_PREFIX + '/chat'
@@ -13,8 +15,12 @@ CHAT_URL_PREFIX = API_URL_PREFIX + '/chat'
 async def lifespan(app: FastAPI):
     heartbeat = Heartbeat()
     await heartbeat.start()
+    # Embedding models named in CHAT_EMB_MODELS_PRELOAD load in the background;
+    # the service accepts requests meanwhile.
+    preload = asyncio.create_task(embedding_models.preload(), name='chat_emb_preload')
     log.info("Chat service started")
     yield
+    preload.cancel()
     await heartbeat.stop()
     log.info("Chat service stopped")
 

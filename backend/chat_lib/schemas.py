@@ -29,6 +29,12 @@ class ConversationCreate(BaseModel):
     filters: RequestGVDBsRetrFilters | None = None
 
 
+class MessageCreate(BaseModel):
+    content: str
+    # the LLM for this turn; may differ from turn to turn
+    gllms_id: int
+
+
 class ConversationRename(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
 

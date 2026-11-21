@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from common.sql_db_async import AsyncSession, async_get_session
 from common.sql_models import User
 from chat_lib.auth import chat_user
 from chat_lib.schemas import (
     ChatOptions, ChatOptionsCollection, ChatOptionsLLM,
-    ConversationCreate, ConversationRename, ConversationRead, ConversationDetail, DeleteResult,
+    ConversationCreate, ConversationRename, ConversationRead, ConversationDetail, DeleteResult, MessageCreate,
 )
 from chat_lib.tables import ChatTable, ChatError
+from chat_lib.turn import prepare_turn, stream_turn
 
 router__chat = APIRouter()
 
@@ -72,3 +74,23 @@ async def delete_conversation(
     if not success:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return DeleteResult(conv_id=conv_id, success=True)
+
+
+@router__chat.post("/conversations/{conv_id:int}/messages")
+async def send_message(
+    conv_id: int,
+    payload: MessageCreate,
+    user: User = Depends(chat_user),
+    session: AsyncSession = Depends(async_get_session),
+):
+    """Send a message; the answer comes back as a stream of server-sent events.
+    Closing the stream stops the answer (what was written so far is kept)."""
+    try:
+        ctx = await prepare_turn(session, user, conv_id, payload.content, payload.gllms_id)
+    except ChatError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.detail)
+    return StreamingResponse(
+        stream_turn(ctx),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},  # the latter: no buffering in nginx
+    )
