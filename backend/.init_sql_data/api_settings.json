@@ -24,6 +24,10 @@
     "value": "{\"search_type\": \"similarity\", \"search_kwargs__similarity\": {\"k\": 10}, \"search_kwargs__mmr\": {\"k\": 10, \"fetch_k\": 20, \"lambda_mult\": 0.5}, \"search_kwargs__similarity_score_threshold\": {\"k\": 10, \"score_threshold\": 0.5}}"
   },
   {
+    "name": "chat_history_turns",
+    "value": "6"
+  },
+  {
     "name": "future",
     "value": ""
   }

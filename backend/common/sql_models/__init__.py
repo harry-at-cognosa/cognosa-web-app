@@ -13,3 +13,5 @@ from .group_llms import GroupLLMs
 from .doc_tasks import DocTasks
 from .api_processes import ApiProcesses
 from .log_crud import LogCRUD
+from .chat_conversations import ChatConversations
+from .chat_messages import ChatMessages

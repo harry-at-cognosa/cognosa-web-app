@@ -18,7 +18,8 @@ class DocTasksTable:
     def row_as_json(row_obj) -> str:
         ignore_columns = ("deleted",
             "gllms_status", "gllms_status_updated_at", "gllms_created_at", "gllms_status_text",
-            "gvdbs_status", "gvdbs_status_updated_at", "gvdbs_created_at", "gvdbs_status_text"
+            "gvdbs_status", "gvdbs_status_updated_at", "gvdbs_created_at", "gvdbs_status_text",
+            "gvdbs_chat_cfg",  # chat-only; keep it out of the doc_tasks snapshot
         )
         return json.dumps({k: v for k, v in row_obj.__dict__.items() 
                            if not (k.startswith('_') or k in ignore_columns)

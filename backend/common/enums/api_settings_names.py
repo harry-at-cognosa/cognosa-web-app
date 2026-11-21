@@ -9,6 +9,8 @@ class ApiSettingsNamesEnum(Enum):
     gvdbs_def_retr_params = 'gvdbs_def_retr_params'
     # Feature 199: 'TRUE' hides the Retrieval Parameters control on the Queries page
     suppress_retrieval_parameters = 'suppress_retrieval_parameters'
+    # Chat: how many earlier turns are resent to the LLM (a window, not a cap). Default 6.
+    chat_history_turns = 'chat_history_turns'
     # free-form long string reserved for future use
     future = 'future'
 

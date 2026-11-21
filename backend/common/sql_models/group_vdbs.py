@@ -25,6 +25,8 @@ class GroupVDBs(Base):
     gvdbs_retr_params: Mapped[str] = mapped_column(VARCHAR, nullable=False)
     gvdbs_retr_filters: Mapped[str] = mapped_column(VARCHAR, nullable=False, server_default=text("'{}'"))
     gvdbs_emb_model: Mapped[str] = mapped_column(VARCHAR, nullable=False)
+    # Chat settings for this collection (JSON, see common.features.chat_cfg). '{}' = defaults.
+    gvdbs_chat_cfg: Mapped[str] = mapped_column(VARCHAR, nullable=False, server_default=text("'{}'"))
     gvdbs_created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     # gvdbs_status = success / warning / danger
     gvdbs_status: Mapped[str] = mapped_column(VARCHAR, nullable=False, server_default=text("'warning'"))
