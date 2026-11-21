@@ -24,7 +24,8 @@
      default 6).
    - **Page**: conversation sidebar, Stop, filters (the `Queries` filter form),
      `Open in Queries` on each answer (pre-fills a new query, does not run it),
-     `Download` (Markdown, built in the browser).
+     `Download` (Markdown, built in the browser; token counts and time after each
+     answer and a totals section at the end).
    - **Web app**: `GET /users/me` adds `chat_enabled` and `chat_service_port`;
      Server Status lists the chat service; `CHAT_SERVICE_PORT` in `backend/.env`.
    - **Migration**: `3f8a1c5d9e27` (additive). **Deploy**: new `chat` container and

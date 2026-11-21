@@ -48,6 +48,12 @@ export default function DownloadConversationButton() {
     lines.push(`- Started: ${new Date(conv.created_at).toLocaleString()}`);
     lines.push(`- Saved: ${now.toLocaleString()}`);
     lines.push("");
+    // usage, per answer and in total (answers only carry these figures)
+    const n = (value: number | null) => (value ?? 0).toLocaleString("en-US");
+    let totalIn = 0;
+    let totalOut = 0;
+    let totalSeconds = 0;
+    let answers = 0;
     for (const m of store.messages) {
       const when = new Date(m.created_at).toLocaleString();
       lines.push("---");
@@ -63,9 +69,36 @@ export default function DownloadConversationButton() {
         lines.push(`## Answer (${notes.join(", ")})`);
         lines.push("");
         lines.push(m.content || "_No answer was written._");
+        lines.push("");
+        lines.push(
+          `_Tokens: ${n(m.tokens_in)} in / ${n(m.tokens_out)} out` +
+            (m.seconds !== null ? ` · ${m.seconds.toFixed(1)} s` : "") +
+            "_",
+        );
+        totalIn += m.tokens_in ?? 0;
+        totalOut += m.tokens_out ?? 0;
+        totalSeconds += m.seconds ?? 0;
+        answers += 1;
       }
       lines.push("");
     }
+
+    lines.push("---");
+    lines.push("");
+    lines.push("## Totals");
+    lines.push("");
+    lines.push(`- Answers: ${answers}`);
+    lines.push(`- Tokens in: ${n(totalIn)}`);
+    lines.push(`- Tokens out: ${n(totalOut)}`);
+    lines.push(`- Tokens in + out: ${n(totalIn + totalOut)}`);
+    lines.push(`- Answer time: ${totalSeconds.toFixed(1)} s`);
+    lines.push("");
+    lines.push(
+      "_Token counts are estimates made by Cognosa, not the LLM provider's " +
+        "billed figures. They do not include the short extra call that restates " +
+        "a follow-up question before searching._",
+    );
+    lines.push("");
 
     const fileName =
       `Chat${conv.conv_id}_` +
