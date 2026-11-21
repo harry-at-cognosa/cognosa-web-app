@@ -20,7 +20,7 @@ built; effort figures are estimates, not measurements.
 | 7 | Transcripts persist until the user deletes them. |
 | 8 | Nothing about retrieval results is stored: no source list, no chunk IDs, no chunk text. The question and answer text are the record, and the download is that transcript. |
 | 9 | No group-admin view of other users' conversations. |
-| 10 | The design is collection-agnostic. Nothing in code or schema names a field of any particular collection; group 2 is only the first tenant to use it. |
+| 10 | The chat code and schema are collection-agnostic: nothing new names a field of any particular collection, and group 2 is only the first tenant to use it. Filtering is the exception, and is not a fully generic capability (section 8). |
 | 11 | The rewrite call uses the conversation's own LLM, unless the group has a rewrite LLM set, in which case that one is used. |
 | 12 | Access to conversations is a group-level attribute, default off. Only a superuser can see or edit it; group admins cannot see it. A group without it does not see the page. |
 | 13 | Reconstructing which chunks produced an answer is not a requirement. Where an answer should name its sources, the LLM does so in the answer text. |
@@ -107,8 +107,12 @@ A second FastAPI application (working name `chat_service.py`, own port) that sha
   layer that takes a message list and streams asynchronously. It should not import the
   runner's classes; keeping them separate honours decision 5.
 - **Filters.** Validation of filter values (`common/features/gvdbs_retr_filters.py`) and
-  their conversion to a Qdrant filter (`tasks_lib/vdb_lib/qdrant_filters.py`) are generic,
-  self-contained modules. The service uses them as they are.
+  their conversion to a Qdrant filter (`tasks_lib/vdb_lib/qdrant_filters.py`) are
+  self-contained modules. The service uses them as they are, so chat filters behave
+  exactly as `Queries` filters do, including the collection-specific code described in
+  section 8.
+- **Vector database.** Qdrant only. pgvector and Chroma are not supported in chat and
+  there is no plan to support them going forward.
 - **Embedding models.** Loaded on first use and kept cached, with an optional preload list
   in the environment mirroring `RT_VDB_EMB_MODELS_PRELOAD`.
 - **Health.** It reports a heartbeat to `api_processes`, so it appears on Server Status.
@@ -232,7 +236,7 @@ superuser routes.
 
 ## 7. The `Chat` page
 
-A new nav entry beside `Queries`, at `/app/chat`.
+A new nav entry, `Chat`, in the `Query Documents` menu beside `Queries`, at `/app/chat`.
 
 - **Sidebar:** conversations grouped by date, rename and delete, `New chat`. Same
   resizable splitter as the `Queries` page.
@@ -268,9 +272,24 @@ The service, tables and page behave identically for every collection. What varie
 configuration held on the collection's `group_vdbs` row: its chat retrieval settings, its
 system prompt, and whatever filter schema it already has.
 
-**Filters in chat.** The existing filter mechanism is already schema-driven, so chat
-offers a collection's filters, when it has any, without knowing what they are. The user
-sets them before the first message; they then hold for the whole conversation. Proposing
+**Filters in chat.** The user sets a collection's filters, when it has any, before the
+first message; they then hold for the whole conversation. Chat adds no filter logic of its
+own and reuses what `Queries` has.
+
+**Filtering is not a fully generic capability.** Making a collection filterable takes
+work specific to that collection, at two levels:
+
+- *Annotation, always.* Each filterable field must be declared in the collection's filter
+  schema (`group_vdbs.gvdbs_retr_filters`): its title, metadata path and type. Plain text
+  and select fields then work with no new code.
+- *Elaboration code, where a field has its own semantics.* The existing module
+  `tasks_lib/vdb_lib/qdrant_filters.py` carries code specific to the Ledra product
+  collection, selected by `sub_type` values beginning `ledra_`: the base/alt switch, and a
+  product-ID field that searches one or both of two metadata keys depending on that
+  switch. A new collection whose filters need comparable behaviour needs comparable code
+  added there.
+
+A collection with no filters needs neither. Proposing
 filter values automatically from the message text is a possible later refinement.
 
 **Group 2.** Two collections, both on `all-MiniLM-L6-v2`:
