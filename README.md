@@ -87,7 +87,22 @@ source ./venv/bin/activate
 chroma run --port 8010 --path .\chroma_db\
 ```
 
-10. browse to webpage and test it: http://127.0.0.1:8000
+10. Terminal 5 (optional, for the Chat page): run the chat service in background:
+
+```
+source ./venv/bin/activate
+cd backend
+uvicorn chat_service:app --port 8001
+```
+
+The port must match `CHAT_SERVICE_PORT` in `backend/.env` (8001). Chat is off for
+every group until a superuser turns it on in SuperUser / Groups (`Chat?`); the
+`Chat` entry then appears in the `Query Documents` menu. Use the web app at
+`http://127.0.0.1:8000` or `http://localhost:8000`: the browser calls the chat
+service directly, and any other address must first be added to `CORS_ORIGINS`.
+Smoke test: `python -m tools.chat_smoke --user NAME --password PASSWORD [--turns]`.
+
+11. browse to webpage and test it: http://127.0.0.1:8000
 
 ---
 

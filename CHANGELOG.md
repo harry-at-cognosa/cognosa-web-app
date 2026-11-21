@@ -1,6 +1,39 @@
 ## [Unreleased]
 
-_Nothing yet. Project paused 2026-09-15; see ROADMAP.md._
+1. Conversation mode: a `Chat` page (`Query Documents` / `Chat`, `/app/chat`) for
+   multi-turn questions over one collection. Design and plan:
+   `docs/conversation_mode_design_261120.md`,
+   `docs/conversation_mode_implementation_plan_261120.md`.
+   - **Chat service**: a new process, `backend/chat_service.py` + `backend/chat_lib/`
+     (`uvicorn chat_service:app --port 8001`), separate from the web app and from
+     `run_tasks.py`. API under `/api/v1/chat/`. Answers are streamed (server-sent
+     events) and written to the database once. Follow-up questions are rewritten to
+     a standalone question before searching. Qdrant collections only.
+   - **Storage**: new tables `chat_conversations`, `chat_messages`. Only the text of
+     questions and answers is kept (plus the rewritten search query, token counts and
+     timing); no retrieved chunks, sources or prompts. `doc_tasks` is not used.
+   - **Scope of a conversation**: one collection and one set of filter values, chosen
+     before the first message and then fixed. The LLM may change per turn.
+   - **Access**: off by default, switched on per group by a superuser
+     (`api_groups.chat_enabled`, SuperUser / Groups, `Chat?`). No group-admin page
+     shows or edits any chat setting. Each user sees only their own conversations.
+   - **Settings**: `api_groups.chat_rewrite_gllms_id` (optional LLM for the rewrite);
+     `group_vdbs.gvdbs_chat_cfg` (per-collection chat search parameters and system
+     prompt; default: the collection's search type with k capped at 8);
+     `api_settings` row `chat_history_turns` (earlier turns resent to the LLM,
+     default 6).
+   - **Page**: conversation sidebar, Stop, filters (the `Queries` filter form),
+     `Open in Queries` on each answer (pre-fills a new query, does not run it),
+     `Download` (Markdown, built in the browser).
+   - **Web app**: `GET /users/me` adds `chat_enabled` and `chat_service_port`;
+     Server Status lists the chat service; `CHAT_SERVICE_PORT` in `backend/.env`.
+   - **Migration**: `3f8a1c5d9e27` (additive). **Deploy**: new `chat` container and
+     an nginx `location /api/v1/chat/` that must be added by hand once per host;
+     see `release/ec2_ubuntu_24_04/cognosa/!README.MD`, "Chat service".
+   - Smoke test: `backend/tools/chat_smoke.py`.
+
+2. `Queries` and `Chat` answers render Markdown tables (`remark-gfm` added to the
+   shared `MarkdownRenderer`); previously a table showed as raw `| a | b |` text.
 
 ## [0.48.0] (2026-09-15)
 

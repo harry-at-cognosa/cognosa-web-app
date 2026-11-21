@@ -71,6 +71,7 @@ services:
       - "443:443" # HTTPS
     depends_on:
       - app
+      - chat   # nginx resolves upstream names when it loads its config
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - nginx_certs:/etc/letsencrypt # persistent certs
@@ -112,6 +113,37 @@ services:
       - "HF_HOME=/hf_cache"
     volumes:
       - ./rt_logs:/app/logs
+      - hf_cache:/hf_cache
+
+  # --- Chat service (conversation mode) ---
+  # A separate process from app and rt. Same image as rt (it needs the
+  # embedding and LLM libraries), started with a different command.
+  # nginx routes /api/v1/chat/ to it (see nginx_default.conf).
+  # One worker only: the service keeps per-process state.
+  chat:
+    build:
+      context: ../cognosa-src
+      dockerfile: release/ec2_ubuntu_24_04/cognosa/run_tasks.Dockerfile
+    command: ["uvicorn", "chat_service:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "1"]
+    restart: always
+    expose:
+      - "8001"
+    depends_on:
+      - db
+      - qdrant
+    # env_app.env, not env_run_tasks.env: the service checks the same login
+    # tokens as the web app, so it needs the same SECRET (and DATABASE_URL).
+    env_file:
+      - env_app.env
+    environment:
+      - "CORS_ORIGINS=https://${COGNOSA_DOMAIN}"
+      - "URL_QDRANT_LOCAL=qdrant:6333"
+      - "URL_OLLAMA_LOCAL=http://127.0.0.1:11434/v1"
+      # Loaded at start-up so the first question does not wait; other models load on first use.
+      - "CHAT_EMB_MODELS_PRELOAD=sentence-transformers/all-MiniLM-L6-v2"
+      - "HF_HOME=/hf_cache"
+    volumes:
+      - ./chat_logs:/app/logs
       - hf_cache:/hf_cache
 
 volumes:

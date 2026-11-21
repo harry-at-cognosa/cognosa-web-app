@@ -7,7 +7,7 @@
 # git commands are delegated back to $SUDO_USER so the clone stays user-owned.
 #
 # Steps: fetch + checkout the ref in /home/ubuntu/cognosa-src, refresh
-# docker-compose.yml from the clone, build app + rt images, stop them, run
+# docker-compose.yml from the clone, build app + rt + chat images, stop them, run
 # alembic migrations, start everything, prune dangling images.
 # Data (pg_db_data, qdrantdb, env files, nginx conf, certs) is never touched.
 #
@@ -34,10 +34,10 @@ cp "$SRC/$REL/docker-compose.yml" "$OPS/docker-compose.yml"
 cd "$OPS"
 
 echo "== building images"
-docker compose build app rt
+docker compose build app rt chat
 
-echo "== stopping app + rt, migrating"
-docker compose stop app rt
+echo "== stopping app + rt + chat, migrating"
+docker compose stop app rt chat
 docker compose up -d db qdrant
 docker compose run --rm --no-deps app alembic upgrade head
 
@@ -55,6 +55,11 @@ curl -fsS -o /dev/null "$APP" || { echo "app did not come up at $APP"; docker co
 docker compose exec -T nginx nginx -s reload
 sleep 1
 curl -fsSk -o /dev/null https://localhost/ && echo "== nginx -> app OK" || { echo "nginx -> app FAILED"; exit 1; }
+# Chat service: an unauthenticated request must reach it and be refused (401).
+# Anything else means nginx has no `location /api/v1/chat/` (see !README.MD) or
+# the service is down. Reported, not fatal: queries do not depend on chat.
+CHAT_CODE="$(curl -sk -o /dev/null -w '%{http_code}' https://localhost/api/v1/chat/options || true)"
+[ "$CHAT_CODE" = 401 ] && echo "== nginx -> chat OK" || echo "!! nginx -> chat returned $CHAT_CODE (expected 401); see 'Chat service' in !README.MD"
 docker image prune -f >/dev/null
 
 docker compose ps

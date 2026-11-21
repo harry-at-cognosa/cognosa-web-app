@@ -24,9 +24,55 @@ cd /home/ubuntu/cognosa
 ./deploy.sh v0.46             # or any tag / sha / branch
 ```
 
-deploy.sh: fetch + detached checkout, refresh docker-compose.yml, build app+rt,
-stop app+rt, `alembic upgrade head`, `up -d`, prune old images, append to
-`deploy.log`. Brief downtime of app/rt only; db/qdrant/nginx keep running.
+deploy.sh: fetch + detached checkout, refresh docker-compose.yml, build
+app+rt+chat, stop them, `alembic upgrade head`, `up -d`, prune old images,
+append to `deploy.log`. Brief downtime of app/rt/chat only; db/qdrant/nginx
+keep running.
+
+### Chat service (conversation mode)
+
+The Chat page is served by a third application container, `chat`
+(`backend/chat_service.py`), built from the same image as `rt`. It needs no env
+file of its own: it reads `env_app.env`, because it checks the same login
+tokens as the web app and so must have the same `SECRET`.
+
+nginx must route `/api/v1/chat/` to it. `nginx/conf.d/default.conf` on the host
+is never overwritten by deploys, so **add the block by hand, once per host**,
+above `location / {` in the `listen 443` server (copy it from
+`nginx_default.conf` in the clone):
+
+```
+    location /api/v1/chat/ {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://chat:8001;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_buffering off;
+        proxy_read_timeout 600s;
+    }
+```
+
+Order matters the first time, because nginx refuses to load a config that names
+a container which does not exist yet:
+
+```
+cd /home/ubuntu/cognosa
+./deploy.sh <ref>                                   # 1. creates and starts the chat container
+nano nginx/conf.d/default.conf                      # 2. add the block above
+docker compose exec -T nginx nginx -t               # 3. must say "syntax is ok"
+docker compose exec -T nginx nginx -s reload
+curl -sk -o /dev/null -w '%{http_code}\n' https://localhost/api/v1/chat/options    # 4. expect 401
+```
+
+Before step 2 deploy.sh prints `!! nginx -> chat returned 404`; that is
+expected on the first run and goes away once the block is in.
+
+Chat is off for every group until a superuser turns it on (SuperUser / Groups,
+`Chat?`). Logs are in `chat_logs/`. Memory: the container holds its own copy of
+each embedding model it uses, on top of the copies in `rt`.
 
 ### First-time setup of a host
 
@@ -103,6 +149,7 @@ qdrantdb - Qdrant DB folder. There will be `aliases` and `collections` folders.
 pg_db_data - PostgreSQL DB folder (used by FastAPI webapp)
 app_logs - FastAPI webapp logs (not filled for now)
 rt_logs - run_tasks.py logs
+chat_logs - chat service logs
 
 Other folders are for installation procedures.
 
