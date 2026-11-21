@@ -4,7 +4,9 @@ from common import log
 from common.watchdogs import get_outdated_status
 from common.watchdogs.group_vdbs import GroupVDBSTable
 from common.watchdogs.group_llms import GroupLLMsTable
+from sqlalchemy import select
 from common.sql_db_async import AsyncSession
+from common.sql_models import ApiGroups
 from cwa_lib.sql_tables.api_processes import ApiProcessesTable, ApiProcesses
 from cwa_lib.sql_tables.api_settings import ApiSettingsTable
 
@@ -79,6 +81,23 @@ class SuServerStatusPage:
                     'status_text': ap.ap_status,
                     'is_good': 'success'
                 })
+
+        # Chat service (conversation mode): a separate process with its own
+        # heartbeat row. Listed when it is running, or when any group has chat
+        # switched on and it therefore ought to be.
+        chat_ap = type__name__subname__ap.get('chat_service', dict()).get('chat_service', dict()).get('service')
+        chat_wanted = (await session.execute(
+            select(ApiGroups.group_id).where(ApiGroups.chat_enabled == True, ApiGroups.deleted == 0).limit(1)  # noqa: E712
+        )).scalar_one_or_none() is not None
+        if chat_ap or chat_wanted:
+            result_list.append({
+                'name': 'chat_service',
+                'subprocesses': [{
+                    'name': 'service',
+                    'status_text': chat_ap.ap_status if chat_ap else 'Instance is not found',
+                    'is_good': 'success' if chat_ap else 'danger',
+                }],
+            })
 
         return result_list
     
