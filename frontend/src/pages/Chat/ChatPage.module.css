@@ -129,3 +129,47 @@
 .itemActive {
   background: var(--theme-color-100) !important;
 }
+
+/* header controls: collection takes the room, the rest keep their size */
+.headerCollection {
+  flex: 3 1 16rem;
+  width: auto;
+}
+.headerLLM {
+  flex: 2 1 11rem;
+  width: auto;
+}
+
+/* filter values in force for the conversation */
+.filterLine {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+.filterChip {
+  padding: 0.05rem 0.5rem;
+  border-radius: 0.75rem;
+  background: #fff3cd;
+  border: 1px solid #ffe69c;
+}
+.filterNot {
+  color: #e00000;
+  font-weight: 700;
+}
+
+/* per-answer actions */
+.linkButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.linkButton:hover {
+  color: #212529;
+}

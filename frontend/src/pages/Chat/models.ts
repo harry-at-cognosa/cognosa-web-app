@@ -54,6 +54,14 @@ export interface ChatMessage {
   created_at: string;
 }
 
+// Handed to the Queries page by "Open in Queries" (router state): a new query
+// pre-filled from one chat turn.
+export interface ChatQueryPrefill {
+  input_text: string;
+  gvdbs_id: number;
+  filters: ChatFilters | null;
+}
+
 export interface ChatConversationDetail extends ChatConversation {
   messages: ChatMessage[];
 }

@@ -7,9 +7,36 @@ import {
 import type {
   ChatConversation,
   ChatConversationDetail,
+  ChatFilters,
   ChatMessage,
   ChatOptions,
 } from "../models";
+
+// Filter values chosen for a chat that has not started yet.
+export interface ChatDraftFilters {
+  global_not_value: boolean | null;
+  rf_field_id__values: Record<string, string[]>;
+}
+
+const NO_DRAFT_FILTERS: ChatDraftFilters = {
+  global_not_value: null,
+  rf_field_id__values: {},
+};
+
+// The request form of the draft: only fields that hold a value.
+export function draftFiltersRequest(
+  draft: ChatDraftFilters,
+): ChatFilters | null {
+  const values = Object.entries(draft.rf_field_id__values)
+    .map(([rf_field_id, list]) => ({
+      rf_field_id,
+      values_list: (list || []).filter((v) => v.trim()),
+    }))
+    .filter((entry) => entry.values_list.length);
+  if (!values.length) return null;
+  if (draft.global_not_value === null) return { values };
+  return { global_not_value: draft.global_not_value, values };
+}
 
 interface ChatState {
   // collections and LLMs of the user's group
@@ -33,6 +60,9 @@ interface ChatState {
   // choices for the next message
   draftGvdbsId: number | null; // collection of a chat not yet started
   setDraftGvdbsId: (gvdbs_id: number) => void;
+  // its filter values; like the collection, fixed once the chat starts
+  draftFilters: ChatDraftFilters;
+  setDraftFilters: (draftFilters: ChatDraftFilters) => void;
   gllmsId: number | null; // LLM for the next turn
   setGllmsId: (gllms_id: number) => void;
 
@@ -133,10 +163,25 @@ export const useChatStore = createResettableStore<ChatState>((set, get) => ({
       return false;
     }
   },
-  newChat: () => set({ conv: null, messages: [], sendError: "" }),
+  // filters never carry over into a new chat
+  newChat: () =>
+    set({
+      conv: null,
+      messages: [],
+      sendError: "",
+      draftFilters: NO_DRAFT_FILTERS,
+    }),
 
   draftGvdbsId: null,
-  setDraftGvdbsId: (gvdbs_id) => set({ draftGvdbsId: gvdbs_id }),
+  // filters belong to a collection: another collection starts without any
+  setDraftGvdbsId: (gvdbs_id) =>
+    set((state) =>
+      state.draftGvdbsId === gvdbs_id
+        ? {}
+        : { draftGvdbsId: gvdbs_id, draftFilters: NO_DRAFT_FILTERS },
+    ),
+  draftFilters: NO_DRAFT_FILTERS,
+  setDraftFilters: (draftFilters) => set({ draftFilters }),
   gllmsId: null,
   setGllmsId: (gllms_id) => set({ gllmsId: gllms_id }),
 
@@ -149,7 +194,7 @@ export const useChatStore = createResettableStore<ChatState>((set, get) => ({
 
   send: async (text, onCreated) => {
     const content = text.trim();
-    const { gllmsId, draftGvdbsId, streaming } = get();
+    const { gllmsId, draftGvdbsId, draftFilters, streaming } = get();
     if (!content || streaming) return false;
     if (!gllmsId) {
       set({ sendError: "Choose an LLM" });
@@ -158,7 +203,7 @@ export const useChatStore = createResettableStore<ChatState>((set, get) => ({
     set({ sendError: "" });
 
     // The first message of a new chat creates the conversation; its
-    // collection is fixed from here on.
+    // collection and filters are fixed from here on.
     let conv = get().conv;
     if (!conv) {
       if (!draftGvdbsId) {
@@ -169,6 +214,7 @@ export const useChatStore = createResettableStore<ChatState>((set, get) => ({
         conv = await chatRequest<ChatConversation>("POST", "/conversations", {
           gvdbs_id: draftGvdbsId,
           gllms_id: gllmsId,
+          filters: draftFiltersRequest(draftFilters),
         });
       } catch (e) {
         set({ sendError: errorText(e) });
@@ -177,6 +223,7 @@ export const useChatStore = createResettableStore<ChatState>((set, get) => ({
       set((state) => ({
         conv,
         messages: [],
+        draftFilters: NO_DRAFT_FILTERS,
         conversations: [conv as ChatConversation, ...state.conversations],
       }));
       onCreated(conv.conv_id);

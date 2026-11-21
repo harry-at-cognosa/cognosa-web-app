@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import { Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import MarkdownRenderer from "../../../components/MarkdownRenderer";
 import { useChatStore } from "../stores/useChatStore";
-import type { ChatMessage } from "../models";
+import type { ChatMessage, ChatQueryPrefill } from "../models";
 import styles from "../ChatPage.module.css";
 
 function UserBubble({ text }: { text: string }) {
@@ -17,9 +18,11 @@ function UserBubble({ text }: { text: string }) {
 function AssistantBubble({
   message,
   llmName,
+  onOpenInQueries,
 }: {
   message: ChatMessage;
   llmName: string;
+  onOpenInQueries: (() => void) | null;
 }) {
   const isError = message.status === "error";
   const meta = [
@@ -37,9 +40,22 @@ function AssistantBubble({
         ) : (
           <em className="text-muted">No answer was written.</em>
         )}
-        {meta.length ? (
-          <div className={styles.meta}>{meta.join(" · ")}</div>
-        ) : null}
+        <div className={styles.meta}>
+          {meta.join(" · ")}
+          {onOpenInQueries ? (
+            <>
+              {meta.length ? " · " : ""}
+              <button
+                type="button"
+                className={styles.linkButton}
+                title="Start a query from this question, with the same collection and filters, on the Queries page"
+                onClick={onOpenInQueries}
+              >
+                Open in Queries
+              </button>
+            </>
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -47,6 +63,7 @@ function AssistantBubble({
 
 export default function MessageThread() {
   const store = useChatStore();
+  const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   // Follow the answer while it is written, unless the reader scrolled up.
   const follow = useRef(true);
@@ -69,6 +86,18 @@ export default function MessageThread() {
     store.options?.collections.find(
       (c) => c.gvdbs_id === (store.conv?.gvdbs_id ?? store.draftGvdbsId),
     )?.gvdbs_name || "";
+
+  // Follow up on an answer with a full query: the question as it was actually
+  // searched (the standalone form), on the conversation's collection and filters.
+  const openInQueries = (m: ChatMessage) => {
+    if (!store.conv || !m.retrieval_query) return;
+    const chatPrefill: ChatQueryPrefill = {
+      input_text: m.retrieval_query,
+      gvdbs_id: store.conv.gvdbs_id,
+      filters: store.conv.filters,
+    };
+    navigate("/app/query_documents/queries", { state: { chatPrefill } });
+  };
 
   const isEmpty =
     !store.messages.length && store.pendingUser === null && !store.loadingConv;
@@ -101,6 +130,11 @@ export default function MessageThread() {
                 key={m.msg_id}
                 message={m}
                 llmName={llmName(m.gllms_id)}
+                onOpenInQueries={
+                  m.retrieval_query && m.status !== "error" && !store.streaming
+                    ? () => openInQueries(m)
+                    : null
+                }
               />
             ),
           )}

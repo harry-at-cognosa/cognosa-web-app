@@ -9,7 +9,7 @@ import type { DocTasksGVDBsCfgState } from "../../../components/GVDBsRetrParams/
 
 const SHORT_NAME_MAX = 25;
 
-function sanitize(text: string): string {
+export function sanitize(text: string): string {
   return text
     .normalize("NFKD")
     .replace(/[^A-Za-z0-9_-]+/g, "-")
@@ -17,7 +17,7 @@ function sanitize(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-function timestamp(d: Date): string {
+export function timestamp(d: Date): string {
   const p = (n: number) => n.toString().padStart(2, "0");
   return (
     `${p(d.getFullYear() % 100)}${p(d.getMonth() + 1)}${p(d.getDate())}` +
@@ -40,7 +40,10 @@ function secondsOrNA(seconds: number | null) {
   return seconds === null ? "N/A" : `${seconds} sec`;
 }
 
-async function saveTextFile(fileName: string, text: string): Promise<void> {
+export async function saveTextFile(
+  fileName: string,
+  text: string,
+): Promise<void> {
   const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
   // Chrome / Edge: real "Save As" dialog (folder + editable name)
   const w = window as unknown as {

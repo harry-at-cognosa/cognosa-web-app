@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import type { ChatQueryPrefill } from "../../Chat/models";
 import { Form, ProgressBar } from "react-bootstrap";
 import axiosClient from "../../../api/axiosClient";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
@@ -32,6 +34,38 @@ function QueryArea() {
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const docTasksShortStore = useDocTasksShortStore();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Arriving from "Open in Queries" on the Chat page: start a new query with
+  // the question, collection and filters of that chat turn. The user reviews
+  // it and presses Ask as usual; nothing is submitted here.
+  useEffect(() => {
+    const prefill = (location.state as { chatPrefill?: ChatQueryPrefill } | null)
+      ?.chatPrefill;
+    if (!prefill) return;
+    // apply once: a reload or Back must not start the query over again
+    navigate(location.pathname, { replace: true, state: null });
+    queryStore.setOpUUID("");
+    queryStore.stopPolling();
+    current.setNewQuery();
+    if (docTaskOptionsStore.gvdbs_id__row[prefill.gvdbs_id])
+      current.setGVDBsID(prefill.gvdbs_id);
+    current.setInputText(prefill.input_text);
+    if (prefill.filters?.values?.length) {
+      const rf_field_id__values: Record<string, string[]> = {};
+      for (const f of prefill.filters.values)
+        rf_field_id__values[f.rf_field_id] = f.values_list;
+      GVDBsRetrFiltersHistory.update(
+        null,
+        prefill.gvdbs_id,
+        prefill.filters.global_not_value ?? null,
+        rf_field_id__values,
+      );
+    }
+    // makes the collection selector load the filters just recorded
+    defRetrFiltersStore.setIsLoaded(false);
+  }, []);
 
   // Send POST request to url
   const handleSubmit = async () => {
