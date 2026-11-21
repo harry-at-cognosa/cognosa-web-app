@@ -1,0 +1,131 @@
+.wrapper {
+  height: calc(100vh - 60px);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.splitContainer {
+  --left-pct: 33.333%;
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.leftPanel {
+  flex: 0 0 var(--left-pct);
+  min-width: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+/* right side: header, scrolling thread, composer pinned to the bottom */
+.rightPanel {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.thread {
+  flex: 1 1 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding: 1rem 1.25rem;
+  background: #fff;
+}
+
+.threadInner {
+  max-width: 60rem;
+  margin: 0 auto;
+}
+
+.row {
+  display: flex;
+  margin-bottom: 1rem;
+}
+.rowUser {
+  justify-content: flex-end;
+}
+
+.bubbleUser {
+  max-width: 80%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 1rem 1rem 0.25rem 1rem;
+  background: var(--theme-color-200);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bubbleAssistant {
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.25rem 0;
+  overflow-wrap: anywhere;
+}
+/* the last paragraph of an answer should not push the meta line away */
+.bubbleAssistant :global(.markdown-content) > :last-child {
+  margin-bottom: 0.25rem;
+}
+
+.meta {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.errorText {
+  color: #b02a37;
+}
+
+.empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  text-align: center;
+}
+
+.composer {
+  flex: 0 0 auto;
+  padding: 0.75rem 1.25rem 1rem;
+  border-top: 1px solid #dee2e6;
+  background: #f8f9fa;
+}
+.composerInner {
+  max-width: 60rem;
+  margin: 0 auto;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+.composerInner textarea {
+  resize: none;
+  max-height: 12rem;
+}
+
+.header {
+  flex: 0 0 auto;
+  padding: 0.6rem 1.25rem;
+  border-bottom: 1px solid #dee2e6;
+  background: #f8f9fa;
+}
+
+/* sidebar item: title on one line, actions appear on hover */
+.itemTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 3rem;
+}
+.itemActions {
+  visibility: hidden;
+}
+.item:hover .itemActions {
+  visibility: visible;
+}
+.itemActive {
+  background: var(--theme-color-100) !important;
+}

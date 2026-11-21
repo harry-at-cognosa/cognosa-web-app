@@ -26,6 +26,10 @@ class UsersMe(BaseModel):
     is_superuser: bool
     is_verified: bool
     created_at: datetime
+    # Chat (conversation mode): whether the user's group has it, and where the
+    # browser finds the chat service ('' = same origin, behind the reverse proxy).
+    chat_enabled: bool = False
+    chat_service_port: str = ''
 
 
 class UserRead(schemas.BaseUser[uuid.UUID]):

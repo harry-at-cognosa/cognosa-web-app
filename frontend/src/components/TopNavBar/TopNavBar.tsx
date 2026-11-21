@@ -55,6 +55,12 @@ const TopNavBar = () => {
                   <LinkContainer to="/app/query_documents/queries">
                     <Dropdown.Item>Queries</Dropdown.Item>
                   </LinkContainer>
+                  {/* shown only when chat is switched on for the user's group */}
+                  {user.chat_enabled && (
+                    <LinkContainer to="/app/chat">
+                      <Dropdown.Item>Chat</Dropdown.Item>
+                    </LinkContainer>
+                  )}
                 </Dropdown.Menu>
               </Dropdown>
             )}

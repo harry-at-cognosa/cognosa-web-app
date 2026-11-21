@@ -20,6 +20,7 @@ import HomePage from "./HomePage/HomePage";
 import GaManageDocTasksPage from "./GaManageDocTasks/GaManageDocTasksPage";
 import GaGVDBsRetrParamsPage from "./GaGVDBsRetrParams/GaGVDBsRetrParamsPage";
 import GaManageVDBsPage from "./GaManageVDBs/GaManageVDBsPage";
+import ChatPage from "./Chat/ChatPage";
 
 export const Router = createBrowserRouter([
   {
@@ -41,6 +42,14 @@ export const Router = createBrowserRouter([
       {
         path: "query_documents/queries",
         element: <QueryDocumentsPage />,
+      },
+      {
+        path: "chat",
+        element: <ChatPage />,
+      },
+      {
+        path: "chat/:convId",
+        element: <ChatPage />,
       },
       {
         path: "manage_contexts",

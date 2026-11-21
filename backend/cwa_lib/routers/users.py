@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from common import CHAT_SERVICE_PORT
 from common.sql_db_async import AsyncSession, async_get_session
 from common.sql_models import User
 from cwa_lib.users import current_active_user
@@ -19,4 +20,9 @@ async def users_me(
             detail="User not found"
         )
     group_obj = await ApiGroupsTable(session).get_group_by_group_id(user.group_id)
-    return UsersMe(**user.__dict__, group_name=group_obj.group_name)
+    return UsersMe(
+        **user.__dict__,
+        group_name=group_obj.group_name,
+        chat_enabled=bool(group_obj.chat_enabled),
+        chat_service_port=CHAT_SERVICE_PORT,
+    )

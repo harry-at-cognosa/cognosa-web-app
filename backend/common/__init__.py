@@ -18,6 +18,9 @@ DATABASE_SYNC_URL = DATABASE_URL.replace('database://', 'postgresql+psycopg2://'
 
 LOG_SQLALCHEMY_RT = os.getenv("LOG_SQLALCHEMY_RT", 'NOTSET')
 RT_VDB_PROCESS_NUM = int(os.getenv("RT_VDB_PROCESS_NUM", 1))
+# Port the chat service listens on when the browser must reach it directly
+# (local runs). Leave empty where a reverse proxy routes /api/v1/chat/ to it.
+CHAT_SERVICE_PORT = os.getenv("CHAT_SERVICE_PORT", "").strip()
 RT_VDB_EMB_MODELS_PRELOAD = split2list(os.getenv("RT_VDB_EMB_MODELS_PRELOAD", ''), ',', str)
 
 from .async_log import AsyncLogger

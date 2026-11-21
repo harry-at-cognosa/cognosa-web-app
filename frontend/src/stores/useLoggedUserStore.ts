@@ -11,6 +11,10 @@ interface UsersMeResponse {
   is_contentmanager: boolean;
   is_verified: boolean;
   is_superuser: boolean;
+  // Chat (conversation mode): on for the user's group?  Port of the chat
+  // service when the browser must call it directly ("" = same origin).
+  chat_enabled?: boolean;
+  chat_service_port?: string;
 }
 
 interface LoggedUserState extends UsersMeResponse {
@@ -32,6 +36,8 @@ const defaultValues = {
   is_contentmanager: false,
   is_verified: false,
   is_superuser: false,
+  chat_enabled: false,
+  chat_service_port: "",
 };
 
 export const useLoggedUserStore = create<LoggedUserState>((set) => ({
