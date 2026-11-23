@@ -1,4 +1,3 @@
-import { Table } from "react-bootstrap";
 import { getRetrFiltersShortTableFromJSONStr } from "../../components/GVDBsRetrFilters/functions";
 import { getRetrParamsShortNameFromShortStr } from "../../components/GVDBsRetrParams/functions";
 import type { TableCellValue, TableRow } from "../TableStoreFactory";
@@ -27,6 +26,10 @@ function secondsOrNA(seconds: TableCellValue) {
   return `${seconds} sec`;
 }
 
+const TH =
+  "py-px pr-2 text-right align-middle font-semibold whitespace-nowrap text-ink-2";
+const TD = "py-px text-left align-middle";
+
 interface Props {
   row: TableRow;
 }
@@ -36,50 +39,44 @@ export default function GaDocTasksQueryInfo({ row }: Props) {
     row["gvdbs_cfg"] as string,
   );
   return (
-    <table>
+    <table className="text-[13px] leading-snug">
       <tbody>
         <tr>
-          <th className="text-end pe-2">Placed at:</th>
-          <td className="text-start">{getPlacedAtStr(row)}</td>
+          <th className={TH}>Placed at:</th>
+          <td className={TD}>{getPlacedAtStr(row)}</td>
         </tr>
         {row["short_name"] ? (
           <tr>
-            <th className="text-end pe-2">Short Name:</th>
-            <td className="text-start">{row["short_name"]}</td>
+            <th className={TH}>Short Name:</th>
+            <td className={TD}>{row["short_name"]}</td>
           </tr>
         ) : null}
         <tr>
-          <th className="text-end pe-2">Collection:</th>
-          <td className="text-start">{row["gvdbs_name"]}</td>
+          <th className={TH}>Collection:</th>
+          <td className={TD}>{row["gvdbs_name"]}</td>
         </tr>
         {row["gvdbs_cfg"] ? (
           <tr>
-            <th className="text-end pe-2">Retrieval Params:</th>
-            <td className="text-start">
+            <th className={TH}>Retrieval Params:</th>
+            <td className={TD}>
               {getRetrParamsShortNameFromShortStr(row["gvdbs_cfg"].toString())}
             </td>
           </tr>
         ) : null}
         {gvdbs_rf_rows ? (
           <tr>
-            <th className="text-end pe-2">Retrieval Filters:</th>
-            <td className="text-start">
-              <Table bordered className="mb-0">
+            <th className={TH}>Retrieval Filters:</th>
+            <td className={TD}>
+              <table className="w-full border-collapse">
                 <tbody>
                   {gvdbs_rf_rows.map((row, i) => (
                     <tr key={i}>
-                      <td
-                        className={"text-nowrap py-0"}
-                        style={{ width: "1%", backgroundColor: "#fff0" }}
-                      >
+                      <td className="w-px border border-line px-1.5 py-px whitespace-nowrap">
                         {row.short_title}
                       </td>
-                      <td className="py-0" style={{ backgroundColor: "#fff0" }}>
+                      <td className="border border-line px-1.5 py-px">
                         {row.global_not ? (
-                          <span
-                            className="me-2 pb-1"
-                            style={{ color: "#e00000" }}
-                          >
+                          <span className="mr-2 font-semibold text-err">
                             NOT:
                           </span>
                         ) : null}
@@ -88,48 +85,47 @@ export default function GaDocTasksQueryInfo({ row }: Props) {
                     </tr>
                   ))}
                 </tbody>
-              </Table>
+              </table>
             </td>
           </tr>
         ) : null}
         <tr>
-          <th className="text-end pe-2">LLM:</th>
-          <td className="text-start">{row["gllms_name"]}</td>
+          <th className={TH}>LLM:</th>
+          <td className={TD}>{row["gllms_name"]}</td>
         </tr>
         <tr>
-          <th className="text-end pe-2">VectorDB/LLM time:</th>
-          <td className="text-start">
+          <th className={TH}>VectorDB/LLM time:</th>
+          <td className={TD}>
             {secondsOrNA(row["vdb_query_seconds"]) +
               " / " +
               secondsOrNA(row["llm_query_seconds"])}
           </td>
         </tr>
         <tr>
-          <th className="text-end pe-2">Tokens Sent/Recv:</th>
-          <td className="text-start">
+          <th className={TH}>Tokens Sent/Recv:</th>
+          <td className={TD}>
             {row["llm_tokens_sent"] || "N/A"}
             {" / "}
             {row["llm_tokens_received"] || "N/A"}
           </td>
         </tr>
         <tr>
-          <th className="text-end pe-2">Status:</th>
+          <th className={TH}>Status:</th>
           <td
-            className="text-start"
-            style={{
-              color: row["status_str"] === "error" ? "red" : "black",
-            }}
+            className={
+              row["status_str"] === "error" ? TD + " text-err" : TD
+            }
           >
             {row["status_str"]}
           </td>
         </tr>
         <tr>
-          <th className="text-end pe-2"></th>
-          <td className="text-start"></td>
+          <th className={TH}></th>
+          <td className={TD}></td>
         </tr>
         <tr>
-          <th className="text-end pe-2"></th>
-          <td className="text-start"></td>
+          <th className={TH}></th>
+          <td className={TD}></td>
         </tr>
       </tbody>
     </table>

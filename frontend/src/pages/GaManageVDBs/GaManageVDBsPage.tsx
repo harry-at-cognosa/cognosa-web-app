@@ -1,11 +1,12 @@
 import { useTopNavBarTitle } from "../../hooks/useTopNavBarTitle";
+import TablePage from "../../tables/elements/TablePage";
 import TableGaManageVDBs from "./GaTableManageVDBs";
 
 export default function GaManageVDBsPage() {
   useTopNavBarTitle("Manage Collections");
   return (
-    <div className="container-fluid my-4">
+    <TablePage>
       <TableGaManageVDBs />
-    </div>
+    </TablePage>
   );
 }

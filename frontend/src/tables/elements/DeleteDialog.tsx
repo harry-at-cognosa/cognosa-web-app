@@ -1,7 +1,12 @@
-import { Button, Modal, Table } from "react-bootstrap";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { createTableStore } from "../TableStoreFactory";
-import ColumnDisplayName from "./ColumnDisplayName";
-import ViewCellElement from "./ViewCellElement";
+import RowValues from "./RowValues";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -15,44 +20,42 @@ export default function DeleteDialog({ useStore }: Props) {
   const { delete__ask_columns } = data.table_options;
   const handleClose = () => setDeleteRow(null);
   return (
-    <Modal show={Boolean(deleteRow)} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Confirm delete:</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {delete__ask_columns.map((col) => (
-          <Table bordered key={col + "__col_table"}>
-            <tbody>
-              <tr key={col + "__col_name"}>
-                <th className="bg-tc-100">
-                  <ColumnDisplayName
-                    nameType="dialog"
-                    data={data}
-                    col={col}
-                  ></ColumnDisplayName>
-                </th>
-              </tr>
-              <tr key={col + "__col_value"}>
-                <ViewCellElement
-                  useStore={useStore}
-                  row={deleteRow}
-                  col={col}
-                ></ViewCellElement>
-              </tr>
-            </tbody>
-          </Table>
-        ))}
-      </Modal.Body>
-      <Modal.Footer>
-        <Button
-          variant="danger"
-          onClick={tableStore.queryDeleteRow}
-          disabled={tableStore.busy != ""}
-          className="fw-bold"
-        >
-          Delete
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <Dialog
+      open={Boolean(deleteRow)}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent
+        className="flex max-h-[calc(100dvh-2rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-[520px]"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          (e.currentTarget as HTMLElement).focus();
+        }}
+      >
+        <div className="px-5 pt-5 pr-14 pb-3">
+          <DialogTitle>Confirm delete:</DialogTitle>
+          <DialogDescription className="sr-only">
+            Values of the row that will be deleted
+          </DialogDescription>
+        </div>
+        <div className="scroll-soft min-h-0 flex-1 overflow-y-auto px-5 pb-4">
+          <RowValues
+            useStore={useStore}
+            row={deleteRow}
+            cols={delete__ask_columns}
+          />
+        </div>
+        <div className="flex flex-none justify-end border-t border-line-soft px-5 py-3.5">
+          <Button
+            variant="destructive"
+            onClick={tableStore.queryDeleteRow}
+            disabled={tableStore.busy != ""}
+          >
+            Delete
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

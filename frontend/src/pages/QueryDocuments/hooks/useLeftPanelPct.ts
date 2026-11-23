@@ -4,9 +4,10 @@ import { useCallback, useState } from "react";
 // query/response area (right). Width is a percentage of the container,
 // clamped to [MIN_PCT, MAX_PCT], persisted per browser in localStorage.
 const STORAGE_KEY = "query_page_left_panel_pct";
-export const DEFAULT_PCT = 33.333;
-const MIN_PCT = 18;
-const MAX_PCT = 45;
+// v1.1.0 (owner ruling): the default is 24 % (v1.0.1: 33.333); key and limits unchanged.
+export const DEFAULT_PCT = 24;
+export const MIN_PCT = 18;
+export const MAX_PCT = 45;
 
 function clamp(pct: number): number {
   return Math.min(MAX_PCT, Math.max(MIN_PCT, pct));

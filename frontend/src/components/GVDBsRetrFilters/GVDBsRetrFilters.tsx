@@ -1,4 +1,3 @@
-import { Container } from "react-bootstrap";
 import { useDefaultGVDBsRetrFiltersStore } from "./useDefaultGVDBsRetrFiltersStore";
 import { useModalGVDBsRetrFiltersStore } from "./useModalGVDBsRetrFiltersStore";
 import type { GVDBsRetrFiltersField } from "./types";
@@ -63,21 +62,25 @@ export default function GVDBsRetrFilters() {
   }
 
   return (
-    <Container fluid>
+    <div>
       {global_not_enabled ? (
-        <GVDBsRetrFiltersFieldGlobalNot
-          value={global_not_value}
-          onChange={onChange}
-        />
+        <div className="mb-2.5 flex justify-end">
+          <GVDBsRetrFiltersFieldGlobalNot
+            value={global_not_value}
+            onChange={onChange}
+          />
+        </div>
       ) : null}
-      {fields.map((field) => (
-        <FieldList
-          key={"rffl__" + field.rf_field_id}
-          field={field}
-          valueList={rf_field_id__values[field.rf_field_id] || []}
-          onChange={onChange}
-        />
-      ))}
-    </Container>
+      <div className="grid grid-cols-1 gap-x-3.5 gap-y-2.5 sm:grid-cols-2">
+        {fields.map((field) => (
+          <FieldList
+            key={"rffl__" + field.rf_field_id}
+            field={field}
+            valueList={rf_field_id__values[field.rf_field_id] || []}
+            onChange={onChange}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

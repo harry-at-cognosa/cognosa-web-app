@@ -1,4 +1,5 @@
-import { Button } from "react-bootstrap";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { createTableStore, TableRow } from "../TableStoreFactory";
 
 interface Props {
@@ -19,11 +20,10 @@ export default function CreateRowButton({ useStore }: Props) {
   return (
     <Button
       type="button"
-      variant="warning"
-      className="me-3 fw-bold px-4 btn-tc-300-400"
       onClick={() => setShowCreateOrUpdateDialog("create", makeInitialDict())}
     >
-      + Add
+      <Plus />
+      Add
     </Button>
   );
 }

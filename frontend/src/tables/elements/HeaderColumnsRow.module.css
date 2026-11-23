@@ -1,32 +1,44 @@
 .sortableHeader {
-  position: relative; /* enables absolute positioning of child */
-  padding-right: 24px; /* make room for the ▲ so it doesn't overlap text */
+  cursor: pointer;
+}
+
+/* the label and its arrow; a pill when this column is the sort column */
+.sortButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: -6px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.sortButtonActive {
+  background: var(--tint);
+  color: var(--tint-fg);
+}
+
+.sortIndicator,
+.sortIndicatorInvisible {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  transition: opacity 0.2s ease;
 }
 
 .sortIndicator {
-  position: relative;
-  right: 0; /* adjust as needed for spacing from right border */
-  top: 50%;
-  transform: translateY(-50%); /* vertically center */
-  opacity: 1; /* optional: subtle by default */
-  transition: opacity 0.2s ease; /* smooth shadow transition */
-}
-
-.sortIndicatorInvisible {
-  opacity: 0.1;
-  position: relative;
-  right: 0; /* adjust as needed for spacing from right border */
-  top: 50%;
-  transform: translateY(-50%); /* vertically center */
-  transition: opacity 0.2s ease; /* smooth shadow transition */
-}
-
-.sortableHeader:hover .sortIndicator {
   opacity: 1;
 }
 
+/* a sortable column that is not the sort column: faint arrow, full on hover */
+.sortIndicatorInvisible {
+  opacity: 0.22;
+}
+
 .sortableHeader:hover .sortIndicatorInvisible {
-  opacity: 1; /* fully visible on hover */
+  opacity: 1;
 }
 
 /* drag-resizable columns (table_options.resize__allow) */
@@ -54,13 +66,13 @@
   left: 3px;
   width: 3px;
   border-radius: 2px;
-  background: rgba(0, 0, 0, 0.25);
+  background: color-mix(in srgb, var(--muted-fg) 40%, transparent);
   transition: background 0.15s ease;
 }
 
 .resizeHandle:hover::after,
 :global(body).resizing .resizeHandle::after {
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--accent-text);
 }
 
 /* while dragging: no text selection, keep the resize cursor everywhere */

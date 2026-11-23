@@ -1,4 +1,5 @@
-import { Button } from "react-bootstrap";
+import { X } from "lucide-react";
+import { TableCell, TableRow } from "@/components/ui/table";
 import ViewCellElement from "./ViewCellElement";
 import UpdateRowButton from "./UpdateRowButton";
 import ReadRowButton from "./ReadRowButton";
@@ -30,19 +31,18 @@ export default function TableBody({ useStore }: Props) {
     userWidths,
   ]);
   return (
-    <tbody ref={tbodyRef}>
+    <tbody ref={tbodyRef} className="[&_tr:last-child]:border-0">
       {data.rows.map((row) => (
-        <tr
+        <TableRow
           key={row[data.table_options.pk]?.toString()}
-          style={{ textAlign: "center", verticalAlign: "middle" }}
+          className="hover:bg-(--row-hover)"
         >
           {/* view/edit button cell */}
-          <td
+          <TableCell
             key={row[data.table_options.pk]?.toString() + "__edit"}
-            className="position-relative"
-            style={{ width: "1px" }}
+            className="relative w-px pr-0"
           >
-            <div className="content-wrapper">
+            <div>
               {data.table_options.update__ask_columns.length ? (
                 <UpdateRowButton
                   row={row}
@@ -53,7 +53,7 @@ export default function TableBody({ useStore }: Props) {
               )}
             </div>
             <BusyCell isBusy={isBusy} />
-          </td>
+          </TableCell>
           {/* visible columns */}
           {tableStore.data?.table_options?.read__visible_columns.map((col) => (
             <ViewCellElement
@@ -66,24 +66,25 @@ export default function TableBody({ useStore }: Props) {
           ))}
           {/* delete button cell */}
           {data.table_options.delete__ask_columns.length ? (
-            <td
+            <TableCell
               key={row[data.table_options.pk]?.toString() + "__delete"}
-              className="position-relative"
-              style={{ width: "1px" }}
+              className="relative w-px px-1.5"
             >
-              <div className="content-wrapper">
-                <Button
+              <div>
+                <button
                   type="button"
-                  variant="secondary"
+                  className="x-btn"
+                  aria-label="Delete"
+                  title="Delete"
                   onClick={() => tableStore.setDeleteRow(row)}
                 >
-                  X
-                </Button>
+                  <X className="size-4" />
+                </button>
               </div>
               <BusyCell isBusy={isBusy} />
-            </td>
+            </TableCell>
           ) : null}
-        </tr>
+        </TableRow>
       ))}
     </tbody>
   );

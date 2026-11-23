@@ -1,4 +1,4 @@
-import { Form, InputGroup, Spinner } from "react-bootstrap";
+import { Sel } from "@/components/Sel";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import { useEffect } from "react";
@@ -22,36 +22,16 @@ export default function QuerySelectContext() {
   }, [waitingState, current.gc_id]);
 
   return (
-    <InputGroup className="mb-2">
-      <InputGroup.Text className="fw-bold bg-tc-300">Context:</InputGroup.Text>
-      {waitingState ? (
-        <InputGroup.Text
-          style={{
-            flex: "1",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#f8f9fa",
-          }}
-        >
-          <Spinner animation="border" size="sm" />
-        </InputGroup.Text>
-      ) : (
-        <Form.Select
-          value={current.gc_id?.toString() || ""}
-          onChange={(e) => current.setGCID(Number(e.target.value))}
-          disabled={waitingState || current.gvdbs_id === -1}
-        >
-          {group_contexts.map((gc_obj) => (
-            <option
-              key={gc_obj.gc_id.toString()}
-              value={gc_obj.gc_id.toString()}
-            >
-              {gc_obj.gc_name}
-            </option>
-          ))}
-        </Form.Select>
-      )}
-    </InputGroup>
+    <Sel
+      variant="pill"
+      label="Context"
+      value={waitingState ? "" : current.gc_id?.toString() || ""}
+      onChange={(v) => current.setGCID(Number(v))}
+      options={group_contexts.map((gc_obj) => ({
+        value: gc_obj.gc_id.toString(),
+        label: gc_obj.gc_name,
+      }))}
+      disabled={waitingState || current.gvdbs_id === -1}
+    />
   );
 }

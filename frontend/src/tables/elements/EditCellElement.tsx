@@ -1,6 +1,9 @@
-import { Container, Form } from "react-bootstrap";
+import { Check, CircleX } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { Sel } from "@/components/Sel";
 import type { createTableStore, TableCellValue } from "../TableStoreFactory";
-import { Check, XCircle } from "react-bootstrap-icons";
 import ApiSettingsValue from "../EditRenders/ApiSettingsValue";
 import EditCellGVDBDefRetrParams from "../EditRenders/EditCellGVDBDefRetrParams";
 
@@ -8,6 +11,11 @@ interface Props {
   useStore: ReturnType<typeof createTableStore>;
   col: string;
 }
+
+// marks a Sel as invalid (it has no aria-invalid of its own)
+export const SEL_INVALID = "border-destructive ring-3 ring-destructive/20";
+// multi-line editors keep the row count they are given and can be dragged taller
+export const TEXTAREA_CLASS = "field-sizing-fixed resize-y";
 
 export default function EditCellElement({ useStore, col }: Props) {
   const tableStore = useStore();
@@ -21,6 +29,7 @@ export default function EditCellElement({ useStore, col }: Props) {
   const value = tableStore.editRow[col];
   const value_str = value?.toString() || "";
   const cellType = columns[col].type;
+  const label = columns[col].display || col;
   function onChange(value: TableCellValue) {
     tableStore.setEditRow({ ...tableStore.editRow, [col]: value });
     if (editRowErrorMark) tableStore.setEditRowErrorMark(col, false);
@@ -38,19 +47,17 @@ export default function EditCellElement({ useStore, col }: Props) {
 
   if (cellType === "boolean")
     return (
-      <div key={"div_boolean__" + key} className="d-flex">
-        <Form.Check
-          type="switch"
+      <div key={"div_boolean__" + key} className="flex h-9 items-center gap-2.5">
+        <Switch
+          id={key}
           checked={!!value}
           key={"check_boolean__" + key}
-          className="ms-2"
-          onChange={(e) => onChange(e.target.checked)}
-          autoComplete="off"
-        ></Form.Check>
-        {Boolean(value) ? (
-          <Check size={"24px"} style={{ color: "green" }}></Check>
+          onCheckedChange={(checked) => onChange(checked)}
+        ></Switch>
+        {value ? (
+          <Check className="size-5 text-ok" aria-label="yes"></Check>
         ) : (
-          <XCircle size={"24px"} style={{ color: "red" }}></XCircle>
+          <CircleX className="size-5 text-err" aria-label="no"></CircleX>
         )}
       </div>
     );
@@ -58,29 +65,30 @@ export default function EditCellElement({ useStore, col }: Props) {
     const select_values = columns[col].select;
     if (select_values === null)
       return (
-        <Form.Control
+        <Input
+          id={key}
           type="number"
-          value={value as string | number}
+          value={(value ?? "") as string | number}
           key={key}
           onChange={(e) => onChange(parseFloat(e.target.value) || null)}
           autoComplete="off"
-          isInvalid={isInvalid}
+          aria-invalid={isInvalid || undefined}
+          className="tabular-nums"
         />
       );
     else
       return (
-        <Form.Select
+        <Sel
+          id={key}
+          label={label}
           value={value_str}
-          onChange={(e) => onChange(Number(e.target.value))}
-          autoComplete="off"
-          isInvalid={isInvalid}
-        >
-          {select_values.map((row) => (
-            <option key={row.value.toString()} value={row.value.toString()}>
-              {row.name}
-            </option>
-          ))}
-        </Form.Select>
+          onChange={(v) => onChange(Number(v))}
+          options={select_values.map((row) => ({
+            value: row.value.toString(),
+            label: row.name,
+          }))}
+          className={isInvalid ? SEL_INVALID : undefined}
+        />
       );
   }
   if (cellType === "string") {
@@ -89,61 +97,65 @@ export default function EditCellElement({ useStore, col }: Props) {
       return (
         <>
           {dummy_username}
-          <Form.Control
+          <Input
+            id={key}
             type="text"
-            value={(value === null ? "" : value) as string}
+            value={(value === null || value === undefined ? "" : value) as string}
             key={key}
             onChange={(e) => onChange(e.target.value)}
             autoComplete="off"
-            isInvalid={isInvalid}
+            aria-invalid={isInvalid || undefined}
           />
         </>
       );
     else
       return (
-        <Form.Select
+        <Sel
+          id={key}
+          label={label}
           value={value_str}
-          onChange={(e) => onChange(e.target.value)}
-          autoComplete="off"
-          isInvalid={isInvalid}
-        >
-          {select_values.map((row) => (
-            <option key={row.value.toString()} value={row.value.toString()}>
-              {row.name}
-            </option>
-          ))}
-        </Form.Select>
+          onChange={(v) => onChange(v)}
+          options={select_values.map((row) => ({
+            value: row.value.toString(),
+            label: row.name,
+          }))}
+          className={isInvalid ? SEL_INVALID : undefined}
+        />
       );
   }
   if (cellType === "text")
     return (
-      <Form.Control
-        as="textarea"
-        value={value as string}
+      <Textarea
+        id={key}
+        value={(value ?? "") as string}
         key={key}
         onChange={(e) => onChange(e.target.value)}
         rows={5}
         autoComplete="off"
-        isInvalid={isInvalid}
-      ></Form.Control>
+        aria-invalid={isInvalid || undefined}
+        className={TEXTAREA_CLASS}
+      ></Textarea>
     );
   if (cellType === "group_id_name") {
     const select_group_id_name = columns["group_id"].select;
     if (!select_group_id_name || !select_group_id_name.length)
-      return <h3 style={{ color: "red" }}>No groups found!</h3>;
+      return (
+        <h3 className="font-heading text-xl font-semibold text-err">
+          No groups found!
+        </h3>
+      );
     return (
-      <Form.Select
+      <Sel
+        id={key}
+        label={label}
         value={value_str}
-        onChange={(e) => onChange(Number(e.target.value))}
-        autoComplete="off"
-        isInvalid={isInvalid}
-      >
-        {select_group_id_name.map((gin) => (
-          <option key={gin.value.toString()} value={gin.value.toString()}>
-            {gin.name}
-          </option>
-        ))}
-      </Form.Select>
+        onChange={(v) => onChange(Number(v))}
+        options={select_group_id_name.map((gin) => ({
+          value: gin.value.toString(),
+          label: gin.name,
+        }))}
+        className={isInvalid ? SEL_INVALID : undefined}
+      />
     );
   }
   if (cellType === "api_settings_value") {
@@ -159,38 +171,40 @@ export default function EditCellElement({ useStore, col }: Props) {
           style={{ display: "none", position: "absolute" }}
           autoComplete="new-password"
         />
-        <Form.Control
+        <Input
+          id={key}
           type="password"
-          value={(value === null ? "" : value) as string}
+          value={(value === null || value === undefined ? "" : value) as string}
           key={key}
           onChange={(e) => onChange(e.target.value)}
           autoComplete="off"
-          isInvalid={isInvalid}
+          aria-invalid={isInvalid || undefined}
         />
       </>
     );
   }
   if (cellType === "gvdbs_retr_params") {
     return (
-      <Container style={{ padding: "20px" }}>
+      <div className="rounded-[18px] border border-hair bg-(--box) p-4">
         <EditCellGVDBDefRetrParams
           valueStr={value_str}
           onChange={(newValueStr) => onChange(newValueStr)}
         />
-      </Container>
+      </div>
     );
   }
   if (cellType === "gvdbs_retr_filters")
     return (
-      <Form.Control
-        as="textarea"
-        value={value as string}
+      <Textarea
+        id={key}
+        value={(value ?? "") as string}
         key={key}
         onChange={(e) => onChange(e.target.value)}
         rows={5}
         autoComplete="off"
-        isInvalid={isInvalid}
-      ></Form.Control>
+        aria-invalid={isInvalid || undefined}
+        className={TEXTAREA_CLASS}
+      ></Textarea>
     );
   return value?.toString();
 }

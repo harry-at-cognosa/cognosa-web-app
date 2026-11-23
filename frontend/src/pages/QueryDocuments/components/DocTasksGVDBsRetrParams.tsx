@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { ChevronDown, RotateCcw, SlidersHorizontal } from "lucide-react";
+import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import { EditorPopoverContent } from "./EditorPopover";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
-import { ArrowRepeat, CheckCircleFill, GearFill } from "react-bootstrap-icons";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import GVDBsRetrParams from "../../../components/GVDBsRetrParams/GVDBsRetrParams";
 import { useDefaultGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDefaultGVDBsRetrParamsStore";
@@ -84,64 +85,47 @@ export default function DocTasksGVDBsRetrParams() {
 
     setShow(true);
   };
+  const shortName = modalDisabled
+    ? "N/A"
+    : needReloadFromHistory
+      ? "…"
+      : curStore.getShortName();
 
   return (
-    <>
-      <Button
-        variant="outline-secondary"
-        className="fw-bold btn-tc-300-400"
-        style={{
-          color: "black",
-        }}
-        onClick={handleShow}
-        disabled={modalDisabled}
+    <div className="flex min-w-0 items-center gap-1">
+      {/* Apply commits; any other way of closing (X, Escape, click outside) discards */}
+      <Popover
+        open={show}
+        onOpenChange={(open) => (open ? handleShow() : handleCancel())}
       >
-        <GearFill size={"20px"} style={{ marginBottom: "2px" }}></GearFill>
-        &nbsp;
-        {"Retrieval Parameters: " +
-          (modalDisabled
-            ? "N/A"
-            : needReloadFromHistory
-              ? "…"
-              : curStore.getShortName())}
-      </Button>
-      <Button
-        variant="outline-secondary"
-        className="fw-bold btn-tc-300-400"
-        style={{
-          color: "black",
-        }}
+        <PopoverTrigger asChild>
+          <button type="button" className="pill" disabled={modalDisabled}>
+            <SlidersHorizontal className="size-3.5 flex-none" />
+            <span className="k">Retrieval Parameters</span>
+            <span className="v tabular-nums">{shortName}</span>
+            <ChevronDown className="size-4 flex-none" />
+          </button>
+        </PopoverTrigger>
+        <EditorPopoverContent
+          title="VDB Retrieval Parameters"
+          className="w-[400px]"
+          onApply={handleApply}
+        >
+          <GVDBsRetrParams />
+        </EditorPopoverContent>
+      </Popover>
+      <button
+        type="button"
+        className="mini"
         onClick={() => {
           curStore.copyFromDefault();
         }}
         disabled={modalDisabled}
+        title="Back to the collection's default Retrieval Parameters"
       >
-        <ArrowRepeat size="20px" style={{ marginBottom: "3px" }} /> Reset
-      </Button>
-
-      <Modal show={show} onHide={handleCancel}>
-        <Modal.Header closeButton>
-          <Modal.Title>VDB Retrieval Parameters</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <GVDBsRetrParams />
-        </Modal.Body>
-        <Modal.Footer className="justify-content-center">
-          <Button
-            variant="success"
-            className="fw-bold btn-tc-300-400"
-            onClick={handleApply}
-            style={{ color: "black" }}
-          >
-            <CheckCircleFill
-              className="me-1 my-0"
-              size="20px"
-              style={{ color: "green" }}
-            ></CheckCircleFill>
-            Apply
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+        <RotateCcw className="size-3.5" />
+        Reset
+      </button>
+    </div>
   );
 }

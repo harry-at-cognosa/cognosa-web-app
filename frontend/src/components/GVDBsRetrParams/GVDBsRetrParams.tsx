@@ -1,7 +1,9 @@
-import { Form, InputGroup } from "react-bootstrap";
+import { useId } from "react";
+import { Input } from "@/components/ui/input";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
 import type { SearchType } from "./types";
 import { useModalGVDBsRetrParamsStore } from "./useModalGVDBsRetrParamsStore";
-import clsx from "clsx";
 
 const SearchTypeName = [
   ["similarity", "Similarity"],
@@ -13,8 +15,14 @@ interface Props {
   onChange?: (valueStr: string) => void;
 }
 
+/**
+ * The one Retrieval Parameters editor: Search Type and k / fetch_k /
+ * lambda_mult / score_threshold, on the modal store. Used in the popover on
+ * Queries and in the admin forms.
+ */
 export default function GVDBsRetrParams({ onChange }: Props) {
   const modalStore = useModalGVDBsRetrParamsStore();
+  const idPrefix = useId();
 
   const search_type = modalStore.search_type;
   const isSIM = search_type === "similarity";
@@ -62,109 +70,90 @@ export default function GVDBsRetrParams({ onChange }: Props) {
     if (onChange) onChange(modalStore.getJSON());
   };
 
+  const lbl = (enabled: boolean) => cn("lbl", !enabled && "opacity-70");
+
   return (
-    <>
-      <InputGroup className="mb-2">
-        <InputGroup.Text
-          className="fw-bold justify-content-end bg-tc-300"
-          style={{ width: "16ch" }}
-        >
-          Search Type:
-        </InputGroup.Text>
-        <Form.Select
-          className="fw-bold"
-          value={search_type}
-          onChange={(e) => handleSearchTypeChange(e.target.value as SearchType)}
-          autoComplete="off"
-        >
-          {SearchTypeName.map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </Form.Select>
-      </InputGroup>
-      <hr />
-      <InputGroup className="mb-2">
-        <InputGroup.Text
-          className="fw-bold justify-content-end bg-tc-300"
-          style={{ width: "16ch" }}
-        >
-          k:
-        </InputGroup.Text>
-        <Form.Control
-          type="number"
-          className="fw-bold"
-          value={isSIM ? sk__sim.k : isMMR ? sk__mmr.k : sk__sst.k}
-          onChange={(e) => handleKandFetchKChange("k", e.target.value)}
-          min={1}
-        />
-      </InputGroup>
-
-      <InputGroup className="mb-2">
-        <InputGroup.Text
-          className={clsx(
-            "fw-bold justify-content-end",
-            isMMR ? "bg-tc-300" : "bg-tc-100",
-          )}
-          style={{ width: "16ch" }}
-        >
-          fetch_k:
-        </InputGroup.Text>
-        <Form.Control
-          type="number"
-          className="fw-bold"
-          value={isMMR ? sk__mmr.fetch_k : ""}
-          disabled={!isMMR}
-          onChange={(e) => handleKandFetchKChange("fetch_k", e.target.value)}
-          min={1}
-        />
-      </InputGroup>
-      <InputGroup className="mb-2">
-        <InputGroup.Text
-          className={clsx(
-            "fw-bold justify-content-end",
-            isMMR ? "bg-tc-300" : "bg-tc-100",
-          )}
-          style={{ width: "16ch" }}
-        >
-          lambda_mult:
-        </InputGroup.Text>
-        <Form.Control
-          type="number"
-          step="0.01"
-          className="fw-bold"
-          value={isMMR ? sk__mmr.lambda_mult : ""}
-          disabled={!isMMR}
-          onChange={(e) => handleLMandSTChange("lambda_mult", e.target.value)}
-          min={0}
-          max={1}
-        />
-      </InputGroup>
-
-      <InputGroup className="mb-2">
-        <InputGroup.Text
-          className={clsx(
-            "fw-bold justify-content-end",
-            isSST ? "bg-tc-300" : "bg-tc-100",
-          )}
-          style={{ width: "16ch" }}
-        >
-          score_threshold:
-        </InputGroup.Text>
-        <Form.Control
-          type="number"
-          step="0.01"
-          className="fw-bold"
-          value={isSST ? sk__sst.score_threshold : ""}
-          disabled={!isSST}
-          onChange={(e) =>
-            handleLMandSTChange("score_threshold", e.target.value)
-          }
-          min={0}
-          max={1}
-        />
-      </InputGroup>
-    </>
+    <div>
+      <span className="lbl" id={`${idPrefix}-st`}>
+        Search Type
+      </span>
+      <ToggleGroup
+        type="single"
+        aria-labelledby={`${idPrefix}-st`}
+        value={search_type}
+        // Radix lets the pressed item be un-pressed (value ""); a search type is required
+        onValueChange={(v) => v && handleSearchTypeChange(v as SearchType)}
+        className="w-full flex-wrap"
+      >
+        {SearchTypeName.map(([value, label]) => (
+          <ToggleGroupItem key={value} value={value} className="grow">
+            {label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+      <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2.5">
+        <div>
+          <label className="lbl" htmlFor={`${idPrefix}-k`}>
+            k
+          </label>
+          <Input
+            id={`${idPrefix}-k`}
+            type="number"
+            className="tabular-nums"
+            value={isSIM ? sk__sim.k : isMMR ? sk__mmr.k : sk__sst.k}
+            onChange={(e) => handleKandFetchKChange("k", e.target.value)}
+            min={1}
+          />
+        </div>
+        <div>
+          <label className={lbl(isMMR)} htmlFor={`${idPrefix}-fetch_k`}>
+            fetch_k
+          </label>
+          <Input
+            id={`${idPrefix}-fetch_k`}
+            type="number"
+            className="tabular-nums"
+            value={isMMR ? sk__mmr.fetch_k : ""}
+            disabled={!isMMR}
+            onChange={(e) => handleKandFetchKChange("fetch_k", e.target.value)}
+            min={1}
+          />
+        </div>
+        <div>
+          <label className={lbl(isMMR)} htmlFor={`${idPrefix}-lambda_mult`}>
+            lambda_mult
+          </label>
+          <Input
+            id={`${idPrefix}-lambda_mult`}
+            type="number"
+            step="0.01"
+            className="tabular-nums"
+            value={isMMR ? sk__mmr.lambda_mult : ""}
+            disabled={!isMMR}
+            onChange={(e) => handleLMandSTChange("lambda_mult", e.target.value)}
+            min={0}
+            max={1}
+          />
+        </div>
+        <div>
+          <label className={lbl(isSST)} htmlFor={`${idPrefix}-score_threshold`}>
+            score_threshold
+          </label>
+          <Input
+            id={`${idPrefix}-score_threshold`}
+            type="number"
+            step="0.01"
+            className="tabular-nums"
+            value={isSST ? sk__sst.score_threshold : ""}
+            disabled={!isSST}
+            onChange={(e) =>
+              handleLMandSTChange("score_threshold", e.target.value)
+            }
+            min={0}
+            max={1}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

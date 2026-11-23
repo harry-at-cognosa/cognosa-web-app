@@ -1,4 +1,5 @@
-import { Button } from "react-bootstrap";
+import { Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 
 export default function CloneQueryButton() {
@@ -14,13 +15,13 @@ export default function CloneQueryButton() {
   return (
     <Button
       type="button"
-      variant=""
-      className="me-2 fw-bold btn-tc-300-400"
+      variant="outline"
       size="sm"
       onClick={handleClick}
       disabled={disabled}
-      style={{ visibility: visibility ? "visible" : "hidden" }}
+      className={visibility ? undefined : "invisible"}
     >
+      <Copy className="size-3.5" />
       Clone this query
     </Button>
   );

@@ -1,6 +1,6 @@
-import { Button } from "react-bootstrap";
+import { RefreshCw } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { createTableStore } from "../TableStoreFactory";
-import { ArrowRepeat } from "react-bootstrap-icons";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -9,13 +9,16 @@ interface Props {
 export default function TableReloadButton({ useStore }: Props) {
   const tableStore = useStore();
   return (
-    <Button
+    <button
       type="button"
-      variant=""
-      className="mx-3 fw-bold p-0 btn-tc-200-300"
+      className="icon-btn size-[30px]!"
       onClick={() => tableStore.setNeedReload(true)}
+      aria-label="Reload"
+      title="Reload"
     >
-      <ArrowRepeat size="1.75rem" className="fw-bold"></ArrowRepeat>
-    </Button>
+      <RefreshCw
+        className={cn("size-3.5", tableStore.busy === "read" && "animate-spin")}
+      />
+    </button>
   );
 }

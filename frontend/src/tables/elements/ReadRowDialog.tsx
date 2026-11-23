@@ -1,8 +1,13 @@
-import { Button, Modal, Table } from "react-bootstrap";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { createTableStore } from "../TableStoreFactory";
-import ColumnDisplayName from "./ColumnDisplayName";
-import ViewCellElement from "./ViewCellElement";
 import ExportButton from "./ExportButton";
+import RowValues from "./RowValues";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -17,46 +22,40 @@ export default function ReadRowDialog({ useStore }: Props) {
   const visible_columns = view__visible_columns || read__visible_columns;
   const handleClose = () => setReadRow(null);
   return (
-    <Modal show={Boolean(readRow)} onHide={handleClose} size="lg">
-      <Modal.Header closeButton>
-        <Modal.Title>Row values:</Modal.Title>
-        <div className="mx-auto mt-1" style={{ fontSize: "large" }}>
+    <Dialog
+      open={Boolean(readRow)}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent
+        className="flex max-h-[calc(100dvh-2rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-[800px]"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          (e.currentTarget as HTMLElement).focus();
+        }}
+      >
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 pt-5 pr-14 pb-3">
+          <DialogTitle>Row values:</DialogTitle>
+          <DialogDescription className="sr-only">
+            All values of the row
+          </DialogDescription>
+          <span className="flex-1" />
           <ExportButton useStore={useStore} row={readRow} />
         </div>
-      </Modal.Header>
-      <Modal.Body>
-        {visible_columns.map((col) => (
-          <Table bordered key={col + "__col_table"}>
-            <tbody>
-              <tr key={col + "__col_name"}>
-                <th className="bg-tc-100">
-                  <ColumnDisplayName
-                    nameType="dialog"
-                    data={data}
-                    col={col}
-                  ></ColumnDisplayName>
-                </th>
-              </tr>
-              <tr key={col + "__col_value"}>
-                <ViewCellElement
-                  useStore={useStore}
-                  row={readRow}
-                  col={col}
-                ></ViewCellElement>
-              </tr>
-            </tbody>
-          </Table>
-        ))}
-      </Modal.Body>
-      <Modal.Footer>
-        <Button
-          variant=""
-          onClick={handleClose}
-          className="fw-bold btn-tc-300-400"
-        >
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
+        <div className="scroll-soft min-h-0 flex-1 overflow-y-auto px-5 pb-4">
+          <RowValues
+            useStore={useStore}
+            row={readRow}
+            cols={visible_columns}
+          />
+        </div>
+        <div className="flex flex-none justify-end border-t border-line-soft px-5 py-3.5">
+          <Button variant="outline" onClick={handleClose}>
+            Close
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

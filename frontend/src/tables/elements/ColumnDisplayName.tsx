@@ -8,14 +8,16 @@ interface Props {
 
 export default function ColumnDisplayName({ nameType, data, col }: Props) {
   if (!data) return null;
-  let displayName = data.columns[col].display || col;
+  const displayName = data.columns[col].display || col;
   if (nameType === "dialog") return displayName;
-  let lines = displayName.split("\n");
+  const lines = displayName.split("\n");
   if (lines.length <= 1) return <span>{displayName}</span>;
   return (
     <span>
       {lines.map((x, i) => (
-        <div key={i}>{x}</div>
+        <span key={i} className="block">
+          {x}
+        </span>
       ))}
     </span>
   );

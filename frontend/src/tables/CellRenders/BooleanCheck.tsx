@@ -1,3 +1,4 @@
+import { Check, X } from "lucide-react";
 import type { TableOptions, TableCellValue } from "../TableStoreFactory";
 
 interface Props {
@@ -11,26 +12,18 @@ export default function BooleanCheck({ table_options, col, value }: Props) {
   if (!value && table_options.read__hide_on_false.includes(col)) return null;
   if (value)
     return (
-      <span
-        style={{
-          color: "green",
-          fontSize: "1.2em",
-          fontWeight: "bold",
-        }}
-      >
-        ✓
-      </span>
+      <Check
+        className="inline-block size-[18px] stroke-[2.6] text-ok"
+        role="img"
+        aria-label="yes"
+      />
     );
   else
     return (
-      <span
-        style={{
-          color: "red",
-          fontSize: "1.2em",
-          fontWeight: "bold",
-        }}
-      >
-        X
-      </span>
+      <X
+        className="inline-block size-[18px] stroke-[2.6] text-err"
+        role="img"
+        aria-label="no"
+      />
     );
 }

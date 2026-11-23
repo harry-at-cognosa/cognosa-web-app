@@ -1,96 +1,77 @@
-import { useEffect } from "react";
-import { Button, ListGroup } from "react-bootstrap";
+import { useState } from "react";
+import { ConfirmDelete } from "@/components/ConfirmDelete";
+import { GroupLabel } from "@/components/SplitLayout";
 import { useDocTasksShortStore } from "../stores/useDocTasksShort";
 import QueriesListBarItem from "./QueriesListBarItem";
 import axiosClient from "../../../api/axiosClient";
-import type { DocTasksShortQuery } from "../models/docTasksShortQuery";
+import type { DocTasksShortItem } from "../models/docTasksShortItem";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
-import { Search } from "react-bootstrap-icons";
+import { useQueryNotice } from "../hooks/useQueryNotice";
 
-function QueriesListBar() {
+interface Props {
+  /** called after a query was chosen (closes the list on a phone) */
+  afterPick?: () => void;
+}
+
+function QueriesListBar({ afterPick }: Props) {
   const queryStore = useQueryDocumentsStore();
   const queriesStore = useDocTasksShortStore();
   const currentStore = useDocTasksCurrentStore();
+  const [pending, setPending] = useState<DocTasksShortItem | null>(null);
 
-  useEffect(() => {
-    if (!queriesStore.needReload) return;
-    async function fetchQueries() {
-      try {
-        const response = await axiosClient.post<DocTasksShortQuery>(
-          "/doc_tasks/query_short",
-        );
-        const rows = response.data.rows;
-        queriesStore.setRows(rows);
-      } catch {
-        alert("Error during fetching /doc_tasks/query_short");
+  const handleDelete = async (doc_task_id: number) => {
+    try {
+      await axiosClient.delete(`/doc_tasks/${doc_task_id}`);
+      queriesStore.deleteRow(doc_task_id);
+    } catch (error) {
+      console.error("Failed to delete query:", error);
+      useQueryNotice.getState().show("Failed to delete query. Please try again.");
+    } finally {
+      if (doc_task_id === useDocTasksCurrentStore.getState().doc_task_id) {
+        // clear query if it was current
+        queryStore.setOpUUID("");
+        queryStore.stopPolling();
+        currentStore.cloneQuery();
       }
     }
-    queriesStore.setNeedReload(false);
-    fetchQueries();
-  }, [queriesStore.needReload]);
+  };
 
-  const todayRows = queriesStore.getTodayRows();
-  const weekRows = queriesStore.getWeekRows();
-  const beforeRows = queriesStore.getBeforeRows();
+  const groups: [string, boolean, DocTasksShortItem[]][] = [
+    ["Today", false, queriesStore.getTodayRows()],
+    ["This week", true, queriesStore.getWeekRows()],
+    ["Before", true, queriesStore.getBeforeRows()],
+  ];
 
   return (
-    <div className="w-100 bg-light border-end">
-      <Button
-        type="button"
-        variant="light"
-        className="w-100 fw-bold mt-2 btn-tc-300-400"
-        onClick={() => {
-          queryStore.setOpUUID("");
-          queryStore.stopPolling();
-          currentStore.setNewQuery();
+    <>
+      <ConfirmDelete
+        name={pending ? pending.short_name : null}
+        onCancel={() => setPending(null)}
+        onConfirm={() => {
+          if (pending) handleDelete(pending.doc_task_id);
+          setPending(null);
         }}
-      >
-        <Search /> &nbsp; New Query
-      </Button>
-      {todayRows.length ? (
-        <>
-          <h5 className="p-2 mb-0 bg-opacity-10 bg-tc-100">Today:</h5>
-          <ListGroup as="ul" className="m-0">
-            {todayRows.map((item) => (
-              <QueriesListBarItem
-                showDate={false}
-                key={"recent_queries_" + item.doc_task_id}
-                item={item}
-              />
-            ))}
-          </ListGroup>
-        </>
-      ) : null}
-      {weekRows.length ? (
-        <>
-          <h5 className="p-2 mb-0 bg-opacity-10 bg-tc-100">This week:</h5>
-          <ListGroup as="ul" className="m-0">
-            {weekRows.map((item) => (
-              <QueriesListBarItem
-                showDate={true}
-                key={"recent_queries_" + item.doc_task_id}
-                item={item}
-              />
-            ))}
-          </ListGroup>
-        </>
-      ) : null}
-      {beforeRows.length ? (
-        <>
-          <h5 className="p-2 mb-0 bg-opacity-10 bg-tc-100">Before:</h5>
-          <ListGroup as="ul" className="m-0">
-            {beforeRows.map((item) => (
-              <QueriesListBarItem
-                showDate={true}
-                key={"recent_queries_" + item.doc_task_id}
-                item={item}
-              />
-            ))}
-          </ListGroup>
-        </>
-      ) : null}
-    </div>
+      />
+      {groups.map(([label, showDate, rows]) =>
+        rows.length ? (
+          <div key={label}>
+            <GroupLabel>{label}</GroupLabel>
+            <ul>
+              {rows.map((item) => (
+                <QueriesListBarItem
+                  showDate={showDate}
+                  key={"recent_queries_" + item.doc_task_id}
+                  item={item}
+                  onDelete={setPending}
+                  afterPick={afterPick}
+                />
+              ))}
+            </ul>
+          </div>
+        ) : null,
+      )}
+    </>
   );
 }
 

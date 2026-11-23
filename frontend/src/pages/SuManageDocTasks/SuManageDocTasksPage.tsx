@@ -1,11 +1,12 @@
 import { useTopNavBarTitle } from "../../hooks/useTopNavBarTitle";
+import TablePage from "../../tables/elements/TablePage";
 import TableSuManageDocTasks from "./SuTableManageDocTasks";
 
 export default function SuManageDocTasksPage() {
   useTopNavBarTitle("Manage Doc Tasks");
   return (
-    <div className="container-fluid my-4">
+    <TablePage>
       <TableSuManageDocTasks />
-    </div>
+    </TablePage>
   );
 }

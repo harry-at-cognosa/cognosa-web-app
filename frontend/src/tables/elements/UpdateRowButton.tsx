@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { Button } from "@/components/ui/button";
 import type { createTableStore, TableRow } from "../TableStoreFactory";
 
 interface Props {
@@ -16,8 +16,8 @@ export default function UpdateRowButton({ row, useStore }: Props) {
     <Button
       type="button"
       id={`btn_update__${data.name}__${pk_value_str}`}
-      variant="primary"
-      className="fw-bold"
+      variant="secondary"
+      size="xs"
       onClick={() => setShowCreateOrUpdateDialog("update", { ...row })}
     >
       Edit

@@ -541,14 +541,16 @@ export function PageHead({
     usePageHeads.setState((s) => ({ count: s.count + 1 }));
     return () => usePageHeads.setState((s) => ({ count: s.count - 1 }));
   }, []);
+  // Heading = the menu label of the current page (ruling of 2026-11-22); the
+  // v1.0.1 title still names the browser tab and is the fallback here.
   let name = title;
   if (name === undefined) {
-    name = storeTitle.split(TITLE_SEP).slice(1).join(TITLE_SEP);
-  }
-  if (!name) {
     for (const g of groups) {
       for (const i of g.items) if (isCurrent(i, pathname)) name = i.label;
     }
+  }
+  if (!name) {
+    name = storeTitle.split(TITLE_SEP).slice(1).join(TITLE_SEP);
   }
   return (
     <div className={cn("flex min-h-10 flex-none items-center gap-2", className)}>

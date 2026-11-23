@@ -1,6 +1,12 @@
 import { useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { createTableStore } from "../../TableStoreFactory";
-import { Dropdown, Form, InputGroup } from "react-bootstrap";
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -57,50 +63,49 @@ export default function PaginationLimit({ useStore }: Props) {
 
   const idLimitInput = "limit_input__" + data.name;
 
+  // A number can be typed (applied after 2 seconds) or picked from the list.
   return (
-    <InputGroup size="sm" className="mb-0">
-      <InputGroup.Text className="fw-bold bg-tc-300 bc-tc-300">
-        Limit:
-      </InputGroup.Text>
-
-      <Form.Control
-        list={table_options.select_limit.length ? idLimitInput : ""}
-        type="number"
-        size="sm"
-        value={inputLimit}
-        className="fw-bold bg-tc-100 bc-tc-300"
-        onChange={(e) => {
-          const rawValue = e.target.value;
-          const value = parseInt(rawValue, 10);
-          if (!isNaN(value)) {
-            handleLimitInputChange(value);
-          }
-        }}
-        aria-label="Rows per page"
-        style={{ width: "8ch" }}
-      />
-      {table_options.select_limit.length ? (
-        <Dropdown>
-          <Dropdown.Toggle
-            size="sm"
-            className="bc-tc-300 bg-tc-300"
-            style={{ color: "black" }}
-          />
-          <Dropdown.Menu
-            align={"end"}
-            style={{ minWidth: "auto", width: "10ch" }}
-          >
-            {table_options.select_limit.map((size) => (
-              <Dropdown.Item
-                key={size}
-                onClick={() => handleLimitSelectChange(size)}
+    <div className="inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground">
+      <label htmlFor={idLimitInput}>Limit</label>
+      <div className="inline-flex h-[34px] items-center rounded-full border border-line bg-surface pr-[3px] pl-1 hover:border-tint-edge focus-within:border-ring">
+        <input
+          id={idLimitInput}
+          type="number"
+          value={inputLimit}
+          className="h-full w-[7ch] rounded-full bg-transparent pl-2.5 font-semibold text-ink tabular-nums outline-none"
+          onChange={(e) => {
+            const rawValue = e.target.value;
+            const value = parseInt(rawValue, 10);
+            if (!isNaN(value)) {
+              handleLimitInputChange(value);
+            }
+          }}
+          aria-label="Rows per page"
+        />
+        {table_options.select_limit.length ? (
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="grid size-[26px] flex-none place-items-center rounded-full text-muted-foreground hover:bg-tint hover:text-tint-fg aria-expanded:bg-tint aria-expanded:text-tint-fg"
+                aria-label="Choose rows per page"
               >
-                {size}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-      ) : null}
-    </InputGroup>
+                <ChevronDown className="size-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[10ch]">
+              {table_options.select_limit.map((size) => (
+                <DropdownMenuItem
+                  key={size}
+                  onSelect={() => handleLimitSelectChange(size)}
+                >
+                  {size}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
+      </div>
+    </div>
   );
 }

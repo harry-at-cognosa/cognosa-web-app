@@ -1,4 +1,5 @@
-import { Form } from "react-bootstrap";
+import { TableHead, TableRow } from "@/components/ui/table";
+import { Sel } from "@/components/Sel";
 import type { createTableStore } from "../TableStoreFactory";
 
 interface Props {
@@ -41,6 +42,7 @@ export default function HeaderFilterRow({ useStore }: Props) {
     return v === undefined || v === null ? "" : String(v);
   }
 
+  // raw is "" for "All" (Sel maps its empty item back to "")
   function onChange(col: string, raw: string) {
     if (tableStore.busy) return;
     const column = data!.columns[col];
@@ -52,31 +54,29 @@ export default function HeaderFilterRow({ useStore }: Props) {
   }
 
   return (
-    <tr style={{ textAlign: "center", verticalAlign: "middle" }}>
-      <th className="bg-tc-100 p-1"></th>
+    <TableRow className="border-b border-line">
+      <TableHead className="pt-0"></TableHead>
       {data.table_options.read__visible_columns.map((col) => (
-        <th key={"filter_" + col} className="bg-tc-100 p-1 fw-normal">
+        <TableHead key={"filter_" + col} className="pt-0 pb-2 font-normal">
           {allow.includes(col) ? (
-            <Form.Select
+            <Sel
               size="sm"
               value={currentValue(col)}
-              onChange={(e) => onChange(col, e.target.value)}
-              title={"Filter: " + (data.columns[col]?.display || col)}
-              style={{ minWidth: "5rem" }}
-            >
-              <option value="">All</option>
-              {optionsFor(col).map((o) => (
-                <option key={col + "_" + o.value} value={o.value}>
-                  {o.name}
-                </option>
-              ))}
-            </Form.Select>
+              onChange={(v) => onChange(col, v)}
+              emptyLabel="All"
+              label={"Filter: " + (data.columns[col]?.display || col)}
+              options={optionsFor(col).map((o) => ({
+                value: o.value,
+                label: o.name,
+              }))}
+              className="h-[30px]! min-w-20 rounded-full text-[13px] text-ink"
+            />
           ) : null}
-        </th>
+        </TableHead>
       ))}
       {data.table_options.delete__ask_columns.length ? (
-        <th className="bg-tc-100 p-1"></th>
+        <TableHead className="pt-0"></TableHead>
       ) : null}
-    </tr>
+    </TableRow>
   );
 }

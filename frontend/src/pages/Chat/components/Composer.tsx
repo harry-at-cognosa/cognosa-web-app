@@ -1,14 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import { Alert, Button, Form } from "react-bootstrap";
-import { SendFill, StopFill } from "react-bootstrap-icons";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ArrowUp, Square } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useChatStore } from "../stores/useChatStore";
-import styles from "../ChatPage.module.css";
 
 interface Props {
   onCreated: (conv_id: number) => void;
+  /** the settings row under the message box */
+  children?: ReactNode;
 }
 
-export default function Composer({ onCreated }: Props) {
+export default function Composer({ onCreated, children }: Props) {
   const store = useChatStore();
   const [text, setText] = useState("");
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -18,7 +19,7 @@ export default function Composer({ onCreated }: Props) {
     const el = inputRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = el.scrollHeight + 2 + "px";
+    el.style.height = el.scrollHeight + "px";
   }, [text]);
 
   // ready to type when a conversation is opened or a new chat started
@@ -40,21 +41,11 @@ export default function Composer({ onCreated }: Props) {
   };
 
   return (
-    <div className={styles.composer}>
-      {store.sendError ? (
-        <Alert
-          variant="danger"
-          dismissible
-          className="py-2 mb-2"
-          onClose={store.clearSendError}
-        >
-          {store.sendError}
-        </Alert>
-      ) : null}
-      <div className={styles.composerInner}>
-        <Form.Control
-          as="textarea"
+    <div className="composer rounded-[26px] px-3 pt-3 pb-3 sm:px-4 sm:pt-3.5">
+      <div className="flex items-end gap-3">
+        <textarea
           ref={inputRef}
+          aria-label="Message"
           rows={1}
           placeholder="Ask a question...  (Enter to send, Shift+Enter for a new line)"
           value={text}
@@ -65,28 +56,34 @@ export default function Composer({ onCreated }: Props) {
               handleSend();
             }
           }}
+          className="scroll-soft block max-h-48 min-h-[44px] w-full min-w-0 flex-1 resize-none bg-transparent px-1 py-2.5 text-base leading-[1.4] text-ink outline-none placeholder:text-muted-foreground"
         />
         {store.streaming ? (
           <Button
             type="button"
-            variant="outline-secondary"
+            variant="outline"
+            size="lg"
+            className="flex-none border-tint-edge max-sm:w-[42px] max-sm:px-0"
             title="Stop the answer"
             onClick={store.stop}
           >
-            <StopFill /> Stop
+            <Square className="size-3.5 fill-current" />
+            <span className="max-sm:sr-only">Stop</span>
           </Button>
         ) : (
           <Button
             type="button"
-            variant="light"
-            className="btn-tc-300-400 fw-bold"
+            size="lg"
+            className="flex-none max-sm:w-[42px] max-sm:px-0"
             disabled={!canSend}
             onClick={handleSend}
           >
-            <SendFill /> Send
+            <ArrowUp />
+            <span className="max-sm:sr-only">Send</span>
           </Button>
         )}
       </div>
+      {children}
     </div>
   );
 }
