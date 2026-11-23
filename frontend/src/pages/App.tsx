@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import TopNavBar from "../components/TopNavBar/TopNavBar";
+import { Shell } from "../components/Shell";
+import { TooltipProvider } from "../components/ui/tooltip";
 import { useLoggedUserStore } from "../stores/useLoggedUserStore";
 import NavigationInjector from "../api/NavigationInjector";
 import { API_URL } from "../api/apiURL";
@@ -40,13 +41,12 @@ export default function App() {
   }, [navigate]);
 
   return (
-    <div className="min-vh-100">
+    <TooltipProvider delayDuration={250}>
       <NavigationInjector />
       <ThemeColor />
-      <TopNavBar />
-      <main>
+      <Shell>
         <Outlet />
-      </main>
-    </div>
+      </Shell>
+    </TooltipProvider>
   );
 }

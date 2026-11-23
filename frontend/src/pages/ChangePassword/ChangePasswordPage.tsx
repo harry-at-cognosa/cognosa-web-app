@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, Container, Form } from "react-bootstrap";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { PageHead } from "@/components/Shell";
 import { API_URL } from "../../api/apiURL";
 
 export default function ChangePasswordPage() {
@@ -40,40 +42,46 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <Container className="d-flex justify-content-center align-items-center min-vh-100">
-      <Card className="shadow-lg p-4" style={{ maxWidth: 400, width: "100%" }}>
-        <h2 className="text-center mb-4">Change Password</h2>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group>
-            <Form.Label>Current password</Form.Label>
-            <Form.Control
+    <div className="grid min-h-full grid-rows-[auto_1fr] px-5 pt-3 pb-8">
+      <PageHead title="Change Password" />
+      <div className="glass-card w-full max-w-[400px] place-self-center rounded-3xl p-6">
+        <form onSubmit={handleSubmit} className="grid gap-4">
+          <div>
+            <label htmlFor="current-password" className="lbl">
+              Current password
+            </label>
+            <Input
+              id="current-password"
               type="password"
               placeholder=""
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              style={{ width: "100%", padding: "0.5rem" }}
               required
-            ></Form.Control>
-          </Form.Group>
-          <br />
-          <Form.Group>
-            <Form.Label>New password</Form.Label>
-            <Form.Control
+            />
+          </div>
+          <div>
+            <label htmlFor="new-password" className="lbl">
+              New password
+            </label>
+            <Input
+              id="new-password"
               type="password"
               placeholder=""
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              style={{ width: "100%", padding: "0.5rem" }}
               required
-            ></Form.Control>
-          </Form.Group>
-          <br />
-          <Button type="submit" variant="primary" className="mt-2 mx-auto">
-            Change
-          </Button>
-          {message && <div>{message}</div>}
-        </Form>
-      </Card>
-    </Container>
+            />
+          </div>
+          <div className="mt-1">
+            <Button type="submit">Change</Button>
+          </div>
+          {message && (
+            <div role="status" className="text-sm text-ink-2">
+              {message}
+            </div>
+          )}
+        </form>
+      </div>
+    </div>
   );
 }

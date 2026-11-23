@@ -1,6 +1,6 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-}
+/* Legacy rules for pages not yet converted to the 9b look (ui-9b migration).
+   Loaded after index.css. To be deleted in batch 5 together with Bootstrap.
+   The --theme-color-* variables are still written by components/ThemeColor.tsx. */
 
 .bg-tc-100 {
   background-color: var(--theme-color-100) !important;

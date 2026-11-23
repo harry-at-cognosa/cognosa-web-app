@@ -24,6 +24,8 @@ downloads/
 eggs/
 .eggs/
 lib/
+# the frontend keeps view helpers in src/lib (shadcn convention); not a Python lib dir
+!frontend/src/lib/
 lib64/
 parts/
 sdist/
