@@ -25,7 +25,7 @@ cd /home/ubuntu/cognosa
 ```
 
 deploy.sh: fetch + detached checkout, refresh docker-compose.yml, build
-app+rt+chat, stop them, `alembic upgrade head`, `up -d`, prune old images,
+app+rt (chat runs the rt image), stop app/rt/chat, `alembic upgrade head`, `up -d`, prune old images,
 append to `deploy.log`. Brief downtime of app/rt/chat only; db/qdrant/nginx
 keep running.
 

@@ -94,6 +94,7 @@ services:
 
   # --- run_tasks ---
   rt:
+    image: cognosa-rt
     build:
       context: ../cognosa-src
       dockerfile: release/ec2_ubuntu_24_04/cognosa/run_tasks.Dockerfile
@@ -116,14 +117,15 @@ services:
       - hf_cache:/hf_cache
 
   # --- Chat service (conversation mode) ---
-  # A separate process from app and rt. Same image as rt (it needs the
-  # embedding and LLM libraries), started with a different command.
+  # A separate process from app and rt. Runs the rt image itself (it needs the
+  # embedding and LLM libraries), started with a different command. It has no
+  # build of its own: a second build made a second 10 GB image and filled the
+  # disk (demo, 2026-11-23). `docker compose build rt` is what updates it.
   # nginx routes /api/v1/chat/ to it (see nginx_default.conf).
   # One worker only: the service keeps per-process state.
   chat:
-    build:
-      context: ../cognosa-src
-      dockerfile: release/ec2_ubuntu_24_04/cognosa/run_tasks.Dockerfile
+    image: cognosa-rt
+    pull_policy: never
     command: ["uvicorn", "chat_service:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "1"]
     restart: always
     expose:

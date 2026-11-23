@@ -7,7 +7,7 @@
 # git commands are delegated back to $SUDO_USER so the clone stays user-owned.
 #
 # Steps: fetch + checkout the ref in /home/ubuntu/cognosa-src, refresh
-# docker-compose.yml from the clone, build app + rt + chat images, stop them, run
+# docker-compose.yml from the clone, build app + rt images (chat runs the rt image), stop them, run
 # alembic migrations, start everything, prune dangling images.
 # Data (pg_db_data, qdrantdb, env files, nginx conf, certs) is never touched.
 #
@@ -34,7 +34,7 @@ cp "$SRC/$REL/docker-compose.yml" "$OPS/docker-compose.yml"
 cd "$OPS"
 
 echo "== building images"
-docker compose build app rt chat
+docker compose build app rt          # chat runs the rt image
 
 echo "== stopping app + rt + chat, migrating"
 docker compose stop app rt chat
