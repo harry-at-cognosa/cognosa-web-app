@@ -2,7 +2,7 @@
 // (shadcn Sidebar, collapsible to an icon strip; an off-canvas sheet on a phone),
 // the page area to its right. Replaces v1.0.1's TopNavBar; which groups and items
 // a user sees follows exactly the same conditions as TopNavBar did.
-import { Fragment, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useState, type ReactNode } from "react";
 import {
   Activity,
   ArrowLeftRight,
@@ -569,6 +569,22 @@ export function Shell({ children }: { children: ReactNode }) {
   const open = useNav((s) => s.open);
   const setOpen = useNav((s) => s.setOpen);
   const title = useNavbarStore((s) => s.title);
+  // The browser tab names the page by its menu label, like the page heading
+  // (ruling of 2026-11-22); pages outside the menu keep the v1.0.1 title.
+  const { pathname } = useLocation();
+  const groups = useNavGroups();
+  let label: string | undefined;
+  for (const g of groups) {
+    for (const i of g.items) if (isCurrent(i, pathname)) label = i.label;
+  }
+  const tabTitle = label
+    ? `${title.split(TITLE_SEP)[0] || PRODUCT_NAME}${TITLE_SEP}${label}`
+    : title;
+  // useTopNavBarTitle resets document.title directly when a page unmounts, which
+  // React does not see; write it again whenever the page or its title changes.
+  useEffect(() => {
+    if (tabTitle) document.title = tabTitle;
+  }, [tabTitle, title, pathname]);
   return (
     <SidebarProvider
       open={open}
@@ -581,7 +597,7 @@ export function Shell({ children }: { children: ReactNode }) {
         } as React.CSSProperties
       }
     >
-      <title>{title}</title>
+      <title>{tabTitle}</title>
       <AppSidebar />
       <SidebarInset className="min-h-0 min-w-0 bg-transparent">
         <div className="scroll-soft min-h-0 flex-1 overflow-auto">{children}</div>

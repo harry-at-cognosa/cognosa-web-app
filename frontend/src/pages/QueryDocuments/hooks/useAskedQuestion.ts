@@ -45,5 +45,10 @@ export function useAskedQuestion(shownAnswer: 1 | 2): string | null {
   const n = question_number >= 2 ? shownAnswer : 1;
   // previousQuery holds the last submitted query, or the stored one of a task
   // loaded from the history; it does not follow edits in the Query box
-  return known?.[n] ?? previousQuery?.input_text ?? null;
+  if (known?.[n]) return known[n]!;
+  // A task loaded from the history that has a follow-up: the stored text is the
+  // follow-up's, so the first question is unknown and Answer 1 gets no heading
+  // (ruling of 2026-11-22).
+  if (question_number >= 2 && n === 1) return null;
+  return previousQuery?.input_text ?? null;
 }
