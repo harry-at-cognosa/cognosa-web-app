@@ -29,21 +29,10 @@ try {
 }
 
 export default function ThemeColor() {
-  const { color, needReload, api_settings } = useWebAppOptionsStore();
+  const { needReload, api_settings } = useWebAppOptionsStore();
 
   useEffect(() => {
     if (needReload) return;
-    // v1.0.1 variables, still used by the pages not yet converted (until batch 5)
-    document.documentElement.style.setProperty("--theme-color-100", color.c100);
-    document.documentElement.style.setProperty("--theme-color-200", color.c200);
-    document.documentElement.style.setProperty("--theme-color-300", color.c300);
-    document.documentElement.style.setProperty("--theme-color-400", color.c400);
-    document.documentElement.style.setProperty("--theme-color-500", color.c500);
-    document.documentElement.style.setProperty("--theme-color-600", color.c600);
-    document.documentElement.style.setProperty("--theme-color-700", color.c700);
-    document.documentElement.style.setProperty("--theme-color-800", color.c800);
-    document.documentElement.style.setProperty("--theme-color-900", color.c900);
-
     // 9b tokens; same rule as the store: webapp_main_color, else "gray"
     const name = api_settings?.webapp_main_color || DEFAULT_COLOR;
     const applied = applyRamp(name) ? name : DEFAULT_COLOR;

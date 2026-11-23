@@ -2,7 +2,7 @@
 // (shadcn Sidebar, collapsible to an icon strip; an off-canvas sheet on a phone),
 // the page area to its right. Replaces v1.0.1's TopNavBar; which groups and items
 // a user sees follows exactly the same conditions as TopNavBar did.
-import { Fragment, useEffect, useState, type ReactNode } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 import {
   Activity,
   ArrowLeftRight,
@@ -28,7 +28,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { create } from "zustand";
 import {
   Collapsible,
   CollapsibleContent,
@@ -82,9 +81,6 @@ const SCHEMES: { value: Scheme; label: string }[] = [
   { value: "dark", label: "Dark" },
   { value: "system", label: "System" },
 ];
-
-/** How many PageHead are mounted; see PhoneNavFallback. View state only. */
-const usePageHeads = create<{ count: number }>(() => ({ count: 0 }));
 
 /** A menu entry is a route, or (Change Group only) an action that opens a dialog. */
 interface NavItem {
@@ -537,10 +533,6 @@ export function PageHead({
   const { isMobile, toggleSidebar, openMobile } = useSidebar();
   const storeTitle = useNavbarStore((s) => s.title);
   const groups = useNavGroups();
-  useEffect(() => {
-    usePageHeads.setState((s) => ({ count: s.count + 1 }));
-    return () => usePageHeads.setState((s) => ({ count: s.count - 1 }));
-  }, []);
   // Heading = the menu label of the current page (ruling of 2026-11-22); the
   // v1.0.1 title still names the browser tab and is the fallback here.
   let name = title;
@@ -573,28 +565,6 @@ export function PageHead({
   );
 }
 
-/**
- * Phone only, and only while some pages have no PageHead yet: a floating button
- * that opens the navigation on a page that does not render a PageHead.
- * TODO(ui-9b batch 5): delete once every page is converted.
- */
-function PhoneNavFallback() {
-  const { isMobile, toggleSidebar, openMobile } = useSidebar();
-  const hasHead = usePageHeads((s) => s.count > 0);
-  if (!isMobile || hasHead) return null;
-  return (
-    <button
-      type="button"
-      className="icon-btn fixed right-3 bottom-3 z-20 shadow-md"
-      aria-label="Open navigation"
-      aria-expanded={openMobile}
-      onClick={toggleSidebar}
-    >
-      <Menu className="size-[18px]" />
-    </button>
-  );
-}
-
 export function Shell({ children }: { children: ReactNode }) {
   const open = useNav((s) => s.open);
   const setOpen = useNav((s) => s.setOpen);
@@ -615,7 +585,6 @@ export function Shell({ children }: { children: ReactNode }) {
       <AppSidebar />
       <SidebarInset className="min-h-0 min-w-0 bg-transparent">
         <div className="scroll-soft min-h-0 flex-1 overflow-auto">{children}</div>
-        <PhoneNavFallback />
       </SidebarInset>
     </SidebarProvider>
   );
