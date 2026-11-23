@@ -1,5 +1,5 @@
 import { useRef, type ReactNode } from "react";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { useColumnWidths } from "../hooks/useColumnWidths";
 import styles from "./ResizableTableWidth.module.css";
 
@@ -13,8 +13,9 @@ const WIDTH_KEY = "__table";
 const MIN_TABLE_WIDTH = 480;
 
 // Page wrapper for a table. Until the user drags the grip on its right edge it
-// is a normal Bootstrap container; after that it has the dragged width (never
-// wider than the window). Double-click the grip to go back to the default.
+// is as wide as the page allows, up to 1320 px (the v1.0.1 container); after
+// that it has the dragged width (never wider than the page). Double-click the
+// grip to go back to the default.
 export default function ResizableTableWidth({ table, children }: Props) {
   const width = useColumnWidths((state) => state.widths[table]?.[WIDTH_KEY]);
   const { setWidth, resetWidth, persist } = useColumnWidths();
@@ -29,10 +30,10 @@ export default function ResizableTableWidth({ table, children }: Props) {
   return (
     <div
       ref={wrapperRef}
-      className={clsx(
+      className={cn(
         styles.wrapper,
-        "my-4",
-        width ? "mx-auto px-3" : "container"
+        "mx-auto px-5 pt-3 pb-12",
+        width ? null : "w-full max-w-[1320px]",
       )}
       style={width ? { width: width + "px", maxWidth: "100%" } : undefined}
     >

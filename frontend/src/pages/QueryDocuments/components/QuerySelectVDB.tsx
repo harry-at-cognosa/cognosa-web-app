@@ -1,19 +1,15 @@
-import { Button, Form, InputGroup, Spinner } from "react-bootstrap";
-import DocTasksGVDBsRetrParams from "./DocTasksGVDBsRetrParams";
+import { RefreshCw } from "lucide-react";
+import { Sel } from "@/components/Sel";
+import { cn } from "@/lib/utils";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import { useEffect } from "react";
-import { ArrowRepeat } from "react-bootstrap-icons";
 import { useDefaultGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDefaultGVDBsRetrParamsStore";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
-import { useLoggedUserStore } from "../../../stores/useLoggedUserStore";
-import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import { useDefaultGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDefaultGVDBsRetrFiltersStore";
 import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
 
 export default function QuerySelectVDB() {
-  const user = useLoggedUserStore();
-  const webAppOptions = useWebAppOptionsStore();
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const defGVDBsRetrParamsStore = useDefaultGVDBsRetrParamsStore();
@@ -91,15 +87,6 @@ export default function QuerySelectVDB() {
     current.gvdbs_id,
   ]);
 
-  function getSelectBgColor(gvdbs_id: number | null): string {
-    if (waitingState || !gvdbs_id) return "";
-    const row = docTaskOptionsStore.gvdbs_id__row[gvdbs_id];
-    if (!row) return "#ECCCCF";
-    if (row.gvdbs_status === "danger") return "#ECCCCF";
-    if (row.gvdbs_status === "warning") return "#F2E7C3";
-    return "";
-  }
-
   function getOptionText(gvdbs_id: number | null): string {
     if (waitingState || !gvdbs_id) return "";
     const row = docTaskOptionsStore.gvdbs_id__row[gvdbs_id];
@@ -110,53 +97,28 @@ export default function QuerySelectVDB() {
   }
 
   return (
-    <InputGroup className="mb-2">
-      <InputGroup.Text className="fw-bold bg-tc-300">
-        <Button
-          type="button"
-          variant=""
-          className="p-0 me-2 fw-bold btn-tc-300-400"
-          style={{ verticalAlign: "middle" }}
-          onClick={() => docTaskOptionsStore.setNeedReload(true)}
-          disabled={waitingState}
-        >
-          <ArrowRepeat size="20px" style={{ marginBottom: "3px" }} />
-        </Button>
-        Document Collection:
-      </InputGroup.Text>
-      {waitingState ? (
-        <InputGroup.Text
-          style={{
-            flex: "1",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#f8f9fa",
-          }}
-        >
-          <Spinner animation="border" size="sm" />
-        </InputGroup.Text>
-      ) : (
-        <Form.Select
-          value={current.gvdbs_id?.toString() || ""}
-          onChange={(e) => current.setGVDBsID(Number(e.target.value))}
-          //style={{ backgroundColor: getSelectBgColor(current.gvdbs_id) }}
-        >
-          {group_vdbs.map((gvdbs_obj) => (
-            <option
-              key={gvdbs_obj.gvdbs_id.toString()}
-              value={gvdbs_obj.gvdbs_id.toString()}
-              style={{ backgroundColor: getSelectBgColor(gvdbs_obj.gvdbs_id) }}
-            >
-              {getOptionText(gvdbs_obj.gvdbs_id)}
-            </option>
-          ))}
-        </Form.Select>
-      )}
-      {(user.is_superuser || user.is_groupadmin || user.is_contentmanager) &&
-      !webAppOptions.isRetrievalParamsSuppressed() ? (
-        <DocTasksGVDBsRetrParams></DocTasksGVDBsRetrParams>
-      ) : null}
-    </InputGroup>
+    <div className="flex min-w-0 items-center gap-1">
+      <Sel
+        variant="pill"
+        label="Document Collection"
+        value={waitingState ? "" : current.gvdbs_id?.toString() || ""}
+        onChange={(v) => current.setGVDBsID(Number(v))}
+        options={group_vdbs.map((gvdbs_obj) => ({
+          value: gvdbs_obj.gvdbs_id.toString(),
+          label: getOptionText(gvdbs_obj.gvdbs_id),
+        }))}
+        disabled={waitingState}
+      />
+      <button
+        type="button"
+        className="mini"
+        onClick={() => docTaskOptionsStore.setNeedReload(true)}
+        disabled={waitingState}
+        title="Reloads the Document Collection and LLM lists from the server"
+      >
+        <RefreshCw className={cn("size-3.5", waitingState && "animate-spin")} />
+        Refresh lists
+      </button>
+    </div>
   );
 }

@@ -1,25 +1,16 @@
 import { useState } from "react";
-import { Button, Container, Modal } from "react-bootstrap";
+import { ChevronDown, Filter, RotateCcw } from "lucide-react";
+import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import { EditorPopoverContent } from "./EditorPopover";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
-import {
-  ArrowRepeat,
-  CheckCircleFill,
-  FunnelFill,
-  GearFill,
-} from "react-bootstrap-icons";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useDefaultGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDefaultGVDBsRetrFiltersStore";
 import { useModalGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useModalGVDBsRetrFiltersStore";
 import GVDBsRetrFilters from "../../../components/GVDBsRetrFilters/GVDBsRetrFilters";
 import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
-import GVDBsRetrFiltersTable from "../../../components/GVDBsRetrFilters/GVDBsRetrFiltersTable";
 import { GVDBsRetrFiltersHistory } from "../../../components/GVDBsRetrFilters/history";
 
-export default function DocTasksGVDBsRetrFilters({
-  children,
-}: {
-  children?: React.ReactNode;
-}) {
+export default function DocTasksGVDBsRetrFilters() {
   const { doc_task_id, gvdbs_id } = useDocTasksCurrentStore();
   const DocTaskOptionsStore = useDocTaskOptionsStore();
   const [show, setShow] = useState(false);
@@ -27,8 +18,7 @@ export default function DocTasksGVDBsRetrFilters({
   const modalStore = useModalGVDBsRetrFiltersStore();
   const curStore = useDocTasksGVDBsRetrFiltersStore();
 
-  // Filters exist only for collections that define them. The row itself is
-  // always rendered so that `children` (e.g. Save Result) stay visible.
+  // Filters exist only for collections that define them.
   const filtersAvailable =
     !DocTaskOptionsStore.needReload &&
     Boolean(defStore.isLoaded && defStore.fields) &&
@@ -79,81 +69,53 @@ export default function DocTasksGVDBsRetrFilters({
     setShow(true);
   };
 
-  if (!filtersAvailable) {
-    return (
-      <Container fluid className="mb-2 p-0 no-left-margin-children">
-        {children}
-      </Container>
-    );
-  }
+  if (!filtersAvailable) return null;
 
   return (
-    <Container fluid className="mb-2 p-0">
-      <Button
-        variant="outline-secondary"
-        className={
-          "fw-bold " +
-          (activeCount ? "btn-filters-active" : "btn-tc-300-400")
-        }
-        style={{
-          color: "black",
-        }}
-        onClick={handleShow}
-        title={
-          activeCount
-            ? "Retrieval filters are limiting this query"
-            : "No retrieval filters set"
-        }
+    <div className="flex min-w-0 items-center gap-1">
+      {/* Apply commits; any other way of closing (X, Escape, click outside) discards */}
+      <Popover
+        open={show}
+        onOpenChange={(open) => (open ? handleShow() : handleCancel())}
       >
-        {activeCount ? (
-          <FunnelFill size={"20px"} style={{ marginBottom: "2px" }} />
-        ) : (
-          <GearFill size={"20px"} style={{ marginBottom: "2px" }}></GearFill>
-        )}
-        &nbsp;
-        {activeCount
-          ? `Retrieval Filters: ${activeCount} active`
-          : "Retrieval Filters "}
-      </Button>
-      <Button
-        variant="outline-secondary"
-        className="fw-bold ms-2 btn-tc-300-400"
-        style={{
-          color: "black",
-        }}
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className="pill"
+            data-active={activeCount > 0}
+            title={
+              activeCount
+                ? "Retrieval filters are limiting this query"
+                : "No retrieval filters set"
+            }
+          >
+            <Filter className="size-3.5 flex-none" />
+            <span className="k">Retrieval Filters</span>
+            {activeCount > 0 && <span className="count">{activeCount}</span>}
+            <span className="v">{activeCount > 0 ? "active" : "none"}</span>
+            <ChevronDown className="size-4 flex-none" />
+          </button>
+        </PopoverTrigger>
+        <EditorPopoverContent
+          title="Retrieval Filters"
+          className="w-[600px]"
+          onApply={handleApply}
+        >
+          <GVDBsRetrFilters />
+        </EditorPopoverContent>
+      </Popover>
+      <button
+        type="button"
+        className="mini"
         onClick={() => {
           GVDBsRetrFiltersHistory.delete(doc_task_id, gvdbs_id);
           curStore.reset();
         }}
+        title="Clears the Retrieval Filters"
       >
-        <ArrowRepeat size="20px" style={{ marginBottom: "3px" }} /> Reset
-      </Button>
-      {children}
-
-      <Modal show={show} onHide={handleCancel}>
-        <Modal.Header closeButton>
-          <Modal.Title>Retrieval Filters</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <GVDBsRetrFilters />
-        </Modal.Body>
-        <Modal.Footer className="justify-content-center">
-          <Button
-            variant="success"
-            className="fw-bold btn-tc-300-400"
-            onClick={handleApply}
-            style={{ color: "black" }}
-          >
-            <CheckCircleFill
-              className="me-1 my-0"
-              size="20px"
-              style={{ color: "green" }}
-            ></CheckCircleFill>
-            Apply
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <GVDBsRetrFiltersTable />
-    </Container>
+        <RotateCcw className="size-3.5" />
+        Reset
+      </button>
+    </div>
   );
 }

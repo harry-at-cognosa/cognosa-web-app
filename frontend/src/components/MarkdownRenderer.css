@@ -1,0 +1,20 @@
+/* Highlighted code blocks keep highlight.js's github-dark theme (as v1.0.1);
+   the .md typography in index.css gives every <pre> a sunk box, which would
+   show as a pale frame around the dark block. */
+.md pre:has(> code.hljs) {
+  padding: 0;
+  background: none;
+}
+.md pre > code.hljs {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.md .md-table-wrap {
+  overflow-x: auto;
+  margin: 0 0 0.85em;
+}
+.md .md-table-wrap > table {
+  margin: 0;
+}

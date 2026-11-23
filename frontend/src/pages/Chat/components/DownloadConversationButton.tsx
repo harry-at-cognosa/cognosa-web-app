@@ -1,5 +1,5 @@
-import { Button } from "react-bootstrap";
-import { Download } from "react-bootstrap-icons";
+import { Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   sanitize,
   saveTextFile,
@@ -109,15 +109,15 @@ export default function DownloadConversationButton() {
 
   return (
     <Button
+      variant="outline"
       size="sm"
-      variant="outline-secondary"
-      className="fw-bold text-nowrap btn-tc-300-400"
-      style={{ color: "black" }}
+      className="ml-auto flex-none"
       disabled={!enabled}
       onClick={handleDownload}
       title="Download this conversation as a Markdown file"
     >
-      <Download /> Download
+      <Download className="size-3.5" />
+      Download
     </Button>
   );
 }

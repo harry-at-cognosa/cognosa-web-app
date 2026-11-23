@@ -1,5 +1,6 @@
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 
+/** VectorDB/LLM time and tokens sent/received of the query on show. */
 export default function QueryTokensCounter() {
   const current = useDocTasksCurrentStore();
 
@@ -12,17 +13,21 @@ export default function QueryTokensCounter() {
     if (seconds === null) return "N/A";
     return `${seconds} sec`;
   }
-  const tokensCounterText = `VectorDB/LLM time: ${secondsOrNA(
-    current.vdb_query_seconds
-  )} / ${secondsOrNA(current.llm_query_seconds)} Tokens Sent/Recv: ${
-    current.llm_tokens_sent || "N/A"
-  }/${current.llm_tokens_received || "N/A"}`;
+  if (!tokensCounterVisible) return null;
+  const items: [string, string | number][] = [
+    ["VectorDB", secondsOrNA(current.vdb_query_seconds)],
+    ["LLM", secondsOrNA(current.llm_query_seconds)],
+    ["Tokens sent", current.llm_tokens_sent || "N/A"],
+    ["received", current.llm_tokens_received || "N/A"],
+  ];
   return (
-    <small
-      className="m-0 fw-bold"
-      style={{ visibility: tokensCounterVisible ? "visible" : "hidden" }}
-    >
-      {tokensCounterText}
-    </small>
+    <dl className="ml-auto flex flex-wrap justify-end gap-x-4 gap-y-0.5 text-[13px] text-muted-foreground tabular-nums">
+      {items.map(([k, v]) => (
+        <div key={k} className="flex gap-1.5 whitespace-nowrap">
+          <dt>{k}</dt>
+          <dd className="font-semibold text-ink">{v}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

@@ -4,68 +4,34 @@ import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 import "highlight.js/styles/github-dark.css";
+import "./MarkdownRenderer.css";
+import { cn } from "@/lib/utils";
 
 interface MarkdownRendererProps {
   content: string;
+  /** added to the `md` typography block (e.g. "chat" for the denser chat size) */
+  className?: string;
 }
 
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
+/** Answers are Markdown. Typography is the .md block in index.css. */
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
+  content,
+  className,
+}) => {
   return (
-    <div className="markdown-content">
+    <div className={cn("md", className)}>
       <ReactMarkdown
         // GitHub-flavoured Markdown: tables, strikethrough, task lists, bare links
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
-        components={
-          {
-            // Bootstrap styles a table only when it carries the `table` class.
-            // The wrapper lets a wide table scroll sideways inside the answer.
-            table: ({ children }) => (
-              <div className="table-responsive">
-                <table className="table table-sm table-bordered w-auto">
-                  {children}
-                </table>
-              </div>
-            ),
-            //   h1: ({ children }) => (
-            //     <h1 className="text-2xl font-bold mt-6 mb-3">{children}</h1>
-            //   ),
-            //   h2: ({ children }) => (
-            //     <h2 className="text-xl font-semibold mt-5 mb-2">{children}</h2>
-            //   ),
-            //   p: ({ children }) => (
-            //     <p className="mb-4 leading-relaxed">{children}</p>
-            //   ),
-            //   code: ({ className, children }) => {
-            //     //const match = /language-(\w+)/.exec(className || "");
-            //     return (
-            //       <pre
-            //         className="bg-gray-900 rounded-lg overflow-x-auto"
-            //         style={{ color: "red", marginBottom: 0 }}
-            //       >
-            //         <code className={className}>{children}</code>
-            //       </pre>
-            //     );
-            //   },
-            //   ul: ({ children }) => (
-            //     <ul className="list-disc pl-5 mb-4">{children}</ul>
-            //   ),
-            //   ol: ({ children }) => (
-            //     <ol className="list-decimal pl-5 mb-4">{children}</ol>
-            //   ),
-            //   li: ({ children }) => <li className="mb-1">{children}</li>,
-            //   a: ({ children, href }) => (
-            //     <a
-            //       href={href}
-            //       target="_blank"
-            //       rel="noopener noreferrer"
-            //       className="text-blue-400 hover:underline"
-            //     >
-            //       {children}
-            //     </a>
-            //   ),
-          }
-        }
+        components={{
+          // The wrapper lets a wide table scroll sideways inside the answer.
+          table: ({ children }) => (
+            <div className="md-table-wrap">
+              <table>{children}</table>
+            </div>
+          ),
+        }}
       >
         {content}
       </ReactMarkdown>

@@ -1,6 +1,14 @@
 import { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
-import { CheckCircleFill, FunnelFill, GearFill } from "react-bootstrap-icons";
+import { CircleCheck, Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import GVDBsRetrFilters from "../../../components/GVDBsRetrFilters/GVDBsRetrFilters";
 import { useDefaultGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDefaultGVDBsRetrFiltersStore";
 import { useModalGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useModalGVDBsRetrFiltersStore";
@@ -74,14 +82,10 @@ export default function ChatFilters({
 
   return (
     <>
-      <Button
-        size="sm"
-        variant="outline-secondary"
-        className={
-          "fw-bold text-nowrap " +
-          (activeCount ? "btn-filters-active" : "btn-tc-300-400")
-        }
-        style={{ color: "black" }}
+      <button
+        type="button"
+        className="pill"
+        data-active={activeCount > 0}
         disabled={store.streaming}
         onClick={handleShow}
         title={
@@ -90,40 +94,35 @@ export default function ChatFilters({
             : "Limit what this chat searches. Filters cannot be changed once the chat has started."
         }
       >
-        {activeCount ? <FunnelFill /> : <GearFill />}
-        &nbsp;{activeCount ? `Filters: ${activeCount}` : "Filters"}
-      </Button>
+        <Filter className="size-3.5" />
+        <span className="v">
+          {activeCount ? `Filters: ${activeCount}` : "Filters"}
+        </span>
+      </button>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Filters for this chat</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p className="text-muted small">
-            Filters apply to every question in the chat and are fixed once the
-            first message is sent.
-          </p>
-          <GVDBsRetrFilters />
-        </Modal.Body>
-        <Modal.Footer className="justify-content-center">
-          <Button
-            variant="success"
-            className="fw-bold btn-tc-300-400"
-            style={{ color: "black" }}
-            onClick={handleApply}
-          >
-            <CheckCircleFill
-              className="me-1 my-0"
-              size="20px"
-              style={{ color: "green" }}
-            />
-            Apply
-          </Button>
-          <Button variant="outline-secondary" onClick={handleClear}>
-            Clear all
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <Dialog open={show} onOpenChange={(open) => !open && handleClose()}>
+        <DialogContent className="max-h-[calc(100dvh-24px)] grid-rows-[auto_minmax(0,1fr)_auto] sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Filters for this chat</DialogTitle>
+            <DialogDescription>
+              Filters apply to every question in the chat and are fixed once the
+              first message is sent.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="scroll-soft -mx-1 min-h-0 overflow-y-auto px-1">
+            <GVDBsRetrFilters />
+          </div>
+          <DialogFooter className="sm:justify-center">
+            <Button onClick={handleApply}>
+              <CircleCheck />
+              Apply
+            </Button>
+            <Button variant="outline" onClick={handleClear}>
+              Clear all
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

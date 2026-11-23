@@ -1,5 +1,5 @@
-import { Button } from "react-bootstrap";
-import { Download } from "react-bootstrap-icons";
+import { Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useDocTaskOptionsStore } from "../stores/useDocTaskOptionsStore";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
@@ -197,14 +197,15 @@ export default function SaveResultButton() {
 
   return (
     <Button
-      variant="outline-secondary"
-      className="fw-bold ms-2 btn-tc-300-400"
-      style={{ color: "black" }}
+      type="button"
+      variant="outline"
+      size="sm"
       disabled={!enabled}
       onClick={handleSave}
       title="Save the query and its result as a Markdown file"
     >
-      <Download size="20px" style={{ marginBottom: "3px" }} /> Save Result
+      <Download className="size-3.5" />
+      Save Result
     </Button>
   );
 }

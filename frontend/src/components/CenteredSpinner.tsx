@@ -1,12 +1,13 @@
-import { Spinner } from "react-bootstrap";
+import { LoaderCircle } from "lucide-react";
 
 export default function CenteredSpinner() {
   return (
-    <div
-      className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh" }}
-    >
-      <Spinner animation="border" role="status" />
+    <div className="flex min-h-dvh items-center justify-center">
+      <LoaderCircle
+        className="size-8 animate-spin text-accent-text"
+        role="status"
+        aria-label="Loading"
+      />
     </div>
   );
 }

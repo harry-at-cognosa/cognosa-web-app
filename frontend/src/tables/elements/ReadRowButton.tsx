@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { Button } from "@/components/ui/button";
 import type { createTableStore, TableRow } from "../TableStoreFactory";
 
 interface Props {
@@ -12,8 +12,8 @@ export default function ReadRowButton({ row, useStore }: Props) {
   return (
     <Button
       type="button"
-      variant=""
-      className="fw-bold btn-tc-300-400"
+      variant="secondary"
+      size="xs"
       onClick={() => setReadRow({ ...row })}
     >
       View

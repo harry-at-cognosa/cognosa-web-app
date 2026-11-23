@@ -1,17 +1,34 @@
-import {
-  Button,
-  Dropdown,
-  Form,
-  InputGroup,
-  Modal,
-  Spinner,
-} from "react-bootstrap";
+import { useEffect } from "react";
+import { CircleCheck, LoaderCircle } from "lucide-react";
 import { useSuChangeOneselfStore } from "./useSuChangeOneselfStore";
-import { useEffect, useState } from "react";
-import { CheckCircleFill } from "react-bootstrap-icons";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Sel } from "@/components/Sel";
 
-export default function SuChangeOneself() {
-  const [show, setShow] = useState(false);
+const YES_NO = [
+  { value: "1", label: "Yes" },
+  { value: "0", label: "No" },
+];
+
+/**
+ * SuperUser > Change Group: the dialog. The menu item that opens it lives in the
+ * shell (components/Shell.tsx), which mounts this component whenever the SuperUser
+ * group is shown and controls `show`.
+ */
+export default function SuChangeOneself({
+  show,
+  onShowChange,
+}: {
+  show: boolean;
+  onShowChange: (show: boolean) => void;
+}) {
   const store = useSuChangeOneselfStore();
   useEffect(() => {
     if (!store.needReload) return;
@@ -21,128 +38,87 @@ export default function SuChangeOneself() {
     fetchChangeOneselfData();
   }, [store.needReload]);
   useEffect(() => store.setNeedReload(true), []);
+  // reload each time the dialog is shown
+  useEffect(() => {
+    if (show) store.setNeedReload(true);
+  }, [show]);
 
-  const handleCancel = () => setShow(false);
   const handleApply = () => {
     store.setNeedReload(true);
     async function setOneself() {
       const result = await store.applyData();
       if (result?.is_success) {
-        setShow(false);
+        onShowChange(false);
         location.reload();
       }
     }
     setOneself();
   };
   return (
-    <>
-      <Dropdown.Item onClick={() => setShow(true)}>Change Group</Dropdown.Item>
-      <Modal
-        show={show}
-        onHide={handleCancel}
-        onShow={() => store.setNeedReload(true)}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Superuser: Group and Options</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {store.error_msg ? (
-            <h3 style={{ color: "red" }}>{store.error_msg}</h3>
-          ) : null}
-          {store.firstLoad ? (
-            <Spinner />
-          ) : (
-            <>
-              <InputGroup className="mb-2">
-                <InputGroup.Text
-                  className="fw-bold justify-content-end bg-tc-300"
-                  style={{ width: "17ch" }}
-                >
-                  Group:
-                </InputGroup.Text>
-                <Form.Select
-                  className="fw-bold"
-                  value={store.group_id}
-                  autoComplete="off"
-                  disabled={store.needReload}
-                  onChange={(e) => {
-                    store.setGroupId(Number(e.target.value));
-                  }}
-                >
-                  {store.group_list.map((group) => (
-                    <option key={group.group_id} value={group.group_id}>
-                      {group.group_id}: {group.group_name}
-                    </option>
-                  ))}
-                </Form.Select>
-              </InputGroup>
-              <InputGroup className="mb-2">
-                <InputGroup.Text
-                  className="fw-bold justify-content-end bg-tc-300"
-                  style={{ width: "17ch" }}
-                >
-                  ContentManager:
-                </InputGroup.Text>
-                <Form.Select
-                  className="fw-bold"
-                  value={store.is_contentmanager ? 1 : 0}
-                  autoComplete="off"
-                  disabled={store.needReload}
-                  onChange={(e) => {
-                    store.setIsContentManager(Boolean(Number(e.target.value)));
-                  }}
-                >
-                  <option key={"is_cm_yes"} value={1}>
-                    Yes
-                  </option>
-                  <option key={"is_cm_no"} value={0}>
-                    No
-                  </option>
-                </Form.Select>
-              </InputGroup>
-              <InputGroup className="mb-2">
-                <InputGroup.Text
-                  className="fw-bold justify-content-end bg-tc-300"
-                  style={{ width: "17ch" }}
-                >
-                  GroupAdmin:
-                </InputGroup.Text>
-                <Form.Select
-                  className="fw-bold"
-                  value={store.is_groupadmin ? 1 : 0}
-                  autoComplete="off"
-                  disabled={store.needReload}
-                  onChange={(e) => {
-                    store.setIsGroupAdmin(Boolean(Number(e.target.value)));
-                  }}
-                >
-                  <option key={"is_ga_yes"} value={1}>
-                    Yes
-                  </option>
-                  <option key={"is_ga_no"} value={0}>
-                    No
-                  </option>
-                </Form.Select>
-              </InputGroup>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer className="justify-content-center">
-          <Button
-            variant="success"
-            className="fw-bold btn-tc-300-400"
-            onClick={handleApply}
-            style={{ color: "black" }}
-          >
-            <CheckCircleFill
-              className="me-1 my-0"
-              size="20px"
-              style={{ color: "green" }}
-            ></CheckCircleFill>
+    <Dialog open={show} onOpenChange={onShowChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Superuser: Group and Options</DialogTitle>
+          <DialogDescription className="sr-only">
+            Choose the group and the roles to act with
+          </DialogDescription>
+        </DialogHeader>
+        {store.error_msg ? (
+          <h3 className="text-lg font-semibold text-err">{store.error_msg}</h3>
+        ) : null}
+        {store.firstLoad ? (
+          <LoaderCircle
+            className="size-7 animate-spin text-accent-text"
+            role="status"
+            aria-label="Loading"
+          />
+        ) : (
+          <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-2.5">
+            <label htmlFor="su-change-group" className="lbl m-0 text-right">
+              Group:
+            </label>
+            <Sel
+              id="su-change-group"
+              label="Group"
+              value={String(store.group_id)}
+              disabled={store.needReload}
+              onChange={(v) => store.setGroupId(Number(v))}
+              options={store.group_list.map((group) => ({
+                value: String(group.group_id),
+                label: `${group.group_id}: ${group.group_name}`,
+              }))}
+            />
+            <label htmlFor="su-change-cm" className="lbl m-0 text-right">
+              ContentManager:
+            </label>
+            <Sel
+              id="su-change-cm"
+              label="ContentManager"
+              value={store.is_contentmanager ? "1" : "0"}
+              disabled={store.needReload}
+              onChange={(v) => store.setIsContentManager(Boolean(Number(v)))}
+              options={YES_NO}
+            />
+            <label htmlFor="su-change-ga" className="lbl m-0 text-right">
+              GroupAdmin:
+            </label>
+            <Sel
+              id="su-change-ga"
+              label="GroupAdmin"
+              value={store.is_groupadmin ? "1" : "0"}
+              disabled={store.needReload}
+              onChange={(v) => store.setIsGroupAdmin(Boolean(Number(v)))}
+              options={YES_NO}
+            />
+          </div>
+        )}
+        <DialogFooter className="sm:justify-center">
+          <Button onClick={handleApply}>
+            <CircleCheck />
             Apply
           </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

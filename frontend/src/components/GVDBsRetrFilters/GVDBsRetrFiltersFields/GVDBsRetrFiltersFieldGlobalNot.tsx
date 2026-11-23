@@ -1,4 +1,4 @@
-import { Form } from "react-bootstrap";
+import { Switch } from "@/components/ui/switch";
 
 interface FieldProps {
   value: boolean | null;
@@ -11,14 +11,14 @@ export default function GVDBsRetrFiltersFieldGlobalNot({
 }: FieldProps) {
   if (value === null) return null;
   return (
-    <Form.Check
-      type="switch"
-      className="fw-bold"
-      label="NOT:"
-      checked={value}
-      onChange={(e) =>
-        onChange("global_not_value", e.target.checked ? "1" : "")
-      }
-    />
+    <label className="flex items-center gap-2 text-sm font-semibold">
+      <Switch
+        checked={value}
+        onCheckedChange={(checked) =>
+          onChange("global_not_value", checked ? "1" : "")
+        }
+      />
+      NOT:
+    </label>
   );
 }

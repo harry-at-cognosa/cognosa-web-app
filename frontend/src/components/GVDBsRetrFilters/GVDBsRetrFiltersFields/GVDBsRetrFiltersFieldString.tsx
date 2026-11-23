@@ -1,4 +1,5 @@
-import { Form, InputGroup } from "react-bootstrap";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import type { GVDBsRetrFiltersField } from "../types";
 
 interface FieldProps {
@@ -12,20 +13,22 @@ export default function GVDBsRetrFiltersFieldString({
   value,
   onChange,
 }: FieldProps) {
+  const id = `rf-${field.rf_field_id}`;
+  const isSet = Boolean(value && value.trim());
   return (
-    <InputGroup className="mb-2">
-      <InputGroup.Text
-        className={"fw-bold justify-content-end bg-tc-300"}
-        style={{ width: "16ch" }}
-      >
+    <div className="min-w-0">
+      <label className="lbl" htmlFor={id}>
         {field.title}
-      </InputGroup.Text>
-      <Form.Control
-        type="string"
-        className="fw-bold"
+      </label>
+      <Input
+        id={id}
+        type="text"
         value={value || ""}
         onChange={(e) => onChange(field.rf_field_id, e.target.value)}
+        className={cn(
+          isSet && "border-tint-edge bg-tint font-semibold text-tint-fg",
+        )}
       />
-    </InputGroup>
+    </div>
   );
 }

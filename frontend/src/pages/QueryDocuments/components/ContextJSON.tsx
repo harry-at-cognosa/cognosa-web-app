@@ -1,6 +1,14 @@
-import { Button, Card, Form, Modal } from "react-bootstrap";
-import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useState } from "react";
+import { FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 
 interface JsonItem {
   page_content: string;
@@ -10,7 +18,7 @@ interface JsonItem {
 
 export default function ContextJSON() {
   const [show, setShow] = useState(false);
-  const { context_json } = useDocTasksCurrentStore();
+  const { context_json, doc_task_id, short_name } = useDocTasksCurrentStore();
   if (!context_json) return null;
 
   // Parse the JSON string
@@ -33,107 +41,83 @@ export default function ContextJSON() {
     <>
       <Button
         type="button"
-        variant=""
-        className="me-2 fw-bold btn-tc-300-400"
+        variant="secondary"
         size="sm"
         onClick={() => setShow(true)}
       >
+        <FileText className="size-3.5" />
         {headerText + "..."}
       </Button>
-      <Modal
-        show={show}
-        onHide={() => setShow(false)}
-        size="xl"
-        fullscreen="lg-down" // Fullscreen on small devices
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>{headerText + ":"}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>
+      <Sheet open={show} onOpenChange={setShow}>
+        <SheetContent
+          side="right"
+          className="gap-0 border-0 data-[side=right]:w-[min(1100px,100vw)] data-[side=right]:border-l-0 data-[side=right]:sm:max-w-[min(1100px,92vw)] md:rounded-l-[28px]"
+        >
+          <SheetHeader className="p-5 pb-3">
+            <SheetTitle>{headerText + ":"}</SheetTitle>
+            <SheetDescription>
+              Query {doc_task_id}: {short_name}
+            </SheetDescription>
+          </SheetHeader>
           {parsedData.length === 0 ? (
-            <div className="text-center py-4">
+            <div className="py-6 text-center">
               <p>No data to display</p>
             </div>
           ) : (
-            <div className="d-flex flex-column gap-4">
+            <ol className="scroll-soft min-h-0 flex-1 overflow-y-auto px-5 pb-5">
               {parsedData.map((item, index) => (
-                <Card key={index} className="shadow-sm">
-                  <Card.Header className="d-flex justify-content-between align-items-center bg-tc-100">
-                    <h6 className="mb-0">Item {index + 1}</h6>
-                    <small className="text-muted">{getItemHeader(item)}</small>
-                  </Card.Header>
-                  <Card.Body>
-                    <div className="row">
-                      {/* Page Content - Textarea */}
-                      <div className="col-md-6 mb-3 mb-md-0">
-                        <Form.Group>
-                          <Form.Label>
-                            <strong>Page Content</strong>
-                          </Form.Label>
-                          <Form.Control
-                            as="textarea"
-                            rows={12} // Increased rows to match JSON display height
-                            value={item.page_content || ""}
-                            readOnly
-                            style={{
-                              fontFamily: "monospace",
-                              fontSize: "12px",
-                              resize: "vertical",
-                              width: "100%",
-                              height: "100%", // Ensure full height
-                              minHeight: "300px", // Minimum height to match JSON area
-                            }}
-                          />
-                        </Form.Group>
-                      </div>
-
-                      {/* Metadata and Other Fields - JSON */}
-                      <div className="col-md-6">
-                        <Card>
-                          <Card.Header>
-                            <strong>Metadata & Other Fields</strong>
-                          </Card.Header>
-                          <Card.Body className="p-0" style={{ height: "100%" }}>
-                            <pre
-                              className="mb-0"
-                              style={{
-                                backgroundColor: "#f8f9fa",
-                                padding: "1rem",
-                                margin: 0,
-                                height: "calc(100% - 2rem)", // Full height minus padding
-                                maxHeight: "none",
-                                overflow: "auto",
-                                fontFamily: "monospace",
-                                fontSize: "12px",
-                                borderRadius: "0 0 4px 4px",
-                                whiteSpace: "pre-wrap",
-                                wordBreak: "break-word",
-                              }}
-                            >
-                              {JSON.stringify(
-                                {
-                                  metadata: item.metadata,
-                                  ...Object.fromEntries(
-                                    Object.entries(item).filter(
-                                      ([key]) => key !== "page_content"
-                                    )
-                                  ),
-                                },
-                                null,
-                                2
-                              )}
-                            </pre>
-                          </Card.Body>
-                        </Card>
-                      </div>
+                <li key={index} className="border-t border-line-soft py-3.5">
+                  <div className="mb-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
+                    <h3 className="font-semibold text-ink">
+                      Item{" "}
+                      <span className="text-accent-text tabular-nums">
+                        {index + 1}
+                      </span>
+                    </h3>
+                    <small className="min-w-0 text-[13px] wrap-anywhere text-muted-foreground">
+                      {getItemHeader(item)}
+                    </small>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    {/* Page Content - Textarea */}
+                    <div className="flex min-w-0 flex-col">
+                      <label className="lbl" htmlFor={`found-doc-${index}`}>
+                        Page Content
+                      </label>
+                      <textarea
+                        id={`found-doc-${index}`}
+                        rows={12}
+                        value={item.page_content || ""}
+                        readOnly
+                        className="scroll-soft min-h-[300px] w-full flex-1 resize-y rounded-xl border border-line bg-surface px-3 py-2 font-mono text-xs text-ink outline-none focus-visible:border-ring"
+                      />
                     </div>
-                  </Card.Body>
-                </Card>
+
+                    {/* Metadata and Other Fields - JSON */}
+                    <div className="flex min-w-0 flex-col">
+                      <span className="lbl">Metadata & Other Fields</span>
+                      <pre className="scroll-soft m-0 min-h-[300px] flex-1 overflow-auto rounded-xl bg-sunk p-3 font-mono text-xs wrap-anywhere whitespace-pre-wrap text-ink">
+                        {JSON.stringify(
+                          {
+                            metadata: item.metadata,
+                            ...Object.fromEntries(
+                              Object.entries(item).filter(
+                                ([key]) => key !== "page_content",
+                              ),
+                            ),
+                          },
+                          null,
+                          2,
+                        )}
+                      </pre>
+                    </div>
+                  </div>
+                </li>
               ))}
-            </div>
+            </ol>
           )}
-        </Modal.Body>
-      </Modal>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

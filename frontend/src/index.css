@@ -1,0 +1,650 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./styles/shadcn.css";
+@import "@fontsource-variable/instrument-sans";
+@import "@fontsource-variable/bricolage-grotesque";
+
+/* Ported from prototype 9b ("Soft gradient, side menu"). styles/shadcn.css is
+   shadcn's own tailwind.css (custom variants, no-scrollbar, scroll-fade), copied
+   so that the shadcn CLI is not a runtime dependency.
+
+   src/lib/scheme.ts sets <html data-scheme="light|dark">; shadcn expects a .dark
+   class. Re-pointing the variant is all that is needed. */
+@custom-variant dark (&:where([data-scheme="dark"], [data-scheme="dark"] *));
+
+@theme inline {
+  --font-sans: "Instrument Sans Variable", system-ui, -apple-system, sans-serif;
+  --font-heading: "Bricolage Grotesque Variable", "Instrument Sans Variable", system-ui, sans-serif;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  /* shadcn Sidebar tokens, pointed at the direction's own */
+  --color-sidebar: transparent;
+  --color-sidebar-foreground: var(--ink);
+  --color-sidebar-primary: var(--primary);
+  --color-sidebar-primary-foreground: var(--primary-foreground);
+  --color-sidebar-accent: var(--tint);
+  --color-sidebar-accent-foreground: var(--tint-fg);
+  --color-sidebar-border: var(--line);
+  --color-sidebar-ring: var(--ring);
+  /* direction tokens, usable as Tailwind colours (text-ink, bg-tint, border-line …) */
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-surface: var(--surface);
+  --color-sunk: var(--sunk);
+  --color-tint: var(--tint);
+  --color-tint-fg: var(--tint-fg);
+  --color-tint-edge: var(--tint-edge);
+  --color-accent-text: var(--accent-text);
+  --color-hair: var(--hair);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-err: var(--err);
+  --color-err-bg: var(--err-bg);
+  --color-off: var(--off);
+  --color-off-bg: var(--off-bg);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ------------------------------------------------------------------------
+   Tokens. The accent is only ever var(--tc-50) … var(--tc-900), written on
+   <html> at run time by components/ThemeColor.tsx from the Api Setting
+   webapp_main_color (22 ramps). Nothing here needs the ramp at build
+   time: shadcn's theme is plain CSS variables, so --primary can simply point
+   at a --tc-* variable. Shades are chosen so text contrast holds for every
+   ramp: white text only ever sits on tc-700 or darker, accent-coloured text
+   on light surfaces is tc-800 or tc-900; in dark the fill is tc-300/400 with
+   dark text and accent text is tc-300 or lighter.
+   ------------------------------------------------------------------------ */
+:root {
+  --radius: 0.75rem;
+
+  /* Instance colour ramp. ThemeColor.tsx overwrites these on <html> from
+     webapp_main_color; "gray" is the store's default until that is known. */
+  --tc-50: #f9fafb;
+  --tc-100: #f3f4f6;
+  --tc-200: #e5e7eb;
+  --tc-300: #d1d5db;
+  --tc-400: #9ca3af;
+  --tc-500: #6b7280;
+  --tc-600: #4b5563;
+  --tc-700: #374151;
+  --tc-800: #1f2937;
+  --tc-900: #111827;
+
+  --ink: #171c28;
+  --ink-2: #3b4354;
+  --muted-fg: #535c6e;
+  --line: rgba(23, 28, 40, 0.12);
+  --line-soft: rgba(23, 28, 40, 0.07);
+  --companion: #ffe1cc; /* the one fixed companion tint (warm apricot) */
+  --canvas: #fcfdff;
+  --wash-a: var(--tc-200);
+  --wash-b: var(--tc-100);
+
+  --ok: #0b6b43;
+  --ok-bg: #e2f6ea;
+  --warn: #8a5300;
+  --warn-bg: #fdf0d3;
+  --err: #a81e33;
+  --err-bg: #fde6ea;
+  --off: #4f5868;
+  --off-bg: #eceef2;
+
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-strong: rgba(255, 255, 255, 0.93);
+  --glass-pop: rgba(255, 255, 255, 0.96);
+  --glass-edge: rgba(255, 255, 255, 0.95);
+  --solid: #ffffff; /* opaque stand-in where layers cannot be translucent */
+  --surface: #ffffff; /* fields, pills, buttons */
+  --sunk: #eef0f4; /* segmented tracks, disabled fields, table head */
+  --seg-on: #ffffff;
+  --row-hover: color-mix(in srgb, var(--tc-50) 70%, white);
+  --box: color-mix(in srgb, var(--tc-50) 55%, white);
+  --hair: color-mix(in srgb, var(--tc-300) 45%, white);
+  --glow: color-mix(in srgb, var(--tc-500) 30%, transparent);
+  --glow-soft: color-mix(in srgb, var(--tc-400) 20%, transparent);
+  --tint: color-mix(in srgb, var(--tc-100) 75%, white);
+  --tint-fg: var(--tc-900);
+  --tint-edge: var(--tc-400);
+  --accent-text: var(--tc-800);
+  --bubble: color-mix(in srgb, var(--tc-100) 82%, white);
+  --bubble-edge: color-mix(in srgb, var(--tc-200) 80%, white);
+  --primary-fill: linear-gradient(120deg, var(--tc-700), var(--tc-800));
+  --primary-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  --scrim: color-mix(in srgb, var(--tc-900) 14%, transparent);
+
+  /* shadcn's semantic tokens, mapped onto the above */
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --card: var(--glass-strong);
+  --card-foreground: var(--ink);
+  --popover: var(--glass-pop);
+  --popover-foreground: var(--ink);
+  --primary: var(--tc-700);
+  --primary-foreground: #ffffff;
+  --secondary: var(--sunk);
+  --secondary-foreground: var(--ink);
+  --muted: var(--sunk);
+  --muted-foreground: var(--muted-fg);
+  --accent: var(--tint);
+  --accent-foreground: var(--tint-fg);
+  --destructive: var(--err);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--tc-700);
+}
+
+[data-scheme="dark"] {
+  color-scheme: dark;
+  --ink: #eef1f7;
+  --ink-2: #cfd5e1;
+  --muted-fg: #a6afc0;
+  --line: rgba(255, 255, 255, 0.14);
+  --line-soft: rgba(255, 255, 255, 0.08);
+  --companion: rgba(190, 96, 44, 0.3);
+  --canvas: #0c1019;
+  --wash-a: color-mix(in srgb, var(--tc-600) 34%, transparent);
+  --wash-b: color-mix(in srgb, var(--tc-800) 50%, transparent);
+
+  --ok: #7be0b0;
+  --ok-bg: rgba(60, 190, 130, 0.16);
+  --warn: #f5c76b;
+  --warn-bg: rgba(230, 160, 40, 0.16);
+  --err: #ff9aa9;
+  --err-bg: rgba(240, 80, 105, 0.18);
+  --off: #b3bccb;
+  --off-bg: rgba(255, 255, 255, 0.08);
+
+  --glass: rgba(20, 25, 38, 0.56);
+  --glass-strong: rgba(22, 27, 41, 0.86);
+  --glass-pop: rgba(25, 31, 46, 0.95);
+  --glass-edge: rgba(255, 255, 255, 0.1);
+  --solid: #171c2a;
+  --surface: rgba(255, 255, 255, 0.06);
+  --sunk: rgba(255, 255, 255, 0.07);
+  --seg-on: var(--tint);
+  --row-hover: color-mix(in srgb, var(--tc-500) 10%, transparent);
+  --box: color-mix(in srgb, var(--tc-500) 7%, transparent);
+  --hair: color-mix(in srgb, var(--tc-400) 34%, transparent);
+  --glow: color-mix(in srgb, var(--tc-500) 26%, transparent);
+  --glow-soft: color-mix(in srgb, var(--tc-400) 26%, transparent);
+  --tint: color-mix(in srgb, var(--tc-500) 24%, #171c2a);
+  --tint-fg: var(--tc-100);
+  --tint-edge: color-mix(in srgb, var(--tc-400) 60%, transparent);
+  --accent-text: var(--tc-300);
+  --bubble: color-mix(in srgb, var(--tc-500) 22%, #171c2a);
+  --bubble-edge: color-mix(in srgb, var(--tc-400) 34%, transparent);
+  --primary-fill: linear-gradient(120deg, var(--tc-300), var(--tc-400));
+  --primary-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  --scrim: rgba(4, 6, 12, 0.55);
+
+  --primary: var(--tc-300);
+  --primary-foreground: #0d111c;
+  --ring: var(--tc-300);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    background: var(--canvas);
+  }
+  body {
+    @apply text-foreground text-sm antialiased;
+    margin: 0;
+    line-height: 1.45;
+    min-height: 100dvh;
+    background:
+      radial-gradient(820px 480px at 4% -8%, var(--wash-a), transparent 68%),
+      radial-gradient(620px 460px at 78% -12%, var(--wash-b), transparent 70%),
+      radial-gradient(760px 560px at 104% 96%, var(--companion), transparent 66%),
+      radial-gradient(700px 520px at 30% 112%, var(--wash-b), transparent 70%),
+      var(--canvas);
+    background-attachment: fixed;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  a {
+    color: var(--accent-text);
+  }
+  /* one focus treatment for everything that is not a shadcn control */
+  :where(a, button, [tabindex]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--tc-400) 40%, transparent);
+  }
+}
+
+@layer components {
+  /* ---------- surfaces ---------- */
+  .glass-side {
+    background: var(--glass);
+    border: 1px solid var(--glass-edge);
+    box-shadow: 0 0 0 1px var(--line-soft), 0 20px 44px -28px var(--glow);
+    backdrop-filter: blur(22px) saturate(1.2);
+  }
+  .glass-card {
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-edge);
+    box-shadow: 0 0 0 1px var(--line-soft), 0 26px 56px -34px var(--glow);
+  }
+  .glass-pop {
+    background: var(--glass-pop);
+    border: 1px solid var(--glass-edge);
+    box-shadow:
+      0 0 0 1px var(--line-soft),
+      0 34px 70px -28px var(--glow),
+      0 10px 26px -18px rgba(23, 28, 40, 0.3);
+    backdrop-filter: blur(24px) saturate(1.3);
+  }
+  .glass-bar {
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-edge);
+    box-shadow: 0 0 0 1px var(--line-soft), 0 14px 34px -18px var(--glow);
+    backdrop-filter: blur(18px) saturate(1.3);
+  }
+  .composer {
+    border: 1.5px solid transparent;
+    background:
+      linear-gradient(var(--solid), var(--solid)) padding-box,
+      linear-gradient(120deg, var(--glass-edge), var(--hair)) border-box;
+    box-shadow: 0 30px 60px -30px var(--glow), 0 0 0 1px var(--line-soft);
+  }
+  .composer:focus-within {
+    background:
+      linear-gradient(var(--solid), var(--solid)) padding-box,
+      linear-gradient(120deg, var(--tc-400), var(--companion) 45%, var(--tc-600)) border-box;
+    box-shadow: 0 30px 60px -28px var(--glow), 0 0 0 5px var(--glow-soft);
+  }
+  .primary-fill {
+    background: var(--primary-fill);
+    color: var(--primary-foreground);
+    box-shadow: 0 12px 24px -10px var(--glow), var(--primary-sheen);
+  }
+
+  /* ---------- small parts ---------- */
+  .lbl {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--muted-fg);
+    margin: 0 0 5px 2px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 11px 0 13px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    white-space: nowrap;
+    max-width: 100%;
+    min-width: 0;
+    font-size: 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .pill:hover:not(:disabled) {
+    border-color: var(--tint-edge);
+  }
+  .pill:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .pill .k {
+    color: var(--muted-fg);
+    font-weight: 500;
+    font-size: 13px;
+    flex: none;
+  }
+  .pill .v {
+    color: var(--ink);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .pill > svg {
+    color: var(--muted-fg);
+    flex: none;
+  }
+  .pill[data-active="true"] {
+    background: var(--tint);
+    border-color: var(--tint-edge);
+    box-shadow: 0 8px 18px -10px var(--glow);
+  }
+  .pill[data-active="true"] .k,
+  .pill[data-active="true"] .v,
+  .pill[data-active="true"] > svg {
+    color: var(--tint-fg);
+  }
+  .pill[data-state="open"] {
+    border-color: var(--tint-edge);
+    box-shadow: 0 0 0 3px var(--glow-soft);
+  }
+  .pill:disabled,
+  .pill[data-locked="true"] {
+    background: var(--sunk);
+    border-color: transparent;
+  }
+  .pill:disabled {
+    cursor: not-allowed;
+  }
+  .pill:disabled .v {
+    color: var(--muted-fg);
+  }
+  .count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 36px;
+    padding: 0 10px 0 8px;
+    border-radius: 999px;
+    color: var(--ink-2);
+    font-weight: 500;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .mini:hover:not(:disabled) {
+    background: var(--tint);
+    color: var(--tint-fg);
+  }
+  .mini:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+    padding: 2px 11px;
+    border-radius: 999px;
+    background: var(--tint);
+    border: 1px dashed var(--tint-edge);
+    color: var(--tint-fg);
+    font-size: 13px;
+  }
+  .tag b {
+    font-weight: 700;
+  }
+  .tag-not {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--err-bg);
+    color: var(--err);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 11px 0 9px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .status::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
+  }
+  .status.plain::before {
+    display: none;
+  }
+  .status.ok {
+    background: var(--ok-bg);
+    color: var(--ok);
+  }
+  .status.warn {
+    background: var(--warn-bg);
+    color: var(--warn);
+  }
+  .status.err {
+    background: var(--err-bg);
+    color: var(--err);
+  }
+  .status.off {
+    background: var(--off-bg);
+    color: var(--off);
+  }
+  .status.run {
+    background: var(--tint);
+    color: var(--tint-fg);
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-2);
+  }
+  .icon-btn:hover:not(:disabled) {
+    color: var(--accent-text);
+    border-color: var(--tint-edge);
+  }
+  .icon-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .x-btn {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--muted-fg);
+  }
+  .x-btn:hover {
+    background: var(--err-bg);
+    color: var(--err);
+  }
+  .x-btn.edit:hover {
+    background: var(--tint);
+    color: var(--tint-fg);
+  }
+
+  /* ---------- history list ---------- */
+  .hist-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0 4px;
+    padding: 7px 6px 7px 12px;
+    border-radius: 14px;
+    border: 1px solid transparent;
+  }
+  .hist-item:hover {
+    background: color-mix(in srgb, var(--surface) 60%, transparent);
+  }
+  .hist-item[aria-current="true"] {
+    background: var(--surface);
+    border-color: var(--hair);
+    box-shadow: 0 10px 22px -14px var(--glow);
+  }
+  [data-scheme="dark"] .hist-item[aria-current="true"] {
+    background: var(--tint);
+  }
+  .hist-item[aria-current="true"]::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 3px;
+    background: linear-gradient(var(--tc-400), var(--tc-600));
+  }
+
+  /* ---------- Markdown answers. Tailwind's preflight strips list and
+     heading styles and shadcn ships no prose styles, so these are ours. ---------- */
+  .md {
+    font-size: 16px;
+    line-height: 1.62;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .md.chat {
+    font-size: 15.5px;
+    line-height: 1.58;
+  }
+  .md > :first-child {
+    margin-top: 0;
+  }
+  .md > :last-child {
+    margin-bottom: 0;
+  }
+  .md p {
+    margin: 0 0 0.85em;
+  }
+  .md ul,
+  .md ol {
+    margin: 0 0 0.85em;
+    padding-left: 1.4em;
+  }
+  .md ul {
+    list-style: disc;
+  }
+  .md ol {
+    list-style: decimal;
+  }
+  .md li {
+    margin: 0.2em 0;
+  }
+  .md li::marker {
+    color: var(--muted-fg);
+  }
+  .md strong {
+    font-weight: 700;
+  }
+  .md h1,
+  .md h2,
+  .md h3,
+  .md h4 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    margin: 1.1em 0 0.45em;
+  }
+  .md h1 {
+    font-size: 1.4em;
+  }
+  .md h2 {
+    font-size: 1.25em;
+  }
+  .md h3 {
+    font-size: 1.1em;
+  }
+  .md h4 {
+    font-size: 1em;
+  }
+  .md a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .md code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.88em;
+    padding: 0.1em 0.35em;
+    border-radius: 6px;
+    background: var(--sunk);
+  }
+  .md pre {
+    margin: 0 0 0.85em;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--sunk);
+    overflow-x: auto;
+  }
+  .md pre code {
+    padding: 0;
+    background: none;
+  }
+  .md blockquote {
+    margin: 0 0 0.85em;
+    padding-left: 14px;
+    border-left: 3px solid var(--tint-edge);
+    color: var(--ink-2);
+  }
+  .md table {
+    /* words in cells stay whole; a wide table scrolls inside its wrapper */
+    overflow-wrap: normal;
+    border-collapse: collapse;
+    margin: 0 0 0.85em;
+    font-size: 0.92em;
+  }
+  .md th,
+  .md td {
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+
+  /* ---------- thin scrollbars inside panels ---------- */
+  .scroll-soft {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--muted-fg) 40%, transparent) transparent;
+  }
+}

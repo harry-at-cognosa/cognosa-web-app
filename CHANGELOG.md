@@ -2,6 +2,38 @@
 
 _Nothing yet._
 
+## [1.1.0] (2026-11-22)
+
+1. New user interface. The frontend is rebuilt on shadcn/ui, Tailwind v4, Radix and
+   Lucide in place of react-bootstrap. No backend, API or database change; the pages
+   do what they did in 1.0.1. Plan: `docs/ui_9b_migration_plan_261122.md`.
+   - **Navigation**: a side menu replaces the top bar. It has one icon per item, folds
+     by group, and collapses to an icon strip. Which groups and items a user sees is
+     unchanged (role, and `Chat?` on the group). `Change Group` is the first
+     `SuperUser` item and opens the same dialog. On a phone the menu opens from the
+     page heading.
+   - **Colour**: `webapp_main_color` is still the only colour setting; every accent of
+     the instance derives from it. A dark scheme is an option in the user menu
+     (Light, Dark, System); light is the default.
+   - **`Queries`**: the answer is at the top with the question as its heading, and the
+     query form below it. The history list can be collapsed; its default width is
+     24 % (was 33 %), same limits and same double-click reset. `Retrieval Parameters`
+     and `Retrieval Filters` each have their own `Reset`. Active filters show as a
+     count and tags. Messages that were browser alerts are shown in the page.
+   - **`Chat`**: the conversation list is the same collapsible panel. Collection, LLM
+     and filters are in the composer. Rename is done in place in the list.
+   - **Tables** (all `GroupAdmin` and `SuperUser` pages, `Manage Contexts`): one
+     restyled pattern with the same sorting, filters, paging, limit, export and
+     dialogs. A dialog with a long-text field is 1140 px wide.
+   - **Page headings and browser tab titles** use the menu labels (`Users`,
+     `Doc Collections`, ...).
+   - Dropdowns are styled lists, not native selects. Deletes on `Queries` and `Chat`
+     confirm in a dialog with the same wording.
+   - **Login** (`/login`): restyled to match; the form is unchanged. It uses a neutral
+     accent, since the instance colour is not known before login.
+2. Removed dependencies: `bootstrap`, `react-bootstrap`, `react-bootstrap-icons`,
+   `bootstrap-icons`, `react-router-bootstrap`, `@popperjs/core`.
+
 ## [1.0.1] (2026-11-20)
 
 1. `Chat`: the conversation number is shown before each title in the sidebar (as the

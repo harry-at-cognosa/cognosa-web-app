@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { Table, Spinner, Alert } from "react-bootstrap";
+import { LoaderCircle } from "lucide-react";
+import { Table } from "@/components/ui/table";
 import type { createTableStore } from "./TableStoreFactory";
 import DeleteDialog from "./elements/DeleteDialog";
 import EditDialog from "./elements/EditDialog";
 import TableHeader from "./elements/TableHeader";
+import TableToolbar from "./elements/TableToolbar";
 import ReadRowDialog from "./elements/ReadRowDialog";
-import BusyModal from "./elements/BusyModal";
 import TableBody from "./elements/TableBody";
 
 interface Props {
@@ -23,21 +24,37 @@ export default function UniversalTable({ useStore }: Props) {
   useEffect(() => tableStore.setNeedReload(true), []);
 
   if (!data && tableStore.busy === "read")
-    return <Spinner animation="border" />;
+    return (
+      <div className="flex justify-center py-10">
+        <LoaderCircle
+          className="size-8 animate-spin text-accent-text"
+          role="status"
+          aria-label="Loading"
+        />
+      </div>
+    );
 
   return (
     <>
       {tableStore.error ? (
-        <Alert variant="danger">{tableStore.error}</Alert>
+        <div
+          role="alert"
+          className="mb-3 rounded-2xl bg-err-bg px-3.5 py-2.5 text-sm font-medium wrap-break-word text-err"
+        >
+          {tableStore.error}
+        </div>
       ) : null}
-      <Table bordered hover responsive>
-        <TableHeader useStore={useStore}></TableHeader>
-        <TableBody useStore={useStore} />
-      </Table>
+      {/* min-w-0: a wide table scrolls inside the card, never the page */}
+      <div className="glass-card min-w-0 overflow-hidden rounded-3xl">
+        <TableToolbar useStore={useStore} />
+        <Table>
+          <TableHeader useStore={useStore}></TableHeader>
+          <TableBody useStore={useStore} />
+        </Table>
+      </div>
       <ReadRowDialog useStore={useStore}></ReadRowDialog>
       <EditDialog useStore={useStore}></EditDialog>
       <DeleteDialog useStore={useStore}></DeleteDialog>
-      <BusyModal useStore={useStore}></BusyModal>
     </>
   );
 }

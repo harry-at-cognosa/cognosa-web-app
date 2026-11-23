@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Button } from "react-bootstrap";
+import { Square } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import axiosClient from "../../../api/axiosClient";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 import type { DocTasksResponse } from "../models/docTasksResponse";
+import { useQueryNotice } from "../hooks/useQueryNotice";
 
 /**
  * Cancel the in-flight query. POST /doc_tasks/{id}/cancel moves the task to a
@@ -29,7 +31,9 @@ export default function CancelQueryButton() {
       current.setFromServerResponse(response.data);
       if (!response.data.is_processing) queryStore.stopPolling();
     } catch {
-      alert("Could not cancel the query. Please try again.");
+      useQueryNotice
+        .getState()
+        .show("Could not cancel the query. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -38,12 +42,12 @@ export default function CancelQueryButton() {
   return (
     <Button
       type="button"
-      variant="outline-danger"
+      variant="outline"
       size="sm"
-      className="w-100 mt-1"
       onClick={handleClick}
       disabled={busy}
     >
+      <Square className="size-3" />
       Cancel this query
     </Button>
   );

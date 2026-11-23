@@ -1,4 +1,5 @@
-import { Button, Spinner } from "react-bootstrap";
+import { LoaderCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
 
@@ -25,13 +26,18 @@ export default function AskButton({ handleSubmit }: Props) {
   const showSpinner = Boolean(current.is_processing);
   return (
     <Button
+      type="button"
+      size="lg"
+      className="flex-none max-md:w-full"
       onClick={handleSubmit}
       disabled={disabled}
-      variant="outline-secondary"
-      className="w-100 fw-bold"
-      style={{ color: "black" }}
     >
-      {showSpinner ? <Spinner size={"sm"} /> : null}
+      {showSpinner ? (
+        <>
+          <LoaderCircle className="animate-spin" />
+          <span className="sr-only">{current.status_text || "Processing"}</span>
+        </>
+      ) : null}
       {getButtonText()}
     </Button>
   );

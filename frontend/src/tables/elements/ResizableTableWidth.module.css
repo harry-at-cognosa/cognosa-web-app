@@ -22,13 +22,13 @@
   left: 4px;
   width: 4px;
   border-radius: 2px;
-  background: rgba(0, 0, 0, 0.15);
+  background: color-mix(in srgb, var(--muted-fg) 40%, transparent);
   transition: background 0.15s ease;
 }
 
 .grip:hover::after,
 :global(body).resizing .grip::after {
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--accent-text);
 }
 
 /* while dragging: no text selection, keep the resize cursor everywhere */

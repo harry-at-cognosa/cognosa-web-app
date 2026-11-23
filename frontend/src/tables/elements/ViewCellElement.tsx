@@ -1,4 +1,5 @@
-import clsx from "clsx";
+import { TableCell } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import getColor from "../../api/getColor";
 import { getRetrParamsShortNameFromFullStr } from "../../components/GVDBsRetrParams/functions";
 import BooleanCheck from "../CellRenders/BooleanCheck";
@@ -14,14 +15,20 @@ interface TdProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
 }
 
 function Td({ isBusy, className, children, ...props }: TdProps) {
-  const combinedClassName = "position-relative " + (className || "");
   return (
-    <td {...props} className={combinedClassName}>
+    <TableCell {...props} className={cn("relative wrap-break-word", className)}>
       {children}
       <BusyCell isBusy={isBusy || false} />
-    </td>
+    </TableCell>
   );
 }
+
+// gllms_status / gvdbs_status values are Bootstrap context names set by the server
+const STATUS_CLASS: Record<string, string> = {
+  success: "ok",
+  warning: "warn",
+  danger: "err",
+};
 
 interface Props {
   useStore: ReturnType<typeof createTableStore>;
@@ -69,7 +76,7 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
   if (cellType === "group_id_name") {
     const group_id_name: Record<number, string> = add_values["group_id_name"];
     return (
-      <Td key={key} isBusy={isBusy}>
+      <Td key={key} isBusy={isBusy} className="min-w-44">
         {group_id_name[Number(value)]}
       </Td>
     );
@@ -86,23 +93,32 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
     const cellText =
       row["gllms_status_text"] || row["gvdbs_status_text"] || "<Pending>";
     return (
-      <Td key={key} className={"table-" + value} isBusy={isBusy}>
-        {cellText}
+      <Td key={key} isBusy={isBusy}>
+        <span
+          className={cn(
+            "status plain",
+            STATUS_CLASS[value_str] || "off",
+          )}
+        >
+          {cellText}
+        </span>
       </Td>
     );
   }
   if (cellType === "api_settings_value") {
     if (pk_value_str === "webapp_main_color")
       return (
-        <Td
-          key={key}
-          className="fw-bold"
-          style={{
-            backgroundColor: getColor(value_str, 300),
-          }}
-          isBusy={isBusy}
-        >
-          {value}
+        <Td key={key} isBusy={isBusy}>
+          {/* a swatch of the chosen ramp, not a theme colour */}
+          <span
+            className="inline-flex h-7 items-center rounded-full px-3 text-[13px] font-bold"
+            style={{
+              backgroundColor: getColor(value_str, 300),
+              color: getColor(value_str, 900),
+            }}
+          >
+            {value}
+          </span>
         </Td>
       );
     return (
@@ -134,8 +150,8 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
     });
     return (
       <Td key={key} isBusy={isBusy}>
-        <div className="text-nowrap">{dateString}</div>
-        <div className="text-nowrap">{timeString}</div>
+        <div className="whitespace-nowrap">{dateString}</div>
+        <div className="whitespace-nowrap">{timeString}</div>
       </Td>
     );
   }
@@ -151,7 +167,7 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
       <Td
         key={key}
         isBusy={isBusy}
-        className={clsx("align-top", row["output_text_2"] ? "p-0" : null)}
+        className="align-top"
       >
         <GaDocTasksAnswer row={row} />
       </Td>
@@ -168,7 +184,9 @@ export default function ViewCellElement({ useStore, row, col, isBusy }: Props) {
   if (cellType === "gvdbs_retr_params") {
     return (
       <Td key={key} isBusy={isBusy}>
-        <b>{getRetrParamsShortNameFromFullStr(value_str)}</b>
+        <b className="font-semibold whitespace-nowrap tabular-nums">
+          {getRetrParamsShortNameFromFullStr(value_str)}
+        </b>
       </Td>
     );
   }

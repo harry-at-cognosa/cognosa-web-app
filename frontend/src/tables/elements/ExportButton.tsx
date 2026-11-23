@@ -1,10 +1,10 @@
-import { Button } from "react-bootstrap";
+import { FileJson, FileSpreadsheet } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   useExcelExport,
   type ExcelExportColumnDefinition,
 } from "../hooks/useExcelExport";
 import type { createTableStore, TableRow } from "../TableStoreFactory";
-import { FileEarmark } from "react-bootstrap-icons";
 import { useJsonExport } from "../hooks/useJSONExport";
 
 interface Props {
@@ -74,34 +74,30 @@ export default function ExportButton({ useStore, row }: Props) {
     });
   };
   return (
-    <>
-      <span className="pt-1">Export:&nbsp;</span>
+    <div className="inline-flex items-center gap-1.5">
+      <span className="text-[13px] font-medium text-muted-foreground">
+        Export:
+      </span>
       {exportList.includes("xlsx-current") ? (
         <Button
           type="button"
-          variant=""
-          className="fw-bold py-0 me-1 btn-tc-300-400"
-          style={{
-            fontSize: "smaller",
-          }}
+          variant="outline"
+          size="sm"
           onClick={handleExportExcel}
         >
-          <FileEarmark size={"16px"} /> Excel
+          <FileSpreadsheet /> Excel
         </Button>
       ) : null}
       {exportList.includes("json-current") ? (
         <Button
           type="button"
-          variant=""
-          className="fw-bold py-0 btn-tc-300-400"
-          style={{
-            fontSize: "smaller",
-          }}
+          variant="outline"
+          size="sm"
           onClick={handleExportJSON}
         >
-          <FileEarmark size={"16px"} /> JSON
+          <FileJson /> JSON
         </Button>
       ) : null}
-    </>
+    </div>
   );
 }

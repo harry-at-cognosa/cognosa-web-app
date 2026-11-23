@@ -1,4 +1,4 @@
-import { Form, InputGroup } from "react-bootstrap";
+import { Sel } from "@/components/Sel";
 import type { GVDBsRetrFiltersField } from "../types";
 
 interface FieldProps {
@@ -7,6 +7,9 @@ interface FieldProps {
   onChange: (name: string, value: string) => void;
 }
 
+// a field that holds a value is tinted, so set filters stand out in the form
+const SET_MARK = "border-tint-edge bg-tint font-semibold text-tint-fg";
+
 export default function GVDBsRetrFiltersFieldSelect({
   field,
   value,
@@ -14,27 +17,23 @@ export default function GVDBsRetrFiltersFieldSelect({
 }: FieldProps) {
   if (field.type !== "select") return null;
   const { rf_field_id, title, values } = field;
-  const allValues = ["", ...values];
+  const id = `rf-${rf_field_id}`;
+  const isSet = Boolean(value && value.trim());
   return (
-    <InputGroup className="mb-2">
-      <InputGroup.Text
-        className={"fw-bold justify-content-end bg-tc-300"}
-        style={{ width: "16ch" }}
-      >
+    <div className="min-w-0">
+      <label className="lbl" htmlFor={id}>
         {title}
-      </InputGroup.Text>
-      <Form.Select
-        className="fw-bold"
-        value={value}
-        onChange={(e) => onChange(rf_field_id, e.target.value)}
-        autoComplete="off"
-      >
-        {allValues.map((value) => (
-          <option key={`rffs__${rf_field_id}__option__${value}`} value={value}>
-            {value}
-          </option>
-        ))}
-      </Form.Select>
-    </InputGroup>
+      </label>
+      <Sel
+        id={id}
+        label={title}
+        value={value || ""}
+        onChange={(v) => onChange(rf_field_id, v)}
+        // the empty item clears the filter (v1.0.1: the blank first option)
+        emptyLabel=""
+        options={values.map((v) => ({ value: v, label: v }))}
+        className={isSet ? SET_MARK : undefined}
+      />
+    </div>
   );
 }

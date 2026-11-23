@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { ChatQueryPrefill } from "../../Chat/models";
-import { Form, ProgressBar } from "react-bootstrap";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Notice } from "@/components/Notice";
 import axiosClient from "../../../api/axiosClient";
 import { useDocTasksCurrentStore } from "../stores/useDocTasksCurrent";
 import type { DocTasksQuery } from "../models/docTasksQuery";
@@ -12,13 +14,14 @@ import generateUUID from "../../../api/generateUUID";
 import QuerySelectVDB from "./QuerySelectVDB";
 import QuerySelectLLM from "./QuerySelectLLM";
 import QuerySelectContext from "./QuerySelectContext";
-import QueryTokensCounter from "./QueryTokensCounter";
 import { useQueryDocumentsStore } from "../stores/useQueryDocumentStore";
-import ContextJSON from "./ContextJSON";
 import AskButton from "./AskButton";
-import CancelQueryButton from "./CancelQueryButton";
-import CloneQueryButton from "./CloneQueryButton";
-import SaveResultButton from "./SaveResultButton";
+import DocTasksGVDBsRetrParams from "./DocTasksGVDBsRetrParams";
+import GVDBsRetrFiltersTable from "../../../components/GVDBsRetrFilters/GVDBsRetrFiltersTable";
+import { useQueryNotice } from "../hooks/useQueryNotice";
+import { useAsked } from "../hooks/useAskedQuestion";
+import { useLoggedUserStore } from "../../../stores/useLoggedUserStore";
+import { useWebAppOptionsStore } from "../../../stores/useWebAppOptionsStore";
 import { useDocTasksGVDBsRetrParamsStore } from "../../../components/GVDBsRetrParams/useDocTasksGVDBsRetrParamsStore";
 import DocTasksGVDBsRetrFilters from "./DocTasksGVDBsRetrFilters";
 import { useDocTasksGVDBsRetrFiltersStore } from "../../../components/GVDBsRetrFilters/useDocTasksGVDBsRetrFiltersStore";
@@ -34,6 +37,11 @@ function QueryArea() {
   const current = useDocTasksCurrentStore();
   const docTaskOptionsStore = useDocTaskOptionsStore();
   const docTasksShortStore = useDocTasksShortStore();
+  const user = useLoggedUserStore();
+  const webAppOptions = useWebAppOptionsStore();
+  const notice = useQueryNotice();
+  // v1.0.1 used window.alert() for these; same texts, shown in the Notice
+  const alert = notice.show;
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -69,6 +77,7 @@ function QueryArea() {
 
   // Send POST request to url
   const handleSubmit = async () => {
+    notice.dismiss();
     const input_text = current.input_text?.trim();
     if (!input_text) {
       alert("Enter query");
@@ -123,6 +132,15 @@ function QueryArea() {
       alert("Query is the same as previous. Please, change something.");
       return;
     }
+    // view level: what the heading above the answer shows (see useAskedQuestion)
+    const asked = useAsked.getState();
+    const askedSlot = query.doc_task_id ? 2 : 1;
+    if (query.doc_task_id) {
+      const firstQuestion = current.previousQuery?.input_text;
+      if (firstQuestion && asked.byId[query.doc_task_id]?.[1] === undefined)
+        asked.record(query.doc_task_id, 1, firstQuestion);
+      asked.record(query.doc_task_id, 2, input_text);
+    } else asked.setPending(input_text);
     try {
       current.setBeforeServerResponse(query);
       const opUUID = generateUUID();
@@ -131,8 +149,12 @@ function QueryArea() {
         "/doc_tasks",
         query,
       );
-      if (useQueryDocumentsStore.getState().opUUID !== opUUID) return;
+      if (useQueryDocumentsStore.getState().opUUID !== opUUID) {
+        if (askedSlot === 1) asked.setPending(null);
+        return;
+      }
       const data = response.data;
+      if (askedSlot === 1) asked.record(data.doc_task_id, 1, input_text);
       current.setFromServerResponse(data);
       GVDBsRetrFiltersHistory.updateFromGVDBsCfgJSON(
         data.doc_task_id,
@@ -146,6 +168,7 @@ function QueryArea() {
       docTasksShortStore.setNeedReload(true);
     } catch {
       alert("Error during post /doc_tasks");
+      if (askedSlot === 1) asked.setPending(null);
       queryStore.stopPolling();
     }
   };
@@ -200,49 +223,65 @@ function QueryArea() {
     return () => queryStore.stopPolling();
   }, []);
 
-  return (
-    <div className="p-3 border-bottom bg-light">
-      <QuerySelectVDB />
-      <Form.Control
-        type="text"
-        className="mb-2"
-        placeholder="Query Short Name (optional)"
-        value={current.short_name || ""}
-        onChange={(e) => current.setShortName(e.target.value)}
-      />
-      <DocTasksGVDBsRetrFilters>
-        <SaveResultButton />
-      </DocTasksGVDBsRetrFilters>
-      <Form.Control
-        as="textarea"
-        className="mb-2"
-        rows={4}
-        placeholder="Enter your query here..."
-        value={current.input_text || ""}
-        onChange={(e) => current.setInputText(e.target.value)}
-      />
-      <QuerySelectContext />
-      <QuerySelectLLM />
-      <Form.Control
-        as="textarea"
-        className="mb-2"
-        rows={2}
-        placeholder="Optional Instruction"
-        value={current.optional_text || ""}
-        onChange={(e) => current.setOptionalText(e.target.value)}
-      />
-      <AskButton handleSubmit={handleSubmit} />
-      <CancelQueryButton />
-      <br className="mt-0" />
-      <div style={{ visibility: queryStore.isPolling ? "visible" : "hidden" }}>
-        <ProgressBar animated now={current.status_pct || 0} />
-      </div>
+  const showRetrParams =
+    (user.is_superuser || user.is_groupadmin || user.is_contentmanager) &&
+    !webAppOptions.isRetrievalParamsSuppressed();
 
-      <h5>{current.status_text || ""}</h5>
-      <div className="d-flex justify-content-between">
-        <ContextJSON />
-        <QueryTokensCounter />
-        <CloneQueryButton />
+  return (
+    <div className="mt-auto flex flex-col gap-2.5 pt-2">
+      <Notice text={notice.text} onDismiss={notice.dismiss} />
+      <div className="composer rounded-[26px] px-4 pt-3.5 pb-3.5">
+        <label className="lbl" htmlFor="q-text">
+          Query
+        </label>
+        <textarea
+          id="q-text"
+          rows={2}
+          placeholder="Enter your query here..."
+          value={current.input_text || ""}
+          onChange={(e) => current.setInputText(e.target.value)}
+          className="block field-sizing-content max-h-48 min-h-[3.2em] w-full resize-none bg-transparent px-1 pt-0.5 pb-2 text-[17px] leading-[1.4] font-medium text-ink outline-none placeholder:font-normal placeholder:text-muted-foreground"
+        />
+
+        <div className="grid grid-cols-1 gap-3 border-t border-line-soft pt-2.5 pb-3 sm:grid-cols-2">
+          <div>
+            <label className="lbl" htmlFor="q-short">
+              Query Short Name (optional)
+            </label>
+            <Input
+              id="q-short"
+              type="text"
+              value={current.short_name || ""}
+              onChange={(e) => current.setShortName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="lbl" htmlFor="q-opt">
+              Optional Instruction
+            </label>
+            <Textarea
+              id="q-opt"
+              rows={1}
+              value={current.optional_text || ""}
+              onChange={(e) => current.setOptionalText(e.target.value)}
+              className="max-h-32 min-h-9 resize-none py-[7px]"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:gap-3.5">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+            <QuerySelectVDB />
+            <span className="basis-full" />
+            <QuerySelectContext />
+            <QuerySelectLLM />
+            <span className="basis-full" />
+            {showRetrParams ? <DocTasksGVDBsRetrParams /> : null}
+            <DocTasksGVDBsRetrFilters />
+            <GVDBsRetrFiltersTable />
+          </div>
+          <AskButton handleSubmit={handleSubmit} />
+        </div>
       </div>
     </div>
   );

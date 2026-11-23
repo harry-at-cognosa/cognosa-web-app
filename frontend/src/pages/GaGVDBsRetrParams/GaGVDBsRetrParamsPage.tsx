@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Spinner } from "react-bootstrap";
+import { CircleCheck, LoaderCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { PageHead } from "@/components/Shell";
 import { useTopNavBarTitle } from "../../hooks/useTopNavBarTitle";
 import GVDBsRetrParams from "../../components/GVDBsRetrParams/GVDBsRetrParams";
-import { CheckCircleFill } from "react-bootstrap-icons";
 import axiosClient from "../../api/axiosClient";
 import { useModalGVDBsRetrParamsStore } from "../../components/GVDBsRetrParams/useModalGVDBsRetrParamsStore";
 
@@ -45,44 +46,36 @@ export default function GaGVDBsRetrParamsPage() {
     setGVDBsRetrParams();
   }
   return (
-    <Container style={{ marginTop: "5ch", maxWidth: "100ch" }}>
-      <h3
-        className="text-center bg-tc-200"
-        style={{ padding: "5px", borderRadius: "10px" }}
-      >
-        Default Retrieval Parameters for group collections:
-      </h3>
-      <br />
-      {isLoaded ? (
-        <div>
-          <GVDBsRetrParams />
-          <br />
-          <div className="text-center">
-            <Button
-              variant="success"
-              className="fw-bold btn-tc-300-400"
-              onClick={handleApply}
-              disabled={isApplying}
-              style={{ color: "black" }}
-            >
-              {isApplying ? (
-                <Spinner size="sm" className="me-1"></Spinner>
-              ) : (
-                <CheckCircleFill
-                  className="me-1 my-0"
-                  size="20px"
-                  style={{ color: "green" }}
-                ></CheckCircleFill>
-              )}
-              Apply
-            </Button>
+    <div className="px-5 pt-3 pb-12">
+      <PageHead className="mb-3" />
+      <div className="glass-card mx-auto w-full max-w-[100ch] rounded-3xl p-6">
+        <h2 className="mb-5 font-heading text-xl leading-tight font-semibold tracking-[-0.015em] text-ink">
+          Default Retrieval Parameters for group collections:
+        </h2>
+        {isLoaded ? (
+          <div>
+            <GVDBsRetrParams />
+            <div className="mt-5 flex justify-center border-t border-line-soft pt-4">
+              <Button size="lg" onClick={handleApply} disabled={isApplying}>
+                {isApplying ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  <CircleCheck />
+                )}
+                Apply
+              </Button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="text-center">
-          <Spinner></Spinner>
-        </div>
-      )}
-    </Container>
+        ) : (
+          <div className="flex justify-center py-6">
+            <LoaderCircle
+              className="size-8 animate-spin text-accent-text"
+              role="status"
+              aria-label="Loading"
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

@@ -30,8 +30,20 @@ export default function HomePage() {
     fetchHtml();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading)
+    return (
+      <div className="grid min-h-dvh place-items-center text-ink-2">
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="grid min-h-dvh place-items-center">
+        <div className="glass-card rounded-3xl px-6 py-5 text-err">
+          Error: {error}
+        </div>
+      </div>
+    );
 
   if (import.meta.env.DEV) {
     return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;

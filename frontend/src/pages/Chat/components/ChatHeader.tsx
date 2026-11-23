@@ -1,21 +1,29 @@
-import { Form } from "react-bootstrap";
-import { FunnelFill } from "react-bootstrap-icons";
+import { useState } from "react";
+import { Filter, Lock } from "lucide-react";
+import { Sel } from "@/components/Sel";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { draftFiltersRequest, useChatStore } from "../stores/useChatStore";
 import ChatFilters, { parseFilterSchema } from "./ChatFilters";
-import DownloadConversationButton from "./DownloadConversationButton";
-import styles from "../ChatPage.module.css";
 
 function statusMark(status: string): string {
-  if (status === "danger") return " ⛔";
-  if (status === "warning") return " ⚠️";
+  if (status === "danger") return "⛔ ";
+  if (status === "warning") return "⚠️ ";
   return "";
 }
 
+// v1.0.1 tints the control when the chosen collection or LLM is not ready
 function statusBg(status: string | undefined): string {
-  if (status === "danger") return "#ECCCCF";
-  if (status === "warning") return "#F2E7C3";
+  if (status === "danger") return "bg-err-bg";
+  if (status === "warning") return "bg-warn-bg";
   return "";
 }
+
+const LOCK_TEXT =
+  "A conversation stays on one collection. Start a new chat to use another.";
 
 interface FilterChip {
   key: string;
@@ -23,10 +31,40 @@ interface FilterChip {
   value: string;
 }
 
-// Collection, filters and LLM for the conversation. The collection and its
-// filters can be chosen only before the first message: a conversation stays
-// on one collection and one set of filter values. The LLM can change per turn.
-export default function ChatHeader() {
+/** The collection once the chat has started: a locked pill. A click or tap shows why (hover alone fails on touch). */
+function LockedCollection({ name, tint }: { name: string; tint: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Tooltip open={open} onOpenChange={setOpen} disableHoverableContent>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          className={"pill cursor-default! " + tint}
+          data-locked="true"
+          aria-label={`Document Collection: ${name}. ${LOCK_TEXT}`}
+          onClick={(e) => {
+            // Radix closes a tooltip on click; here the click is what shows it
+            e.preventDefault();
+            setOpen(true);
+          }}
+        >
+          <Lock className="size-3.5" />
+          <span className="k max-sm:hidden">Document Collection</span>
+          <span className="v text-ink-2!">{name}</span>
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="pointer-events-none">
+        {LOCK_TEXT}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+// Collection, filters and LLM for the conversation, shown under the message
+// box. The collection and its filters can be chosen only before the first
+// message: a conversation stays on one collection and one set of filter
+// values. The LLM can change per turn.
+export default function ChatSettings() {
   const store = useChatStore();
   const collections = store.options?.collections || [];
   const llms = store.options?.llms || [];
@@ -56,66 +94,69 @@ export default function ChatHeader() {
   const isNot = filters?.global_not_value === true;
 
   return (
-    <div className={styles.header}>
-      <div className="d-flex flex-wrap gap-2 align-items-center">
-        <Form.Select
-          size="sm"
-          aria-label="Document collection"
-          className={styles.headerCollection}
-          title={
-            started
-              ? "A conversation stays on one collection. Start a new chat to use another."
-              : "Document collection for this chat"
+    <div className="mt-1 flex flex-wrap items-center gap-2 border-t border-line-soft pt-3">
+      {started ? (
+        <LockedCollection
+          name={
+            collection
+              ? statusMark(collection.gvdbs_status) + collection.gvdbs_name
+              : "⛔ Collection not available"
           }
-          disabled={started || store.streaming}
-          value={gvdbsId ?? ""}
-          style={{ backgroundColor: statusBg(collection?.gvdbs_status) }}
-          onChange={(e) => store.setDraftGvdbsId(Number(e.target.value))}
+          tint={statusBg(collection?.gvdbs_status)}
+        />
+      ) : (
+        <span
+          className="inline-flex max-w-full min-w-0"
+          title="Document collection for this chat"
         >
-          {started && !collection ? (
-            <option value={gvdbsId ?? ""}>⛔ Collection not available</option>
-          ) : null}
-          {collections.map((c) => (
-            <option key={c.gvdbs_id} value={c.gvdbs_id}>
-              {c.gvdbs_name + statusMark(c.gvdbs_status)}
-            </option>
-          ))}
-        </Form.Select>
-        <Form.Select
-          size="sm"
-          aria-label="LLM"
-          className={styles.headerLLM}
-          title="LLM that writes the next answer"
+          <Sel
+            variant="pill"
+            label="Document Collection"
+            className={statusBg(collection?.gvdbs_status)}
+            disabled={store.streaming}
+            value={gvdbsId === null ? "" : String(gvdbsId)}
+            onChange={(v) => store.setDraftGvdbsId(Number(v))}
+            options={collections.map((c) => ({
+              value: String(c.gvdbs_id),
+              label: statusMark(c.gvdbs_status) + c.gvdbs_name,
+            }))}
+          />
+        </span>
+      )}
+      <span
+        className="inline-flex max-w-full min-w-0"
+        title="LLM that writes the next answer"
+      >
+        <Sel
+          variant="pill"
+          label="LLM"
+          className={statusBg(llm?.gllms_status)}
           disabled={store.streaming}
-          value={store.gllmsId ?? ""}
-          style={{ backgroundColor: statusBg(llm?.gllms_status) }}
-          onChange={(e) => store.setGllmsId(Number(e.target.value))}
-        >
-          {llms.map((m) => (
-            <option key={m.gllms_id} value={m.gllms_id}>
-              {m.gllms_name + statusMark(m.gllms_status)}
-            </option>
-          ))}
-        </Form.Select>
-        {!started ? (
-          <ChatFilters schemaStr={collection?.gvdbs_retr_filters} />
-        ) : null}
-        <DownloadConversationButton />
-      </div>
+          value={store.gllmsId === null ? "" : String(store.gllmsId)}
+          onChange={(v) => store.setGllmsId(Number(v))}
+          options={llms.map((m) => ({
+            value: String(m.gllms_id),
+            label: statusMark(m.gllms_status) + m.gllms_name,
+          }))}
+        />
+      </span>
+      {!started ? (
+        <ChatFilters schemaStr={collection?.gvdbs_retr_filters} />
+      ) : null}
       {chips.length ? (
         <div
-          className={styles.filterLine}
+          className="flex basis-full flex-wrap items-center gap-1.5"
           title={
             started
               ? "Filters of this conversation. They cannot be changed; start a new chat to use others."
               : "Filters for this chat. Fixed once the first message is sent."
           }
         >
-          <FunnelFill className="me-1" />
-          {isNot ? <span className={styles.filterNot}>NOT</span> : null}
+          <Filter className="size-3.5 flex-none text-muted-foreground" aria-hidden />
+          {isNot ? <span className="tag-not">NOT</span> : null}
           {chips.map((chip) => (
-            <span key={chip.key} className={styles.filterChip}>
-              <strong>{chip.title}:</strong> {chip.value}
+            <span key={chip.key} className="tag wrap-anywhere">
+              {chip.title}: <b>{chip.value}</b>
             </span>
           ))}
         </div>
